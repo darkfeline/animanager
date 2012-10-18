@@ -38,8 +38,11 @@ class AnimeDB(Database):
         super().__init__(user='anime', db='anime', charset='utf8')
 
     def get(self, key):
-        return self.execute(
-            "SELECT * FROM anime WHERE series=N%s", key)
+        entries = self.execute("SELECT * FROM anime WHERE series=N%s", key)
+        if len(entries) < 1:
+            return None
+        else:
+            return entries[0]
 
     def add(self, entry):
         """
