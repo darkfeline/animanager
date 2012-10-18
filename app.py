@@ -21,7 +21,7 @@ Notes: {notes}
 """
 PROMPT = ">>> "
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
 
 
 def main():
