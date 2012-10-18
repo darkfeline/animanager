@@ -101,7 +101,7 @@ def change_choose(key):
     logging.debug("change_choose('{}')".format(key))
     entry = locator.db.get(key)
     print(format_entry(entry))
-    print("What do you want to do?")
+    print("What do you want to change?")
     options = {
         'a': 'series',
         'b': 'last_watched',
