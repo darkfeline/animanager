@@ -127,6 +127,13 @@ def change_choose(key):
 
 
 def change_field(key, field):
+    print('Changing field: {}'.format(field))
+    print('Old value: {}'.format(get_field(field, locator.db.get(key))))
+
+    a = input(PROMPT)
+    map = {field: a}
+    locator.db.change(key, map)
+    print('Done')
     return -1
 
 
