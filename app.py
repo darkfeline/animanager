@@ -53,8 +53,9 @@ def main_menu():
     print("Welcome to Animanager")
     options = {
         'f': ('Find an entry', find),
+        'c': ('Change an entry', change_find),
         'q': ('Quit', main_menu)}
-    order = ('f', 'q')
+    order = ('f', 'c', 'q')
     for i in order:
         print('{} - {}'.format(i, options[i][0]))
 
