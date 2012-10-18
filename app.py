@@ -53,7 +53,7 @@ def main_menu():
     print("Welcome to Animanager")
     options = {
         'f': ('Find an entry', find),
-        'q': ('Quit', main_menu)}
+        'q': ('Quit',)}
     order = ('f', 'q')
     for i in order:
         print('{} - {}'.format(i, options[i][0]))
