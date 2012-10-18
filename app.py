@@ -71,10 +71,20 @@ def main_menu():
 
 
 def change_find():
-    return -1
+
+    logging.debug('change_find()')
+    print('Which entry to change?')
+
+    a = input(PROMPT)
+    entry = locator.db.get(a)
+    if entry is None:
+        print('Cannot find {}'.format(a))
+        return -1
+    else:
+        return (change_choose, [a], {})
 
 
-def change_choose():
+def change_choose(key):
     return -1
 
 
