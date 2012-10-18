@@ -150,5 +150,9 @@ def format_entry(entry):
     map = dict((FIELDS[i], entry[i]) for i in range(len(entry)))
     return ENTRY.format(**map)
 
+
+def get_field(field, entry):
+    return entry[FIELDS.index(field)]
+
 if __name__ == "__main__":
     main()
