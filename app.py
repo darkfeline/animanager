@@ -83,12 +83,12 @@ def find():
     print('Which entry to find?')
 
     a = input(PROMPT)
-    entries = locator.db.get(a)
-    logging.debug(entries)
-    if len(entries) == 0:
+    entry = locator.db.get(a)
+    logging.debug(entry)
+    if entry is None:
         print('Cannot find {}'.format(a))
         return -1
-    for entry in entries:
+    else:
         map = dict((FIELDS[i], entry[i]) for i in range(len(entry)))
         logging.debug(map)
         print(ENTRY.format(**map))
