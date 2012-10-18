@@ -97,6 +97,36 @@ def change_find():
 
 
 def change_choose(key):
+
+    logging.debug("change_choose('{}')".format(key))
+    entry = locator.db.get(key)
+    print(format_entry(entry))
+    print("What do you want to do?")
+    options = {
+        'a': 'series',
+        'b': 'last_watched',
+        'c': 'total',
+        'd': 'done',
+        'e': 'type',
+        'f': 'season',
+        'g': 'rating',
+        'h': 'airing_days',
+        'i': 'ep_notes',
+        'j': 'notes',
+        'q': 'Quit'}
+    order = ('q')
+    for i in order:
+        print('{} - {}'.format(i, options[i]))
+
+    a = input(PROMPT)
+    if a == 'q':
+        print("Okay")
+        return -1
+    else:
+        return (change_field, [key, options[a]], {})
+
+
+def change_field(key, field):
     return -1
 
 
