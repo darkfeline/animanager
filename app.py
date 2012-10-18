@@ -89,10 +89,13 @@ def find():
         print('Cannot find {}'.format(a))
         return -1
     else:
-        map = dict((FIELDS[i], entry[i]) for i in range(len(entry)))
-        logging.debug(map)
-        print(ENTRY.format(**map))
+        print(format_entry(entry))
         return -1
+
+
+def format_entry(entry):
+    map = dict((FIELDS[i], entry[i]) for i in range(len(entry)))
+    return ENTRY.format(**map)
 
 if __name__ == "__main__":
     main()
