@@ -1,0 +1,6 @@
+*.sw[po]
+__pycache__/
+
+backup.sql.gz
+temp/
+pymysql
