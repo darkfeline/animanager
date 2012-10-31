@@ -11,7 +11,7 @@ def find():
 
     a = input(globals.PROMPT)
     entry = locator.db.get(a)
-    logging.debug(entry)
+    logging.debug('Found {}'.format(entry))
     if entry is None:
         print('Cannot find {}'.format(a))
         return -1
