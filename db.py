@@ -44,6 +44,11 @@ class AnimeDB(Database):
         else:
             return entries[0]
 
+    def search(self, key):
+        entries = self.execute(
+            "SELECT * FROM anime WHERE series REGEXP N%s", r'.*' + key + r'.*')
+        return entries
+
     def add(self, entry):
         """
         :param entry: entry
