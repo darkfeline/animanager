@@ -1,5 +1,4 @@
 *.sw[po]
 __pycache__/
 
-temp/
 virt-env/
