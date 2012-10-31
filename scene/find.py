@@ -20,6 +20,23 @@ def find():
         return -1
 
 
+def search():
+
+    logging.debug('search()')
+    print('Search for what?')
+
+    a = input(globals.PROMPT)
+    entries = locator.db.search(a)
+    logging.debug('Found {}'.format(entries))
+    if not entries:
+        print('Cannot find {}'.format(a))
+        return -1
+    else:
+        for a in _format_entries(entries):
+            print(a)
+        return -1
+
+
 def _format_entries(entries):
     return [_format_entry(entry) for entry in entries]
 
