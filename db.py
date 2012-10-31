@@ -9,6 +9,12 @@ class Database:
         self.conn = pymysql.connect(*args, **kwargs)
 
     def execute(self, cmd, args=None):
+        """
+        :param cmd: MySQL query
+        :type cmd: str
+        :param args: string substition param used by pymysql
+
+        """
         cur = self.conn.cursor()
         cur.execute(cmd, args)
         return cur.fetchall()
@@ -38,6 +44,13 @@ class AnimeDB(Database):
         super().__init__(user='anime', db='anime', charset='utf8')
 
     def get(self, key):
+        """Get single entry by key
+
+        :param key: search key
+        :type key: string
+        :rtype: None or tuple
+
+        """
         entries = self.execute("SELECT * FROM anime WHERE series=N%s", key)
         if len(entries) < 1:
             return None
@@ -45,6 +58,12 @@ class AnimeDB(Database):
             return entries[0]
 
     def search(self, key):
+        """Get matches by regex search
+
+        :param key: search key
+        :type key: string
+
+        """
         entries = self.execute(
             "SELECT * FROM anime WHERE series REGEXP N%s", r'.*' + key + r'.*')
         return entries
