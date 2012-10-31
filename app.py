@@ -154,6 +154,10 @@ def find():
         return -1
 
 
+def format_entries(entries):
+    return [format_entry(entry) for entry in entries]
+
+
 def format_entry(entry):
     map = dict((FIELDS[i], entry[i]) for i in range(len(entry)))
     return ENTRY.format(**map)
