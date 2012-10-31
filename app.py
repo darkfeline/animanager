@@ -5,8 +5,7 @@ import logging
 import db
 import locator
 
-FIELDS = ('series', 'last_watched', 'total', 'done', 'type', 'season',
-          'rating', 'airing_days', 'ep_notes', 'notes')
+FIELDS = db.AnimeDB.fields
 ENTRY = """Series: {series}
 Last: {last_watched}
 Total: {total}
