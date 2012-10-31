@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+import atexit
 
 import db
 import locator
@@ -45,6 +46,7 @@ def main():
 
     """
     locator.db = db.AnimeDB()
+    atexit.register(locator.db.close, locator.db)
     stack = []
     stack.append((main_menu, [], {}))
     while len(stack) > 0:
