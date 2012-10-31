@@ -20,7 +20,7 @@ def main():
 
     """
     locator.db = db.AnimeDB()
-    atexit.register(locator.db.close, locator.db)
+    atexit.register(locator.db.close)
     stack = []
     stack.append((menu.main_menu, [], {}))
     while len(stack) > 0:
