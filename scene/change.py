@@ -94,6 +94,19 @@ def change_field(key, field):
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 
     a = input(globals.PROMPT)
+    if not a:
+        print('Empty input')
+        print('Cancel (or set to null)? [Y/n/c(lear)]')
+        a = input(globals.PROMPT)
+        if a == 'n':
+            return
+        elif a == 'c':
+            print('Setting to null')
+            a = None
+        else:
+            print('Okay')
+            return -1
+
     map = {field: a}
     locator.db.change(key, map)
     print('Done')
