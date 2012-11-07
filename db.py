@@ -77,6 +77,7 @@ class AnimeDB(Database):
 
         """
         keys = list(entry.keys())
+        assert 'series' in keys
         query = 'INSERT INTO anime ({}) VALUES({})'.format(
                 ','.join(keys),
                 ','.join('%({})s'.format(key) for key in keys))
