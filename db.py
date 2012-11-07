@@ -31,16 +31,16 @@ class AnimeDB(Database):
     fields = ('series', 'last_watched', 'total', 'done', 'type', 'season',
               'rating', 'airing_days', 'ep_notes', 'notes')
     field_map = {
-        'series': "series=N%(series)s",
-        'last_watched': 'last_watched=%(last_watched)s"',
-        'total': 'total=%(total)s"',
-        'done': 'done=%(done)s"',
-        'type': "type=N%(type)s",
-        'season': "season=N%(season)s",
-        'rating': 'rating=%(rating)s"',
-        'airing_days': "airing_days=N%(airing_days)s",
-        'ep_notes': "ep_notes=N%(ep_notes)s",
-        'notes': "notes=N%(notes)s"}
+        'series': 'series=N%(series)s',
+        'last_watched': 'last_watched=%(last_watched)s',
+        'total': 'total=%(total)s',
+        'done': 'done=%(done)s',
+        'type': 'type=N%(type)s',
+        'season': 'season=N%(season)s',
+        'rating': 'rating=%(rating)s',
+        'airing_days': 'airing_days=N%(airing_days)s',
+        'ep_notes': 'ep_notes=N%(ep_notes)s',
+        'notes': 'notes=N%(notes)s'}
 
     def __init__(self):
         super().__init__(user='anime', db='anime', charset='utf8')
