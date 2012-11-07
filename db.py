@@ -44,10 +44,11 @@ class AnimeDB(Database):
         super().__init__(user='anime', db='anime', charset='utf8')
 
     def get(self, key):
-        """Get single entry by key
+        """
+        Get single entry by key
 
-        :param key: search key
-        :type key: string
+        :param key: key
+        :type key: str
         :rtype: None or tuple
 
         """
@@ -58,10 +59,11 @@ class AnimeDB(Database):
             return entries[0]
 
     def search(self, key):
-        """Get matches by regex search
+        """
+        Get matches by regex search
 
         :param key: search key
-        :type key: string
+        :type key: str
 
         """
         entries = self.execute(
@@ -81,6 +83,15 @@ class AnimeDB(Database):
         self.execute(query, entry)
 
     def change(self, key, map):
+        """
+        Change an entry
+
+        :param key: key
+        :type key: str
+        :param map: values
+        :type map: dict
+
+        """
         map = map.copy()  # we change map later
         query = "UPDATE anime SET {} WHERE series=N%(key)s".format(
                 ','.join(self.field_map[key] for key in map.keys()))
