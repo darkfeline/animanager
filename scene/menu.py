@@ -12,7 +12,7 @@ def main_menu():
     options = {
         'f': ('Find an entry', find.find),
         's': ('Search for an entry', find.search),
-        'c': ('Change an entry', change.change_find),
+        'c': ('Change an entry', change.find),
         'q': ('Quit',)}
     order = ('f', 's', 'c', 'q')
     for i in order:

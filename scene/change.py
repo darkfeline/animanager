@@ -4,9 +4,9 @@ import globals
 import locator
 
 
-def change_find():
+def find():
 
-    logging.debug('change_find()')
+    logging.debug('change.find()')
     print('Which entry to change?')
 
     a = input(globals.PROMPT)
@@ -15,12 +15,12 @@ def change_find():
         print('Cannot find {}'.format(a))
         return -1
     else:
-        return (change_choose, [a], {})
+        return (choose, [a], {})
 
 
-def change_choose(key):
+def choose(key):
 
-    logging.debug("change_choose('{}')".format(key))
+    logging.debug("change.choose('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
     print("What do you want to change?")
