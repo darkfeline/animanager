@@ -83,6 +83,16 @@ class AnimeDB(Database):
                 ','.join('%({})s'.format(key) for key in keys))
         self.execute(query, entry)
 
+    def delete(self, key):
+        """
+        Get matches by regex search
+
+        :param key: search key
+        :type key: str
+
+        """
+        self.execute("DELETE FROM anime WHERE series=N%s", key)
+
     def change(self, key, map):
         """
         Change an entry
