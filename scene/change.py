@@ -88,6 +88,8 @@ def choose(key):
 
 
 def change_field(key, field):
+
+    logging.debug('change_field({}, {})'.format(key, field))
     print('Changing field: {}'.format(field))
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 
