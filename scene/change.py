@@ -18,6 +18,45 @@ def find():
         return (choose, [a], {})
 
 
+def search():
+
+    logging.debug('change.search()')
+    print('Search for what?')
+
+    a = input(globals.PROMPT)
+    entries = locator.db.search(a)
+    logging.debug('Found {}'.format(entries))
+
+    if not entries:
+        print('Cannot find {}'.format(a))
+        return -1
+    else:
+        return (search_choose, [entries], {})
+
+
+def search_choose(entries):
+
+    logging.debug('change.search_choose({})'.format(entries))
+    for i, entry in enumerate(entries):
+        print('{} - {}'.format(i, entry['series']))
+    print('q - quit')
+    print()
+    print('Which entry to change?')
+
+    a = input(globals.PROMPT)
+    if a == 'q':
+        print("Okay")
+        return -1
+    else:
+        try:
+            key = entries[int(a)]
+        except IndexError:
+            print('Bad input {}'.format(a))
+            return
+        else:
+            return (choose, [key], {})
+
+
 def choose(key):
 
     logging.debug("change.choose('{}')".format(key))

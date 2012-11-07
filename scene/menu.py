@@ -13,8 +13,9 @@ def main_menu():
         'f': ('Find an entry', find.find),
         's': ('Search for an entry', find.search),
         'c': ('Change an entry', change.find),
+        'd': ('Search and change', change.search),
         'q': ('Quit',)}
-    order = ('f', 's', 'c', 'q')
+    order = ('f', 's', 'c', 'd', 'q')
     for i in order:
         print('{} - {}'.format(i, options[i][0]))
 
