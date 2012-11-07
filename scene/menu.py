@@ -4,18 +4,19 @@ from globals import PROMPT
 from scene import find
 from scene import change
 
+options = {
+    'f': ('Find an entry', find.find),
+    's': ('Search for an entry', find.search),
+    'c': ('Change an entry', change.find),
+    'd': ('Search and change', change.search),
+    'q': ('Quit',)}
+order = ('f', 's', 'c', 'd', 'q')
+
 
 def main_menu():
 
     logging.debug('main_menu()')
     print("Welcome to Animanager")
-    options = {
-        'f': ('Find an entry', find.find),
-        's': ('Search for an entry', find.search),
-        'c': ('Change an entry', change.find),
-        'd': ('Search and change', change.search),
-        'q': ('Quit',)}
-    order = ('f', 's', 'c', 'd', 'q')
     for i in order:
         print('{} - {}'.format(i, options[i][0]))
 
