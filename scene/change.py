@@ -62,6 +62,7 @@ def choose(key):
     logging.debug("change.choose('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
+    print('q - Quit')
     print("What do you want to change?")
     options = {
         'a': 'series',
@@ -73,11 +74,7 @@ def choose(key):
         'g': 'rating',
         'h': 'airing_days',
         'i': 'ep_notes',
-        'j': 'notes',
-        'q': 'Quit'}
-    order = ('q')
-    for i in order:
-        print('{} - {}'.format(i, options[i]))
+        'j': 'notes'}
 
     a = input(globals.PROMPT)
     if a == 'q':
