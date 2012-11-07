@@ -15,7 +15,7 @@ def main():
     Functions:
     Return a tuple with first value callable to add to stack
         (function, args, kwargs)
-    Return -1 to pop
+    Return -n to pop n levels
     Return None to repeat
 
     """
@@ -30,8 +30,9 @@ def main():
             continue
         elif isinstance(a, tuple) and hasattr(a[0], '__call__'):
             stack.append(a)
-        elif a == -1:
-            stack.pop()
+        elif a < 0:
+            for i in range(a, 0):
+                stack.pop()
         print()
 
 if __name__ == "__main__":
