@@ -32,6 +32,7 @@ def main():
             stack.append(a)
         elif a == -1:
             stack.pop()
+        print()
 
 if __name__ == "__main__":
     main()
