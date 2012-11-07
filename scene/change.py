@@ -38,7 +38,7 @@ def search_choose(entries):
 
     logging.debug('change.search_choose({})'.format(entries))
     for i, entry in enumerate(entries):
-        print('{} - {}'.format(i, entry['series']))
+        print('{} - {}'.format(i, entry[0]))
     print('q - quit')
     print()
     print('Which entry to change?')
