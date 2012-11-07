@@ -84,7 +84,13 @@ def choose(key):
         print("Okay")
         return -1
     else:
-        return (change_field, [key, options[a]], {})
+        try:
+            b = (change_field, [key, options[a]], {})
+        except KeyError:
+            print("Bad input {}".format(a))
+            return
+        else:
+            return b
 
 
 def change_field(key, field):
