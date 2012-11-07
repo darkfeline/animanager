@@ -49,7 +49,7 @@ def search_choose(entries):
         return -1
     else:
         try:
-            key = entries[int(a)]
+            key = entries[int(a)][0]
         except IndexError:
             print('Bad input {}'.format(a))
             return
