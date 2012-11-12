@@ -23,6 +23,7 @@ class Database:
         cur.close()
 
     def close(self):
+        self.conn.commit()
         self.conn.close()
 
 
