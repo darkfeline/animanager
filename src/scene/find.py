@@ -14,10 +14,10 @@ def find():
     logging.debug('Found {}'.format(entry))
     if entry is None:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
         print(_format_entry(entry))
-        return -1
+        return -2
 
 
 def search():
@@ -30,11 +30,11 @@ def search():
     logging.debug('Found {}'.format(entries))
     if not entries:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
         for a in _format_entries(entries):
             print(a)
-        return -1
+        return -2
 
 
 def _format_entries(entries):
