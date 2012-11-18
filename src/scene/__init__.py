@@ -1,6 +1,3 @@
-import subprocess
-
-
 class SceneStack:
 
     def __init__(self):
@@ -29,12 +26,12 @@ class SceneStack:
             func, args, kwargs = self.top
         except TypeError:
             return
-        clear()
         rv = func(*args, **kwargs)
         if rv == -1:
             self.pop()
         elif rv == -2:
             self.pop_slice()
+        print()
 
     def add(self, scene):
         if not self.stack:
@@ -53,7 +50,3 @@ class SceneStack:
 
     def pop_slice(self):
         self.stack.pop()
-
-
-def clear():
-    subprocess.call('clear')
