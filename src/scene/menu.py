@@ -1,5 +1,6 @@
 import logging
 
+import locator
 from globals import PROMPT
 from scene import find
 from scene import change
@@ -25,7 +26,9 @@ def main_menu():
         print("Bye")
         return -1
     try:
-        return (options[a][1], [], {})
+        x = (options[a][1], [], {})
     except KeyError:
         print("{} is not a valid option".format(a))
         return
+    else:
+        locator.stack.push(x)

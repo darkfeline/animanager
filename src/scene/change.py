@@ -13,9 +13,9 @@ def find():
     entry = locator.db.get(a)
     if entry is None:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
-        return (choose, [a], {})
+        locator.stack.add((choose, [a], {}))
 
 
 def search():
@@ -29,9 +29,9 @@ def search():
 
     if not entries:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
-        return (search_choose, [entries], {})
+        locator.stack.add((search_choose, [entries], {}))
 
 
 def search_choose(entries):
@@ -46,7 +46,7 @@ def search_choose(entries):
     a = input(globals.PROMPT)
     if a == 'q':
         print("Okay")
-        return -1
+        return -2
     else:
         try:
             key = entries[int(a)][0]
@@ -54,7 +54,7 @@ def search_choose(entries):
             print('Bad input {}'.format(a))
             return
         else:
-            return (choose, [key], {})
+            locator.stack.add((choose, [key], {}))
 
 
 def choose(key):
@@ -79,7 +79,7 @@ def choose(key):
     a = input(globals.PROMPT)
     if a == 'q':
         print("Okay")
-        return -1
+        return -2
     else:
         try:
             b = (change_field, [key, options[a]], {})
@@ -87,7 +87,7 @@ def choose(key):
             print("Bad input {}".format(a))
             return
         else:
-            return b
+            locator.stack.push(b)
 
 
 def change_field(key, field):
@@ -113,7 +113,7 @@ def change_field(key, field):
     map = {field: a}
     locator.db.change(key, map)
     print('Done')
-    return -1
+    return -2
 
 
 def _format_entry(entry):
