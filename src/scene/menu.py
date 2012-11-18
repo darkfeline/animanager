@@ -31,4 +31,4 @@ def main_menu():
         print("{} is not a valid option".format(a))
         return
     else:
-        locator.push(x)
+        locator.stack.push(x)
