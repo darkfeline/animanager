@@ -87,7 +87,7 @@ def choose(key):
             print("Bad input {}".format(a))
             return
         else:
-            locator.stach.push(b)
+            locator.stack.push(b)
 
 
 def change_field(key, field):
