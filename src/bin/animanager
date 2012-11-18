@@ -8,7 +8,9 @@ import locator
 import scene
 from scene import menu
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(
+    filename='animanager.log', format='%(levelname)s:%(message)s',
+    level=logging.DEBUG)
 
 
 def main():
