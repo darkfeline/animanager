@@ -50,5 +50,5 @@ def _rget_scripts(dir, l):
         f = os.path.join(dir, f)
         if os.path.isfile(f) and os.path.splitext(f)[1] != '.swp':
             l.append(f)
-        elif os.path.sidir(f):
+        elif os.path.isdir(f):
             _rget_scripts(f, l)
