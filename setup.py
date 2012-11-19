@@ -8,7 +8,7 @@ from setup_utils import get_scripts
 
 setup(
     name='Animanager',
-    version='0.2',
+    version='0.3',
     description='Anime Manager MySQL frontend application',
     author='Allen Li',
     author_email='darkfeline@abagofapples.com',
