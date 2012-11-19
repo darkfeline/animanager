@@ -1,40 +1,42 @@
 import logging
 
-import locator
-import globals
+from animanager import locator
+from animanager import globals
+
+logger = logging.getLogger(__name__)
 
 
 def find():
 
-    logging.debug('find()')
+    logger.debug('find()')
     print('Which entry to find?')
 
     a = input(globals.PROMPT)
     entry = locator.db.get(a)
-    logging.debug('Found {}'.format(entry))
+    logger.debug('Found {}'.format(entry))
     if entry is None:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
         print(_format_entry(entry))
-        return -1
+        return -2
 
 
 def search():
 
-    logging.debug('search()')
+    logger.debug('search()')
     print('Search for what?')
 
     a = input(globals.PROMPT)
     entries = locator.db.search(a)
-    logging.debug('Found {}'.format(entries))
+    logger.debug('Found {}'.format(entries))
     if not entries:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
         for a in _format_entries(entries):
             print(a)
-        return -1
+        return -2
 
 
 def _format_entries(entries):

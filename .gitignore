@@ -1,4 +1,6 @@
 *.sw[po]
 __pycache__/
-
+build/
 virt-env/
+virt-env-clean/
+*.log

@@ -1,4 +1,4 @@
-import db
+from animanager import db
 
 FIELDS = db.AnimeDB.fields
 ENTRY = """Series: {series}

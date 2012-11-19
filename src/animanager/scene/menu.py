@@ -1,9 +1,11 @@
 import logging
 
-from globals import PROMPT
-from scene import find
-from scene import change
+from animanager import locator
+from animanager.globals import PROMPT
+from animanager.scene import find
+from animanager.scene import change
 
+logger = logging.getLogger(__name__)
 options = {
     'f': ('Find an entry', find.find),
     's': ('Search for an entry', find.search),
@@ -15,7 +17,7 @@ order = ('f', 's', 'c', 'd', 'q')
 
 def main_menu():
 
-    logging.debug('main_menu()')
+    logger.debug('main_menu()')
     print("Welcome to Animanager")
     for i in order:
         print('{} - {}'.format(i, options[i][0]))
@@ -25,7 +27,9 @@ def main_menu():
         print("Bye")
         return -1
     try:
-        return (options[a][1], [], {})
+        x = (options[a][1], [], {})
     except KeyError:
         print("{} is not a valid option".format(a))
         return
+    else:
+        locator.stack.push(x)

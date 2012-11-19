@@ -1,42 +1,44 @@
 import logging
 
-import globals
-import locator
+from animanager import globals
+from animanager import locator
+
+logger = logging.getLogger(__name__)
 
 
 def find():
 
-    logging.debug('change.find()')
+    logger.debug('change.find()')
     print('Which entry to change?')
 
     a = input(globals.PROMPT)
     entry = locator.db.get(a)
     if entry is None:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
-        return (choose, [a], {})
+        locator.stack.add((choose, [a], {}))
 
 
 def search():
 
-    logging.debug('change.search()')
+    logger.debug('change.search()')
     print('Search for what?')
 
     a = input(globals.PROMPT)
     entries = locator.db.search(a)
-    logging.debug('Found {}'.format(entries))
+    logger.debug('Found {}'.format(entries))
 
     if not entries:
         print('Cannot find {}'.format(a))
-        return -1
+        return -2
     else:
-        return (search_choose, [entries], {})
+        locator.stack.add((search_choose, [entries], {}))
 
 
 def search_choose(entries):
 
-    logging.debug('change.search_choose({})'.format(entries))
+    logger.debug('change.search_choose({})'.format(entries))
     for i, entry in enumerate(entries):
         print('{} - {}'.format(i, entry[0]))
     print('q - quit')
@@ -46,7 +48,7 @@ def search_choose(entries):
     a = input(globals.PROMPT)
     if a == 'q':
         print("Okay")
-        return -1
+        return -2
     else:
         try:
             key = entries[int(a)][0]
@@ -54,12 +56,12 @@ def search_choose(entries):
             print('Bad input {}'.format(a))
             return
         else:
-            return (choose, [key], {})
+            locator.stack.add((choose, [key], {}))
 
 
 def choose(key):
 
-    logging.debug("change.choose('{}')".format(key))
+    logger.debug("change.choose('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
     print('q - Quit')
@@ -79,7 +81,7 @@ def choose(key):
     a = input(globals.PROMPT)
     if a == 'q':
         print("Okay")
-        return -1
+        return -2
     else:
         try:
             b = (change_field, [key, options[a]], {})
@@ -87,12 +89,12 @@ def choose(key):
             print("Bad input {}".format(a))
             return
         else:
-            return b
+            locator.stack.push(b)
 
 
 def change_field(key, field):
 
-    logging.debug('change_field({}, {})'.format(key, field))
+    logger.debug('change_field({}, {})'.format(key, field))
     print('Changing field: {}'.format(field))
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 
@@ -113,7 +115,7 @@ def change_field(key, field):
     map = {field: a}
     locator.db.change(key, map)
     print('Done')
-    return -1
+    return -2
 
 
 def _format_entry(entry):
