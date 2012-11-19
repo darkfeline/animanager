@@ -2,19 +2,30 @@
 
 import logging
 import atexit
+import argparse
 
 from animanager import db
 from animanager import locator
 from animanager import scene
 from animanager.scene import menu
 
-logging.basicConfig(
-    filename='animanager.log',
-    format='%(asctime)s %(levelname)s %(name)s %(message)s',
-    level=logging.DEBUG)
-
 
 def main():
+
+    parser = argparse.ArgumentParser(
+        description='Anime Manager MySQL frontend.')
+    parser.add_argument('--loglevel', action='store', default='info')
+    parser.add_argument('--logfile', action='store', default='')
+    args = parser.parse_args()
+
+    config = {'format': '%(asctime)s %(levelname)s %(name)s %(message)s'}
+    try:
+        config['level'] = getattr(logging, args.loglevel.upper())
+    except AttributeError:
+        raise ValueError('Invalid log level: {!s}'.format(args.loglevel))
+    if args.logfile:
+        config['filename'] = args.logfile
+    logging.basicConfig(**config)
 
     locator.db = db.AnimeDB()
     atexit.register(locator.db.close)
