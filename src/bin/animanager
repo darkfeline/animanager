@@ -3,10 +3,10 @@
 import logging
 import atexit
 
-import db
-import locator
-import scene
-from scene import menu
+from animanager import db
+from animanager import locator
+from animanager import scene
+from animanager.scene import menu
 
 logging.basicConfig(
     filename='animanager.log', format='%(levelname)s:%(message)s',
