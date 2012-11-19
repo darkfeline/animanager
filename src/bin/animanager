@@ -9,7 +9,8 @@ from animanager import scene
 from animanager.scene import menu
 
 logging.basicConfig(
-    filename='animanager.log', format='%(levelname)s:%(message)s',
+    filename='animanager.log',
+    format='%(asctime)s %(levelname)s %(name)s %(message)s',
     level=logging.DEBUG)
 
 
