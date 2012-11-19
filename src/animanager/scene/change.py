@@ -3,10 +3,12 @@ import logging
 from animanager import globals
 from animanager import locator
 
+logger = logging.getLogger(__name__)
+
 
 def find():
 
-    logging.debug('change.find()')
+    logger.debug('change.find()')
     print('Which entry to change?')
 
     a = input(globals.PROMPT)
@@ -20,12 +22,12 @@ def find():
 
 def search():
 
-    logging.debug('change.search()')
+    logger.debug('change.search()')
     print('Search for what?')
 
     a = input(globals.PROMPT)
     entries = locator.db.search(a)
-    logging.debug('Found {}'.format(entries))
+    logger.debug('Found {}'.format(entries))
 
     if not entries:
         print('Cannot find {}'.format(a))
@@ -36,7 +38,7 @@ def search():
 
 def search_choose(entries):
 
-    logging.debug('change.search_choose({})'.format(entries))
+    logger.debug('change.search_choose({})'.format(entries))
     for i, entry in enumerate(entries):
         print('{} - {}'.format(i, entry[0]))
     print('q - quit')
@@ -59,7 +61,7 @@ def search_choose(entries):
 
 def choose(key):
 
-    logging.debug("change.choose('{}')".format(key))
+    logger.debug("change.choose('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
     print('q - Quit')
@@ -92,7 +94,7 @@ def choose(key):
 
 def change_field(key, field):
 
-    logging.debug('change_field({}, {})'.format(key, field))
+    logger.debug('change_field({}, {})'.format(key, field))
     print('Changing field: {}'.format(field))
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 

@@ -5,6 +5,7 @@ from animanager.globals import PROMPT
 from animanager.scene import find
 from animanager.scene import change
 
+logger = logging.getLogger(__name__)
 options = {
     'f': ('Find an entry', find.find),
     's': ('Search for an entry', find.search),
@@ -16,7 +17,7 @@ order = ('f', 's', 'c', 'd', 'q')
 
 def main_menu():
 
-    logging.debug('main_menu()')
+    logger.debug('main_menu()')
     print("Welcome to Animanager")
     for i in order:
         print('{} - {}'.format(i, options[i][0]))

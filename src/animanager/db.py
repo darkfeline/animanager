@@ -4,6 +4,8 @@ import logging
 
 import pymysql
 
+logger = logging.getLogger(__name__)
+
 
 class Database:
 
@@ -110,6 +112,6 @@ class AnimeDB(Database):
         query = "UPDATE anime SET {} WHERE series=N%(key)s".format(
                 ','.join(self.field_map[key] for key in map.keys()))
         map['key'] = key
-        logging.debug('Query:{}'.format(query))
-        logging.debug('Map:{}'.format(map))
+        logger.debug('Query:{}'.format(query))
+        logger.debug('Map:{}'.format(map))
         self.execute(query, map)
