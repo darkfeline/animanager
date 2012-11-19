@@ -9,7 +9,7 @@ from setup_utils import get_scripts
 setup(
     name='Animanager',
     version='0.2',
-    description='MySQL anime database cli application',
+    description='Anime Manager MySQL frontend application',
     author='Allen Li',
     author_email='darkfeline@abagofapples.com',
     package_dir={'': 'src'},
