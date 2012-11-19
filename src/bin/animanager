@@ -14,8 +14,8 @@ def main():
 
     parser = argparse.ArgumentParser(
         description='Anime Manager MySQL frontend.')
-    parser.add_argument('--loglevel', action='store', default='info')
-    parser.add_argument('--logfile', action='store', default='')
+    parser.add_argument('--loglevel', action='store', default='debug')
+    parser.add_argument('--logfile', action='store', default='animanager.log')
     args = parser.parse_args()
 
     config = {'format': '%(asctime)s %(levelname)s %(name)s %(message)s'}
