@@ -1,9 +1,9 @@
 import logging
 
-import locator
-from globals import PROMPT
-from scene import find
-from scene import change
+from animanager import locator
+from animanager.globals import PROMPT
+from animanager.scene import find
+from animanager.scene import change
 
 options = {
     'f': ('Find an entry', find.find),

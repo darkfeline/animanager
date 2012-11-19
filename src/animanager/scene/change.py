@@ -1,7 +1,7 @@
 import logging
 
-import globals
-import locator
+from animanager import globals
+from animanager import locator
 
 
 def find():
