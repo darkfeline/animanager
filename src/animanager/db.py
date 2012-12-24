@@ -46,7 +46,9 @@ class AnimeDB(Database):
         'notes': 'notes=N%(notes)s'}
 
     def __init__(self):
-        super().__init__(user='anime', db='anime', charset='utf8')
+        super().__init__(
+            unix_socket='/run/mysqld/mysqld.sock', user='anime', db='anime',
+            charset='utf8')
 
     def get(self, key):
         """
