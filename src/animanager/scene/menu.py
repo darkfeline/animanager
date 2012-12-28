@@ -12,8 +12,8 @@ options = OrderedDict()
 options['a'] = ('Add an entry', add.add)
 options['f'] = ('Find an entry', find.find)
 options['s'] = ('Search for an entry', find.search)
-options['c'] = ('Change an entry', change.find)
-options['d'] = ('Search and change', change.search)
+options['fc'] = ('Find and change an entry', change.find)
+options['sc'] = ('Search for and change an entry', change.search)
 options['q'] = ('Quit',)
 
 
