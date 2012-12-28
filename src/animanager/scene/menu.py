@@ -2,17 +2,19 @@ import logging
 
 from animanager import locator
 from animanager.globals import PROMPT
+from animanager.scene import add
 from animanager.scene import find
 from animanager.scene import change
 
 logger = logging.getLogger(__name__)
 options = {
+    'a': ('Add an entry', add.add),
     'f': ('Find an entry', find.find),
     's': ('Search for an entry', find.search),
     'c': ('Change an entry', change.find),
     'd': ('Search and change', change.search),
     'q': ('Quit',)}
-order = ('f', 's', 'c', 'd', 'q')
+order = ('a', 'f', 's', 'c', 'd', 'q')
 
 
 def main_menu():
