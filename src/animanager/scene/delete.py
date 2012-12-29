@@ -63,3 +63,4 @@ def search_choose(entries):
             return
         else:
             _delete(key)
+            return -2
