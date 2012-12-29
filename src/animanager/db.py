@@ -92,9 +92,9 @@ class AnimeDB(Database):
 
     def delete(self, key):
         """
-        Get matches by regex search
+        Delete entry with given key
 
-        :param key: search key
+        :param key: key
         :type key: str
 
         """
