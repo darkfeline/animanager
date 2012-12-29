@@ -15,8 +15,8 @@ options['f'] = ('Find an entry', find.find)
 options['s'] = ('Search for an entry', find.search)
 options['fc'] = ('Find and change an entry', change.find)
 options['sc'] = ('Search for and change an entry', change.search)
-options['dc'] = ('Find and delete an entry', delete.find)
-options['dc'] = ('Search for and delete an entry', delete.search)
+options['fd'] = ('Find and delete an entry', delete.find)
+options['sd'] = ('Search for and delete an entry', delete.search)
 options['q'] = ('Quit',)
 
 
