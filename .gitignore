@@ -4,3 +4,4 @@ build/
 virt-env/
 virt-env-clean/
 *.log
+mysql_backup.gz
