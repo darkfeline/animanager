@@ -4,6 +4,7 @@ from collections import OrderedDict
 from animanager import locator
 from animanager.globals import PROMPT
 from animanager.scene import add
+from animanager.scene import delete
 from animanager.scene import find
 from animanager.scene import change
 
@@ -14,6 +15,8 @@ options['f'] = ('Find an entry', find.find)
 options['s'] = ('Search for an entry', find.search)
 options['fc'] = ('Find and change an entry', change.find)
 options['sc'] = ('Search for and change an entry', change.search)
+options['dc'] = ('Find and delete an entry', delete.find)
+options['dc'] = ('Search for and delete an entry', delete.search)
 options['q'] = ('Quit',)
 
 
