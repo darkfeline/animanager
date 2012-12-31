@@ -1,26 +1,31 @@
 import logging
+from collections import OrderedDict
 
 from animanager import locator
 from animanager.globals import PROMPT
+from animanager.scene import add
+from animanager.scene import delete
 from animanager.scene import find
 from animanager.scene import change
 
 logger = logging.getLogger(__name__)
-options = {
-    'f': ('Find an entry', find.find),
-    's': ('Search for an entry', find.search),
-    'c': ('Change an entry', change.find),
-    'd': ('Search and change', change.search),
-    'q': ('Quit',)}
-order = ('f', 's', 'c', 'd', 'q')
+options = OrderedDict()
+options['a'] = ('Add an entry', add.add)
+options['f'] = ('Find an entry', find.find)
+options['s'] = ('Search for an entry', find.search)
+options['fc'] = ('Find and change an entry', change.find)
+options['sc'] = ('Search for and change an entry', change.search)
+options['fd'] = ('Find and delete an entry', delete.find)
+options['sd'] = ('Search for and delete an entry', delete.search)
+options['q'] = ('Quit',)
 
 
 def main_menu():
 
     logger.debug('main_menu()')
     print("Welcome to Animanager")
-    for i in order:
-        print('{} - {}'.format(i, options[i][0]))
+    for key in options:
+        print('{} - {}'.format(key, options[key][0]))
 
     a = input(PROMPT)
     if a == 'q':

@@ -1,6 +1,8 @@
 *.sw[po]
-__pycache__/
 build/
+dist/
 virt-env/
-virt-env-clean/
+MANIFEST
+
+mysql_backup.gz
 *.log
