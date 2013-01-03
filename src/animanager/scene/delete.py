@@ -2,17 +2,9 @@ import logging
 
 from animanager import gvars
 from animanager import locator
+from animanager.scene import choose
 
 logger = logging.getLogger(__name__)
-
-
-def _delete(key):
-    try:
-        locator.db.delete(key)
-    except Exception as e:
-        raise e
-    else:
-        print('Deleted {}'.format(key))
 
 
 def find():
@@ -21,8 +13,7 @@ def find():
     print('Which entry to delete?')
 
     a = input(gvars.PROMPT)
-    _delete(a)
-    return -2
+    locator.stack.add((delete, [a], {}))
 
 
 def search():
@@ -38,29 +29,21 @@ def search():
         print('Cannot find {}'.format(a))
         return -2
     else:
-        locator.stack.add((search_choose, [entries], {}))
+        locator.stack.add((choose.choose_entry, [entries, delete], {}))
 
 
-def search_choose(entries):
+def delete(key):
 
-    logger.debug('change.search_choose({})'.format(entries))
-    for i, entry in enumerate(entries):
-        print('{} - {}'.format(i, entry[0]))
-    print('q - quit')
-    print()
-    print('Which entry to delete?')
+    logger.debug('delete(%s)', key)
+    print('Really delete {}? (yes/no)'.format(key))
 
-    a = input(gvars.PROMPT)
-    if a == 'q':
-        print("Okay")
+    a = input(gvars.PROMPT).lower()
+    if a == 'yes':
+        locator.db.delete(key)
+        print('Deleted {}'.format(key))
+        return -2
+    elif a == 'no':
+        print('Not deleting')
         return -2
     else:
-        try:
-            key = entries[int(a)][0]
-            logger.debug('Got key %s', key)
-        except IndexError:
-            print('Bad input {}'.format(a))
-            return
-        else:
-            _delete(key)
-            return -2
+        print('Please type yes or no')
