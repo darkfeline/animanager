@@ -2,6 +2,7 @@ import logging
 
 from animanager import locator
 from animanager import gvars
+from animanager.scene import choose
 
 logger = logging.getLogger(__name__)
 
@@ -12,14 +13,17 @@ def find():
     print('Which entry to find?')
 
     a = input(gvars.PROMPT)
-    entry = locator.db.get(a)
-    logger.debug('Found {}'.format(entry))
-    if entry is None:
-        print('Cannot find {}'.format(a))
-        return -2
-    else:
+    locator.stack.add((_print_entry, [a], {}))
+
+
+def _print_entry(key):
+    entry = locator.db.get(key)
+    logger.debug('Found %s', entry)
+    if entry:
         print(_format_entry(entry))
-        return -2
+    else:
+        print('{} not found'.format(key))
+    return -2
 
 
 def search():
@@ -34,13 +38,7 @@ def search():
         print('Cannot find {}'.format(a))
         return -2
     else:
-        for a in _format_entries(entries):
-            print(a)
-        return -2
-
-
-def _format_entries(entries):
-    return [_format_entry(entry) for entry in entries]
+        locator.stack.add((choose.choose_entry, [entries, _print_entry], {}))
 
 
 def _format_entry(entry):
