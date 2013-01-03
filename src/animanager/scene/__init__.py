@@ -5,6 +5,21 @@ logger = logging.getLogger(__name__)
 
 class SceneStack:
 
+    """
+    Essentially a state machine that loops over the current state.
+
+    States are called scenes.  Scenes are tuples with length three.  The first
+    item is the function that is called, and the second and third are
+    positional arguments and keyword arguments, respectively.
+
+    SceneStack also has slices. You can add a new slice by using `push()`
+    instead of `add()` when adding a scene.  Scene functions can have special
+    return values.  Returning `-1` will pop itself off of the stack.  Returning
+    `-2` will pop the top slice off of the stack.  If the top slice is empty
+    after popping a single scene (returning `-1`), it will also be popped.
+
+    """
+
     def __init__(self):
         self.stack = []
 
