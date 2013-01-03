@@ -18,7 +18,7 @@ def match():
         print('No match for {}'.format(a))
         return -2
     else:
-        locator.stack.add((choose, [a], {}))
+        locator.stack.add((choose_field, [a], {}))
 
 
 def find():
