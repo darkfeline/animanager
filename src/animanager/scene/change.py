@@ -1,6 +1,6 @@
 import logging
 
-from animanager import globals
+from animanager import gvars
 from animanager import locator
 from animanager.scene import choose
 
@@ -12,7 +12,7 @@ def find():
     logger.debug('change.find()')
     print('Which entry to change?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entry = locator.db.get(a)
     if entry is None:
         print('Cannot find {}'.format(a))
@@ -26,7 +26,7 @@ def search():
     logger.debug('change.search()')
     print('Search for what?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entries = locator.db.search(a)
     logger.debug('Found {}'.format(entries))
 
@@ -56,7 +56,7 @@ def choose_field(key):
         'i': 'ep_notes',
         'j': 'notes'}
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     if a == 'q':
         print("Okay")
         return -2
@@ -76,11 +76,11 @@ def change_field(key, field):
     print('Changing field: {}'.format(field))
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     if not a:
         print('Empty input')
         print('Cancel (or set to null)? [Y/n/c(lear)]')
-        a = input(globals.PROMPT)
+        a = input(gvars.PROMPT)
         if a == 'n':
             return
         elif a == 'c':
@@ -97,9 +97,9 @@ def change_field(key, field):
 
 
 def _format_entry(entry):
-    map = dict((globals.FIELDS[i], entry[i]) for i in range(len(entry)))
-    return globals.SEL_ENTRY.format(**map)
+    map = dict((gvars.FIELDS[i], entry[i]) for i in range(len(entry)))
+    return gvars.SEL_ENTRY.format(**map)
 
 
 def _get_field(field, entry):
-    return entry[globals.FIELDS.index(field)]
+    return entry[gvars.FIELDS.index(field)]

@@ -1,7 +1,7 @@
 import logging
 
 from animanager import locator
-from animanager import globals
+from animanager import gvars
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ def find():
     logger.debug('find()')
     print('Which entry to find?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entry = locator.db.get(a)
     logger.debug('Found {}'.format(entry))
     if entry is None:
@@ -27,7 +27,7 @@ def search():
     logger.debug('search()')
     print('Search for what?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entries = locator.db.search(a)
     logger.debug('Found {}'.format(entries))
     if not entries:
@@ -44,5 +44,5 @@ def _format_entries(entries):
 
 
 def _format_entry(entry):
-    map = dict((globals.FIELDS[i], entry[i]) for i in range(len(entry)))
-    return globals.ENTRY.format(**map)
+    map = dict((gvars.FIELDS[i], entry[i]) for i in range(len(entry)))
+    return gvars.ENTRY.format(**map)

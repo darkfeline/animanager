@@ -1,6 +1,6 @@
 import logging
 
-from animanager import globals
+from animanager import gvars
 from animanager import locator
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def find():
     logger.debug('delete.find()')
     print('Which entry to delete?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     _delete(a)
     return -2
 
@@ -30,7 +30,7 @@ def search():
     logger.debug('delete.search()')
     print('Search for what?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entries = locator.db.search(a)
     logger.debug('Found {}'.format(entries))
 
@@ -50,7 +50,7 @@ def search_choose(entries):
     print()
     print('Which entry to delete?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     if a == 'q':
         print("Okay")
         return -2

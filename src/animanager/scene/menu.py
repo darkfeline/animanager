@@ -2,7 +2,7 @@ import logging
 from collections import OrderedDict
 
 from animanager import locator
-from animanager.globals import PROMPT
+from animanager.gvars import PROMPT
 from animanager.scene import add
 from animanager.scene import delete
 from animanager.scene import find
