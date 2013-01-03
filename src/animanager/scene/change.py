@@ -2,6 +2,7 @@ import logging
 
 from animanager import globals
 from animanager import locator
+from animanager.scene import choose
 
 logger = logging.getLogger(__name__)
 
@@ -33,35 +34,12 @@ def search():
         print('Cannot find {}'.format(a))
         return -2
     else:
-        locator.stack.add((search_choose, [entries], {}))
+        locator.stack.add((choose.choose_entry, [entries, choose_field], {}))
 
 
-def search_choose(entries):
+def choose_field(key):
 
-    logger.debug('change.search_choose({})'.format(entries))
-    for i, entry in enumerate(entries):
-        print('{} - {}'.format(i, entry[0]))
-    print('q - quit')
-    print()
-    print('Which entry to change?')
-
-    a = input(globals.PROMPT)
-    if a == 'q':
-        print("Okay")
-        return -2
-    else:
-        try:
-            key = entries[int(a)][0]
-        except IndexError:
-            print('Bad input {}'.format(a))
-            return
-        else:
-            locator.stack.add((choose, [key], {}))
-
-
-def choose(key):
-
-    logger.debug("change.choose('{}')".format(key))
+    logger.debug("choose_field('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
     print('q - Quit')
