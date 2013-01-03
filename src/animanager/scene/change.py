@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def find():
 
-    logger.debug('change.find()')
+    logger.debug('find()')
     print('Which entry to change?')
 
     a = input(gvars.PROMPT)
@@ -23,7 +23,7 @@ def find():
 
 def search():
 
-    logger.debug('change.search()')
+    logger.debug('search()')
     print('Search for what?')
 
     a = input(gvars.PROMPT)

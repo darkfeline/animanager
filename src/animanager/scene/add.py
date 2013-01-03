@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def add():
 
-    logger.debug('add.add()')
+    logger.debug('add()')
     print('Name of entry to add')
 
     a = input(gvars.PROMPT)

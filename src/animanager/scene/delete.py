@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def find():
 
-    logger.debug('delete.find()')
+    logger.debug('find()')
     print('Which entry to delete?')
 
     a = input(gvars.PROMPT)
@@ -18,7 +18,7 @@ def find():
 
 def search():
 
-    logger.debug('delete.search()')
+    logger.debug('search()')
     print('Search for what?')
 
     a = input(gvars.PROMPT)
