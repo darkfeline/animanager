@@ -49,9 +49,9 @@ class SceneStack:
             return
         rv = func(*args, **kwargs)
         if rv == -1:
-            self.pop()
+            self._pop()
         elif rv == -2:
-            self.pop_slice()
+            self._pop_slice()
         print()
 
     def add(self, scene):
@@ -64,10 +64,10 @@ class SceneStack:
             self.stack.append([])
         self.add(scene)
 
-    def pop(self):
+    def _pop(self):
         self.stack[-1].pop()
         if not self.stack[-1]:
             self.stack.pop()
 
-    def pop_slice(self):
+    def _pop_slice(self):
         self.stack.pop()
