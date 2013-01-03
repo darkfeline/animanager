@@ -1,3 +1,8 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class SceneStack:
 
     def __init__(self):
@@ -22,6 +27,7 @@ class SceneStack:
         If scene returns -2, pop a slice
 
         """
+        logger.debug('stack: %s', self.stack)
         try:
             func, args, kwargs = self.top
         except TypeError:
