@@ -7,10 +7,10 @@ from animanager.scene import choose
 logger = logging.getLogger(__name__)
 
 
-def find():
+def match():
 
-    logger.debug('find()')
-    print('Which entry to find?')
+    logger.debug('match()')
+    print('Check which entry?')
 
     a = input(gvars.PROMPT)
     locator.stack.add((_print_entry, [a], {}))
@@ -26,9 +26,9 @@ def _print_entry(key):
     return -2
 
 
-def search():
+def find():
 
-    logger.debug('search()')
+    logger.debug('find()')
     print('Search for what?')
 
     a = input(gvars.PROMPT)

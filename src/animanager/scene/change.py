@@ -7,23 +7,23 @@ from animanager.scene import choose
 logger = logging.getLogger(__name__)
 
 
-def find():
+def match():
 
-    logger.debug('find()')
+    logger.debug('match()')
     print('Which entry to change?')
 
     a = input(gvars.PROMPT)
     entry = locator.db.get(a)
     if entry is None:
-        print('Cannot find {}'.format(a))
+        print('No match for {}'.format(a))
         return -2
     else:
         locator.stack.add((choose, [a], {}))
 
 
-def search():
+def find():
 
-    logger.debug('search()')
+    logger.debug('find()')
     print('Search for what?')
 
     a = input(gvars.PROMPT)
