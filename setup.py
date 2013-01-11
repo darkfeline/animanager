@@ -10,5 +10,6 @@ setup(
     author_email='darkfeline@abagofapples.com',
     package_dir={'': 'src'},
     packages=['animanager', 'animanager.scene'],
+    requires=['pymysql'],
     scripts=['src/bin/animanager']
 )
