@@ -2,21 +2,21 @@ import logging
 from collections import OrderedDict
 
 from animanager import locator
-from animanager.globals import PROMPT
+from animanager.gvars import PROMPT
 from animanager.scene import add
 from animanager.scene import delete
-from animanager.scene import find
+from animanager.scene import check
 from animanager.scene import change
 
 logger = logging.getLogger(__name__)
 options = OrderedDict()
 options['a'] = ('Add an entry', add.add)
-options['f'] = ('Find an entry', find.find)
-options['s'] = ('Search for an entry', find.search)
+options['m'] = ('Check an entry', check.match)
+options['f'] = ('Find an entry', check.find)
+options['mc'] = ('Change an entry', change.match)
 options['fc'] = ('Find and change an entry', change.find)
-options['sc'] = ('Search for and change an entry', change.search)
+options['md'] = ('Delete an entry', delete.match)
 options['fd'] = ('Find and delete an entry', delete.find)
-options['sd'] = ('Search for and delete an entry', delete.search)
 options['q'] = ('Quit',)
 
 

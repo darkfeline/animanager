@@ -1,31 +1,32 @@
 import logging
 
-from animanager import globals
+from animanager import gvars
 from animanager import locator
+from animanager.scene import choose
 
 logger = logging.getLogger(__name__)
 
 
-def find():
+def match():
 
-    logger.debug('change.find()')
+    logger.debug('match()')
     print('Which entry to change?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entry = locator.db.get(a)
     if entry is None:
-        print('Cannot find {}'.format(a))
+        print('No match for {}'.format(a))
         return -2
     else:
-        locator.stack.add((choose, [a], {}))
+        locator.stack.add((choose_field, [a], {}))
 
 
-def search():
+def find():
 
-    logger.debug('change.search()')
+    logger.debug('find()')
     print('Search for what?')
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     entries = locator.db.search(a)
     logger.debug('Found {}'.format(entries))
 
@@ -33,35 +34,12 @@ def search():
         print('Cannot find {}'.format(a))
         return -2
     else:
-        locator.stack.add((search_choose, [entries], {}))
+        locator.stack.add((choose.choose_entry, [entries, choose_field], {}))
 
 
-def search_choose(entries):
+def choose_field(key):
 
-    logger.debug('change.search_choose({})'.format(entries))
-    for i, entry in enumerate(entries):
-        print('{} - {}'.format(i, entry[0]))
-    print('q - quit')
-    print()
-    print('Which entry to change?')
-
-    a = input(globals.PROMPT)
-    if a == 'q':
-        print("Okay")
-        return -2
-    else:
-        try:
-            key = entries[int(a)][0]
-        except IndexError:
-            print('Bad input {}'.format(a))
-            return
-        else:
-            locator.stack.add((choose, [key], {}))
-
-
-def choose(key):
-
-    logger.debug("change.choose('{}')".format(key))
+    logger.debug("choose_field('{}')".format(key))
     entry = locator.db.get(key)
     print(_format_entry(entry))
     print('q - Quit')
@@ -78,7 +56,7 @@ def choose(key):
         'i': 'ep_notes',
         'j': 'notes'}
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     if a == 'q':
         print("Okay")
         return -2
@@ -98,11 +76,11 @@ def change_field(key, field):
     print('Changing field: {}'.format(field))
     print('Old value: {}'.format(_get_field(field, locator.db.get(key))))
 
-    a = input(globals.PROMPT)
+    a = input(gvars.PROMPT)
     if not a:
         print('Empty input')
         print('Cancel (or set to null)? [Y/n/c(lear)]')
-        a = input(globals.PROMPT)
+        a = input(gvars.PROMPT)
         if a == 'n':
             return
         elif a == 'c':
@@ -119,9 +97,9 @@ def change_field(key, field):
 
 
 def _format_entry(entry):
-    map = dict((globals.FIELDS[i], entry[i]) for i in range(len(entry)))
-    return globals.SEL_ENTRY.format(**map)
+    map = dict((gvars.FIELDS[i], entry[i]) for i in range(len(entry)))
+    return gvars.SEL_ENTRY.format(**map)
 
 
 def _get_field(field, entry):
-    return entry[globals.FIELDS.index(field)]
+    return entry[gvars.FIELDS.index(field)]

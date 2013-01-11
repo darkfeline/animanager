@@ -1,8 +1,11 @@
 *.sw[po]
-build/
-dist/
-virt-env/
-MANIFEST
 
-mysql_backup.gz
-*.log
+/build/
+/dist/
+/MANIFEST
+
+/virt-env/
+/bugs.otl
+
+/mysql_backup.gz
+/*.log
