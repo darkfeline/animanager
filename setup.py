@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='Animanager',
-    version='0.4',
+    version='0.5',
     description='Anime Manager MySQL frontend application',
     author='Allen Li',
     author_email='darkfeline@abagofapples.com',
