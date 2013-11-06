@@ -16,11 +16,11 @@ def main():
     with mysqllib.connect(**info.db_args) as cur:
         name = input("Find an anime: ")
         cur.execute(' '.join((
-            'SELECT id, name FROM anime',
+            'SELECT anime.id, name FROM anime',
             'LEFT JOIN myanime ON anime.id=myanime.id',
             'WHERE status IN ("watching", "on hold")',
             'AND name LIKE %s',
-        )), '%'+name+'%')
+        )), ('%'+name+'%',))
         results = cur.fetchall()
         if not results:
             print("Found nothing")
@@ -34,7 +34,7 @@ def main():
             print('Quitting')
             sys.exit(1)
         id = results[i][0]
-        cur.execute('UPDATE myanime SET status="dropped" WHERE id=%s', id)
+        cur.execute('UPDATE myanime SET status="dropped" WHERE id=%s', (id,))
         print('Set to dropped')
 
 if __name__ == '__main__':
