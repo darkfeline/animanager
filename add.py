@@ -2,7 +2,6 @@
 
 import logging
 from datetime import date
-from urllib import request
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 import html.parser
@@ -10,6 +9,8 @@ import re
 import sys
 
 import mysqllib
+import requestlib
+from requestlib import ffrequest
 
 import info
 
@@ -27,19 +28,12 @@ def main():
 
     logging.basicConfig(level=logging.DEBUG)
 
-    # set up auth
-    auth_handler = request.HTTPBasicAuthHandler()
-    auth_handler.add_password(
-        realm='MyAnimeList API',
-        uri='http://myanimelist.net',
-        **info.mal_args)
-    opener = request.build_opener(auth_handler)
-    # ...and install it globally so it can be used with urlopen.
-    request.install_opener(opener)
+    requestlib.setup()
 
     # MAL API
     partial = input("Search for: ")
-    response = request.urlopen(mal_search + urlencode({'q': partial}))
+    print(mal_search + urlencode({'q': partial}))
+    response = ffrequest(mal_search + urlencode({'q': partial}))
     h = html.parser.HTMLParser()
     response = response.read().decode()
     response = h.unescape(response)
