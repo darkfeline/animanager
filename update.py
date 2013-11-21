@@ -37,7 +37,9 @@ def anime_iter():
 
 def update_entries(to_update):
     with mysqllib.connect(**info.db_args) as cur:
+        print('Setting episode totals')
         cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
+        print('Setting complete as needed')
         cur.execute(' '.join((
             'UPDATE anime',
             'LEFT JOIN myanime ON anime.id=myanime.id',
