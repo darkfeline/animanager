@@ -32,7 +32,6 @@ def main():
 
     # MAL API
     partial = input("Search for: ")
-    print(mal_search + urlencode({'q': partial}))
     response = ffrequest(mal_search + urlencode({'q': partial}))
     h = html.parser.HTMLParser()
     response = response.read().decode()
