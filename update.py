@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-from urllib import request
 from urllib.error import URLError
 from urllib.parse import urlencode
 from xml.etree import ElementTree
