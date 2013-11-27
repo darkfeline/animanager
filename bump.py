@@ -25,7 +25,10 @@ def main():
             print("{} - {}: {}".format(i, series[0], series[1]))
 
         # Pick choice
-        i = int(input("Pick one\n"))
+        try:
+            i = int(input("Pick one\n"))
+        except ValueError:
+            i = -1
         confirm = input("{}: {}\nOkay? [Y/n]".format(
             results[i][0], results[i][1]))
         if confirm.lower() in ('n', 'no'):
