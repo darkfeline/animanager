@@ -71,10 +71,11 @@ def main():
                       [_get(e, k) for k in ('title', 'episodes')])
                      for e in list(tree))
         found_title, found_eps = found[mal_id]
-        assert found_title == name
         found_eps = int(found_eps)
+        logging.debug("Name: %r", name)
         logger.debug('Found id=%r, mal_id=%r, name=%r, eps=%r',
                      id, mal_id, name, found_eps)
+        assert found_title == name
         if found_eps != 0:
             assert found_eps > 0
             to_update.append((found_eps, id))
