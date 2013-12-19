@@ -23,15 +23,19 @@ def _get(e, key):
 
 
 def anime_iter():
-    """Generator for all anime with no total eps"""
+    """Generator for anime to recheck"""
     with mysqllib.connect(**info.db_args) as cur:
-        cur.execute('SELECT id, animedb_id, name, ep_total FROM anime')
+        cur.execute(' '.join((
+            'SELECT anime.id, animedb_id, name, ep_total FROM anime',
+            'LEFT JOIN myanime ON myanime.id = anime.id',
+            'WHERE ep_total = 0',
+            'OR status = "watching"',
+        )))
         while True:
             x = cur.fetchone()
             if x:
-                if x[-1] == 0:  # total eps is not set
-                    yield x
-            else:  # no more
+                yield x
+            else:
                 break
 
 
@@ -57,7 +61,7 @@ def main():
 
     # MAL API
     h = html.parser.HTMLParser()
-    for id, mal_id, name, _ in anime_iter():
+    for id, mal_id, name, my_eps in anime_iter():
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
@@ -72,7 +76,7 @@ def main():
                      for e in list(tree))
         found_title, found_eps = found[mal_id]
         found_eps = int(found_eps)
-        logging.debug("Name: %r", name)
+        logging.debug("Name: %r, Eps: %r", name, my_eps)
         logger.debug('Found id=%r, mal_id=%r, name=%r, eps=%r',
                      id, mal_id, name, found_eps)
         assert found_title == name
