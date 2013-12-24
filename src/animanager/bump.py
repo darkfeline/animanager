@@ -67,13 +67,10 @@ def main(config, name=None):
             (watched, id))
         print('Now {}/{}'.format(watched, total))
 
-        # Set compelte if needed
+        # Set complete if needed
         if watched == total and total != 0:
             print('Setting complete')
             cur.execute(' '.join((
                 'UPDATE myanime SET status=%s, date_finished=%s',
                 'WHERE id=%s',
                 )), ('complete', date.today().isoformat(), id))
-
-if __name__ == '__main__':
-    main()

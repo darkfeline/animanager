@@ -16,4 +16,4 @@ def load_config(f):
 
 def default_config():
     """Return default user config"""
-    return os.path.join(os.path.expanduser("~"), 'anime.cfg')
+    return os.path.join(os.path.expanduser("~"), '.anime.cfg')
