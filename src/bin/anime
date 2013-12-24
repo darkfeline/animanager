@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+import argparse
+import logging
+import sys
+
+import configlib
+from animanager import commands
+
+parser = argparse.ArgumentParser(
+    prog="anime", add_help=False)
+parser.add_argument('command', choices=commands.t_commands)
+parser.add_argument('args', nargs=argparse.REMAINDER)
+parser.add_argument('--loglevel')
+parser.add_argument('--logfile')
+parser.add_argument('--logfilter')
+parser.add_argument('--config')
+args = parser.parse_args()
+
+# set up logging
+logger = logging.getLogger()
+if args.logfile:
+    handler = logging.FileHandler(args.logfile)
+else:
+    handler = logging.StreamHandler()
+logger.addHandler(handler)
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s @%(name)s %(message)s'))
+logger.setLevel(args.loglevel.upper())
+if args.logfilter:
+    handler.addFilter(logging.Filter(args.logfilter))
+
+# load config
+if args.config:
+    config = args.config
+else:
+    config = configlib.default_config()
+config = configlib.load_config(config)
+
+# run command
+if args.command in commands.t_commands:
+    getattr(commands, args.command)(config, *args.args)
+else:
+    print('Command not found')
+    sys.exit(1)

@@ -1,37 +1,28 @@
-#!/usr/bin/env python
-
 import logging
 import sys
 from datetime import date
 
-import mysqllib
-
-import info
+from animanager import mysqllib
+from animanager import inputlib
 
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main(config, name=None):
     logging.basicConfig(level=logging.DEBUG)
-    with mysqllib.connect(**info.db_args) as cur:
+    with mysqllib.connect(**config.db_args) as cur:
 
         # get choices
-        name = input("Find an anime: ")
+        if not name:
+            name = input("Find an anime: ")
+        assert isinstance(name, str)
         cur.execute(
             'SELECT id, name FROM anime WHERE name LIKE %s',
             ('%'+name+'%',))
         results = cur.fetchall()
-        for i, series in enumerate(results):
-            print("{} - {}: {}".format(i, series[0], series[1]))
-
-        # Pick choice
         try:
-            i = int(input("Pick one\n"))
-        except ValueError:
-            i = -1
-        confirm = input("{}: {}\nOkay? [Y/n]".format(
-            results[i][0], results[i][1]))
-        if confirm.lower() in ('n', 'no'):
+            i = inputlib.choice(results)
+        except inputlib.Cancel:
             print('Quitting')
             sys.exit(1)
         id = results[i][0]
