@@ -10,8 +10,6 @@ from animanager import inputlib
 from animanager import mysqllib
 from animanager.requestlib import ffrequest
 
-import info
-
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/anime/search.xml?"
@@ -22,11 +20,12 @@ def _get(e, key):
     return e.find(key).text
 
 
-def main():
+def main(config, name=None):
 
     # MAL API
-    partial = input("Search for: ")
-    response = ffrequest(mal_search + urlencode({'q': partial}))
+    if not name:
+        name = input("Search for: ")
+    response = ffrequest(mal_search + urlencode({'q': name}))
     h = html.parser.HTMLParser()
     response = response.read().decode()
     response = h.unescape(response)
@@ -40,7 +39,7 @@ def main():
 
     # add anime entry
     animedb_id, name, ep_total, type = found[i]
-    with mysqllib.connect(**info.db_args) as cur:
+    with mysqllib.connect(**config.db_args) as cur:
         response = cur.execute('SELECT id FROM anime WHERE name=%s', (name,))
         if cur.fetchone():
             print("Already added")
@@ -68,5 +67,5 @@ def main():
     elif status == 'complete':
         query = ', '.join((query, 'ep_watched=%s'))
         args.append(ep_total)
-    with mysqllib.connect(**info.db_args) as cur:
+    with mysqllib.connect(**config.db_args) as cur:
         cur.execute(query, args)

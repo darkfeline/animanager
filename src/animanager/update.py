@@ -1,16 +1,11 @@
-#!/usr/bin/env python
-
 import logging
 from urllib.error import URLError
 from urllib.parse import urlencode
 from xml.etree import ElementTree
 import html.parser
 
-import mysqllib
-import requestlib
-from requestlib import ffrequest
-
-import info
+from animanager import mysqllib
+from animanager.requestlib import ffrequest
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +17,9 @@ def _get(e, key):
     return e.find(key).text
 
 
-def anime_iter():
+def anime_iter(config):
     """Generator for anime to recheck"""
-    with mysqllib.connect(**info.db_args) as cur:
+    with mysqllib.connect(**config.db_args) as cur:
         cur.execute(' '.join((
             'SELECT anime.id, animedb_id, name, ep_total FROM anime',
             'LEFT JOIN myanime ON myanime.id = anime.id',
@@ -39,8 +34,8 @@ def anime_iter():
                 break
 
 
-def update_entries(to_update):
-    with mysqllib.connect(**info.db_args) as cur:
+def update_entries(config, to_update):
+    with mysqllib.connect(**config.db_args) as cur:
         print('Setting episode totals')
         cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
         print('Setting complete as needed')
@@ -51,17 +46,13 @@ def update_entries(to_update):
         )))
 
 
-def main():
-
-    logging.basicConfig(level=logging.DEBUG)
-
-    requestlib.setup()
+def main(config):
 
     to_update = []
 
     # MAL API
     h = html.parser.HTMLParser()
-    for id, mal_id, name, my_eps in anime_iter():
+    for id, mal_id, name, my_eps in anime_iter(config):
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
@@ -85,7 +76,4 @@ def main():
             to_update.append((found_eps, id))
 
     logger.info('Updating local entries')
-    update_entries(to_update)
-
-if __name__ == '__main__':
-    main()
+    update_entries(config, to_update)
