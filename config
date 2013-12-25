@@ -1,14 +1,13 @@
 {
-    'db_args': {
-        'host': 'localhost',
-        'user': 'anime',
-        'passwd': 'anime',
-        'db': 'anime',
-        'charset': 'utf8',
+    "db_args": {
+        "host": "localhost",
+        "user": "anime",
+        "passwd": "anime",
+        "db": "anime",
+        "charset": "utf8"
     },
-
-    'mal_args': {
-        'user': 'haruhi',
-        'passwd': 'kyon',
-    },
+    "mal_args": {
+        "user": "haruhi",
+        "passwd": "kyon"
+    }
 }

@@ -1,15 +1,13 @@
 from urllib import request
 
-import info
 
-
-def setup():
+def setup(config):
     # set up auth
     auth_handler = request.HTTPBasicAuthHandler()
     auth_handler.add_password(
         realm='MyAnimeList API',
         uri='http://myanimelist.net',
-        **info.mal_args)
+        **config["mal_args"])
     opener = request.build_opener(auth_handler)
     # ...and install it globally so it can be used with urlopen.
     request.install_opener(opener)

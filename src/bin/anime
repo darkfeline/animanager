@@ -4,14 +4,15 @@ import argparse
 import logging
 import sys
 
-import configlib
+from animanager import requestlib
+from animanager import configlib
 from animanager import commands
 
 parser = argparse.ArgumentParser(
     prog="anime", add_help=False)
-parser.add_argument('command', choices=commands.t_commands)
+parser.add_argument('command', choices=commands.t_command)
 parser.add_argument('args', nargs=argparse.REMAINDER)
-parser.add_argument('--loglevel')
+parser.add_argument('--loglevel', default='WARN')
 parser.add_argument('--logfile')
 parser.add_argument('--logfilter')
 parser.add_argument('--config')
@@ -37,8 +38,11 @@ else:
     config = configlib.default_config()
 config = configlib.load_config(config)
 
+# setup requestlib
+requestlib.setup(config)
+
 # run command
-if args.command in commands.t_commands:
+if args.command in commands.t_command:
     getattr(commands, args.command)(config, *args.args)
 else:
     print('Command not found')

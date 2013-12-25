@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(config, name=None):
-    logging.basicConfig(level=logging.DEBUG)
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config['db_args']) as cur:
 
         # get choices
         if not name:
@@ -21,7 +20,7 @@ def main(config, name=None):
             ('%'+name+'%',))
         results = cur.fetchall()
         try:
-            i = inputlib.choice(results)
+            i = inputlib.get_choice(results)
         except inputlib.Cancel:
             print('Quitting')
             sys.exit(1)

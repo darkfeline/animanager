@@ -1,10 +1,15 @@
 anime_tools
 ===========
 
-Create ``info.py`` with attributes ``db_args`` and ``mal_args`` for
-authenticating respectively.
+Dependencies
+------------
 
-db_args
-   host, user, passwd, db, charset
-mal_args
-   user, passwd
+* Python 3.3
+* Python MySQL connector 1.0.12:
+  https://dev.mysql.com/downloads/connector/python/
+
+Config
+------
+
+Copy and edit the included config file to ``.anime.cfg`` in your home
+directory.

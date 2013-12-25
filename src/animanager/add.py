@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import logging
 from datetime import date
 from urllib.parse import urlencode
@@ -8,9 +6,9 @@ import html.parser
 import re
 import sys
 
-import mysqllib
-import requestlib
-from requestlib import ffrequest
+from animanager import inputlib
+from animanager import mysqllib
+from animanager.requestlib import ffrequest
 
 import info
 
@@ -26,10 +24,6 @@ def _get(e, key):
 
 def main():
 
-    logging.basicConfig(level=logging.DEBUG)
-
-    requestlib.setup()
-
     # MAL API
     partial = input("Search for: ")
     response = ffrequest(mal_search + urlencode({'q': partial}))
@@ -42,11 +36,9 @@ def main():
     found = [
         [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
         for e in list(tree)]
-    for i, e in enumerate(found):
-        print('{}: {}'.format(i, e[1]))
+    i = inputlib.get_choice(found)
 
     # add anime entry
-    i = int(input('Pick: '))
     animedb_id, name, ep_total, type = found[i]
     with mysqllib.connect(**info.db_args) as cur:
         response = cur.execute('SELECT id FROM anime WHERE name=%s', (name,))
@@ -78,6 +70,3 @@ def main():
         args.append(ep_total)
     with mysqllib.connect(**info.db_args) as cur:
         cur.execute(query, args)
-
-if __name__ == '__main__':
-    main()

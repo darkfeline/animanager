@@ -8,14 +8,12 @@ def _make_appender(obj):
         return x
     return f
 
-__all__ = []
+__all__ = ['t_command']
 logger = logging.getLogger(__name__)
 t_command = []
 
 _public = _make_appender(__all__)
 _command = _make_appender(t_command)
-
-_public(t_command)
 
 
 @_public
