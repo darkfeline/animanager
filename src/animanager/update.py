@@ -19,7 +19,7 @@ def _get(e, key):
 
 def anime_iter(config):
     """Generator for anime to recheck"""
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
             'SELECT anime.id, animedb_id, name, ep_total FROM anime',
             'LEFT JOIN myanime ON myanime.id = anime.id',
@@ -35,7 +35,7 @@ def anime_iter(config):
 
 
 def update_entries(config, to_update):
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config["db_args"]) as cur:
         print('Setting episode totals')
         cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
         print('Setting complete as needed')

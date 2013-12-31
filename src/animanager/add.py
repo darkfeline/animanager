@@ -39,7 +39,7 @@ def main(config, name=None):
 
     # add anime entry
     animedb_id, name, ep_total, type = found[i]
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config["db_args"]) as cur:
         response = cur.execute('SELECT id FROM anime WHERE name=%s', (name,))
         if cur.fetchone():
             print("Already added")
@@ -67,5 +67,5 @@ def main(config, name=None):
     elif status == 'complete':
         query = ', '.join((query, 'ep_watched=%s'))
         args.append(ep_total)
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(query, args)

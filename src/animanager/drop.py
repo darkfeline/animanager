@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def main(config, name=None):
     if not name:
         name = input("Find an anime: ")
-    with mysqllib.connect(**config.db_args) as cur:
+    with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
             'SELECT anime.id, name FROM anime',
             'LEFT JOIN myanime ON anime.id=myanime.id',
