@@ -68,3 +68,13 @@ def update(config, *args):
     args = parser.parse_args(args)
     from animanager import update
     update.main(config)
+
+
+@_public
+@_command
+def stats(config, *args):
+    logger.debug('stats(%r)', args)
+    parser = argparse.ArgumentParser(prog="anime stats", add_help=False)
+    args = parser.parse_args(args)
+    from animanager import stats
+    stats.main(config)
