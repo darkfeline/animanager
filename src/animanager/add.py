@@ -62,8 +62,10 @@ def main(config, name=None):
     args = [id, status]
     query = 'INSERT INTO myanime SET id=%s, status=%s'
     if status == 'watching':
-        query = ', '.join((query, 'date_started=%s'))
-        args.append(date.today().isoformat())
+        x = input('Set start date to today? [Y/n]')
+        if x.lower() not in ('n', 'no'):
+            query = ', '.join((query, 'date_started=%s'))
+            args.append(date.today().isoformat())
     elif status == 'complete':
         query = ', '.join((query, 'ep_watched=%s'))
         args.append(ep_total)
