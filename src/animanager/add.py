@@ -25,7 +25,17 @@ def main(config, name=None):
         name = input("Search for: ")
     response = ffrequest(mal_search + urlencode({'q': name}))
     response = response.read().decode()
-    tree = ElementTree.fromstring(response)
+    try:
+        tree = ElementTree.fromstring(response)
+    except ElementTree.ParseError as e:
+        logger.error("Caught ParseError: {}".format(e))
+        logger.error(response)
+        print("Caught ParseError: {}".format(e))
+        line, col = e.position
+        response_lines = response.split('\n')
+        print(response_lines[line])
+        print(' ' * (col-1) + '^')
+        sys.exit(1)
     found = [
         [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
         for e in list(tree)]
