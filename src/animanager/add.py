@@ -2,8 +2,6 @@ import logging
 from datetime import date
 from urllib.parse import urlencode
 from xml.etree import ElementTree
-import html.parser
-import re
 import sys
 
 from animanager import inputlib
@@ -26,11 +24,7 @@ def main(config, name=None):
     if not name:
         name = input("Search for: ")
     response = ffrequest(mal_search + urlencode({'q': name}))
-    h = html.parser.HTMLParser()
     response = response.read().decode()
-    response = h.unescape(response)
-    # due to some bug, there are double entities? e.g. &amp;amp;
-    response = re.sub(r'&.+?;', '', response)
     tree = ElementTree.fromstring(response)
     found = [
         [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
