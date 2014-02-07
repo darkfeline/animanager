@@ -73,5 +73,9 @@ def main(config, name=None):
     elif status == 'complete':
         query = ', '.join((query, 'ep_watched=%s'))
         args.append(ep_total)
+        x = input('Set dates to today? [Y/n]')
+        if x.lower() not in ('n', 'no'):
+            query = ', '.join((query, 'date_started=%s', 'date_finished=%s'))
+            args.extend([date.today().isoformat()] * 2)
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(query, args)
