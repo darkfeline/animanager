@@ -23,7 +23,7 @@ def bump(config, *args):
     parser = argparse.ArgumentParser(prog="anime bump", add_help=False)
     parser.add_argument('name', nargs="?")
     args = parser.parse_args(args)
-    from animanager import bump
+    from animanager.anime import bump
     bump.main(config, args.name)
 
 
@@ -34,7 +34,7 @@ def add(config, *args):
     parser = argparse.ArgumentParser(prog="anime add", add_help=False)
     parser.add_argument('name', nargs="?")
     args = parser.parse_args(args)
-    from animanager import add
+    from animanager.anime import add
     add.main(config, args.name)
 
 
@@ -45,7 +45,7 @@ def hold(config, *args):
     parser = argparse.ArgumentParser(prog="anime hold", add_help=False)
     parser.add_argument('name', nargs="?")
     args = parser.parse_args(args)
-    from animanager import hold
+    from animanager.anime import hold
     hold.main(config, args.name)
 
 
@@ -56,7 +56,7 @@ def drop(config, *args):
     parser = argparse.ArgumentParser(prog="anime drop", add_help=False)
     parser.add_argument('name', nargs="?")
     args = parser.parse_args(args)
-    from animanager import drop
+    from animanager.anime import drop
     drop.main(config, args.name)
 
 
@@ -66,7 +66,7 @@ def update(config, *args):
     logger.debug('update(%r)', args)
     parser = argparse.ArgumentParser(prog="anime update", add_help=False)
     args = parser.parse_args(args)
-    from animanager import update
+    from animanager.anime import bump
     update.main(config)
 
 
@@ -76,5 +76,5 @@ def stats(config, *args):
     logger.debug('stats(%r)', args)
     parser = argparse.ArgumentParser(prog="anime stats", add_help=False)
     args = parser.parse_args(args)
-    from animanager import stats
+    from animanager.anime import stats
     stats.main(config)
