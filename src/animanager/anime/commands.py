@@ -78,7 +78,7 @@ def update(config, *args):
     logger.debug('update(%r)', args)
     parser = argparse.ArgumentParser(prog="anime update", add_help=False)
     args = parser.parse_args(args)
-    from animanager.anime import bump
+    from animanager.anime import update
     update.main(config)
 
 
