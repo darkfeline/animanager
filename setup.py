@@ -9,7 +9,7 @@ setup(
     author='Allen Li',
     author_email='darkfeline@abagofapples.com',
     package_dir={'': 'src'},
-    packages=['animanager', 'animanager.anime'],
+    packages=['animanager', 'animanager.anime',  'animanager.manga'],
     requires=['mysql.connector'],
-    scripts=['src/bin/anime']
+    scripts=['src/bin/anime', 'src/bin/manga']
 )
