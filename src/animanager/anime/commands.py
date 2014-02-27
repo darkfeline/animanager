@@ -18,6 +18,18 @@ _command = _make_appender(t_command)
 
 @_public
 @_command
+def imp(config, *args):
+    """import"""
+    logger.debug('import(%r)', args)
+    parser = argparse.ArgumentParser(prog="anime imp", add_help=False)
+    parser.add_argument('file')
+    args = parser.parse_args(args)
+    from animanager.anime import imp
+    imp.main(config, args.file)
+
+
+@_public
+@_command
 def bump(config, *args):
     logger.debug('bump(%r)', args)
     parser = argparse.ArgumentParser(prog="anime bump", add_help=False)

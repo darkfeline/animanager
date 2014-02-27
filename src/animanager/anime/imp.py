@@ -9,8 +9,6 @@ import info
 
 logger = logging.getLogger(__name__)
 
-alist = 'animelist_1379740495_-_1682399.xml'
-mlist = 'mangalist_1378425397_-_1682399.xml'
 stat_map = {
     'completed': 'complete',
     'plan to watch': 'plan to watch',
@@ -35,8 +33,8 @@ def _get(e, key):
     return e.find(key).text
 
 
-def anime(ids):
-    tree = ElementTree.parse(alist)
+def anime(ids, file):
+    tree = ElementTree.parse(file)
     root = tree.getroot()
     for e in root.iter('anime'):
         name = e.find('series_title').text
@@ -48,8 +46,8 @@ def anime(ids):
         yield x
 
 
-def myanime(ids):
-    tree = ElementTree.parse(alist)
+def myanime(ids, file):
+    tree = ElementTree.parse(file)
     root = tree.getroot()
     for e in root.iter('anime'):
         name = _get(e, 'series_type')
@@ -66,13 +64,7 @@ def myanime(ids):
         yield x
 
 
-def manga():
-    tree = ElementTree.parse(mlist)
-    root = tree.getroot()
-    # TODO
-
-
-def main():
+def main(config, file):
     logging.basicConfig(level=logging.DEBUG)
     with mysqllib.connect(**info.db_args) as cur:
         ids = IDCounter()
@@ -87,7 +79,7 @@ def main():
             )) + ')',
             'VALUES',
             '(%s, %s, %s, %s, %s)',
-        )), anime(ids))
+        )), anime(ids, file))
         cur.executemany(' '.join((
             'INSERT INTO myanime',
             '(' + ', '.join((
@@ -99,7 +91,7 @@ def main():
             )) + ')'
             'VALUES',
             '(%s, %s, %s, %s, %s)',
-        )), myanime(ids))
+        )), myanime(ids, file))
 
 if __name__ == '__main__':
     main()
