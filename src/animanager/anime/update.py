@@ -2,9 +2,9 @@ import logging
 from urllib.error import URLError
 from urllib.parse import urlencode
 from xml.etree import ElementTree
-import html.parser
 
 from animanager import mysqllib
+from animanager import xmllib
 from animanager.requestlib import ffrequest
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,6 @@ def main(config):
     to_update = []
 
     # MAL API
-    h = html.parser.HTMLParser()
     for id, mal_id, name, my_eps in anime_iter(config):
         while True:
             try:
@@ -60,8 +59,10 @@ def main(config):
                 continue
             else:
                 break
-        response = h.unescape(response.read().decode())
-        tree = ElementTree.fromstring(response)
+        response = response.read().decode()
+        tree = xmllib.parse(response)
+        if tree is None:
+            continue
         found = dict((int(_get(e, 'id')),
                       [_get(e, k) for k in ('title', 'episodes')])
                      for e in list(tree))
