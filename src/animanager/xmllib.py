@@ -20,7 +20,11 @@ def parse(inp):
     except ElementTree.ParseError as e:
         logger.warning('Encountered parse error %r', e)
         logger.warning(inp)
-        import sys; sys.exit(1)
+        print("Caught ParseError: {}".format(e))
+        line, col = e.position
+        inp = inp.split('\n')
+        print(inp[line])
+        print(' ' * (col-1) + '^')
         return None
     else:
         return tree
