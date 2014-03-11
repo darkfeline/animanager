@@ -9,9 +9,17 @@ DOCTYPE = (
 
 def parse(inp):
     parser = ElementTree.XMLParser()
+    parser.entity['acute'] = chr(180)
+    parser.entity['auml'] = chr(228)
+    parser.entity['ocirc'] = chr(244)
+    parser.entity['ouml'] = chr(246)
+    parser.entity['ndash'] = chr(8211)
     parser.entity['mdash'] = chr(8212)
     parser.entity['ldquo'] = chr(8220)
     parser.entity['rdquo'] = chr(8221)
+    parser.entity['lsquo'] = chr(8226)
+    parser.entity['rsquo'] = chr(8227)
+    parser.entity['hellip'] = chr(8230)
     inp = inp.split('\n')
     inp[1:1] = [DOCTYPE]
     inp = '\n'.join(inp)
@@ -21,10 +29,6 @@ def parse(inp):
         logger.warning('Encountered parse error %r', e)
         logger.warning(inp)
         print("Caught ParseError: {}".format(e))
-        line, col = e.position
-        inp = inp.split('\n')
-        print(inp[line])
-        print(' ' * (col-1) + '^')
         return None
     else:
         return tree

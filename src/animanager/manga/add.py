@@ -31,7 +31,9 @@ def main(config, name=None):
     found = [
         [_get(e, k) for k in ('id', 'title', 'chapters', 'volumes', 'type')]
         for e in list(tree)]
-    i = inputlib.get_choice(found)
+    i = inputlib.get_choice([
+        (id, '{} ({})'.format(title, type)) for
+        id, title, ch, vol, type in found])
 
     # add manga entry
     mangadb_id, name, ch_total, vol_total, type = found[i]

@@ -16,11 +16,14 @@ def main(config, name=None):
             name = input("Find a manga: ")
         assert isinstance(name, str)
         cur.execute(
-            'SELECT id, name FROM manga WHERE name LIKE %s',
+            'SELECT id, name, type FROM manga WHERE name LIKE %s',
             ('%'+name+'%',))
         results = cur.fetchall()
         try:
-            i = inputlib.get_choice(results)
+            # type is a set here because stupid
+            i = inputlib.get_choice([
+                (id, '{} ({})'.format(title, list(type)[0])) for
+                id, title, type in results])
         except inputlib.Cancel:
             print('Quitting')
             sys.exit(1)
