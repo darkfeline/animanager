@@ -53,7 +53,7 @@ def main(config, name=None):
                 cur.execute(
                     'UPDATE mymanga SET status=%s WHERE id=%s',
                     ('reading', id))
-        elif status in ('plan to watch',):
+        elif status in ('plan to read',):
             print('Status is {}, setting reading and start date'.format(
                 status))
             cur.execute(
