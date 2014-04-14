@@ -11,7 +11,7 @@ from animanager.requestlib import ffrequest
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/manga/search.xml?"
-stati = ('plan to watch', 'reading', 'complete')
+stati = ('plan to read', 'reading', 'complete')
 
 
 def _get(e, key):
