@@ -1,11 +1,11 @@
 import logging
 from datetime import date
 from urllib.parse import urlencode
-from xml.etree import ElementTree
 import sys
 
 from animanager import inputlib
 from animanager import mysqllib
+from animanager import xmllib
 from animanager.requestlib import ffrequest
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def main(config, name=None):
     response = ffrequest(mal_search + urlencode({'q': name}))
     response = response.read().decode()
     try:
-        tree = ElementTree.fromstring(response)
+        tree = xmllib.parse(response)
     except ElementTree.ParseError as e:
         logger.error("Caught ParseError: {}".format(e))
         logger.error(response)

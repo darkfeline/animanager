@@ -10,9 +10,12 @@ DOCTYPE = (
 def parse(inp):
     parser = ElementTree.XMLParser()
     parser.entity['acute'] = chr(180)
+    parser.entity['micro'] = chr(181)
     parser.entity['auml'] = chr(228)
+    parser.entity['eacute'] = chr(233)
     parser.entity['ocirc'] = chr(244)
     parser.entity['ouml'] = chr(246)
+    parser.entity['mu'] = chr(956)
     parser.entity['ndash'] = chr(8211)
     parser.entity['mdash'] = chr(8212)
     parser.entity['ldquo'] = chr(8220)
