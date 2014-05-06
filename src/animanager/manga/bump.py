@@ -31,19 +31,19 @@ def main(config, name=None):
 
         # Get eps and confirm
         cur.execute(' '.join((
-            'SELECT ch_read, ch_total FROM manga',
+            'SELECT ch_read, ch_total, vol_total FROM manga',
             'LEFT JOIN mymanga ON manga.id=mymanga.id',
             'WHERE manga.id=%s')), (id,))
-        read, total = cur.fetchone()
-        print('Bumping {}/{}'.format(read, total))
-        if read >= total and total != 0:
+        ch_read, ch_total, vol_total = cur.fetchone()
+        print('Bumping {}/{}'.format(ch_read, ch_total))
+        if ch_read >= ch_total and ch_total != 0:
             print('Maxed')
             sys.exit(1)
         confirm = input("Okay? [Y/n]")
         if confirm.lower() in ('n', 'no'):
             print('Quitting')
             sys.exit(1)
-        read += 1
+        ch_read += 1
 
         # Set status if needed
         cur.execute('SELECT status FROM mymanga WHERE id=%s', (id,))
@@ -66,13 +66,13 @@ def main(config, name=None):
         # Set new value
         cur.execute(
             'UPDATE mymanga SET ch_read=%s WHERE id=%s',
-            (read, id))
-        print('Now {}/{}'.format(read, total))
+            (ch_read, id))
+        print('Now {}/{}'.format(ch_read, ch_total))
 
         # Set complete if needed
-        if read == total and total != 0:
+        if ch_read == ch_total and ch_total != 0:
             print('Setting complete')
             cur.execute(' '.join((
-                'UPDATE mymanga SET status=%s, date_finished=%s',
+                'UPDATE mymanga SET status=%s, date_finished=%s, vol_read=%s',
                 'WHERE id=%s',
-                )), ('complete', date.today().isoformat(), id))
+                )), ('complete', date.today().isoformat(), vol_total, id))
