@@ -70,7 +70,7 @@ def main(config):
         found_eps = int(found_eps)
         logging.debug("Name: %r, Eps: %r", name, my_eps)
         logger.debug('Found id=%r, mal_id=%r, name=%r, eps=%r',
-                     id, mal_id, name, found_eps)
+                     id, mal_id, found_title, found_eps)
         assert found_title == name
         if found_eps != 0:
             assert found_eps > 0
