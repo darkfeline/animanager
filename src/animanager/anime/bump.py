@@ -29,8 +29,7 @@ def main(config, name=None):
         # Get eps and confirm
         cur.execute(' '.join((
             'SELECT ep_watched, ep_total FROM anime',
-            'LEFT JOIN myanime ON anime.id=myanime.id',
-            'WHERE anime.id=%s')), (id,))
+            'WHERE id=%s')), (id,))
         watched, total = cur.fetchone()
         print('Bumping {}/{}'.format(watched, total))
         if watched >= total and total != 0:
@@ -43,7 +42,7 @@ def main(config, name=None):
         watched += 1
 
         # Set status if needed
-        cur.execute('SELECT status FROM myanime WHERE id=%s', (id,))
+        cur.execute('SELECT status FROM anime WHERE id=%s', (id,))
         status = list(cur.fetchone()[0])[0]  # mysqllib returns set b/c retard
         assert isinstance(status, str)
         if status in ('on hold', 'dropped'):
@@ -51,18 +50,18 @@ def main(config, name=None):
             if confirm.lower() not in ('n', 'no'):
                 print('Setting watching')
                 cur.execute(
-                    'UPDATE myanime SET status=%s WHERE id=%s',
+                    'UPDATE anime SET status=%s WHERE id=%s',
                     ('watching', id))
         elif status in ('plan to watch',):
             print('Status is {}, setting watching and start date'.format(
                 status))
             cur.execute(
-                'UPDATE myanime SET status=%s, date_started=%s WHERE id=%s',
+                'UPDATE anime SET status=%s, date_started=%s WHERE id=%s',
                 ('watching', date.today().isoformat(), id))
 
         # Set new value
         cur.execute(
-            'UPDATE myanime SET ep_watched=%s WHERE id=%s',
+            'UPDATE anime SET ep_watched=%s WHERE id=%s',
             (watched, id))
         print('Now {}/{}'.format(watched, total))
 
@@ -70,6 +69,6 @@ def main(config, name=None):
         if watched == total and total != 0:
             print('Setting complete')
             cur.execute(' '.join((
-                'UPDATE myanime SET status=%s, date_finished=%s',
+                'UPDATE anime SET status=%s, date_finished=%s',
                 'WHERE id=%s',
                 )), ('complete', date.today().isoformat(), id))
