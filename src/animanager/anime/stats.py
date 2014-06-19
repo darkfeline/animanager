@@ -21,11 +21,10 @@ Total: {total}"""
 
 def main(config):
     counts = {}
-    query = 'SELECT count(*) FROM anime'
     with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(query)
+        cur.execute('SELECT count(*) FROM anime')
         counts['total'] = cur.fetchone()[0]
-        query = 'SELECT count(*) FROM myanime WHERE status=%s'
+        query = 'SELECT count(*) FROM anime WHERE status=%s'
         for x in statuses:
             cur.execute(query, (x,))
             counts[x] = cur.fetchone()[0]
