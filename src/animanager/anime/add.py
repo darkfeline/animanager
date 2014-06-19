@@ -1,7 +1,6 @@
 import logging
 from datetime import date
 from urllib.parse import urlencode
-import sys
 
 from animanager import inputlib
 from animanager import mysqllib
@@ -20,62 +19,43 @@ def _get(e, key):
 
 def main(config, name=None):
 
-    # MAL API
+    # Get choices from MAL API
     if not name:
         name = input("Search for: ")
     response = ffrequest(mal_search + urlencode({'q': name}))
     response = response.read().decode()
-    try:
-        tree = xmllib.parse(response)
-    except ElementTree.ParseError as e:
-        logger.error("Caught ParseError: {}".format(e))
-        logger.error(response)
-        print("Caught ParseError: {}".format(e))
-        line, col = e.position
-        response_lines = response.split('\n')
-        print(response_lines[line])
-        print(' ' * (col-1) + '^')
-        sys.exit(1)
+    tree = xmllib.parse(response)
     found = [
         [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
         for e in list(tree)]
     i = inputlib.get_choice(found)
 
-    # add anime entry
-    animedb_id, name, ep_total, type = found[i]
-    with mysqllib.connect(**config["db_args"]) as cur:
-        response = cur.execute('SELECT id FROM anime WHERE name=%s', (name,))
-        if cur.fetchone():
-            print("Already added")
-            sys.exit(1)
-        print("Adding main entry")
-        cur.execute(' '.join((
-            'INSERT INTO anime (name, type, ep_total, animedb_id)',
-            'VALUES',
-            '(%s, %s, %s, %s)',
-            )), (name, type, ep_total, animedb_id))
-        response = cur.execute('SELECT id FROM anime WHERE name=%s', (name,))
-        id = cur.fetchone()[0]
+    # Accumulate fields
+    args = {}
+    for field, value in zip(['animedb_id', 'name', 'ep_total', 'type'],
+                            found[i]):
+        args[field] = value
 
-    # add myanime entry
-    print("Status:")
     for i, x in enumerate(stati):
         print('{}: {}'.format(i, x))
-    i = int(input('Pick: '))
-    status = stati[i]
-    args = [id, status]
-    query = 'INSERT INTO myanime SET id=%s, status=%s'
-    if status == 'watching':
+    i = int(input('Pick status: '))
+    args['status'] = stati[i]
+
+    if args['status'] == 'watching':
         x = input('Set start date to today? [Y/n]')
         if x.lower() not in ('n', 'no'):
-            query = ', '.join((query, 'date_started=%s'))
-            args.append(date.today().isoformat())
-    elif status == 'complete':
-        query = ', '.join((query, 'ep_watched=%s'))
-        args.append(ep_total)
+            args['date_started'] = date.today().isoformat()
+    elif args['status'] == 'complete':
+        args['ep_watched'] = args['ep_total']
         x = input('Set dates to today? [Y/n]')
         if x.lower() not in ('n', 'no'):
-            query = ', '.join((query, 'date_started=%s', 'date_finished=%s'))
-            args.extend([date.today().isoformat()] * 2)
+            args['date_started'] = date.today().isoformat()
+            args['date_finished'] = date.today().isoformat()
+
+    # add anime entry
     with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(query, args)
+        fields = list(args)
+        cur.execute(
+            'INSERT INTO anime SET {}'.format(
+                ', '.join(x+'=%s' for x in fields)),
+            [args[x] for x in fields])
