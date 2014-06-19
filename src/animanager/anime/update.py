@@ -1,7 +1,6 @@
 import logging
 from urllib.error import URLError
 from urllib.parse import urlencode
-from xml.etree import ElementTree
 
 from animanager import mysqllib
 from animanager import xmllib
@@ -21,8 +20,7 @@ def anime_iter(config):
     """Generator for anime to recheck"""
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
-            'SELECT anime.id, animedb_id, name, ep_total FROM anime',
-            'LEFT JOIN myanime ON myanime.id = anime.id',
+            'SELECT id, animedb_id, name, ep_total FROM anime',
             'WHERE ep_total = 0',
             'OR status = "watching"',
         )))
@@ -40,9 +38,8 @@ def update_entries(config, to_update):
         cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
         print('Setting complete as needed')
         cur.execute(' '.join((
-            'UPDATE anime',
-            'LEFT JOIN myanime ON anime.id=myanime.id',
-            'SET status="complete" WHERE ep_total=ep_watched',
+            'UPDATE anime SET status="complete"',
+            'WHERE ep_total = ep_watched AND ep_total != 0',
         )))
 
 
