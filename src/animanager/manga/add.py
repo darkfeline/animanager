@@ -1,7 +1,6 @@
 import logging
 from datetime import date
 from urllib.parse import urlencode
-import sys
 
 from animanager import inputlib
 from animanager import mysqllib
@@ -20,14 +19,12 @@ def _get(e, key):
 
 def main(config, name=None):
 
-    # MAL API
+    # Get choices from MAL API
     if not name:
         name = input("Search for: ")
     response = ffrequest(mal_search + urlencode({'q': name}))
     response = response.read().decode()
     tree = xmllib.parse(response)
-    if tree is None:
-        sys.exit(1)
     found = [
         [_get(e, k) for k in ('id', 'title', 'chapters', 'volumes', 'type')]
         for e in list(tree)]
@@ -35,45 +32,34 @@ def main(config, name=None):
         (id, '{} ({})'.format(title, type)) for
         id, title, ch, vol, type in found])
 
-    # add manga entry
-    mangadb_id, name, ch_total, vol_total, type = found[i]
-    with mysqllib.connect(**config["db_args"]) as cur:
-        response = cur.execute(
-            'SELECT id FROM manga WHERE mangadb_id=%s', (mangadb_id,))
-        if cur.fetchone():
-            print("Already added")
-            sys.exit(1)
-        print("Adding main entry")
-        cur.execute(' '.join((
-            'INSERT INTO manga (name, type, ch_total, vol_total, mangadb_id)',
-            'VALUES',
-            '(%s, %s, %s, %s, %s)',
-            )), (name, type, ch_total, vol_total, mangadb_id))
-        response = cur.execute(
-            'SELECT id FROM manga WHERE mangadb_id=%s', (mangadb_id,))
-        id = cur.fetchone()[0]
+    # Accumulate fields
+    args = {}
+    for field, value in zip(
+            ['mangadb_id', 'name', 'ch_total', 'vol_total', 'type'],
+            found[i]):
+        args[field] = value
 
-    # add mymanga entry
-    print("Status:")
     for i, x in enumerate(stati):
         print('{}: {}'.format(i, x))
-    i = int(input('Pick: '))
-    status = stati[i]
-    args = [id, status]
-    query = 'INSERT INTO mymanga SET id=%s, status=%s'
-    if status == 'reading':
+    i = int(input('Pick status: '))
+    args['status'] = stati[i]
+
+    if args['status'] == 'reading':
         x = input('Set start date to today? [Y/n]')
         if x.lower() not in ('n', 'no'):
-            query = ', '.join((query, 'date_started=%s'))
-            args.append(date.today().isoformat())
-    elif status == 'complete':
-        query = ', '.join((query, 'ch_watched=%s'))
-        args.append(ch_total)
-        query = ', '.join((query, 'vol_watched=%s'))
-        args.append(vol_total)
+            args['date_started'] = date.today().isoformat()
+    elif args['status'] == 'complete':
+        args['ch_watched'] = args['ch_total']
+        args['vol_watched'] = args['vol_total']
         x = input('Set dates to today? [Y/n]')
         if x.lower() not in ('n', 'no'):
-            query = ', '.join((query, 'date_started=%s', 'date_finished=%s'))
-            args.extend([date.today().isoformat()] * 2)
+            args['date_started'] = date.today().isoformat()
+            args['date_finished'] = date.today().isoformat()
+
+    # add manga entry
     with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(query, args)
+        fields = list(args)
+        cur.execute(
+            'INSERT INTO manga SET {}'.format(
+                ', '.join(x+'=%s' for x in fields)),
+            [args[x] for x in fields])
