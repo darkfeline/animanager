@@ -2,6 +2,7 @@
 
 from xml.etree import ElementTree
 import logging
+from itertools import count
 
 from animanager import mysqllib
 
@@ -16,87 +17,59 @@ stat_map = {
 }
 
 
-class IDCounter:
-
-    def __init__(self):
-        self.counter = 1
-        self.map = {}
-
-    def add(self, id):
-        assert id not in self.map
-        self.map[id] = self.counter
-        self.counter += 1
-
-
 def _get(e, key):
     return e.find(key).text
 
 
 def manga(ids, file):
+    id_counter = count(1)
     tree = ElementTree.parse(file)
     root = tree.getroot()
     for e in root.iter('manga'):
-        id = _get(e, 'manga_mangadb_id')
-        ids.add(id)
-        x = [ids.map[id]] + [_get(e, x) for x in (
-            'manga_title', 'manga_volumes', 'manga_chapters',
-            'manga_mangadb_id',
-        )]
-        logger.debug(x)
-        yield x
+        fields = dict()
+        fields['id'] = next(id_counter)
+        fields.update(
+            [(our_field, _get(e, their_field)) for our_field, their_field in (
+                ('name', 'manga_title'),
+                ('vol_read', 'my_read_volumes'),
+                ('vol_total', 'manga_volumes'),
+                ('ch_read', 'my_read_chapters'),
+                ('ch_total', 'manga_chapters'),
+                ('status', 'my_status'),
+                ('date_started', 'my_start_date'),
+                ('date_finished', 'my_finish_date'),
+                ('mangadb_id', 'manga_mangadb_id'),
+            )])
+        fields['status'] = stat_map[fields['status'].lower()]
+        if fields['date_started'] == '0000-00-00':
+            fields['date_started'] = None
+        if fields['date_finished'] == '0000-00-00':
+            fields['date_finished'] = None
+        logger.debug(fields)
+        yield fields
 
 
-def mymanga(ids, file):
-    tree = ElementTree.parse(file)
-    root = tree.getroot()
-    for e in root.iter('manga'):
-        id = _get(e, 'manga_mangadb_id')
-        x = [ids.map[id]] + [_get(e, x).lower() for x in (
-            'my_read_volumes', 'my_read_chapters', 'my_status',
-            'my_start_date', 'my_finish_date',
-        )]
-        x[-3] = stat_map[x[-3]]
-        if x[-2] == '0000-00-00':
-            x[-2] = None
-        if x[-1] == '0000-00-00':
-            x[-1] = None
-        logger.debug(x)
-        yield x
+FIELDS = [
+    'id',
+    'name',
+    'vol_read',
+    'vol_total',
+    'ch_read',
+    'ch_total',
+    'status',
+    'date_started',
+    'date_finished',
+    'mangadb_id',
+]
 
 
 def main(config, file):
-    # from pprint import pprint
-    # ids = IDCounter()
-    # pprint(list(manga(ids, file)))
-    # pprint(list(mymanga(ids, file)))
-    # import sys; sys.exit()
     with mysqllib.connect(**config['db_args']) as cur:
-        ids = IDCounter()
-        cur.executemany(' '.join((
-            'INSERT INTO manga',
-            '(' + ', '.join((
-                'id',
-                'name',
-                'vol_total',
-                'ch_total',
-                'mangadb_id',
-            )) + ')',
-            'VALUES',
-            '(%s, %s, %s, %s, %s)',
-        )), list(manga(ids, file)))
-        cur.executemany(' '.join((
-            'INSERT INTO mymanga',
-            '(' + ', '.join((
-                'id',
-                'vol_read',
-                'ch_read',
-                'status',
-                'date_started',
-                'date_finished',
-            )) + ')'
-            'VALUES',
-            '(%s, %s, %s, %s, %s, %s)',
-        )), list(mymanga(ids, file)))
+        cur.execute('INSERT INTO manga ({}) VALUES {}'.format(
+            ', '.join(FIELDS),
+            ', '.join(
+                '({})'.format(', '.join(entry[field] for field in FIELDS))
+                for entry in manga(file))))
 
 if __name__ == '__main__':
     main()
