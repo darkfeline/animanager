@@ -9,7 +9,7 @@ from animanager.requestlib import ffrequest
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/manga/search.xml?"
-stati = ['plan to read', 'read', 'complete']
+statuses = ['plan to read', 'read', 'complete']
 
 
 def _get(e, key):

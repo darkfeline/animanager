@@ -10,7 +10,7 @@ from animanager.requestlib import ffrequest
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/manga/search.xml?"
-stati = ('plan to read', 'reading', 'complete')
+statuses = ('plan to read', 'reading', 'complete')
 
 
 def _get(e, key):
@@ -37,10 +37,10 @@ def main(config, name=None):
     args.update(
         zip(['mangadb_id', 'name', 'ch_total', 'vol_total', 'type'], found[i]))
 
-    for i, x in enumerate(stati):
+    for i, x in enumerate(statuses):
         print('{}: {}'.format(i, x))
     i = int(input('Pick status: '))
-    args['status'] = stati[i]
+    args['status'] = statuses[i]
 
     if args['status'] == 'reading':
         x = input('Set start date to today? [Y/n]')

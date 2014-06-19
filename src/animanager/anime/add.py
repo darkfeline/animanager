@@ -10,7 +10,7 @@ from animanager.requestlib import ffrequest
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/anime/search.xml?"
-stati = ('plan to watch', 'watching', 'complete')
+statuses = ('plan to watch', 'watching', 'complete')
 
 
 def _get(e, key):
@@ -35,10 +35,10 @@ def main(config, name=None):
     args.update(
         zip(['animedb_id', 'name', 'ep_total', 'type'], found[i]))
 
-    for i, x in enumerate(stati):
+    for i, x in enumerate(statuses):
         print('{}: {}'.format(i, x))
     i = int(input('Pick status: '))
-    args['status'] = stati[i]
+    args['status'] = statuses[i]
 
     if args['status'] == 'watching':
         x = input('Set start date to today? [Y/n]')
