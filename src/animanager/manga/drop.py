@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def main(config, name=None):
     if not name:
-        name = input("Find an manga: ")
+        name = input("Find a manga: ")
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
             'SELECT id, name FROM manga',
