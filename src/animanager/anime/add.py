@@ -32,9 +32,8 @@ def main(config, name=None):
 
     # Accumulate fields
     args = {}
-    for field, value in zip(['animedb_id', 'name', 'ep_total', 'type'],
-                            found[i]):
-        args[field] = value
+    args.update(
+        zip(['animedb_id', 'name', 'ep_total', 'type'], found[i]))
 
     for i, x in enumerate(stati):
         print('{}: {}'.format(i, x))
