@@ -1,10 +1,4 @@
 import logging
-from datetime import date
-from urllib.parse import urlencode
-from xml.etree import ElementTree
-import html.parser
-import re
-import sys
 
 from animanager import mysqllib
 
