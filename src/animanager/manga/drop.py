@@ -9,12 +9,11 @@ logger = logging.getLogger(__name__)
 
 def main(config, name=None):
     if not name:
-        name = input("Find an anime: ")
+        name = input("Find an manga: ")
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
-            'SELECT anime.id, name FROM anime',
-            'LEFT JOIN myanime ON anime.id=myanime.id',
-            'WHERE status IN ("watching", "on hold")',
+            'SELECT id, name FROM manga',
+            'WHERE status IN ("reading", "on hold")',
             'AND name LIKE %s',
         )), ('%'+name+'%',))
         results = cur.fetchall()
@@ -23,5 +22,5 @@ def main(config, name=None):
             sys.exit(1)
         i = inputlib.get_choice(results)
         id = results[i][0]
-        cur.execute('UPDATE myanime SET status="dropped" WHERE id=%s', (id,))
+        cur.execute('UPDATE manga SET status="dropped" WHERE id=%s', (id,))
         print('Set to dropped')
