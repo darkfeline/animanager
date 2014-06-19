@@ -34,10 +34,8 @@ def main(config, name=None):
 
     # Accumulate fields
     args = {}
-    for field, value in zip(
-            ['mangadb_id', 'name', 'ch_total', 'vol_total', 'type'],
-            found[i]):
-        args[field] = value
+    args.update(
+        zip(['mangadb_id', 'name', 'ch_total', 'vol_total', 'type'], found[i]))
 
     for i, x in enumerate(stati):
         print('{}: {}'.format(i, x))
