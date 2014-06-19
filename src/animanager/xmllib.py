@@ -1,5 +1,6 @@
 import logging
 from xml.etree import ElementTree
+import sys
 
 logger = logging.getLogger(__name__)
 DOCTYPE = (
@@ -7,7 +8,7 @@ DOCTYPE = (
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
 
 
-def parse(inp):
+def parse(text):
     parser = ElementTree.XMLParser()
     parser.entity['acute'] = chr(180)
     parser.entity['micro'] = chr(181)
@@ -25,15 +26,18 @@ def parse(inp):
     parser.entity['bull'] = chr(8226)
     parser.entity['rsquo'] = chr(8227)
     parser.entity['hellip'] = chr(8230)
-    inp = inp.split('\n')
-    inp[1:1] = [DOCTYPE]
-    inp = '\n'.join(inp)
+    text = text.split('\n')
+    text[1:1] = [DOCTYPE]
+    text = '\n'.join(text)
     try:
-        tree = ElementTree.XML(inp, parser=parser)
+        tree = ElementTree.XML(text, parser=parser)
     except ElementTree.ParseError as e:
-        logger.warning('Encountered parse error %r', e)
-        logger.warning(inp)
-        print("Caught ParseError: {}".format(e))
-        return None
+        logger.error('Encountered parse error %r', e)
+        line, col = e.position
+        logger.error('Error at line %s, column %s', line, col)
+        response_lines = response.split('\n')
+        logger.error(response_lines[line])
+        logger.error(' ' * (col-1) + '^')
+        sys.exit(1)
     else:
         return tree
