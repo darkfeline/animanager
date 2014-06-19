@@ -32,8 +32,7 @@ def main(config, name=None):
         # Get eps and confirm
         cur.execute(' '.join((
             'SELECT ch_read, ch_total, vol_total FROM manga',
-            'LEFT JOIN mymanga ON manga.id=mymanga.id',
-            'WHERE manga.id=%s')), (id,))
+            'WHERE id=%s')), (id,))
         ch_read, ch_total, vol_total = cur.fetchone()
         print('Bumping {}/{}'.format(ch_read, ch_total))
         if ch_read >= ch_total and ch_total != 0:
@@ -46,7 +45,7 @@ def main(config, name=None):
         ch_read += 1
 
         # Set status if needed
-        cur.execute('SELECT status FROM mymanga WHERE id=%s', (id,))
+        cur.execute('SELECT status FROM manga WHERE id=%s', (id,))
         status = list(cur.fetchone()[0])[0]  # mysqllib returns set b/c retard
         assert isinstance(status, str)
         if status in ('on hold', 'dropped'):
@@ -54,18 +53,18 @@ def main(config, name=None):
             if confirm.lower() not in ('n', 'no'):
                 print('Setting reading')
                 cur.execute(
-                    'UPDATE mymanga SET status=%s WHERE id=%s',
+                    'UPDATE manga SET status=%s WHERE id=%s',
                     ('reading', id))
         elif status in ('plan to read',):
             print('Status is {}, setting reading and start date'.format(
                 status))
             cur.execute(
-                'UPDATE mymanga SET status=%s, date_started=%s WHERE id=%s',
+                'UPDATE manga SET status=%s, date_started=%s WHERE id=%s',
                 ('reading', date.today().isoformat(), id))
 
         # Set new value
         cur.execute(
-            'UPDATE mymanga SET ch_read=%s WHERE id=%s',
+            'UPDATE manga SET ch_read=%s WHERE id=%s',
             (ch_read, id))
         print('Now {}/{}'.format(ch_read, ch_total))
 
@@ -73,6 +72,6 @@ def main(config, name=None):
         if ch_read == ch_total and ch_total != 0:
             print('Setting complete')
             cur.execute(' '.join((
-                'UPDATE mymanga SET status=%s, date_finished=%s, vol_read=%s',
+                'UPDATE manga SET status=%s, date_finished=%s, vol_read=%s',
                 'WHERE id=%s',
                 )), ('complete', date.today().isoformat(), vol_total, id))
