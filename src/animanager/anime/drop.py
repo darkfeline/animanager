@@ -12,8 +12,7 @@ def main(config, name=None):
         name = input("Find an anime: ")
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
-            'SELECT anime.id, name FROM anime',
-            'LEFT JOIN myanime ON anime.id=myanime.id',
+            'SELECT id, name FROM anime',
             'WHERE status IN ("watching", "on hold")',
             'AND name LIKE %s',
         )), ('%'+name+'%',))
@@ -23,5 +22,5 @@ def main(config, name=None):
             sys.exit(1)
         i = inputlib.get_choice(results)
         id = results[i][0]
-        cur.execute('UPDATE myanime SET status="dropped" WHERE id=%s', (id,))
+        cur.execute('UPDATE anime SET status="dropped" WHERE id=%s', (id,))
         print('Set to dropped')
