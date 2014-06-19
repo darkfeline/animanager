@@ -9,7 +9,7 @@ from animanager.requestlib import ffrequest
 logger = logging.getLogger(__name__)
 
 mal_search = "http://myanimelist.net/api/manga/search.xml?"
-statuses = ['plan to read', 'read', 'complete']
+statuses = ['plan to read', 'reading', 'complete']
 
 
 def _get(e, key):
@@ -20,9 +20,8 @@ def manga_iter(config):
     """Generator for manga to recheck"""
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
-            'SELECT manga.id, mangadb_id, name, ch_total, vol_total',
+            'SELECT id, mangadb_id, name, ch_total, vol_total',
             'FROM manga',
-            'LEFT JOIN mymanga ON mymanga.id = manga.id',
             'WHERE ch_total = 0',
             'OR vol_total = 0',
             'OR type = ""',
@@ -45,10 +44,9 @@ def update_entries(config, to_update):
             to_update)
         print('Setting complete as needed')
         cur.execute(' '.join((
-            'UPDATE manga',
-            'LEFT JOIN mymanga ON manga.id=mymanga.id',
-            'SET status="complete" WHERE ch_total=ch_read',
-            'OR vol_total=vol_read',
+            'UPDATE manga SET status="complete" WHERE',
+            '(ch_total = ch_read AND ch_total != 0) OR',
+            '(vol_total=vol_read AND vol_total != 0)',
         )))
 
 
