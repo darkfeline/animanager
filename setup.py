@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='animanager',
     version='0.1',
-    description='Anime Manager MySQL frontend application',
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
+    requires=['mysql.connector'],
+    scripts=['src/bin/animanager'],
+
     author='Allen Li',
     author_email='darkfeline@abagofapples.com',
-    package_dir={'': 'src'},
-    packages=['animanager', 'animanager.anime',  'animanager.manga'],
-    requires=['mysql.connector'],
-    scripts=['src/bin/animanager']
+    description='Anime manager MySQL frontend application',
+    license='',
+    url='',
 )
