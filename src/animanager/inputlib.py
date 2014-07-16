@@ -11,7 +11,7 @@ def get_choice(choices, default=-1):
     for i, name in enumerate(choices):
         print("{}: {}".format(i, name))
     try:
-        i = int(input("Pick one\n"))
+        i = int(input("Pick [{}]: ".format(default)))
     except ValueError:
         i = default
     return i
