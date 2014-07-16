@@ -35,9 +35,7 @@ def main(config, name=None):
     args.update(
         zip(['animedb_id', 'name', 'ep_total', 'type'], found[i]))
 
-    for i, x in enumerate(statuses):
-        print('{}: {}'.format(i, x))
-    i = int(input('Pick status: '))
+    i = inputlib.get_choice(statuses, 0)
     args['status'] = statuses[i]
 
     if args['status'] == 'watching':

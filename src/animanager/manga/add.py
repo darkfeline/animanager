@@ -36,9 +36,7 @@ def main(config, name=None):
     args.update(
         zip(['mangadb_id', 'name', 'ch_total', 'vol_total', 'type'], found[i]))
 
-    for i, x in enumerate(statuses):
-        print('{}: {}'.format(i, x))
-    i = int(input('Pick status: '))
+    i = inputlib.get_choice(statuses, 0)
     args['status'] = statuses[i]
 
     if args['status'] == 'reading':
