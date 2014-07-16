@@ -19,14 +19,10 @@ def main(config, name=None):
             'SELECT id, name, type FROM manga WHERE name LIKE %s',
             ('%'+name+'%',))
         results = cur.fetchall()
-        try:
-            # type is a set here because stupid
-            i = inputlib.get_choice([
-                (id, '{} ({})'.format(title, list(type)[0])) for
-                id, title, type in results])
-        except inputlib.Cancel:
-            print('Quitting')
-            sys.exit(1)
+        # type is a set here because mysql API is stupid
+        results = [(id, title, type.pop()) for id, title, type in results]
+        i = inputlib.get_choice(['{} {} ({})'.format(id, title, type) for id,
+                                 title, type in results])
         id = results[i][0]
 
         # Get eps and confirm

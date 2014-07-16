@@ -28,7 +28,7 @@ def main(config, name=None):
     found = [
         [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
         for e in list(tree)]
-    i = inputlib.get_choice(found)
+    i = inputlib.get_choice(['{} {}'.format(x[0], x[1]) for x in found])
 
     # Accumulate fields
     args = {}

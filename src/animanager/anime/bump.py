@@ -19,11 +19,7 @@ def main(config, name=None):
             'SELECT id, name FROM anime WHERE name LIKE %s',
             ('%'+name+'%',))
         results = cur.fetchall()
-        try:
-            i = inputlib.get_choice(results)
-        except inputlib.Cancel:
-            print('Quitting')
-            sys.exit(1)
+        i = inputlib.get_choice(['{} {}'.format(x[0], x[1]) for x in results])
         id = results[i][0]
 
         # Get eps and confirm

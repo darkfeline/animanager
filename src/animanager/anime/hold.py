@@ -20,7 +20,7 @@ def main(config, name=None):
         if not results:
             print("Found nothing")
             sys.exit(1)
-        i = inputlib.get_choice(results)
+        i = inputlib.get_choice(['{} {}'.format(x[0], x[1]) for x in results])
         id = results[i][0]
         cur.execute('UPDATE anime SET status="on hold" WHERE id=%s', (id,))
         print('Set to on hold')
