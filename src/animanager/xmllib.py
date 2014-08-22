@@ -16,6 +16,7 @@ def parse(text):
     parser.entity['eacute'] = chr(233)
     parser.entity['ocirc'] = chr(244)
     parser.entity['ouml'] = chr(246)
+    parser.entity['alpha'] = chr(945)
     parser.entity['mu'] = chr(956)
     parser.entity['ndash'] = chr(8211)
     parser.entity['mdash'] = chr(8212)
