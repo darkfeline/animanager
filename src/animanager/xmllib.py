@@ -1,18 +1,23 @@
-import logging
-from xml.etree import ElementTree
-import sys
+"""
+The module contains XML parsing code
+"""
 
-logger = logging.getLogger(__name__)
+import logging
+import re
+import sys
+from xml.etree import ElementTree
+
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 DOCTYPE = (
     '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' +
     '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
 
 ENTITIES = {
-    "quot": 34,
-    "amp": 38,
-    "apos": 39,
-    "lt": 60,
-    "gt": 62,
+    # "quot": 34,
+    # "amp": 38,
+    # "apos": 39,
+    # "lt": 60,
+    # "gt": 62,
     "nbsp": 160,
     "iexcl": 161,
     "cent": 162,
@@ -264,24 +269,44 @@ ENTITIES = {
     "diams": 9830,
 }
 
-PARSER = ElementTree.XMLParser()
+_ENTITY_PATTEREN = re.compile(r'&(\w+);')
 
-for entity in ENTITIES:
-    PARSER.entity[entity] = chr(ENTITIES[entity])
+
+def _repl_func(match):
+    """Entity replacement function."""
+    try:
+        return chr(ENTITIES[match.group(1)])
+    except KeyError:
+        return match.group(0)
+
+
+def preprocess(text):
+    """Preprocess XML by replacing entities."""
+    text = _ENTITY_PATTEREN.sub(_repl_func, text)
+    return text
 
 
 def parse(text):
+    """Parse XML.
+
+    Return None if text is empty.
+    """
+    if not text:
+        return None
+    logger.debug(text)
     text = text.split('\n')
     text[1:1] = [DOCTYPE]
     text = '\n'.join(text)
+    text = preprocess(text)
+    parser = ElementTree.XMLParser()
     try:
-        tree = ElementTree.XML(text, parser=PARSER)
-    except ElementTree.ParseError as e:
-        logger.error('Encountered parse error %r', e)
-        line, col = e.position
+        tree = ElementTree.XML(text, parser=parser)
+    except ElementTree.ParseError as err:
+        logger.error('Encountered parse error: %r', err)
+        line, col = err.position
         logger.error('Error at line %s, column %s', line, col)
-        response_lines = response.split('\n')
-        logger.error(response_lines[line])
+        text_lines = text.split('\n')
+        logger.error(text_lines[line])
         logger.error(' ' * (col-1) + '^')
         sys.exit(1)
     else:

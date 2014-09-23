@@ -19,6 +19,7 @@ if args.log:
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s @%(name)s %(message)s'))
     handler.setLevel('DEBUG')
+    logger.setLevel('DEBUG')
 
 # setup requestlib
 requestlib.setup(args.config)

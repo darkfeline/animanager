@@ -56,6 +56,8 @@ def main(config):
 
     # MAL API
     for id, mal_id, name, my_chs, my_vols in manga_iter(config):
+        logger.debug("id=%r, name=%r, ch=%r, vol=%r",
+                     id, name, my_chs, my_vols)
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
@@ -63,17 +65,20 @@ def main(config):
                 continue
             else:
                 break
-        tree = xmllib.parse(response.read().decode())
-        found = dict((
-            int(_get(e, 'id')),
-            [_get(e, k) for k in ('title', 'chapters', 'volumes')]
-        ) for e in list(tree))
+        response = response.read().decode()
+        logger.debug(response)
+        tree = xmllib.parse(response)
+        if tree is None:
+            logger.warning('{} is likely deleted'.format(name))
+            continue
+        found = dict((int(_get(e, 'id')),
+                      [_get(e, k) for k in ('title', 'chapters', 'volumes')])
+                     for e in list(tree))
         found_title, found_chs, found_vols = found[mal_id]
         found_chs = int(found_chs)
         found_vols = int(found_vols)
-        logger.debug("Name: %r, Ch: %r, Vol: %r", name, my_chs, my_vols)
-        logger.debug('Found id=%r, mal_id=%r, name=%r, ch=%r, vol=%r',
-                     id, mal_id, found_title, found_chs, found_vols)
+        logger.debug('Found mal_id=%r, name=%r, ch=%r, vol=%r',
+                     mal_id, found_title, found_chs, found_vols)
         assert found_title == name
         if found_chs != 0 or found_vols != 0:
             to_update.append((found_chs, found_vols, id))

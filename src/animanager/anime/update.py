@@ -49,6 +49,7 @@ def main(config):
 
     # MAL API
     for id, mal_id, name, my_eps in anime_iter(config):
+        logger.debug("id=%r, name=%r, eps=%r", id, name, my_eps)
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
@@ -57,6 +58,7 @@ def main(config):
             else:
                 break
         response = response.read().decode()
+        logger.debug(response)
         tree = xmllib.parse(response)
         if tree is None:
             continue
@@ -65,9 +67,11 @@ def main(config):
                      for e in list(tree))
         found_title, found_eps = found[mal_id]
         found_eps = int(found_eps)
-        logging.debug("Name: %r, Eps: %r", name, my_eps)
-        logger.debug('Found id=%r, mal_id=%r, name=%r, eps=%r',
-                     id, mal_id, found_title, found_eps)
+        logger.debug('Found mal_id=%r, name=%r, eps=%r',
+                     mal_id, found_title, found_eps)
+        if found_title != name:
+            raise Error('Found {}, our name is {}'.format(found_title,
+                                                          name))
         assert found_title == name
         if found_eps != 0:
             assert found_eps > 0
@@ -75,3 +79,7 @@ def main(config):
 
     logger.info('Updating local entries')
     update_entries(config, to_update)
+
+
+class Error(Exception):
+    pass
