@@ -1,11 +1,11 @@
 def imp(args):
     from animanager.manga import imp
-    imp.main(config, args.file)
+    imp.main(args.config, args.file)
 
 
 def bump(args):
     from animanager.manga import bump
-    bump.main(config, args.name)
+    bump.main(args.config, args.name)
 
 
 def add(args):

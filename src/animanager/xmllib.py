@@ -308,6 +308,6 @@ def parse(text):
         text_lines = text.split('\n')
         logger.error(text_lines[line])
         logger.error(' ' * (col-1) + '^')
-        sys.exit(1)
+        raise err
     else:
         return tree

@@ -44,8 +44,8 @@ def main(config, name=None):
         if x.lower() not in ('n', 'no'):
             args['date_started'] = date.today().isoformat()
     elif args['status'] == 'complete':
-        args['ch_watched'] = args['ch_total']
-        args['vol_watched'] = args['vol_total']
+        args['ch_read'] = args['ch_total']
+        args['vol_read'] = args['vol_total']
         x = input('Set dates to today? [Y/n]')
         if x.lower() not in ('n', 'no'):
             args['date_started'] = date.today().isoformat()

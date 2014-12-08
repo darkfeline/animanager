@@ -53,7 +53,8 @@ def main(config):
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
-            except URLError:
+            except URLError as err:
+                logger.warning("Encountered URLError %s", err)
                 continue
             else:
                 break
