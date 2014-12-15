@@ -8,9 +8,8 @@ import sys
 from xml.etree import ElementTree
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-DOCTYPE = (
-    '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' +
-    '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+DOCTYPE = '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' + \
+        '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
 ENTITIES = {
     # "quot": 34,
@@ -295,6 +294,9 @@ def parse(text):
         return None
     logger.debug(text)
     text = text.split('\n')
+    # Hack for MAL behavior
+    if text[0] == 'No results':
+        return None
     text[1:1] = [DOCTYPE]
     text = '\n'.join(text)
     text = preprocess(text)

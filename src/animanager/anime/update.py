@@ -49,7 +49,7 @@ def main(config):
 
     # MAL API
     for id, mal_id, name, my_eps in anime_iter(config):
-        logger.debug("id=%r, name=%r, eps=%r", id, name, my_eps)
+        logger.debug("Our entry id=%r, name=%r, eps=%r", id, name, my_eps)
         while True:
             try:
                 response = ffrequest(mal_search + urlencode({'q': name}))
@@ -62,6 +62,7 @@ def main(config):
         logger.debug(response)
         tree = xmllib.parse(response)
         if tree is None:
+            logger.warning('No results found for id=%r, name=%r', id, name)
             continue
         found = dict((int(_get(e, 'id')),
                       [_get(e, k) for k in ('title', 'episodes')])
