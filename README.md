@@ -8,5 +8,5 @@
 
 ## Config
 
-Copy and edit the included config file to ``.anime.cfg`` in your home
-directory.
+Copy the included config file to ``.anime.cfg`` in your home directory and edit
+it as needed.
