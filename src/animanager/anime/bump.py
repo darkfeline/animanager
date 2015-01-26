@@ -6,7 +6,7 @@ import sys
 from animanager import mysqllib
 from animanager import inputlib
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def main(args):
@@ -59,11 +59,11 @@ def main(args):
             update_map['date_started'] = date.today().isoformat()
         if watched == total and total != 0:
             print('Setting status to "complete"')
-            update_map = ['status'] = 'complete'
+            update_map['status'] = 'complete'
 
         query_string = 'UPDATE anime SET {} WHERE id=%s'.format(
-            ', '.join('{}=%s'.format(key for key in update_map))
-        )
+            ', '.join(('{}=%s'.format(key) for key in update_map)))
         query_args = list(update_map.values()) + [choice_id]
 
+        _LOGGER.debug('query: %r %r', query_string, query_args)
         cur.execute(query_string, query_args)

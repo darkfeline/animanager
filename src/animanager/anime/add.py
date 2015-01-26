@@ -57,5 +57,5 @@ def main(args):
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(
             'INSERT INTO anime SET {}'.format(
-                ', '.join('{}=%s'.format(key for key in args))),
+                ', '.join('{}=%s'.format(key) for key in args)),
             args.values())
