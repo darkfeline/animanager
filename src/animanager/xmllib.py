@@ -7,7 +7,7 @@ import re
 import sys
 from xml.etree import ElementTree
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+_LOGGER = logging.getLogger(__name__)
 DOCTYPE = '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' + \
         '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
@@ -292,7 +292,7 @@ def parse(text):
     """
     if not text:
         return None
-    logger.debug(text)
+    _LOGGER.debug(text)
     text = text.split('\n')
     # Hack for MAL behavior
     if text[0] == 'No results':
@@ -304,12 +304,12 @@ def parse(text):
     try:
         tree = ElementTree.XML(text, parser=parser)
     except ElementTree.ParseError as err:
-        logger.error('Encountered parse error: %r', err)
+        _LOGGER.error('Encountered parse error: %r', err)
         line, col = err.position
-        logger.error('Error at line %s, column %s', line, col)
+        _LOGGER.error('Error at line %s, column %s', line, col)
         text_lines = text.split('\n')
-        logger.error(text_lines[line])
-        logger.error(' ' * (col-1) + '^')
+        _LOGGER.error(text_lines[line])
+        _LOGGER.error(' ' * (col-1) + '^')
         raise err
     else:
         return tree

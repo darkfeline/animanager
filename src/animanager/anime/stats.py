@@ -13,7 +13,8 @@ Plan to Watch: {plan to watch}
 Total: {total}"""
 
 
-def main(config):
+def main(args):
+    config = args.config
     counts = {}
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute('SELECT count(*) FROM anime')

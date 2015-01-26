@@ -2,7 +2,7 @@ def get_choice(choices, default=-1):
     """Prompt for user to pick a choice.
 
     Args:
-        choices: A list of choices
+        choices: A list of choices strings.
 
     Returns:
         An int index of the given choice: choices[i].

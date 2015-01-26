@@ -8,7 +8,11 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     requires=['mysql.connector'],
-    scripts=['src/bin/animanager'],
+    entry_points={
+        'console_scripts': [
+            'animanager = animanager.main:main',
+        ],
+    },
 
     author='Allen Li',
     author_email='darkfeline@felesatra.moe',

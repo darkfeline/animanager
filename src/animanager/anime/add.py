@@ -1,5 +1,6 @@
-import logging
+from collections import OrderedDict
 from datetime import date
+import logging
 from urllib.parse import urlencode
 
 from animanager import inputlib
@@ -9,50 +10,52 @@ from animanager.requestlib import ffrequest
 
 logger = logging.getLogger(__name__)
 
-mal_search = "http://myanimelist.net/api/anime/search.xml?"
+MAL_SEARCH = "http://myanimelist.net/api/anime/search.xml?"
 statuses = ('plan to watch', 'watching', 'complete')
 
 
-def _get(e, key):
-    return e.find(key).text
+def _get_datum(entity, key):
+    return entity.find(key).text
+
+_data_keys = ('id', 'title', 'episodes', 'type')
+
+def _get_data(entity):
+    return [_get_datum(entity, key) for key in _data_keys]
 
 
-def main(config, name=None):
+def main(args):
+
+    config = args.config
+    name = args.name
 
     # Get choices from MAL API
-    if not name:
-        name = input("Search for: ")
-    response = ffrequest(mal_search + urlencode({'q': name}))
+    response = ffrequest(MAL_SEARCH + urlencode({'q': name}))
     response = response.read().decode()
     tree = xmllib.parse(response)
-    found = [
-        [_get(e, k) for k in ('id', 'title', 'episodes', 'type')]
-        for e in list(tree)]
+    found = [_get_data(entity) for entity in list(tree)]
     i = inputlib.get_choice(['{} {}'.format(x[0], x[1]) for x in found])
 
-    # Accumulate fields
-    args = {}
-    args.update(
-        zip(['animedb_id', 'name', 'ep_total', 'type'], found[i]))
+    # Set data fields
+    args = OrderedDict(zip(['animedb_id', 'name', 'ep_total', 'type'],
+                           found[i]))
 
     i = inputlib.get_choice(statuses, 0)
     args['status'] = statuses[i]
 
     if args['status'] == 'watching':
-        x = input('Set start date to today? [Y/n]')
-        if x.lower() not in ('n', 'no'):
+        confirm = input('Set start date to today? [Y/n]')
+        if confirm.lower() not in ('n', 'no'):
             args['date_started'] = date.today().isoformat()
     elif args['status'] == 'complete':
         args['ep_watched'] = args['ep_total']
-        x = input('Set dates to today? [Y/n]')
-        if x.lower() not in ('n', 'no'):
-            args['date_started'] = date.today().isoformat()
-            args['date_finished'] = date.today().isoformat()
+        confirm = input('Set dates to today? [Y/n]')
+        if confirm.lower() not in ('n', 'no'):
+            today = date.today().isoformat()
+            args['date_started'] = today
+            args['date_finished'] = today
 
-    # add anime entry
     with mysqllib.connect(**config["db_args"]) as cur:
-        fields = list(args)
         cur.execute(
             'INSERT INTO anime SET {}'.format(
-                ', '.join(x+'=%s' for x in fields)),
-            [args[x] for x in fields])
+                ', '.join('{}=%s'.format(key for key in args))),
+            args.values())

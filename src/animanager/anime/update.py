@@ -12,12 +12,17 @@ mal_search = "http://myanimelist.net/api/anime/search.xml?"
 statuses = ['plan to watch', 'watching', 'complete']
 
 
-def _get(e, key):
-    return e.find(key).text
+def _get_datum(entity, key):
+    return entity.find(key).text
+
+_data_keys = ('id', 'title', 'episodes')
+
+def _get_data(entity):
+    return [_get_datum(entity, key) for key in _data_keys]
 
 
 def anime_iter(config):
-    """Generator for anime to recheck"""
+    """Return a generator of anime database entries."""
     with mysqllib.connect(**config["db_args"]) as cur:
         cur.execute(' '.join((
             'SELECT id, animedb_id, name, ep_total FROM anime',
@@ -33,6 +38,7 @@ def anime_iter(config):
 
 
 def update_entries(config, to_update):
+    """Update anime database entries."""
     with mysqllib.connect(**config["db_args"]) as cur:
         print('Setting episode totals')
         cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
@@ -43,42 +49,31 @@ def update_entries(config, to_update):
         )))
 
 
-def main(config):
-
+def main(args):
+    config = args.config
     to_update = []
-
-    # MAL API
     for id, mal_id, name, my_eps in anime_iter(config):
+        # Search for our show on MAL, and make sure to match our MAL id.
         logger.debug("Our entry id=%r, name=%r, eps=%r", id, name, my_eps)
-        while True:
-            try:
-                response = ffrequest(mal_search + urlencode({'q': name}))
-            except URLError as err:
-                logger.warning("Encountered URLError %s", err)
-                continue
-            else:
-                break
+        response = ffrequest(mal_search + urlencode({'q': name}))
         response = response.read().decode()
         logger.debug(response)
         tree = xmllib.parse(response)
         if tree is None:
             logger.warning('No results found for id=%r, name=%r', id, name)
             continue
-        found = dict((int(_get(e, 'id')),
-                      [_get(e, k) for k in ('title', 'episodes')])
-                     for e in list(tree))
+        found = [_get_data(entity) for entity in list(tree)]
+        found = dict((int(entry[0]), entry[1:]) for entry in found)
         found_title, found_eps = found[mal_id]
         found_eps = int(found_eps)
         logger.debug('Found mal_id=%r, name=%r, eps=%r',
                      mal_id, found_title, found_eps)
         if found_title != name:
-            raise Error('Found {}, our name is {}'.format(found_title,
-                                                          name))
-        assert found_title == name
+            raise Error('Found {}, our name is {}'.format(
+                found_title, name))
         if found_eps != 0:
             assert found_eps > 0
             to_update.append((found_eps, id))
-
     logger.info('Updating local entries')
     update_entries(config, to_update)
 
