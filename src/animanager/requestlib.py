@@ -15,10 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""HTTP request stuff"""
+
 from urllib import request
 
 
 def setup(config):
+    """Set up request MAL authentication."""
     # set up auth
     auth_handler = request.HTTPBasicAuthHandler()
     auth_handler.add_password(
@@ -31,6 +34,7 @@ def setup(config):
 
 
 def ffrequest(url):
+    """urlrequest() using Firefox user agent."""
     req = request.Request(
         url,
         headers={'User-Agent':

@@ -15,27 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Update command."""
+
 import logging
-from urllib.error import URLError
 from urllib.parse import urlencode
 
 from animanager import mysqllib
 from animanager import xmllib
 from animanager.requestlib import ffrequest
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
-mal_search = "http://myanimelist.net/api/anime/search.xml?"
-statuses = ['plan to watch', 'watching', 'complete']
+_MAL_SEARCH = "http://myanimelist.net/api/anime/search.xml?"
 
 
 def _get_datum(entity, key):
+    """Get the XML entity's value for the given key."""
     return entity.find(key).text
 
-_data_keys = ('id', 'title', 'episodes')
+_DATA_KEYS = ('id', 'title', 'episodes')
 
 def _get_data(entity):
-    return [_get_datum(entity, key) for key in _data_keys]
+    """Get entry data from XML tree."""
+    return [_get_datum(entity, key) for key in _DATA_KEYS]
 
 
 def anime_iter(config):
@@ -47,9 +49,9 @@ def anime_iter(config):
             'OR status = "watching"',
         )))
         while True:
-            x = cur.fetchone()
-            if x:
-                yield x
+            row = cur.fetchone()
+            if row:
+                yield row
             else:
                 break
 
@@ -67,33 +69,34 @@ def update_entries(config, to_update):
 
 
 def main(args):
+    """Update command."""
     config = args.config
     to_update = []
-    for id, mal_id, name, my_eps in anime_iter(config):
+    for my_id, mal_id, name, my_eps in anime_iter(config):
         # Search for our show on MAL, and make sure to match our MAL id.
-        logger.debug("Our entry id=%r, name=%r, eps=%r", id, name, my_eps)
-        response = ffrequest(mal_search + urlencode({'q': name}))
+        _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", my_id, name, my_eps)
+        response = ffrequest(_MAL_SEARCH + urlencode({'q': name}))
         response = response.read().decode()
-        logger.debug(response)
+        _LOGGER.debug(response)
         tree = xmllib.parse(response)
         if tree is None:
-            logger.warning('No results found for id=%r, name=%r', id, name)
+            _LOGGER.warning('No results found for id=%r, name=%r', my_id, name)
             continue
         found = [_get_data(entity) for entity in list(tree)]
         found = dict((int(entry[0]), entry[1:]) for entry in found)
         found_title, found_eps = found[mal_id]
         found_eps = int(found_eps)
-        logger.debug('Found mal_id=%r, name=%r, eps=%r',
-                     mal_id, found_title, found_eps)
+        _LOGGER.debug('Found mal_id=%r, name=%r, eps=%r',
+                      mal_id, found_title, found_eps)
         if found_title != name:
             raise Error('Found {}, our name is {}'.format(
                 found_title, name))
         if found_eps != 0:
             assert found_eps > 0
-            to_update.append((found_eps, id))
-    logger.info('Updating local entries')
+            to_update.append((found_eps, my_id))
+    _LOGGER.info('Updating local entries')
     update_entries(config, to_update)
 
 
 class Error(Exception):
-    pass
+    """General error."""

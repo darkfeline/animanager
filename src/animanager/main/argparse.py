@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Argument parsing."""
+
 import argparse
-import logging
 
 from animanager import configlib
 from animanager.anime import argparse as anime

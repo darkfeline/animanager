@@ -21,7 +21,6 @@ The module contains XML parsing code
 
 import logging
 import re
-import sys
 from xml.etree import ElementTree
 
 _LOGGER = logging.getLogger(__name__)

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Bump command."""
+
 from collections import OrderedDict
 from datetime import date
 import logging
@@ -27,6 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def main(args):
+    """Bump command."""
     config = args.config
     name = args.name
     with mysqllib.connect(**config['db_args']) as cur:

@@ -15,21 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import commands
+"""Argument parsing."""
+
+from .bump import main as bump
+from .add import main as add
+from .update import main as update
+from .stats import main as stats
 
 
 def add_parsers(subparsers):
 
+    """Add subparsers."""
+
     parser = subparsers.add_parser('bump')
     parser.add_argument('name', nargs='?')
-    parser.set_defaults(func=commands.bump)
+    parser.set_defaults(func=bump)
 
     parser = subparsers.add_parser('add')
     parser.add_argument('name', nargs='?')
-    parser.set_defaults(func=commands.add)
+    parser.set_defaults(func=add)
 
     parser = subparsers.add_parser('update')
-    parser.set_defaults(func=commands.update)
+    parser.set_defaults(func=update)
 
     parser = subparsers.add_parser('stats')
-    parser.set_defaults(func=commands.stats)
+    parser.set_defaults(func=stats)

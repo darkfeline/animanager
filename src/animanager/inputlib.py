@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Tools for getting input"""
+
 def get_choice(choices, default=-1):
     """Prompt for user to pick a choice.
 

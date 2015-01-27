@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""MySQL connector utilites."""
+
 from contextlib import contextmanager
 
 import mysql.connector
@@ -22,6 +24,7 @@ import mysql.connector
 
 @contextmanager
 def connect(*args, **kwargs):
+    """MySQL connection context manager."""
     try:
         cnx = mysql.connector.connect(*args, **kwargs)
         cur = cnx.cursor()

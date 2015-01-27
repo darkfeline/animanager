@@ -15,3 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""This package handles stuff for the anime table in the database."""
