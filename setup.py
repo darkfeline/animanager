@@ -17,6 +17,6 @@ setup(
     author='Allen Li',
     author_email='darkfeline@felesatra.moe',
     description='Anime manager MySQL frontend application',
-    license='',
+    license='GPLv3',
     url='',
 )
