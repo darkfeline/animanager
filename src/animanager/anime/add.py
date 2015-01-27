@@ -19,6 +19,7 @@
 
 from collections import OrderedDict
 from datetime import date
+import logging
 from urllib.parse import urlencode
 
 from animanager import inputlib
@@ -26,6 +27,7 @@ from animanager import mysqllib
 from animanager import xmllib
 from animanager.requestlib import ffrequest
 
+_LOGGER = logging.getLogger(__name__)
 _MAL_SEARCH = "http://myanimelist.net/api/anime/search.xml?"
 _STATUSES = ('plan to watch', 'watching', 'complete')
 
@@ -74,8 +76,9 @@ def main(args):
             args['date_started'] = today
             args['date_finished'] = today
 
+    query = 'INSERT INTO anime SET {}'.format(
+        ', '.join('{}=%s'.format(key) for key in args))
+    values = list(args.values())
+    _LOGGER.debug('query %r %r', query, values)
     with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(
-            'INSERT INTO anime SET {}'.format(
-                ', '.join('{}=%s'.format(key) for key in args)),
-            args.values())
+        cur.execute(query, values)
