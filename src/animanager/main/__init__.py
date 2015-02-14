@@ -21,8 +21,6 @@ This package provides an easy framework for implementing commands.
 
 import logging
 
-from animanager import requestlib
-
 from . import argparse
 
 
@@ -35,7 +33,6 @@ def main():
     # Parse arguments.
     parser = argparse.make_parser()
     args = parser.parse_args()
-    requestlib.setup(args.config)
     if args.debug:
         handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s @%(name)s %(message)s'))

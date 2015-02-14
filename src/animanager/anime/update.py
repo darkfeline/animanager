@@ -20,24 +20,10 @@
 import logging
 from urllib.parse import urlencode
 
+from animanager import mal
 from animanager import mysqllib
-from animanager import xmllib
-from animanager.requestlib import ffrequest
 
 _LOGGER = logging.getLogger(__name__)
-
-_MAL_SEARCH = "http://myanimelist.net/api/anime/search.xml?"
-
-
-def _get_datum(entity, key):
-    """Get the XML entity's value for the given key."""
-    return entity.find(key).text
-
-_DATA_KEYS = ('id', 'title', 'episodes')
-
-def _get_data(entity):
-    """Get entry data from XML tree."""
-    return [_get_datum(entity, key) for key in _DATA_KEYS]
 
 
 def anime_iter(config):
@@ -71,21 +57,19 @@ def update_entries(config, to_update):
 def main(args):
     """Update command."""
     config = args.config
+    mal.setup(config)
     to_update = []
     for my_id, mal_id, name, my_eps in anime_iter(config):
         # Search for our show on MAL, and make sure to match our MAL id.
         _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", my_id, name, my_eps)
-        response = ffrequest(_MAL_SEARCH + urlencode({'q': name}))
-        response = response.read().decode()
-        _LOGGER.debug(response)
-        tree = xmllib.parse(response)
-        if tree is None:
+        try:
+            results = mal.anime_search(name)
+        except mal.ResponseError:
             _LOGGER.warning('No results found for id=%r, name=%r', my_id, name)
             continue
-        found = [_get_data(entity) for entity in list(tree)]
-        found = dict((int(entry[0]), entry[1:]) for entry in found)
-        found_title, found_eps = found[mal_id]
-        found_eps = int(found_eps)
+        results = dict((result.id, result) for result in results)
+        found = results[mal_id]
+        found_title, found_eps = found.title, found.episodes
         _LOGGER.debug('Found mal_id=%r, name=%r, eps=%r',
                       mal_id, found_title, found_eps)
         if found_title != name:

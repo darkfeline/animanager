@@ -25,7 +25,8 @@ Complete: {complete}
 On Hold: {on hold}
 Dropped: {dropped}
 Plan to Watch: {plan to watch}
-Total: {total}"""
+Total: {total}
+Episodes watched: {ep_watched}"""
 
 
 def main(args):
@@ -39,5 +40,7 @@ def main(args):
         for status in _STATUSES:
             cur.execute(query, (status,))
             counts[status] = cur.fetchone()[0]
+        cur.execute('SELECT SUM(ep_watched) FROM anime')
+        counts['ep_watched'] = cur.fetchone()[0]
         # pylint: disable=star-args
         print(_OUTPUT_TEMPLATE.format(**counts))

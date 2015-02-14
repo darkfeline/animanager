@@ -287,7 +287,7 @@ ENTITIES = {
 _ENTITY_PATTEREN = re.compile(r'&(\w+);')
 
 
-def _repl_func(match):
+def _entity_replace(match):
     """Entity replacement function."""
     try:
         return chr(ENTITIES[match.group(1)])
@@ -295,9 +295,9 @@ def _repl_func(match):
         return match.group(0)
 
 
-def preprocess(text):
+def _preprocess(text):
     """Preprocess XML by replacing entities."""
-    text = _ENTITY_PATTEREN.sub(_repl_func, text)
+    text = _ENTITY_PATTEREN.sub(_entity_replace, text)
     return text
 
 
@@ -315,7 +315,7 @@ def parse(text):
         return None
     text[1:1] = [DOCTYPE]
     text = '\n'.join(text)
-    text = preprocess(text)
+    text = _preprocess(text)
     parser = ElementTree.XMLParser()
     try:
         tree = ElementTree.XML(text, parser=parser)
@@ -329,3 +329,23 @@ def parse(text):
         raise err
     else:
         return tree
+
+
+def get_field(entity, field):
+    """Get the XML entity's value for the given field.
+
+    Example:
+
+    <entry>
+      <spam>eggs</spam>
+    </entry>
+
+    Pass into get_field() with key "spam" returns "eggs".
+
+    """
+    return entity.find(field).text
+
+
+def get_fields(entity, field_list):
+    """Get entry fields from XML tree."""
+    return [get_field(entity, field) for field in field_list]
