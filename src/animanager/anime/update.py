@@ -18,40 +18,19 @@
 """Update command."""
 
 import logging
-from urllib.parse import urlencode
 
+from animanager import dblib
 from animanager import mal
-from animanager import mysqllib
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def anime_iter(config):
+def anime_iter(dbconfig):
     """Return a generator of anime database entries."""
-    with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(' '.join((
-            'SELECT id, animedb_id, name, ep_total FROM anime',
-            'WHERE ep_total = 0',
-            'OR status = "watching"',
-        )))
-        while True:
-            row = cur.fetchone()
-            if row:
-                yield row
-            else:
-                break
-
-
-def update_entries(config, to_update):
-    """Update anime database entries."""
-    with mysqllib.connect(**config["db_args"]) as cur:
-        print('Setting episode totals')
-        cur.executemany('UPDATE anime SET ep_total=%s WHERE id=%s', to_update)
-        print('Setting complete as needed')
-        cur.execute(' '.join((
-            'UPDATE anime SET status="complete"',
-            'WHERE ep_total = ep_watched AND ep_total != 0',
-        )))
+    return dblib.select(dbconfig,
+                        'anime',
+                        ['id', 'animedb_id', 'name', 'ep_total'],
+                        'ep_total = 0 OR status = "watching"',)
 
 
 def main(args):
@@ -59,8 +38,8 @@ def main(args):
     config = args.config
     mal.setup(config)
     to_update = []
-    for my_id, mal_id, name, my_eps in anime_iter(config):
-        # Search for our show on MAL, and make sure to match our MAL id.
+    for my_id, mal_id, name, my_eps in anime_iter(config['db_args']):
+       # Search for our show on MAL, and make sure to match our MAL id.
         _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", my_id, name, my_eps)
         try:
             results = mal.anime_search(name)
@@ -77,9 +56,9 @@ def main(args):
                 found_title, name))
         if found_eps != 0:
             assert found_eps > 0
-            to_update.append((found_eps, my_id))
+            to_update.append((my_id, found_eps))
     _LOGGER.info('Updating local entries')
-    update_entries(config, to_update)
+    dblib.update_many(config['db_args'], 'anime', ['ep_total'], to_update)
 
 
 class Error(Exception):

@@ -20,11 +20,10 @@
 from collections import OrderedDict
 from datetime import date
 import logging
-from urllib.parse import urlencode
 
+from animanager import dblib
 from animanager import inputlib
 from animanager import mal
-from animanager import mysqllib
 
 _LOGGER = logging.getLogger(__name__)
 _STATUSES = ('plan to watch', 'watching', 'complete')
@@ -66,9 +65,4 @@ def main(args):
             fields['date_started'] = today
             fields['date_finished'] = today
 
-    query = 'INSERT INTO anime SET {}'.format(
-        ', '.join('{}=%s'.format(key) for key in fields))
-    values = list(fields.values())
-    _LOGGER.debug('query %r %r', query, values)
-    with mysqllib.connect(**config["db_args"]) as cur:
-        cur.execute(query, values)
+    dblib.insert(config['db_args'], 'anime', fields)

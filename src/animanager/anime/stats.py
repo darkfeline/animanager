@@ -17,7 +17,7 @@
 
 """Stats command."""
 
-from animanager import mysqllib
+from animanager import dblib
 
 _STATUSES = ['plan to watch', 'watching', 'complete', 'dropped', 'on hold']
 _OUTPUT_TEMPLATE = """Watching: {watching}
@@ -33,7 +33,7 @@ def main(args):
     """Stats command."""
     config = args.config
     counts = {}
-    with mysqllib.connect(**config["db_args"]) as cur:
+    with dblib.connect(config["db_args"]) as cur:
         cur.execute('SELECT count(*) FROM anime')
         counts['total'] = cur.fetchone()[0]
         query = 'SELECT count(*) FROM anime WHERE status=%s'

@@ -61,10 +61,10 @@ def main(args):
     dbconfig = args.config['db_args']
     while True:
         files = os.listdir('.')
-        if not files:
-            return
         files = [file for file in files
                  if os.path.splitext(file)[1] in ('.mp4', '.mkv')]
+        if not files:
+            return
         i = inputlib.get_choice(files)
         process(dbconfig, files[i])
         i = input('Quit? [y/N]')
