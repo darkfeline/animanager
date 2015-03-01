@@ -66,6 +66,7 @@ def main(args):
                  if os.path.splitext(file)[1] in ('.mp4', '.mkv')]
         if not files:
             return
+        files = sorted(files)
         i = inputlib.get_choice(files)
         process(dbconfig, files[i])
         i = input('Quit? [y/N]')
