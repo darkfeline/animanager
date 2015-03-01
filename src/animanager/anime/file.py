@@ -40,27 +40,16 @@ def match_dir(filename, directory):
     raise ValueError("Match not found.")
 
 
-def process(dbconfig, filename):
-    """Do watching process for file."""
-    # Play
+def play(filename):
+    """Play video."""
     subprocess.call([PLAYER, filename])
-    # Refile
-    i = input('Refile? [Y/n]')
-    if i.lower() not in ('n', 'no'):
-        dst_dir = match_dir(filename, VID_DIR)
-        dst_path = os.path.join(VID_DIR, dst_dir, os.path.basename(filename))
-        os.rename(filename, dst_path)
-        _LOGGER.info('Moved %s to %s', filename, dst_path)
-    print('>>>> ' + filename)
-    i = input('Bump? [Y/n]')
-    if i.lower() not in ('n', 'no'):
-        ibump(dbconfig, dst_dir)
 
 
 def main(args):
     """Entry point."""
     dbconfig = args.config['db_args']
     while True:
+        # Choose file
         files = os.listdir('.')
         files = [file for file in files
                  if os.path.splitext(file)[1] in ('.mp4', '.mkv')]
@@ -68,7 +57,19 @@ def main(args):
             return
         files = sorted(files)
         i = inputlib.get_choice(files)
-        process(dbconfig, files[i])
-        i = input('Quit? [y/N]')
-        if i.lower() in ('y', 'yes'):
-            return
+
+        # Process file
+        filename = files[i]
+        play(filename)
+
+        dst_dir = match_dir(filename, VID_DIR)
+        dst_path = os.path.join(VID_DIR, dst_dir, os.path.basename(filename))
+
+        i = input('Abort which? [rb] ')
+        i = set(i)
+        if not 'r' in i:
+            os.rename(filename, dst_path)
+            _LOGGER.info('Moved %s to %s', filename, dst_path)
+        if not 'b' in i:
+            print('>>>> ' + filename)
+            ibump(dbconfig, dst_dir)
