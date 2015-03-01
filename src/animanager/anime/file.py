@@ -45,15 +45,16 @@ def process(dbconfig, filename):
     # Play
     subprocess.call([PLAYER, filename])
     # Refile
-    dst_dir = match_dir(filename, VID_DIR)
-    dst_path = os.path.join(VID_DIR, dst_dir, os.path.basename(filename))
-    os.rename(filename, dst_path)
-    _LOGGER.info('Moved %s to %s', filename, dst_path)
+    i = input('Refile? [Y/n]')
+    if i.lower() not in ('n', 'no'):
+        dst_dir = match_dir(filename, VID_DIR)
+        dst_path = os.path.join(VID_DIR, dst_dir, os.path.basename(filename))
+        os.rename(filename, dst_path)
+        _LOGGER.info('Moved %s to %s', filename, dst_path)
     print('>>>> ' + filename)
     i = input('Bump? [Y/n]')
-    if i.lower() in ('n', 'no'):
-        return
-    ibump(dbconfig, dst_dir)
+    if i.lower() not in ('n', 'no'):
+        ibump(dbconfig, dst_dir)
 
 
 def main(args):
