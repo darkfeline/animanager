@@ -1,8 +1,10 @@
-# anime_tools
+# animanager
+
+Personal anime database management tool.
 
 ## Dependencies
 
-* Python 3.3
+* Python 3
 * Python MySQL connector 1.0.12:
   https://dev.mysql.com/downloads/connector/python/
 
