@@ -40,7 +40,6 @@ def _dbconnect(*args, **kwargs):
 
 def connect(dbconfig):
     """Connect using a database configuration."""
-    # pylint: disable=star-args
     return _dbconnect(**dbconfig)
 
 
