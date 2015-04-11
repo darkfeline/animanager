@@ -19,6 +19,8 @@
 Anime filer script.
 """
 
+from collections import namedtuple
+import json
 import logging
 import os
 import subprocess
@@ -30,13 +32,38 @@ from .bump import ibump
 PLAYER = 'mpv'
 VID_DIR = os.path.join(os.environ['HOME'], 'bibliotheca', 'vid')
 _LOGGER = logging.getLogger(__name__)
+INFO_FILE = 'info.json'
+
+MatchInfo = namedtuple('MatchInfo', ['name', 'matches', 'filing'])
 
 
-def match_dir(filename, directory):
-    """Match given filename with subdirectory in given directory."""
+def read_info_file(directory):
+    """Try to read info file."""
+    path = os.path.join(directory, INFO_FILE)
+    if os.path.exists(path):
+        with open(path) as file:
+            return MatchInfo(filing=directory, **json.load(file))
+    else:
+        return None
+
+
+def get_info(filename, directory):
+    """Get info for filing and bumping a show.
+
+    Args:
+        filename: Filename.
+        directory: Path to filing directory.
+
+    """
     for name in os.listdir(directory):
-        if os.path.isdir(os.path.join(directory, name)) and name in filename:
-            return name
+        path = os.path.join(directory, name)
+        if not os.path.isdir(path):
+            continue
+        info = read_info_file(path)
+        if info is None:
+            info = MatchInfo(name, name, path)
+        if info.matches in filename:
+            return info
     raise ValueError("Match not found.")
 
 
@@ -62,8 +89,8 @@ def main(args):
         filename = files[i]
         play(filename)
 
-        dst_dir = match_dir(filename, VID_DIR)
-        dst_path = os.path.join(VID_DIR, dst_dir, os.path.basename(filename))
+        info = get_info(filename, VID_DIR)
+        dst_path = os.path.join(info.filing, filename)
 
         i = input('Abort which? [rb] ')
         i = set(i)
@@ -73,4 +100,4 @@ def main(args):
             _LOGGER.info('Moved %s to %s', filename, dst_path)
         if not 'b' in i:
             print('>>>> ' + filename)
-            ibump(dbconfig, dst_dir)
+            ibump(dbconfig, info.name)
