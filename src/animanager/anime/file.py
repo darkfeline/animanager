@@ -94,10 +94,10 @@ def main(args):
 
         i = input('Abort which? [rb] ')
         i = set(i)
-        if not 'r' in i:
+        if 'r' not in i:
             os.rename(filename, dst_path)
             print('Refiled.')
             _LOGGER.info('Moved %s to %s', filename, dst_path)
-        if not 'b' in i:
+        if 'b' not in i:
             print('>>>> ' + filename)
             ibump(dbconfig, info.name)
