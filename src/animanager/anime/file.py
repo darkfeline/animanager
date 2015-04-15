@@ -55,13 +55,14 @@ def get_info(filename, directory):
         directory: Path to filing directory.
 
     """
-    for name in os.listdir(directory):
+    for name in sorted(os.listdir(directory)):
         path = os.path.join(directory, name)
         if not os.path.isdir(path):
             continue
         info = read_info_file(path)
         if info is None:
             info = MatchInfo(name, name, path)
+        _LOGGER.debug('Info %r', info)
         if info.matches in filename:
             return info
     raise ValueError("Match not found.")
