@@ -31,7 +31,6 @@ def make_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=configlib.load_config,
                         default=configlib.default_config())
-    parser.add_argument('--debug', action='store_true')
 
     # Set up subparsers
     subparsers = parser.add_subparsers(title='Managers')
