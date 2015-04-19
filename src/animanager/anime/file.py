@@ -30,7 +30,7 @@ from animanager import inputlib
 from .bump import ibump
 
 PLAYER = 'mpv'
-VID_DIR = os.path.join(os.environ['HOME'], 'bibliotheca', 'vid')
+VID_DIR = os.path.join(os.environ['HOME'], 'infelphira', 'anime')
 _LOGGER = logging.getLogger(__name__)
 INFO_FILE = 'info.json'
 
