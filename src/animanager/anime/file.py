@@ -90,9 +90,16 @@ def main(args):
         filename = files[i]
         play(filename)
 
-        info = get_info(filename, VID_DIR)
+        while True:
+            try:
+                info = get_info(filename, VID_DIR)
+            except ValueError:
+                input('Match not found.  Press Return once problem is fixed.')
+            else:
+                break
         dst_path = os.path.join(info.filing, filename)
 
+        print('Info found: {!r}'.format(info))
         i = input('Abort which? [rb] ')
         i = set(i)
         if 'r' not in i:
