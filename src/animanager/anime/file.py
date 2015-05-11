@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import subprocess
+import re
 
 from animanager import inputlib
 
@@ -62,7 +63,7 @@ def get_info(filename, directory):
         if info is None:
             info = MatchInfo(name, name, path)
         _LOGGER.debug('Info %r', info)
-        if info.matches in filename:
+        if re.search(info.matches, filename):
             return info
     raise ValueError("Match not found.")
 
