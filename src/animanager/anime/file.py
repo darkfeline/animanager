@@ -30,7 +30,6 @@ from animanager import inputlib
 from .bump import ibump
 
 PLAYER = 'mpv'
-VID_DIR = os.path.join(os.environ['HOME'], 'infelphira', 'anime')
 _LOGGER = logging.getLogger(__name__)
 INFO_FILE = 'info.json'
 
@@ -92,7 +91,7 @@ def main(args):
 
         while True:
             try:
-                info = get_info(filename, VID_DIR)
+                info = get_info(filename, args.config['file_dir'])
             except ValueError:
                 input('Match not found.  Press Return once problem is fixed.')
             else:
