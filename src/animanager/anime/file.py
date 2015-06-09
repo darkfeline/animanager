@@ -30,7 +30,7 @@ from animanager import inputlib
 
 from .bump import ibump
 
-PLAYER = 'mpv'
+PLAYER = ['optirun', 'mpv']
 _LOGGER = logging.getLogger(__name__)
 INFO_FILE = 'info.json'
 
@@ -70,7 +70,7 @@ def get_info(filename, directory):
 
 def play(filename):
     """Play video."""
-    subprocess.call([PLAYER, filename])
+    subprocess.call(PLAYER + [filename])
 
 
 def main(args):
