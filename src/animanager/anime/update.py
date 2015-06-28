@@ -39,7 +39,7 @@ def main(args):
     mal.setup(config)
     to_update = []
     for my_id, mal_id, name, my_eps in anime_iter(config['db_args']):
-       # Search for our show on MAL, and make sure to match our MAL id.
+        # Search for our show on MAL, and make sure to match our MAL id.
         _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", my_id, name, my_eps)
         try:
             results = mal.anime_search(name)
