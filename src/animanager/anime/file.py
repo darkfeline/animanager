@@ -30,7 +30,7 @@ from animanager import inputlib
 
 from .bump import ibump
 
-PLAYER = ['optirun', 'mpv']
+PLAYER = ['mpv']
 _LOGGER = logging.getLogger(__name__)
 INFO_FILE = 'info.json'
 
