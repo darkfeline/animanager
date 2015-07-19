@@ -20,7 +20,6 @@ The module contains XML parsing code for MAL.
 """
 
 import logging
-import re
 from xml.etree import ElementTree
 
 from .. import xmllib
