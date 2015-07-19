@@ -30,6 +30,13 @@ def load_config(path=None):
     return config
 
 
+def save_config(config, path=None):
+    if path is None:
+        path = default_config()
+    with open(path, 'w') as file:
+        json.dump(config, file)
+
+
 def default_config():
     """Return default user config path."""
     return os.path.join(os.path.expanduser("~"), '.anime.cfg')
