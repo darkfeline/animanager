@@ -63,3 +63,23 @@ def parse(text):
         raise err
     else:
         return tree
+
+
+def _get_field(entity, field):
+    """Get the XML entity's value for the given field.
+
+    Example:
+
+    <entry>
+      <spam>eggs</spam>
+    </entry>
+
+    get_field(entitiy, "spam") returns "eggs".
+
+    """
+    return entity.find(field).text
+
+
+def get_fields(entity, field_list):
+    """Get entry fields from a list of XML entities."""
+    return [_get_field(entity, field) for field in field_list]

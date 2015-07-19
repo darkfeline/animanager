@@ -292,23 +292,3 @@ def preprocess(text):
     """Preprocess XML by replacing entities."""
     text = _ENTITY_PATTERN.sub(_entity_replace, text)
     return text
-
-
-def get_field(entity, field):
-    """Get the XML entity's value for the given field.
-
-    Example:
-
-    <entry>
-      <spam>eggs</spam>
-    </entry>
-
-    get_field(entitiy, "spam") returns "eggs".
-
-    """
-    return entity.find(field).text
-
-
-def get_fields(entity, field_list):
-    """Get entry fields from a list of XML entities."""
-    return [get_field(entity, field) for field in field_list]
