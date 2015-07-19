@@ -17,6 +17,54 @@
 
 """Tools for getting input"""
 
+import cmd
+
+class ChoiceCmd(cmd.Cmd):
+
+    intro = "Type ? for help."
+    prompt = "$"
+
+    def __init__(self, choices, default=-1):
+        self.original_choices = choices
+        self.default = default
+
+	def help_general(self):
+        print("Type the number of a choice or use a specific command.")
+
+    def preloop(self):
+        # Initialize choices and print
+        self.do_r()
+        self.do_p()
+
+    def do_r(self):
+        """Reset choices."""
+        self.choices = list(enumerate(self.original_chocies))
+
+    def do_f(self, arg):
+        """Filter choice set."""
+        self.choices = [(i, choice) for i, choice in self.choices if arg in choice]
+
+    def do_p(self):
+        """Print choices."""
+        for i, choice in choices:
+            print("{}: {}".format(i, choice))
+
+    def emptyline(self):
+        """Use default choice."""
+        self.choice = self.default
+        return True
+
+    def default(self, line):
+        """Pick a choice."""
+        try:
+            filtered_i = int(line)
+        except ValueError:
+            print('Invalid pick.')
+        else:
+            real_i = self.choices[filtered_i][1]
+            self.choice = real_i
+            return True
+
 def get_choice(choices, default=-1):
     """Prompt for user to pick a choice.
 
@@ -27,10 +75,6 @@ def get_choice(choices, default=-1):
         An int index of the given choice: choices[i].
 
     """
-    for i, name in enumerate(choices):
-        print("{}: {}".format(i, name))
-    try:
-        i = int(input("Pick [{}]: ".format(default)))
-    except ValueError:
-        i = default
-    return i
+    cmd_interp = ChoiceCmd(choices, default)
+    cmd_interp.cmdloop()
+    return cmd_interp.choice
