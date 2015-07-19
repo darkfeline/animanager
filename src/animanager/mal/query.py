@@ -21,7 +21,7 @@ from collections import namedtuple
 from urllib import request
 from urllib.parse import urlencode
 
-from . import xmllib
+from . import xml
 
 
 def setup(config):
@@ -46,19 +46,19 @@ def _ffrequest(url):
                  'Firefox/24.0'})
     return request.urlopen(req)
 
-_A_SEARCH = "http://myanimelist.net/api/anime/search.xml?"
-_A_SEARCH_FIELDS = ('id', 'title', 'episodes', 'type')
+_ANIME_SEARCH_URL = "http://myanimelist.net/api/anime/search.xml?"
+_ANIME_SEARCH_FIELDS = ('id', 'title', 'episodes', 'type')
 AnimeResult = namedtuple('AnimeResult', ['id', 'title', 'episodes', 'type'])
 
 
 def anime_search(name):
     """Search MAL for anime."""
-    response = _ffrequest(_A_SEARCH + urlencode({'q': name}))
+    response = _ffrequest(_ANIME_SEARCH_URL + urlencode({'q': name}))
     response = response.read().decode()
-    tree = xmllib.parse(response)
+    tree = xml.parse(response)
     if tree is None:
         raise ResponseError('No results found for %r', name)
-    found = [xmllib.get_fields(entity, _A_SEARCH_FIELDS)
+    found = [xml.get_fields(entity, _ANIME_SEARCH_FIELDS)
              for entity in list(tree)]
     found = [AnimeResult(int(id_), title, int(episodes), type_)
              for id_, title, episodes, type_ in found]
