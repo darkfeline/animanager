@@ -21,8 +21,10 @@ import json
 import os
 
 
-def load_config(path):
+def load_config(path=None):
     """Load config from file."""
+    if path is None:
+        path = default_config()
     with open(path) as file:
         config = json.load(file)
     return config
