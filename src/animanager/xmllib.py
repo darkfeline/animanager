@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""The module contains XML parsing code."""
+"""The module contains XML parsing code.
+
+Specifically, an XML preprocessing function for replacing HTML entities."""
 
 import re
 
