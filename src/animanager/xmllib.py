@@ -15,19 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-The module contains XML parsing code
-"""
+"""The module contains XML parsing code."""
 
-import logging
 import re
-from xml.etree import ElementTree
-
-_LOGGER = logging.getLogger(__name__)
-DOCTYPE = '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' + \
-        '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
 ENTITIES = {
+    # These entities are supported by XML natively.
     # "quot": 34,
     # "amp": 38,
     # "apos": 39,
@@ -284,7 +277,7 @@ ENTITIES = {
     "diams": 9830,
 }
 
-_ENTITY_PATTEREN = re.compile(r'&(\w+);')
+_ENTITY_PATTERN = re.compile(r'&(\w+);')
 
 
 def _entity_replace(match):
@@ -295,40 +288,10 @@ def _entity_replace(match):
         return match.group(0)
 
 
-def _preprocess(text):
+def preprocess(text):
     """Preprocess XML by replacing entities."""
-    text = _ENTITY_PATTEREN.sub(_entity_replace, text)
+    text = _ENTITY_PATTERN.sub(_entity_replace, text)
     return text
-
-
-def parse(text):
-    """Parse XML.
-
-    Return None if text is empty.
-    """
-    if not text:
-        return None
-    _LOGGER.debug(text)
-    text = text.split('\n')
-    # Hack for MAL behavior
-    if text[0] == 'No results':
-        return None
-    text[1:1] = [DOCTYPE]
-    text = '\n'.join(text)
-    text = _preprocess(text)
-    parser = ElementTree.XMLParser()
-    try:
-        tree = ElementTree.XML(text, parser=parser)
-    except ElementTree.ParseError as err:
-        _LOGGER.error('Encountered parse error: %r', err)
-        line, col = err.position
-        _LOGGER.error('Error at line %s, column %s', line, col)
-        text_lines = text.split('\n')
-        _LOGGER.error(text_lines[line])
-        _LOGGER.error(' ' * (col-1) + '^')
-        raise err
-    else:
-        return tree
 
 
 def get_field(entity, field):
@@ -340,12 +303,12 @@ def get_field(entity, field):
       <spam>eggs</spam>
     </entry>
 
-    Pass into get_field() with key "spam" returns "eggs".
+    get_field(entitiy, "spam") returns "eggs".
 
     """
     return entity.find(field).text
 
 
 def get_fields(entity, field_list):
-    """Get entry fields from XML tree."""
+    """Get entry fields from a list of XML entities."""
     return [get_field(entity, field) for field in field_list]
