@@ -36,7 +36,7 @@ class Config:
     @staticmethod
     def defaultpath():
         """Return default user config path."""
-        return os.path.join(os.path.expanduser("~"), '.animanager.json')
+        return os.path.join(os.environ['HOME'], '.animanager.json')
 
     def save(self):
         with open(self.path, 'w') as file:
