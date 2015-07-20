@@ -101,3 +101,18 @@ def select(dbconfig, table, fields, where_filter, where_args=tuple()):
                 yield row
             else:
                 break
+
+
+def convert_set(x):
+    """Convert a single item set to the item itself.
+
+    This is because MySQL connector is retarded, returning a set type when the
+    MySQL type is set/enum.
+
+    """
+    # MySQL connector returns a set type because it is retarded.
+    # We need to convert it.
+    if len(x) != 1:
+        raise ValueError('{} does not have exactly one item.'.format(x))
+    x = list(x)
+    return status[0]
