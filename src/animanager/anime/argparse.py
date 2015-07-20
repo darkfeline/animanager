@@ -21,7 +21,7 @@ from .bump import main as bump
 from .add import main as add
 from .update import main as update
 from .stats import main as stats
-from .file import main as file
+from .watch import main as watch
 
 
 def add_parsers(subparsers):
@@ -42,5 +42,5 @@ def add_parsers(subparsers):
     parser = subparsers.add_parser('stats')
     parser.set_defaults(func=stats)
 
-    parser = subparsers.add_parser('file')
-    parser.set_defaults(func=file)
+    parser = subparsers.add_parser('watch')
+    parser.set_defaults(func=watch)
