@@ -64,7 +64,7 @@ class ChoiceCmd(cmd.Cmd):
         except ValueError:
             print('Invalid pick.')
             return
-        real_i = self.choices[filtered_i][1]
+        real_i = self.choices[filtered_i][0]
         try:
             self.set_choice(real_i)
         except ValueError:
