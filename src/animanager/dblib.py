@@ -115,4 +115,4 @@ def convert_set(x):
     if len(x) != 1:
         raise ValueError('{} does not have exactly one item.'.format(x))
     x = list(x)
-    return status[0]
+    return x[0]
