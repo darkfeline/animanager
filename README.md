@@ -11,7 +11,7 @@ Personal anime database management tool.
 
 ## Configuration
 
-You need to set up a config file.  The default path is `~/.anime.cfg`.  The file
+You need to set up a config file.  The default path is `~/.animanager.json`.  The file
 is in JSON format.
 
 ### Example config

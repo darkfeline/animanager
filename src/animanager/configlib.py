@@ -39,4 +39,4 @@ def save_config(config, path=None):
 
 def default_config():
     """Return default user config path."""
-    return os.path.join(os.path.expanduser("~"), '.anime.cfg')
+    return os.path.join(os.path.expanduser("~"), '.animanager.json')
