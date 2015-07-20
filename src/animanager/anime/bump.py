@@ -28,51 +28,47 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def ibump(dbconfig, name):
-    "Interactively bump anime."""
-    results = dblib.select(dbconfig,
-                           'anime',
-                           ['id', 'name', 'ep_watched', 'ep_total', 'status'],
-                           'name LIKE %s AND status != "complete"',
-                           ('%{}%'.format(name),))
+    "Interactively bump anime episode count."""
+    results = dblib.select(
+        dbconfig,
+        table='anime',
+        fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
+        where_filter='name LIKE %s AND status != "complete"',
+        where_args=('%{}%'.format(name),),
+    )
     results = list(results)
-    i = inputlib.get_choice(
-        ['{} {}'.format(x[0], x[1]) for x in results])
+    i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in results])
     choice = results[i]
     choice_id = choice[0]
     watched, total, status = choice[2:]
 
-    # Confirm choice
-    if watched >= total and total != 0:
+    assert (total == 0) or (watched <= total)
+    if watched == total and total != 0:
         print('Maxed')
         return
-    print('Bumping {}/{}'.format(watched, total))
-    confirm = input("Okay? [Y/n]")
-    if confirm.lower() in ('n', 'no'):
-        print('Quitting')
+
+    # Confirm choice
+    print('Currently {}/{}'.format(watched, total))
+    if not inputlib.get_yn("Bump?"):
+        print('Aborting...')
         return
 
     # MySQL connector returns a set type because it is retarded.
     # We need to convert it.
-    status = list(status)
-    assert len(status) == 1
-    status = status[0]
+    status = dblib.convert_set(status)
     assert isinstance(status, str)
 
-    # Calculate what needs updating
+    # Calculate what needs updating.
     update_map = OrderedDict()
     watched += 1
     print('Now {}/{}'.format(watched, total))
     update_map['ep_watched'] = watched
 
-    if status in ('on hold', 'dropped', 'plan to watch'):
-        print('Setting status to "watching"')
+    if status != 'watching':
+        assert status in ('on hold', 'dropped', 'plan to watch')
         update_map['status'] = 'watching'
-    if status == 'plan to watch':
-        print('Setting start date')
-        update_map['date_started'] = date.today().isoformat()
-    if watched == total and total != 0:
-        print('Setting status to "complete"')
-        update_map['status'] = 'complete'
+        if status == 'plan to watch':
+            update_map['date_started'] = date.today().isoformat()
 
     dblib.update_one(dbconfig,
                      'anime',
