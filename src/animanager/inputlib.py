@@ -39,7 +39,7 @@ class ChoiceCmd(cmd.Cmd):
         self.do_r()
         self.do_p()
 
-    def do_r(self):
+    def do_r(self, arg=None):
         """Reset choices."""
         self.choices = list(enumerate(self.original_choices))
 
@@ -47,9 +47,14 @@ class ChoiceCmd(cmd.Cmd):
         """Filter choice set."""
         self.choices = [(i, choice)
                         for i, choice in self.choices
-                        if arg in choice]
+                        if arg in choice.lower()]
+        if not self.choices:
+            print('No choices, resetting.')
+            self.do_r()
+        else:
+            self.do_p()
 
-    def do_p(self):
+    def do_p(self, arg=None):
         """Print choices."""
         for i, choice in self.choices:
             print("{}: {}".format(i, choice))
