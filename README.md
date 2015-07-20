@@ -55,3 +55,5 @@ These are used for authenticating with MAL, for making queries against its API.
 - passwd
 
 ## Database configuration
+
+The `db.sql` file is used for setting up the database.
