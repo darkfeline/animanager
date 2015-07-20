@@ -30,7 +30,7 @@ def make_parser():
     # Set up main parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=configlib.load_config,
-                        default=None)
+                        default=configlib.load_config())
 
     # Set up subparsers
     subparsers = parser.add_subparsers(title='Managers')
