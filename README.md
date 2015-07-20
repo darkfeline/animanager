@@ -20,7 +20,7 @@ is in JSON format.
         "watch": {
             "player": ["mpv"],
             "series": {
-                10: ".*Haruhi.*(?P<ep>[0-9]+)"],
+                10: ".*Haruhi.*(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?"],
             },
         },
         "db_args": {
@@ -45,7 +45,8 @@ These are used for configuring the `watch` command.
 - player: The command line arguments used for launching a video player.
 - series: A dictionary mapping an anime series ID to a regex for matching
   against the filenames of episodes of that series.  The match group named `ep`
-  is used for the episode number.
+  is used for the episode number.  The optional match group named `ver` is used
+  for matching release version, if applicable.
 
 #### player
 
