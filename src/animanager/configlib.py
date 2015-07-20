@@ -28,7 +28,8 @@ class Config:
             path = self.defaultpath()
         self.path = path
         try:
-            self.config = json.load(path)
+            with open(self.path) as file:
+                self.config = json.load(file)
         except OSError:
             raise ConfigError('Could not read config file {}'.format(path))
 
