@@ -17,48 +17,70 @@
 
 """Update command."""
 
+import sys
 import logging
 
 from animanager import dblib
 from animanager import mal
+from animanager import inputlib
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def anime_iter(dbconfig):
+def _anime_iter(dbconfig):
     """Return a generator of anime database entries."""
-    return dblib.select(dbconfig,
-                        'anime',
-                        ['id', 'animedb_id', 'name', 'ep_total'],
-                        'ep_total = 0 OR status = "watching"',)
+    return dblib.select(
+        dbconfig,
+        table='anime',
+        fields=['id', 'animedb_id', 'name', 'ep_total'],
+        where_filter='ep_total = 0 OR status = "watching"',
+    )
 
 
 def main(args):
     """Update command."""
+
     config = args.config
-    mal.setup(config)
+    mal.query.setup(config)
+
+    # Keep a list of ids and episodes to update.
     to_update = []
-    for my_id, mal_id, name, my_eps in anime_iter(config['db_args']):
+    to_rename = []
+    for id, mal_id, name, eps in _anime_iter(config['db_args']):
+        _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", id, name, eps)
+
         # Search for our show on MAL, and make sure to match our MAL id.
-        _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", my_id, name, my_eps)
         try:
-            results = mal.anime_search(name)
+            results = mal.query.anime_search(name)
         except mal.ResponseError:
-            _LOGGER.warning('No results found for id=%r, name=%r', my_id, name)
+            _LOGGER.warning('No results found for id=%r, name=%r', id, name)
             continue
         results = dict((result.id, result) for result in results)
         found = results[mal_id]
         found_title, found_eps = found.title, found.episodes
         _LOGGER.debug('Found mal_id=%r, name=%r, eps=%r',
                       mal_id, found_title, found_eps)
+
+        # If their name is different from our name, prompt for action.
         if found_title != name:
-            raise Error('Found {}, our name is {}'.format(
-                found_title, name))
+            print('Found {}, our name is {}'.format(found_title, name))
+            choice = inputlib.get_choice(["Use MAL's name",
+                                          "Ignore",
+                                          "Abort"], 0)
+            if choice == 0:
+                to_rename.append((id, found_title))
+            elif choice == 2:
+                _LOGGER.info('Aborting...')
+                sys.exit(1)
         if found_eps != 0:
             assert found_eps > 0
-            to_update.append((my_id, found_eps))
-    _LOGGER.info('Updating local entries')
-    dblib.update_many(config['db_args'], 'anime', ['ep_total'], to_update)
+            to_update.append((id, found_eps))
+    if to_rename:
+        _LOGGER.info('Renaming local entries')
+        dblib.update_many(config['db_args'], 'anime', ['name'], to_rename)
+    if to_update:
+        _LOGGER.info('Updating local entries')
+        dblib.update_many(config['db_args'], 'anime', ['ep_total'], to_update)
 
 
 class Error(Exception):
