@@ -33,15 +33,16 @@ def main(args):
 
     """Add command."""
 
+    # Set arguments to convenient variables.
     config = args.config
     name = args.name
 
-    # Get choices from MAL API
-    mal.setup(config)
-    results = mal.anime_search(name)
-    i = inputlib.get_choice(['{} {}'.format(x.id, x.title) for x in results])
+    # Get choices from MAL API.
+    mal.query.setup(config)
+    results = mal.query.anime_search(name)
+    i = inputlib.get_choice(['({}) {}'.format(x.id, x.title) for x in results])
 
-    # Set data fields
+    # Set data fields.
     chosen = results[i]
     fields = OrderedDict((
         ('animedb_id', chosen.id),
@@ -50,17 +51,15 @@ def main(args):
         ('type', chosen.type),
     ))
 
-    # Choose status to set
+    # Choose initial status to set.
     i = inputlib.get_choice(_STATUSES, 0)
     fields['status'] = _STATUSES[i]
     if fields['status'] == 'watching':
-        confirm = input('Set start date to today? [Y/n]')
-        if confirm.lower() not in ('n', 'no'):
+        if inputlib.get_yn('Set start date to today?'):
             fields['date_started'] = date.today().isoformat()
     elif fields['status'] == 'complete':
         fields['ep_watched'] = fields['ep_total']
-        confirm = input('Set dates to today? [Y/n]')
-        if confirm.lower() not in ('n', 'no'):
+        if inputlib.get_yn('Set start and finish dates to today?'):
             today = date.today().isoformat()
             fields['date_started'] = today
             fields['date_finished'] = today
