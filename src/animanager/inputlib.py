@@ -22,13 +22,14 @@ import cmd
 
 class ChoiceCmd(cmd.Cmd):
 
-    intro = "Type ? for help."
-    prompt = "$"
+    prompt = "[{}]> "
 
     def __init__(self, choices, default=-1):
         super().__init__()
         self.original_choices = choices
         self.choice = default
+        # This gets the class's prompt and sets the instance's prompt
+        self.prompt = self.prompt.format(default)
 
     def help_general(self):
         print("Type the number of a choice or use a specific command.")
