@@ -21,22 +21,32 @@ import json
 import os
 
 
-def load_config(path=None):
-    """Load config from file."""
-    if path is None:
-        path = default_config()
-    with open(path) as file:
-        config = json.load(file)
-    return config
+class Config:
+
+    def __init__(self, path=None):
+        if path is None:
+            path = self.defaultpath()
+        self.path = path
+        try:
+            self.config = json.load(path)
+        except OSError:
+            raise ConfigError('Could not read config file {}'.format(path))
+
+    @staticmethod
+    def defaultpath():
+        """Return default user config path."""
+        return os.path.join(os.path.expanduser("~"), '.animanager.json')
+
+    def save(self):
+        with open(self.path, 'w') as file:
+            json.dump(self.config, file)
+
+    def __getitem__(self, key):
+        return self.config[key]
+
+    def __setitem__(self, key, value):
+        self.config[key] = value
 
 
-def save_config(config, path=None):
-    if path is None:
-        path = default_config()
-    with open(path, 'w') as file:
-        json.dump(config, file)
-
-
-def default_config():
-    """Return default user config path."""
-    return os.path.join(os.path.expanduser("~"), '.animanager.json')
+class ConfigError(Exception):
+    """Configuration error."""
