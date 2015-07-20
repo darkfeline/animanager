@@ -82,3 +82,18 @@ def get_choice(choices, default=-1):
     cmd_interp = ChoiceCmd(choices, default)
     cmd_interp.cmdloop()
     return cmd_interp.choice
+
+
+def get_yn(prompt, default=True):
+    """Prompt user for a binary yes/no choice."""
+    if default:
+        prompt = prompt + ' [Y/n]'
+    else:
+        prompt = prompt + ' [y/N]'
+    user_input = input(prompt)
+    # If the default is yes/true, return true as long as the input is not no.
+    # if the default is no, return no as long as the input is not yes.
+    if default:
+        return user_input.lower() not in ('n', 'no')
+    else:
+        return user_input.lower() in ('y', 'yes')
