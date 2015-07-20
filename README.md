@@ -20,8 +20,8 @@ is in JSON format.
         "watch": {
             "player": ["mpv"],
             "series": {
-                10: ".*Haruhi.*(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?"],
-            },
+                10: ".*Haruhi.*(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?"]
+            }
         },
         "db_args": {
             "host": "localhost",
