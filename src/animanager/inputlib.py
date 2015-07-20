@@ -26,6 +26,7 @@ class ChoiceCmd(cmd.Cmd):
     prompt = "$"
 
     def __init__(self, choices, default=-1):
+        super().__init__()
         self.original_choices = choices
         self.choice = default
 
