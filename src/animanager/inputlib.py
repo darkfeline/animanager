@@ -27,7 +27,7 @@ class ChoiceCmd(cmd.Cmd):
 
     def __init__(self, choices, default=-1):
         self.original_choices = choices
-        self.default = default
+        self.choice = default
 
     def help_general(self):
         print("Type the number of a choice or use a specific command.")
@@ -54,7 +54,6 @@ class ChoiceCmd(cmd.Cmd):
 
     def emptyline(self):
         """Use default choice."""
-        self.choice = self.default
         return True
 
     def default(self, line):
