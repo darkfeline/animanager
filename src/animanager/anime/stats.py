@@ -42,5 +42,4 @@ def main(args):
             counts[status] = cur.fetchone()[0]
         cur.execute('SELECT SUM(ep_watched) FROM anime')
         counts['ep_watched'] = cur.fetchone()[0]
-        # pylint: disable=star-args
         print(_OUTPUT_TEMPLATE.format(**counts))
