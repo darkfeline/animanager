@@ -62,10 +62,24 @@ class ChoiceCmd(cmd.Cmd):
             filtered_i = int(line)
         except ValueError:
             print('Invalid pick.')
+            return
+        real_i = self.choices[filtered_i][1]
+        try:
+            self.set_choice(real_i)
+        except ValueError:
+            print('Invalid pick.')
+            return
+        return True
+
+    def set_choice(self, i):
+        """Set choice as given index.
+
+        If choice is not valid, raise ValueError."""
+        i = i % len(self.choices)
+        if i >= len(self.choices):
+            raise ValueError('Invalid choice index {}'.format(i))
         else:
-            real_i = self.choices[filtered_i][1]
-            self.choice = real_i
-            return True
+            self.choice = i
 
 
 def get_choice(choices, default=-1):
