@@ -29,8 +29,9 @@ def make_parser():
 
     # Set up main parser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=configlib.Config,
-                        default=configlib.Config.defaultpath())
+    parser.add_argument('--config',
+                        default=configlib.Config.defaultpath(),
+                        help='Alternate configuration file to use.')
 
     # Set up subparsers
     subparsers = parser.add_subparsers(title='Managers')

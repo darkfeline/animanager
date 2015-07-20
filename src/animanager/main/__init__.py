@@ -21,6 +21,8 @@ This package provides an easy framework for implementing commands.
 
 import logging
 
+from animanager import configlib
+
 from . import argparse
 
 
@@ -29,6 +31,8 @@ def main():
     logging.basicConfig(level='WARNING')
     parser = argparse.make_parser()
     args = parser.parse_args()
+    # Load config in place.
+    args.config = configlib.Config(args.config)
     # Run command.
     try:
         func = args.func
