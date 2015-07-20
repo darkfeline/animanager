@@ -19,6 +19,7 @@
 
 import cmd
 
+
 class ChoiceCmd(cmd.Cmd):
 
     intro = "Type ? for help."
@@ -28,7 +29,7 @@ class ChoiceCmd(cmd.Cmd):
         self.original_choices = choices
         self.default = default
 
-	def help_general(self):
+    def help_general(self):
         print("Type the number of a choice or use a specific command.")
 
     def preloop(self):
@@ -42,11 +43,13 @@ class ChoiceCmd(cmd.Cmd):
 
     def do_f(self, arg):
         """Filter choice set."""
-        self.choices = [(i, choice) for i, choice in self.choices if arg in choice]
+        self.choices = [(i, choice)
+                        for i, choice in self.choices
+                        if arg in choice]
 
     def do_p(self):
         """Print choices."""
-        for i, choice in choices:
+        for i, choice in self.choices:
             print("{}: {}".format(i, choice))
 
     def emptyline(self):
@@ -64,6 +67,7 @@ class ChoiceCmd(cmd.Cmd):
             real_i = self.choices[filtered_i][1]
             self.choice = real_i
             return True
+
 
 def get_choice(choices, default=-1):
     """Prompt for user to pick a choice.
