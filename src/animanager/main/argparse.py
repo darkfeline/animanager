@@ -37,7 +37,11 @@ def make_parser():
     subparsers = parser.add_subparsers(title='Managers')
 
     # Set up anime subsubparser
-    subparser = subparsers.add_parser('anime')
+    subparser = subparsers.add_parser(
+        'anime',
+        description='Anime database manager.',
+        help='Commands for interacting with anime database.',
+    )
     subsubparsers = subparser.add_subparsers(title='Commands')
     anime.add_parsers(subsubparsers)
 
