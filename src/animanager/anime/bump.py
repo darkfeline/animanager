@@ -33,7 +33,7 @@ def _search(dbconfig, name):
         dbconfig,
         table='anime',
         fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
-        where_filter='name LIKE %s AND status == "watching"',
+        where_filter='name LIKE %s AND status = "watching"',
         where_args=('%{}%'.format(name),),
     )
     results = list(results)
