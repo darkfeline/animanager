@@ -17,7 +17,7 @@
 
 """Config loading stuff."""
 
-import json
+import configparser
 import os
 
 
@@ -27,27 +27,20 @@ class Config:
         if path is None:
             path = self.defaultpath()
         self.path = path
-        try:
-            with open(self.path) as file:
-                self.config = json.load(file)
-        except OSError:
-            raise ConfigError('Could not read config file {}'.format(path))
+        self.config = configparser.ConfigParser()
+        self.config.read(self.path)
 
     @staticmethod
     def defaultpath():
         """Return default user config path."""
-        return os.path.join(os.environ['HOME'], '.animanager.json')
+        return os.path.join(os.environ['HOME'], '.animanager.ini')
 
     def save(self):
         with open(self.path, 'w') as file:
-            json.dump(self.config, file)
+            self.config.write(file)
 
     def __getitem__(self, key):
         return self.config[key]
 
     def __setitem__(self, key, value):
         self.config[key] = value
-
-
-class ConfigError(Exception):
-    """Configuration error."""
