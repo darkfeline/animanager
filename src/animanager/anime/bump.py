@@ -27,8 +27,21 @@ from animanager import inputlib
 _LOGGER = logging.getLogger(__name__)
 
 
-def ibump(dbconfig, name):
-    "Interactively bump anime episode count."""
+def _search(dbconfig, name):
+    """Search for series that are being watched."""
+    results = dblib.select(
+        dbconfig,
+        table='anime',
+        fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
+        where_filter='name LIKE %s AND status == "watching"',
+        where_args=('%{}%'.format(name),),
+    )
+    results = list(results)
+    return results
+
+
+def _search_all(dbconfig, name):
+    """Search for all non-complete series."""
     results = dblib.select(
         dbconfig,
         table='anime',
@@ -37,8 +50,13 @@ def ibump(dbconfig, name):
         where_args=('%{}%'.format(name),),
     )
     results = list(results)
-    i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in results])
-    choice = results[i]
+    return results
+
+
+def ibump(dbconfig, choices):
+    "Interactively bump anime episode count."""
+    i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in choices])
+    choice = choices[i]
     choice_id = choice[0]
     watched, total, status = choice[2:]
 
@@ -78,6 +96,9 @@ def ibump(dbconfig, name):
 
 def main(args):
     """Bump command."""
-    name = args.name
     dbconfig = args.config['db_args']
-    ibump(dbconfig, name)
+    if args.all:
+        choices = _search_all(dbconfig, args.name)
+    else:
+        choices = _search(dbconfig, args.name)
+    ibump(dbconfig, choices)

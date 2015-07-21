@@ -30,6 +30,7 @@ def add_parsers(subparsers):
 
     parser = subparsers.add_parser('bump')
     parser.add_argument('name')
+    parser.add_argument('--all', action='store_true')
     parser.set_defaults(func=bump)
 
     parser = subparsers.add_parser('add')
