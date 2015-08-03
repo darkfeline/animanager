@@ -21,11 +21,11 @@ from collections import namedtuple
 from urllib import request
 from urllib.parse import urlencode
 
-from . import xml
+from .parse import parse
 
 
 def setup(config):
-    """Set up request MAL authentication."""
+    """Set up request module with authentication for MAL API."""
     # set up auth
     auth_handler = request.HTTPBasicAuthHandler()
     auth_handler.add_password(
@@ -47,7 +47,8 @@ def _ffrequest(url):
     return request.urlopen(req)
 
 _ANIME_SEARCH_URL = "http://myanimelist.net/api/anime/search.xml?"
-_ANIME_SEARCH_FIELDS = ('id', 'title', 'episodes', 'type')
+_ANIME_FIELDS = ('id', 'title', 'episodes', 'type')
+
 AnimeResult = namedtuple('AnimeResult', ['id', 'title', 'episodes', 'type'])
 
 
@@ -55,14 +56,36 @@ def anime_search(name):
     """Search MAL for anime."""
     response = _ffrequest(_ANIME_SEARCH_URL + urlencode({'q': name}))
     response = response.read().decode()
-    tree = xml.parse(response)
+    tree = parse(response)
     if tree is None:
-        raise ResponseError('No results found for %r', name)
-    found = [xml.get_fields(entity, _ANIME_SEARCH_FIELDS)
-             for entity in list(tree)]
-    found = [AnimeResult(int(id_), title, int(episodes), type_)
-             for id_, title, episodes, type_ in found]
+        raise ResponseError('No results found for {}'.format(name))
+    # Make a list of relevant fields for all entries.
+    found = [_get_fields(entry, _ANIME_FIELDS)
+             for entry in tree.findall('entry')]
+    # Make those fields into AnimeResult tuples.
+    found = [AnimeResult(int(id), title, int(episodes), type)
+             for id, title, episodes, type in found]
     return found
+
+
+def _subelement_value(element, subelement_tag):
+    """Return the text value of the given subelement.
+
+    Example:
+
+    <entry>
+      <spam>eggs</spam>
+    </entry>
+
+    get_field(element, "spam") returns "eggs".
+
+    """
+    return element.find(subelement_tag).text
+
+
+def _get_fields(entry, field_list):
+    """Get entry fields from a list of XML entities."""
+    return [_subelement_value(entry, field) for field in field_list]
 
 
 class ResponseError(Exception):

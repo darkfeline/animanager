@@ -22,11 +22,9 @@ The module contains XML parsing code for MAL.
 import logging
 from xml.etree import ElementTree
 
-from .. import xmllib
+from .preprocess import preprocess
 
 _LOGGER = logging.getLogger(__name__)
-DOCTYPE = '<!DOCTYPE data PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" ' + \
-        '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
 
 
 def parse(text):
@@ -38,21 +36,9 @@ def parse(text):
     if not text:
         return None
     _LOGGER.debug(text)
-
-    # Split up input text to do some MAL-specific preprocessing.
-    text = text.split('\n')
-    # Hack for MAL behavior.
-    # MAL doesn't return proper XML if there are no results.
-    if text[0] == 'No results':
-        return None
-    # Insert propert doctype since MAL doesn't have it.
-    text[1:1] = [DOCTYPE]
-    text = '\n'.join(text)
-
-    text = xmllib.preprocess(text)
-    parser = ElementTree.XMLParser()
+    text = preprocess(text)
     try:
-        tree = ElementTree.XML(text, parser=parser)
+        tree = ElementTree.XML(text)
     except ElementTree.ParseError as err:
         _LOGGER.error('Encountered parse error: %r', err)
         line, col = err.position
@@ -63,23 +49,3 @@ def parse(text):
         raise err
     else:
         return tree
-
-
-def _get_field(entity, field):
-    """Get the XML entity's value for the given field.
-
-    Example:
-
-    <entry>
-      <spam>eggs</spam>
-    </entry>
-
-    get_field(entitiy, "spam") returns "eggs".
-
-    """
-    return entity.find(field).text
-
-
-def get_fields(entity, field_list):
-    """Get entry fields from a list of XML entities."""
-    return [_get_field(entity, field) for field in field_list]

@@ -15,9 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""The module contains XML parsing code.
+"""The module contains an XML preprocessing function for MAL's API.
 
-Specifically, an XML preprocessing function for replacing HTML entities."""
+Specifically, MAL includes HTML entities which are not supported by XML.  The
+function in this module replaces these entities with their Unicode character.
+
+"""
 
 import re
 

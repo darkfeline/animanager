@@ -16,4 +16,3 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import query
-from . import xml
