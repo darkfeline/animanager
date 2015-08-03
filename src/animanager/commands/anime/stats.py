@@ -17,8 +17,6 @@
 
 """Stats command."""
 
-from animanager import dblib
-
 
 def setup_parser(subparsers):
     parser = subparsers.add_parser(
@@ -31,7 +29,7 @@ def setup_parser(subparsers):
 
 def main(args):
     """Stats command."""
-    with dblib.Database().connect() as cur:
+    with args.db.connect() as cur:
         print('By status:')
         cur.execute('SELECT id, name FROM anime_statuses')
         for id, name in cur.fetchall():

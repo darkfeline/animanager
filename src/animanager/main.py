@@ -19,6 +19,7 @@ import logging
 import argparse
 
 from animanager import configlib
+from animanager import dblib
 
 from animanager.commands import anime
 
@@ -32,6 +33,9 @@ def _make_parser():
     parser.add_argument('--config',
                         default=configlib.Config.defaultpath,
                         help='Alternate configuration file to use.')
+    parser.add_argument('--db',
+                        default=dblib.Database.defaultpath,
+                        help='Alternate database file to use.')
 
     # Set up subparsers
     subparsers = parser.add_subparsers(title='Managers')
@@ -45,8 +49,10 @@ def main():
     logging.basicConfig(level='WARNING')
     parser = _make_parser()
     args = parser.parse_args()
-    # Load config.
+
     args.config = configlib.Config(args.config)
+    args.db = dblib.Database(args.db)
+
     # Run command.
     try:
         func = args.func
