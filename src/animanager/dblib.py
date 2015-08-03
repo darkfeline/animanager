@@ -42,8 +42,11 @@ class Database:
     defaultpath = os.path.join(os.environ['HOME'], '.animanager',
                                'database.db')
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, path=None):
+        if path is None:
+            self.path = self.defaultpath
+        else:
+            self.path = path
 
     def connect(self):
         return _connection_manager(self.path)
