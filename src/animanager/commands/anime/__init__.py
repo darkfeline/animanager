@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Argument parsing."""
-
 from .bump import main as bump
 from .add import main as add
 from .update import main as update
@@ -24,10 +22,19 @@ from .stats import main as stats
 from .watch import main as watch
 
 
-def add_parsers(subparsers):
+def setup_parser(subparsers):
 
-    """Add subparsers."""
+    """Setup parsers."""
 
+    # Set up anime command parser.
+    parser = subparsers.add_parser(
+        'anime',
+        description='Anime database manager.',
+        help='Commands for interacting with anime database.',
+    )
+    subparsers = parser.add_subparsers(title='Commands')
+
+    # Add anime subcommand parsers.
     parser = subparsers.add_parser(
         'bump',
         description='Bump the episode count of a watched series.',

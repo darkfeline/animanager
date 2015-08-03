@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Argument parsing."""
-
+import logging
 import argparse
 
 from animanager import configlib
-from animanager.anime import argparse as anime
+
+from animanager.commands import anime
 
 
-def make_parser():
+def _make_parser():
 
-    """Make an ArgumentParser."""
+    """Make the root argument parser for the animanager program."""
 
     # Set up main parser
     parser = argparse.ArgumentParser()
@@ -35,14 +35,25 @@ def make_parser():
 
     # Set up subparsers
     subparsers = parser.add_subparsers(title='Managers')
-
-    # Set up anime subsubparser
-    subparser = subparsers.add_parser(
-        'anime',
-        description='Anime database manager.',
-        help='Commands for interacting with anime database.',
-    )
-    subsubparsers = subparser.add_subparsers(title='Commands')
-    anime.add_parsers(subsubparsers)
+    anime.setup_parser(subparsers)
 
     return parser
+
+
+def main():
+    """Entry function."""
+    logging.basicConfig(level='WARNING')
+    parser = _make_parser()
+    args = parser.parse_args()
+    # Load config.
+    args.config = configlib.Config(args.config)
+    # Run command.
+    try:
+        func = args.func
+    except AttributeError:
+        parser.print_help()
+    else:
+        func(args)
+
+if __name__ == '__main__':
+    main()
