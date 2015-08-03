@@ -19,100 +19,94 @@
 
 from contextlib import contextmanager
 import logging
-
-import mysql.connector
+import sqlite3
+import os
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @contextmanager
-def _dbconnect(*args, **kwargs):
-    """MySQL connection context manager."""
+def _connection_manager(path):
+    """SQLite connection context manager."""
     try:
-        cnx = mysql.connector.connect(*args, **kwargs)
+        cnx = sqlite3.connect(path)
         cur = cnx.cursor()
         yield cur
         cnx.commit()
     finally:
-        cur.close()
         cnx.close()
 
 
-def connect(dbconfig):
-    """Connect using a database configuration."""
-    return _dbconnect(**dbconfig)
+class Database:
 
+    defaultpath = os.path.join(os.environ['HOME'], '.animanager',
+                               'database.db')
 
-def insert(dbconfig, table, fields):
-    """Insert a map of fields as a database row.
+    def __init__(self, path):
+        self.path = path
 
-    Args:
-        dbconfig: dict of database config kwargs.
-        table: database table.
-        fields: dict of database fields.
+    def connect(self):
+        return _connection_manager(self.path)
 
-    """
-    query = ', '.join('{}=%s'.format(key) for key in fields)
-    query = 'INSERT INTO {} SET {}'.format(table, query)
-    values = list(fields.values())
-    with connect(dbconfig) as cur:
-        cur.execute(query, values)
+    def insert(self, table, fields):
+        """Insert a map of fields as a database row.
 
+        Args:
+            table: database table.
+            fields: dict of database fields.
 
-def update_one(dbconfig, table, fields, values):
-    """Update one row."""
-    update_many(dbconfig, table, fields, [values])
+        """
+        keys = list(fields.keys())
+        query = 'INSERT INTO {} ({}) VALUES ({})'.format(
+            table,
+            ', '.join(key for key in keys),
+            ', '.join('?' for key in keys),
+        )
+        values = list(fields[key] for key in keys)
+        with self.connect() as cur:
+            cur.execute(query, values)
 
+    def update_many(self, table, fields, values):
+        """Update many rows.
 
-def update_many(dbconfig, table, fields, values):
-    """Update many rows.
+        Example:
 
-    Example:
+        db.update_many(
+            ['foo', 'bar'],
+            [
+                # id, then field values
+                (1, 'foo_value', 'bar_value'),
+            ]
+        )
 
-    anime_update_many(dbconfig, ['foo', 'bar'], [
-        # id, then field values
-        (1, 'foo_value', 'bar_value'),
-    ])
+        Args:
+            table: database table.
+            fields: list of database fields.
+            values: list of tuples containing values
 
-    Args:
-        dbconfig: dict of database config kwargs.
-        table: database table.
-        fields: list of database fields.
-        values: list of tuples containing values
+        """
+        query = ', '.join(('{}=?'.format(field) for field in fields))
+        query = 'UPDATE {} SET {} WHERE id=?'.format(table, query)
+        values = [row[1:] + row[0:1] for row in values]
+        with self.connect() as cur:
+            cur.executemany(query, values)
 
-    """
-    query = ', '.join(('{}=%s'.format(field) for field in fields))
-    query = 'UPDATE {} SET {} WHERE id=%s'.format(table, query)
-    values = [row[1:] + row[0:1] for row in values]
-    with connect(dbconfig) as cur:
-        # Must be list comprehension since MySQL connector can't use iterators.
-        cur.executemany(query, values)
+    def update_one(self, table, fields, values):
+        """Update one row."""
+        self.update_many(table, fields, [values])
 
-
-def select(dbconfig, table, fields, where_filter, where_args=tuple()):
-    """Do a SELECT query and return a generator."""
-    query = 'SELECT {} FROM {} WHERE {}'.format(
-        ', '.join(fields), table, where_filter)
-    with connect(dbconfig) as cur:
-        cur.execute(query, where_args)
-        while True:
-            row = cur.fetchone()
-            if row:
-                yield row
-            else:
-                break
-
-
-def convert_set(x):
-    """Convert a single item set to the item itself.
-
-    This is because MySQL connector is retarded, returning a set type when the
-    MySQL type is set/enum.
-
-    """
-    # MySQL connector returns a set type because it is retarded.
-    # We need to convert it.
-    if len(x) != 1:
-        raise ValueError('{} does not have exactly one item.'.format(x))
-    x = list(x)
-    return x[0]
+    def select(self, table, fields, where_filter, where_args=tuple()):
+        """Do a SELECT query and return a generator."""
+        query = 'SELECT {} FROM {} WHERE {}'.format(
+            ', '.join(fields),
+            table,
+            where_filter,
+        )
+        with self.connect() as cur:
+            cur.execute(query, where_args)
+            while True:
+                row = cur.fetchone()
+                if row:
+                    yield row
+                else:
+                    break
