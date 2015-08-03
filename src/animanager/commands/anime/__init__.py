@@ -18,8 +18,11 @@
 from .bump import main as bump
 from .add import main as add
 from .update import main as update
-from .stats import main as stats
 from .watch import main as watch
+
+from . import stats
+
+_COMMANDS = [stats]
 
 
 def setup_parser(subparsers):
@@ -61,15 +64,11 @@ def setup_parser(subparsers):
     parser.set_defaults(func=update)
 
     parser = subparsers.add_parser(
-        'stats',
-        description='Display statistics for shows.',
-        help='Display statistics for shows.',
-    )
-    parser.set_defaults(func=stats)
-
-    parser = subparsers.add_parser(
         'watch',
         description='Automate watching episodes and updating counts',
         help='Automate watching episodes and updating counts',
     )
     parser.set_defaults(func=watch)
+
+    for command in _COMMANDS:
+        command.setup_parser(subparsers)

@@ -19,27 +19,27 @@
 
 from animanager import dblib
 
-_STATUSES = ['plan to watch', 'watching', 'complete', 'dropped', 'on hold']
-_OUTPUT_TEMPLATE = """Watching: {watching}
-Complete: {complete}
-On Hold: {on hold}
-Dropped: {dropped}
-Plan to Watch: {plan to watch}
-Total: {total}
-Episodes watched: {ep_watched}"""
+
+def setup_parser(subparsers):
+    parser = subparsers.add_parser(
+        'stats',
+        description='Display statistics for shows.',
+        help='Display statistics for shows.',
+    )
+    parser.set_defaults(func=main)
 
 
 def main(args):
     """Stats command."""
-    config = args.config
-    counts = {}
-    with dblib.connect(config["db_args"]) as cur:
+    with dblib.Database().connect() as cur:
+        print('By status:')
+        cur.execute('SELECT id, name FROM anime_statuses')
+        for id, name in cur.fetchall():
+            cur.execute('SELECT count(*) FROM anime WHERE status=?', [id])
+            print('- {}: {}'.format(name, cur.fetchone()[0]))
+
         cur.execute('SELECT count(*) FROM anime')
-        counts['total'] = cur.fetchone()[0]
-        query = 'SELECT count(*) FROM anime WHERE status=%s'
-        for status in _STATUSES:
-            cur.execute(query, (status,))
-            counts[status] = cur.fetchone()[0]
+        print('Total: {}'.format(cur.fetchone()[0]))
+
         cur.execute('SELECT SUM(ep_watched) FROM anime')
-        counts['ep_watched'] = cur.fetchone()[0]
-        print(_OUTPUT_TEMPLATE.format(**counts))
+        print('Episodes watched: {}'.format(cur.fetchone()[0]))
