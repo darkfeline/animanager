@@ -17,12 +17,12 @@
 
 from .bump import main as bump
 from .add import main as add
-from .update import main as update
 from .watch import main as watch
 
 from . import stats
+from . import update
 
-_COMMANDS = [stats]
+_COMMANDS = [stats, update]
 
 
 def setup_parser(subparsers):
@@ -55,13 +55,6 @@ def setup_parser(subparsers):
     )
     parser.add_argument('name', help='String to search for.')
     parser.set_defaults(func=add)
-
-    parser = subparsers.add_parser(
-        'update',
-        description='Update total episode count for series.',
-        help='Update total episode count for series.',
-    )
-    parser.set_defaults(func=update)
 
     parser = subparsers.add_parser(
         'watch',

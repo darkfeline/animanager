@@ -27,10 +27,18 @@ from animanager import inputlib
 _LOGGER = logging.getLogger(__name__)
 
 
-def _anime_iter(dbconfig):
+def setup_parser(subparsers):
+    parser = subparsers.add_parser(
+        'update',
+        description='Update total episode count for series.',
+        help='Update total episode count for series.',
+    )
+    parser.set_defaults(func=main)
+
+
+def _anime_iter(db):
     """Return a generator of anime database entries."""
-    return dblib.select(
-        dbconfig,
+    return db.select(
         table='anime',
         fields=['id', 'animedb_id', 'name', 'ep_total'],
         where_filter='ep_total = 0 OR status = "watching"',
@@ -40,13 +48,16 @@ def _anime_iter(dbconfig):
 def main(args):
     """Update command."""
 
+    db = args.db
     config = args.config
     mal.query.setup(config)
 
-    # Keep a list of ids and episodes to update.
+    # Keep lists of things to update.
+    # Tuples of ids and total episode counts to update.
     to_update = []
+    # Tuples of ids and series names to update.
     to_rename = []
-    for id, mal_id, name, eps in _anime_iter(config['db_args']):
+    for id, mal_id, name, eps in _anime_iter(db):
         _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", id, name, eps)
 
         # Search for our show on MAL, and make sure to match our MAL id.
@@ -76,11 +87,11 @@ def main(args):
             assert found_eps > 0
             to_update.append((id, found_eps))
     if to_rename:
-        _LOGGER.info('Renaming local entries')
-        dblib.update_many(config['db_args'], 'anime', ['name'], to_rename)
+        _LOGGER.info('Renaming local entries...')
+        db.update_many('anime', ['name'], to_rename)
     if to_update:
-        _LOGGER.info('Updating local entries')
-        dblib.update_many(config['db_args'], 'anime', ['ep_total'], to_update)
+        _LOGGER.info('Updating local entries...')
+        db.update_many('anime', ['ep_total'], to_update)
 
 
 class Error(Exception):
