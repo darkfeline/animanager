@@ -30,7 +30,7 @@ def _make_parser():
     # Set up main parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
-                        default=configlib.Config.defaultpath(),
+                        default=configlib.Config.defaultpath,
                         help='Alternate configuration file to use.')
 
     # Set up subparsers

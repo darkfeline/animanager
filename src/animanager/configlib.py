@@ -23,17 +23,14 @@ import os
 
 class Config:
 
+    defaultpath = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
+
     def __init__(self, path=None):
         if path is None:
             path = self.defaultpath()
         self.path = path
         self.config = configparser.ConfigParser()
         self.config.read(self.path)
-
-    @staticmethod
-    def defaultpath():
-        """Return default user config path."""
-        return os.path.join(os.environ['HOME'], '.animanager.ini')
 
     def save(self):
         with open(self.path, 'w') as file:
