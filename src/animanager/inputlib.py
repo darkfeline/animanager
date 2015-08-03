@@ -15,12 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tools for getting input"""
+"""Tools for getting input from user."""
 
 import cmd
 
 
 class ChoiceCmd(cmd.Cmd):
+
+    """This class provides an interactive interface for selecting from a number of
+    textual choices.
+
+    """
 
     prompt = "[{}]> "
 
