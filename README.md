@@ -12,7 +12,3 @@ Personal anime database management tool.
 ## Configuration
 
 See the file `animanager.ini`.
-
-## Database configuration
-
-The `db.sql` file contains the schema for the database.
