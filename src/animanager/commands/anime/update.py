@@ -20,7 +20,6 @@
 import sys
 import logging
 
-from animanager import dblib
 from animanager import mal
 from animanager import inputlib
 
