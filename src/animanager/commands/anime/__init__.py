@@ -15,14 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .add import main as add
-from .watch import main as watch
-
 from . import stats
 from . import update
 from . import bump
+from . import add
 
-_COMMANDS = [stats, update, bump]
+_COMMANDS = [stats, update, bump, add]
 
 
 def setup_parser(subparsers):
@@ -38,21 +36,5 @@ def setup_parser(subparsers):
     subparsers = parser.add_subparsers(title='Commands')
 
     # Add anime subcommand parsers.
-
-    parser = subparsers.add_parser(
-        'add',
-        description='Add a new series.',
-        help='Add a new series.',
-    )
-    parser.add_argument('name', help='String to search for.')
-    parser.set_defaults(func=add)
-
-    parser = subparsers.add_parser(
-        'watch',
-        description='Automate watching episodes and updating counts',
-        help='Automate watching episodes and updating counts',
-    )
-    parser.set_defaults(func=watch)
-
     for command in _COMMANDS:
         command.setup_parser(subparsers)

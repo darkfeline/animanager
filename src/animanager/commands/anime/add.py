@@ -17,11 +17,9 @@
 
 """Implements add command."""
 
-from collections import OrderedDict
 from datetime import date
 import logging
 
-from animanager import dblib
 from animanager import inputlib
 from animanager import mal
 
@@ -29,27 +27,33 @@ _LOGGER = logging.getLogger(__name__)
 _STATUSES = ('plan to watch', 'watching', 'complete')
 
 
+def setup_parser(subparsers):
+    parser = subparsers.add_parser(
+        'add',
+        description='Add a new series.',
+        help='Add a new series.',
+    )
+    parser.add_argument('name', help='String to search for.')
+    parser.set_defaults(func=main)
+
+
 def main(args):
 
     """Add command."""
 
-    # Set arguments to convenient variables.
-    config = args.config
-    name = args.name
-
     # Get choices from MAL API.
-    mal.query.setup(config)
-    results = mal.query.anime_search(name)
+    mal.query.setup(args.config)
+    results = mal.query.anime_search(args.name)
     i = inputlib.get_choice(['({}) {}'.format(x.id, x.title) for x in results])
 
     # Set data fields.
     chosen = results[i]
-    fields = OrderedDict((
-        ('animedb_id', chosen.id),
-        ('name', chosen.title),
-        ('ep_total', chosen.episodes),
-        ('type', chosen.type),
-    ))
+    fields = {
+        'animedb_id': chosen.id,
+        'name': chosen.title,
+        'ep_total': chosen.episodes,
+        'type': chosen.type,
+    }
 
     # Choose initial status to set.
     i = inputlib.get_choice(_STATUSES, 0)
@@ -64,4 +68,4 @@ def main(args):
             fields['date_started'] = today
             fields['date_finished'] = today
 
-    dblib.insert(config['db_args'], 'anime', fields)
+    args.db.insert('anime', fields)
