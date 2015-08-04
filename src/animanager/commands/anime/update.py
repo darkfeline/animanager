@@ -40,7 +40,7 @@ def _anime_iter(db):
     return db.select(
         table='anime',
         fields=['id', 'animedb_id', 'name', 'ep_total'],
-        where_filter='ep_total = 0 OR status = "watching"',
+        where_filter='ep_total IS NULL OR status = "watching"',
     )
 
 

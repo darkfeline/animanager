@@ -54,6 +54,9 @@ def main(args):
         'ep_total': chosen.episodes,
         'type': chosen.type,
     }
+    if fields['ep_total'] == 0:
+        _LOGGER.warning('Received episode total of 0.')
+        del fields['ep_total']  # default is NULL/None
 
     # Choose initial status to set.
     i = inputlib.get_choice(_STATUSES, 0)

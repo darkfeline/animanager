@@ -63,7 +63,7 @@ def ibump(db, choices):
     choice_id = choice[0]
     watched, total, status = choice[2:]
 
-    if watched == total and total != 0:
+    if watched == total and total is not None:
         print('Maxed')
         return
 
@@ -90,7 +90,7 @@ def ibump(db, choices):
 
     # Finally, if the series is now complete, we set the status and finish date
     # accordingly.
-    if watched == total and total != 0:
+    if watched == total and total is not None:
         update_map['status'] = 'complete'
         update_map['date_finished'] = date.today().isoformat()
 
