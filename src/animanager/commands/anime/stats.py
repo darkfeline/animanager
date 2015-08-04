@@ -31,8 +31,7 @@ def main(args):
     """Stats command."""
     with args.db.connect() as cur:
         print('By status:')
-        cur.execute('SELECT id, name FROM anime_statuses')
-        for id, name in cur.fetchall():
+        for id, name in args.db.anime_statuses():
             cur.execute('SELECT count(*) FROM anime WHERE status=?', [id])
             print('- {}: {}'.format(name, cur.fetchone()[0]))
 

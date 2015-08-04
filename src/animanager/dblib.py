@@ -113,3 +113,8 @@ class Database:
                     yield row
                 else:
                     break
+
+    def anime_statuses(self):
+        with self.connect() as cur:
+            cur.execute('SELECT id, name FROM anime_statuses')
+            return cur.fetchall()
