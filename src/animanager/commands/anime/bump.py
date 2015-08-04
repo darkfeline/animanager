@@ -17,88 +17,98 @@
 
 """Bump command."""
 
-from collections import OrderedDict
 from datetime import date
 import logging
 
-from animanager import dblib
 from animanager import inputlib
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _search(dbconfig, name):
-    """Search for series that are being watched."""
-    results = dblib.select(
-        dbconfig,
+def setup_parser(subparsers):
+    parser = subparsers.add_parser(
+        'bump',
+        description='Bump the episode count of a watched series.',
+        help='Bump the episode count of a watched series.',
+    )
+    parser.add_argument('name', help='String to search for.')
+    parser.add_argument('--all', action='store_true',
+                        help='Search all non-complete series.')
+    parser.set_defaults(func=main)
+
+
+def _search(db, name, all=False):
+    """Search for series."""
+    status_map = db.anime_statuses()
+    if all:
+        where_filter = 'name LIKE ? AND status!={}'.format(
+            status_map.to_id('complete'))
+    else:
+        where_filter = 'name LIKE ? AND status={}'.format(
+            status_map.to_id('watching'))
+    results = db.select(
         table='anime',
         fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
-        where_filter='name LIKE %s AND status = "watching"',
+        where_filter=where_filter,
         where_args=('%{}%'.format(name),),
     )
     results = list(results)
     return results
 
 
-def _search_all(dbconfig, name):
-    """Search for all non-complete series."""
-    results = dblib.select(
-        dbconfig,
-        table='anime',
-        fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
-        where_filter='name LIKE %s AND status != "complete"',
-        where_args=('%{}%'.format(name),),
-    )
-    results = list(results)
-    return results
-
-
-def ibump(dbconfig, choices):
+def ibump(db, choices):
     "Interactively bump anime episode count."""
+
+    # There's a lot of stuff to do here.
+    # First, we prompt the user to choose a series to bump.
     i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in choices])
     choice = choices[i]
     choice_id = choice[0]
     watched, total, status = choice[2:]
 
-    assert (total == 0) or (watched <= total)
     if watched == total and total != 0:
         print('Maxed')
         return
 
-    # Confirm choice
+    # Confirm choice.
     print('Currently {}/{}'.format(watched, total))
     if not inputlib.get_yn("Bump?"):
         print('Aborting...')
         return
 
-    # MySQL connector returns a set type because it is retarded.
-    # We need to convert it.
-    status = dblib.convert_set(status)
-    assert isinstance(status, str)
-
-    # Calculate what needs updating.
-    update_map = OrderedDict()
+    # Calculate what needs updating, putting it into a dictionary that we will
+    # update at the end all at once.
+    update_map = dict()
+    # First we update the episode count.
     watched += 1
     print('Now {}/{}'.format(watched, total))
     update_map['ep_watched'] = watched
 
+    # Set up map so we can translate between status ids and names.
+    status_map = db.anime_statuses()
+
+    # If the status wasn't watching, we set it so.
+    # Additionally if it was plan to watch, we set the starting date.
+    status = status_map.to_name(status)
     if status != 'watching':
-        assert status in ('on hold', 'dropped', 'plan to watch')
         update_map['status'] = 'watching'
         if status == 'plan to watch':
             update_map['date_started'] = date.today().isoformat()
 
-    dblib.update_one(dbconfig,
-                     'anime',
-                     update_map.keys(),
-                     [choice_id] + list(update_map.values()))
+    # Finally, if the series is now complete, we set the status and finish date
+    # accordingly.
+    if watched == total and total != 0:
+        update_map['status'] = status_map.to_id('complete')
+        update_map['date_finished'] = date.today().isoformat()
+
+    # Now we update all of the changes we have gathered.
+    db.update_one(
+        'anime',
+        update_map.keys(),
+        [choice_id] + list(update_map.values()))
 
 
 def main(args):
     """Bump command."""
-    dbconfig = args.config['db_args']
-    if args.all:
-        choices = _search_all(dbconfig, args.name)
-    else:
-        choices = _search(dbconfig, args.name)
-    ibump(dbconfig, choices)
+    choices = _search(args.db, args.name, args.all)
+    ibump(args.db, choices)

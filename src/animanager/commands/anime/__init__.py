@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .bump import main as bump
 from .add import main as add
 from .watch import main as watch
 
 from . import stats
 from . import update
+from . import bump
 
-_COMMANDS = [stats, update]
+_COMMANDS = [stats, update, bump]
 
 
 def setup_parser(subparsers):
@@ -38,15 +38,6 @@ def setup_parser(subparsers):
     subparsers = parser.add_subparsers(title='Commands')
 
     # Add anime subcommand parsers.
-    parser = subparsers.add_parser(
-        'bump',
-        description='Bump the episode count of a watched series.',
-        help='Bump the episode count of a watched series.',
-    )
-    parser.add_argument('name', help='String to search for.')
-    parser.add_argument('--all', action='store_true',
-                        help='Search all non-complete series.')
-    parser.set_defaults(func=bump)
 
     parser = subparsers.add_parser(
         'add',
