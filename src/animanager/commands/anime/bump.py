@@ -39,13 +39,10 @@ def setup_parser(subparsers):
 
 def _search(db, name, all=False):
     """Search for series."""
-    status_map = db.anime_statuses()
     if all:
-        where_filter = 'name LIKE ? AND status!={}'.format(
-            status_map.to_id('complete'))
+        where_filter = 'name LIKE ? AND status!="complete"'
     else:
-        where_filter = 'name LIKE ? AND status={}'.format(
-            status_map.to_id('watching'))
+        where_filter = 'name LIKE ? AND status="watching"'
     results = db.select(
         table='anime',
         fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
@@ -84,12 +81,8 @@ def ibump(db, choices):
     print('Now {}/{}'.format(watched, total))
     update_map['ep_watched'] = watched
 
-    # Set up map so we can translate between status ids and names.
-    status_map = db.anime_statuses()
-
     # If the status wasn't watching, we set it so.
     # Additionally if it was plan to watch, we set the starting date.
-    status = status_map.to_name(status)
     if status != 'watching':
         update_map['status'] = 'watching'
         if status == 'plan to watch':
@@ -98,7 +91,7 @@ def ibump(db, choices):
     # Finally, if the series is now complete, we set the status and finish date
     # accordingly.
     if watched == total and total != 0:
-        update_map['status'] = status_map.to_id('complete')
+        update_map['status'] = 'complete'
         update_map['date_finished'] = date.today().isoformat()
 
     # Now we update all of the changes we have gathered.
