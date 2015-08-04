@@ -115,6 +115,23 @@ class Database:
                     break
 
     def anime_statuses(self):
+        """Return DuplexMap of possible anime statuses."""
         with self.connect() as cur:
             cur.execute('SELECT id, name FROM anime_statuses')
-            return cur.fetchall()
+            return DuplexMap(cur.fetchall())
+
+
+class DuplexMap:
+
+    def __init__(self, pairs):
+        self.map = dict((id, name) for id, name in pairs)
+        self.rmap = dict((name, id) for id, name in self.map.items())
+
+    def to_name(self, id):
+        return self.map[id]
+
+    def to_id(self, name):
+        return self.rmap[name]
+
+    def __iter__(self):
+        return iter(self.map.items())
