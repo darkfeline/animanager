@@ -31,6 +31,7 @@ def _connection_manager(path):
     try:
         cnx = sqlite3.connect(path)
         cur = cnx.cursor()
+        cur.execute('PRAGMA foreign_keys = ON')
         yield cur
         cnx.commit()
     finally:
