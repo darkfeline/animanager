@@ -9,6 +9,11 @@ Personal anime database management tool.
 
 [2]: https://dev.mysql.com/downloads/connector/python/
 
-## Configuration
+## Configuration/Setup
 
-See the file `animanager.ini`.
+Copy the included configuration file `config.ini` to `~/.animanager/config.ini`.
+
+Load the included database schema `schema.sql` into a SQLite3 database file at
+`~/.animanager/database.db`:
+
+    $ sqlite3 ~/.animanager/database.db '.read schema.sql'
