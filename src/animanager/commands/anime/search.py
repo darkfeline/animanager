@@ -15,27 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import stats
-from . import update
-from . import bump
-from . import add
-from . import search
-
-_COMMANDS = [stats, update, bump, add, search]
+from tabulate import tabulate
 
 
 def setup_parser(subparsers):
-
-    """Setup parsers."""
-
-    # Set up anime command parser.
     parser = subparsers.add_parser(
-        'anime',
-        description='Anime database manager.',
-        help='Commands for interacting with anime database.',
+        'search',
+        description='Search for series data.',
+        help='Search for series data.',
     )
-    subparsers = parser.add_subparsers(title='Commands')
+    parser.add_argument('name')
+    parser.set_defaults(func=main)
 
-    # Add anime subcommand parsers.
-    for command in _COMMANDS:
-        command.setup_parser(subparsers)
+_FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
+           'date_started', 'date_finished', 'animedb_id']
+
+
+def main(args):
+    shows = args.db.select(
+        'anime',
+        _FIELDS,
+        'name LIKE ?',
+        ['%{}%'.format(args.name)]
+    )
+    print(tabulate(shows, headers=_FIELDS))
