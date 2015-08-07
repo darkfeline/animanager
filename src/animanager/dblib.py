@@ -97,9 +97,10 @@ class Database:
         with self.connect() as cur:
             cur.executemany(query, values)
 
-    def update_one(self, table, fields, values):
+    def update_one(self, table, id, map):
         """Update one row."""
-        self.update_many(table, fields, [values])
+        keys = list(map.keys())
+        self.update_many(table, keys, ([id] + [map[k] for k in keys],))
 
     def select(self, table, fields, where_filter, where_args=tuple()):
         """Do a SELECT query and return a generator."""

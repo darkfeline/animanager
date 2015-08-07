@@ -73,12 +73,24 @@ def ibump(db, choices):
         print('Aborting...')
         return
 
+    bump(db, choice_id)
+    print('Now {}/{}'.format(watched + 1, total))
+
+
+def bump(db, id):
+    results = db.select(
+        table='anime',
+        fields=['ep_watched', 'ep_total', 'status'],
+        where_filter='id=?',
+        where_args=(id,)
+    )
+    watched, total, status = next(results)
+
     # Calculate what needs updating, putting it into a dictionary that we will
     # update at the end all at once.
     update_map = dict()
     # First we update the episode count.
     watched += 1
-    print('Now {}/{}'.format(watched, total))
     update_map['ep_watched'] = watched
 
     # If the status wasn't watching, we set it so.
@@ -95,10 +107,7 @@ def ibump(db, choices):
         update_map['date_finished'] = date.today().isoformat()
 
     # Now we update all of the changes we have gathered.
-    db.update_one(
-        'anime',
-        update_map.keys(),
-        [choice_id] + list(update_map.values()))
+    db.update_one('anime', id, update_map)
 
 
 def main(args):
