@@ -40,9 +40,9 @@ def setup_parser(subparsers):
 def _search(db, name, all=False):
     """Search for series."""
     if all:
-        where_filter = 'name LIKE ? AND status!="complete"'
+        where_filter = 'status!="complete" AND name LIKE ?'
     else:
-        where_filter = 'name LIKE ? AND status="watching"'
+        where_filter = 'status="watching" AND name LIKE ?'
     results = db.select(
         table='anime',
         fields=['id', 'name', 'ep_watched', 'ep_total', 'status'],
