@@ -39,7 +39,7 @@ def register(db, config, id):
     )
     name = next(results)[0]
     config['series'][str(id)] = (
-        r'.*{}.*'
+        r'.*{}.*?'
         r'(?P<ep>[0-9]+)'
         r'(v(?P<ver>[0-9]+))?').format(re.escape(name))
     config.save()
