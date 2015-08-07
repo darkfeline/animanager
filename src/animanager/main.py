@@ -46,7 +46,7 @@ def _make_parser():
 
 def main():
     """Entry function."""
-    logging.basicConfig(level='WARNING')
+    logging.basicConfig(level='INFO')
     parser = _make_parser()
     args = parser.parse_args()
 
