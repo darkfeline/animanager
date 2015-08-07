@@ -68,31 +68,6 @@ def _get_series_info(db, config):
     return processed_list
 
 
-# XXX Move this
-def filter_series(db, config):
-    """Remove completed series from config file."""
-    series = config['series']
-    to_delete = []
-    for id, _ in series.items():
-        id = int(id)
-        # Get series information from database.
-        results = db.select(
-            table='anime',
-            fields=['status'],
-            where_filter='id=?',
-            where_args=(id,),
-        )
-        status = list(results)[0][0]
-        if status == 'complete':
-            to_delete.append(id)
-    # Do removal
-    if to_delete:
-        for id in to_delete:
-            del series[id]
-        config['series'] = series
-        config.save()
-
-
 def _match_series_files(series_info, files):
     """Match series files.
 

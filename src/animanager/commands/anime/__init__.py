@@ -21,8 +21,9 @@ from . import bump
 from . import add
 from . import search
 from . import watch
+from . import clean
 
-_COMMANDS = [stats, update, bump, add, search, watch]
+_COMMANDS = [stats, update, bump, add, search, watch, clean]
 
 
 def setup_parser(subparsers):
