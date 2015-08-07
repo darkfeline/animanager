@@ -96,6 +96,8 @@ def _match_series_files(series_info, files):
             for id, pattern, name, ep_watched, matched_files in series_files
             if matched_files]
 
+_VIDEO_EXT = set(('.mkv', '.mp4'))
+
 
 def main(args):
 
@@ -108,7 +110,9 @@ def main(args):
 
     # Use series information to search current directory for files and
     # match them with a series.
-    files = sorted(os.listdir('.'))
+    files = [file
+             for file in sorted(os.listdir('.'))
+             if os.path.splitext(file)[1] in _VIDEO_EXT]
     series_files = _match_series_files(series_info, files)
 
     while series_files:
