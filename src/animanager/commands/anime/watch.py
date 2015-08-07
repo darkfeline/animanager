@@ -23,39 +23,43 @@ import logging
 import os
 import subprocess
 import re
+from operator import itemgetter
 
 from animanager import inputlib
-from animanager import dblib
 
-from .bump import ibump
+from .bump import bump
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def play(args, filename):
-    """Play video."""
-    subprocess.call(args + [filename])
+def setup_parser(subparsers):
+    parser = subparsers.add_parser(
+        'watch',
+        description='Automate watching episodes and updating counts',
+        help='Automate watching episodes and updating counts',
+    )
+    parser.set_defaults(func=main)
 
 
-def _fetch_series_info(config):
-    """Fetch series info.
+def _get_series_info(db, config):
+    """Get series info.
 
     Load series id and filename patterns from the config file and match it with
     other necessary info from our database.
 
+    Output format: A list of tuples (id, pattern, name, ep_watched)
+
+    pattern: Compiled regexp pattern
+
     """
-    dbconfig = config['db_args']
-    series = config['watch']['series']
-    # Get the series in our configured list.
     processed_list = []
-    for id, pattern in series.items():
+    for id, pattern in config['series'].items():
         id = int(id)
         # Get series information from database.
-        results = dblib.select(
-            dbconfig,
+        results = db.select(
             table='anime',
             fields=['name', 'ep_watched'],
-            where_filter='id = %s',
+            where_filter='id=?',
             where_args=(id,),
         )
         name, ep_watched = list(results)[0]
@@ -65,30 +69,27 @@ def _fetch_series_info(config):
 
 
 # XXX Move this
-def filter_series(config):
+def filter_series(db, config):
     """Remove completed series from config file."""
-    dbconfig = config['db_args']
-    series = config['watch']['series']
-    # Get the series in our configured list.
+    series = config['series']
     to_delete = []
-    for id, pattern in series.items():
+    for id, _ in series.items():
+        id = int(id)
         # Get series information from database.
-        results = dblib.select(
-            dbconfig,
+        results = db.select(
             table='anime',
             fields=['status'],
-            where_filter='id = %s',
+            where_filter='id=?',
             where_args=(id,),
         )
         status = list(results)[0][0]
-        # If series is not currently watching, mark for removal.
-        if status != 'watching':
+        if status == 'complete':
             to_delete.append(id)
     # Do removal
     if to_delete:
         for id in to_delete:
             del series[id]
-        config['watch']['series'] = series
+        config['series'] = series
         config.save()
 
 
@@ -97,87 +98,69 @@ def _match_series_files(series_info, files):
 
     Use series information to associate with the given list of files.
 
+    Takes input series_info from _get_series_info().
+
     """
-    series_files = [[id, pattern, name, ep_watched, list()]
-                    for id, pattern, name, ep_watched in series_info]
+    series_files = [x + (list(),) for x in series_info]
     for filename in files:
-        for _, pattern, _, ep_watched, matched_files in series_files:
+        for id, pattern, name, ep_watched, matched_files in series_files:
             match = pattern.match(filename)
             if match:
                 # Even if we match a file, we still check the episode number.
                 # If it has already been watched, remove the file and don't add
                 # it.
-                if int(match.group('ep')) <= ep_watched:
+                ep_num = int(match.group('ep'))
+                if ep_num <= ep_watched:
                     os.remove(filename)
                     msg = 'Removed {} because it has already been watched.'
                     _LOGGER.info(msg.format(filename))
                 else:
-                    matched_files.append(filename)
+                    matched_files.append((ep_num, filename))
                 break
-    return [[id, name, ep_watched, matched_files]
-            for id, _, name, ep_watched, matched_files in series_files]
+    return [[id, name, ep_watched, sorted(matched_files, key=itemgetter(0))]
+            for id, pattern, name, ep_watched, matched_files in series_files]
 
 
 def main(args):
-    """Entry point."""
 
     config = args.config
+    db = args.db
+    player = config['watch']['player']
 
-    dbconfig = config['db_args']
-    playerconfig = config['watch']['player']
+    # Load series information.
+    series_info = _get_series_info(db, config)
+
+    # Use series information to search current directory for files and
+    # match them with a series.
+    files = sorted(os.listdir('.'))
+    series_files = _match_series_files(series_info, files)
 
     while True:
-        # Load series information.
-        series_info = _fetch_series_info(config)
-
-        # Use series information to search current directory for files and
-        # match them with a series.
-        files = sorted(os.listdir('.'))
-        series_files = _match_series_files(series_info, files)
-
         # Choose series to watch.
-        msg = "({}) {} (cur. ep. {}, {} eps.)"
+        msg = "({}) {} (cur. ep. {}, {} eps. avail.)"
         i = inputlib.get_choice(
             [msg.format(id, name, ep_watched, len(matched_files))
              for id, name, ep_watched, matched_files in series_files]
         )
 
-        # XXX Left off here
+        id, _, ep_watched, files = series_files[i]
 
-        # Play episodes in order.
-        # After each episode, bump or delete?
+        # Check if next episode has the right number.
+        if files[0][0] != ep_watched + 1:
+            print('Next episode is missing.')
+            continue
 
-        # XXX Old stuff follows
+        # Play the episode.
+        subprocess.call([player, files[0][1]])
 
-        # Choose file
-        files = os.listdir('.')
-        files = [file for file in files
-                 if os.path.splitext(file)[1] in ('.mp4', '.mkv')]
+        if inputlib.get_yn('Bump?'):
+            bump(db, id)
+
+        if inputlib.get_yn('Delete?'):
+            os.unlink(files[0][1])
+
+        # Remove the episode from our list.
+        del files[0]
+        # Also remove the series if there are no more episodes.
         if not files:
-            return
-        files = sorted(files)
-        i = inputlib.get_choice(files)
-
-        # Process file
-        filename = files[i]
-        play(playerconfig, filename)
-
-        while True:
-            try:
-                info = get_info(filename, args.config['file_dir'])
-            except ValueError:
-                input('Match not found.  Press Return once problem is fixed.')
-            else:
-                break
-        dst_path = os.path.join(info.filing, filename)
-
-        print('Info found: {!r}'.format(info))
-        i = input('Abort which? [rb] ')
-        i = set(i)
-        if 'r' not in i:
-            os.rename(filename, dst_path)
-            print('Refiled.')
-            _LOGGER.info('Moved %s to %s', filename, dst_path)
-        if 'b' not in i:
-            print('>>>> ' + filename)
-            ibump(dbconfig, info.name)
+            del series_files[i]
