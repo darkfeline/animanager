@@ -24,6 +24,8 @@ import os
 import subprocess
 import re
 from operator import itemgetter
+from collections import namedtuple
+from collections import deque
 
 from animanager import inputlib
 
@@ -40,16 +42,43 @@ def setup_parser(subparsers):
     )
     parser.set_defaults(func=main)
 
+_EpisodeInfo = namedtuple("_EpisodeInfo", ['ep_num', 'file'])
+
+
+class _SeriesInfo:
+
+    def __init__(self, id, pattern, name, ep_watched):
+        self.id = id
+        self.pattern = re.compile(pattern)
+        self.name = name
+        self.ep_watched = ep_watched
+        self.matched_files = list()
+
+    def add(self, ep_num, file):
+        self.matched_files.append(_EpisodeInfo(ep_num, file))
+
+    @property
+    def next(self):
+        return self.matched_files[0]
+
+    def pop(self):
+        return self.matched_files.popleft()
+
+    def sort(self):
+        self.matched_files = deque(sorted(self.matched_files, key=itemgetter(0)))
+
+    def __bool__(self):
+        return bool(self.matched_files)
+
+    def __len__(self):
+        return len(self.matched_files)
+
 
 def _get_series_info(db, config):
     """Get series info.
 
     Load series id and filename patterns from the config file and match it with
     other necessary info from our database.
-
-    Output format: A list of tuples (id, pattern, name, ep_watched)
-
-    pattern: Compiled regexp pattern
 
     """
     processed_list = []
@@ -63,8 +92,7 @@ def _get_series_info(db, config):
             where_args=(id,),
         )
         name, ep_watched = list(results)[0]
-        pattern = re.compile(pattern)
-        processed_list.append((id, pattern, name, ep_watched))
+        processed_list.append(_SeriesInfo(id, pattern, name, ep_watched))
     return processed_list
 
 
@@ -73,28 +101,25 @@ def _match_series_files(series_info, files):
 
     Use series information to associate with the given list of files.
 
-    Takes input series_info from _get_series_info().
-
     """
-    series_files = [x + (list(),) for x in series_info]
     for filename in files:
-        for id, pattern, name, ep_watched, matched_files in series_files:
-            match = pattern.match(filename)
+        for info in series_info:
+            match = info.pattern.match(filename)
             if match:
                 # Even if we match a file, we still check the episode number.
                 # If it has already been watched, remove the file and don't add
                 # it.
                 ep_num = int(match.group('ep'))
-                if ep_num <= ep_watched:
+                if ep_num <= info.ep_watched:
                     os.remove(filename)
                     msg = 'Removed {} because it has already been watched.'
                     _LOGGER.info(msg.format(filename))
                 else:
-                    matched_files.append((ep_num, filename))
+                    info.add(ep_num, filename)
                 break
-    return [[id, name, ep_watched, sorted(matched_files, key=itemgetter(0))]
-            for id, pattern, name, ep_watched, matched_files in series_files
-            if matched_files]
+    for info in series_info:
+        info.sort()
+    return [info for info in series_info if info]
 
 _VIDEO_EXT = set(('.mkv', '.mp4'))
 
@@ -113,34 +138,35 @@ def main(args):
     files = [file
              for file in sorted(os.listdir('.'))
              if os.path.splitext(file)[1] in _VIDEO_EXT]
-    series_files = _match_series_files(series_info, files)
+    series_info = _match_series_files(series_info, files)
 
-    while series_files:
+    while series_info:
         # Choose series to watch.
         msg = "({}) {} (cur. ep. {}, {} eps. avail.)"
         i = inputlib.get_choice(
-            [msg.format(id, name, ep_watched, len(matched_files))
-             for id, name, ep_watched, matched_files in series_files]
+            [msg.format(info.id, info.name, info.ep_watched, len(info))
+             for info in series_info]
         )
 
-        id, _, ep_watched, files = series_files[i]
+        info = series_info[i]
 
         # Check if next episode has the right number.
-        if files[0][0] != ep_watched + 1:
+        if info.next.ep_num != info.ep_watched + 1:
             print('Next episode is missing.')
             continue
 
         # Play the episode.
-        subprocess.call([player, files[0][1]])
+        subprocess.call([player, info.next.file])
 
         if inputlib.get_yn('Bump?'):
-            bump(db, id)
+            bump(db, info.id)
+            info.ep_watched += 1
 
         if inputlib.get_yn('Delete?'):
-            os.unlink(files[0][1])
+            os.unlink(info.next.file)
 
         # Remove the episode from our list.
-        del files[0]
+        info.pop()
         # Also remove the series if there are no more episodes.
         if not files:
             del series_files[i]
