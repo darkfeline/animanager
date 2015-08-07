@@ -111,7 +111,7 @@ def main(args):
     files = sorted(os.listdir('.'))
     series_files = _match_series_files(series_info, files)
 
-    while True:
+    while series_files:
         # Choose series to watch.
         msg = "({}) {} (cur. ep. {}, {} eps. avail.)"
         i = inputlib.get_choice(
