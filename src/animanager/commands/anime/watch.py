@@ -93,7 +93,8 @@ def _match_series_files(series_info, files):
                     matched_files.append((ep_num, filename))
                 break
     return [[id, name, ep_watched, sorted(matched_files, key=itemgetter(0))]
-            for id, pattern, name, ep_watched, matched_files in series_files]
+            for id, pattern, name, ep_watched, matched_files in series_files
+            if matched_files]
 
 
 def main(args):
