@@ -53,7 +53,7 @@ def _search(db, name, all=False):
     return results
 
 
-def ibump(db, choices):
+def _ibump(db, choices):
     "Interactively bump anime episode count."""
 
     # There's a lot of stuff to do here.
@@ -113,4 +113,4 @@ def bump(db, id):
 def main(args):
     """Bump command."""
     choices = _search(args.db, args.name, args.all)
-    ibump(args.db, choices)
+    _ibump(args.db, choices)
