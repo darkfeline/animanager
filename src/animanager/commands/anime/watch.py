@@ -65,7 +65,8 @@ class _SeriesInfo:
         return self.matched_files.popleft()
 
     def sort(self):
-        self.matched_files = deque(sorted(self.matched_files, key=itemgetter(0)))
+        self.matched_files = deque(
+            sorted(self.matched_files, key=itemgetter(0)))
 
     def __bool__(self):
         return bool(self.matched_files)
