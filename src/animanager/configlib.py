@@ -55,3 +55,6 @@ class Config:
             r'.*{}.*?'
             r'(?P<ep>[0-9]+)'
             r'(v(?P<ver>[0-9]+))?').format(re.escape(name))
+
+    def unregister(self, id):
+        del self['series'][str(id)]

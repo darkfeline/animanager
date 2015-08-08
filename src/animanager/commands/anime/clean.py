@@ -44,7 +44,7 @@ def _filter_series(db, config):
     # Do removal
     if to_delete:
         for id in to_delete:
-            del series[str(id)]
+            config.unregister(id)
         config.save()
 
 
