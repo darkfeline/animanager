@@ -17,27 +17,12 @@
 
 """Tools for animanager MySQL database."""
 
-from contextlib import contextmanager
 import logging
 import sqlite3
 import os
+import sys
 
 _LOGGER = logging.getLogger(__name__)
-
-
-@contextmanager
-def _connection_manager(path):
-    """SQLite connection context manager."""
-    try:
-        cnx = sqlite3.connect(path)
-        cur = cnx.cursor()
-        cur.execute('PRAGMA foreign_keys = ON')
-        cur.execute('PRAGMA foreign_keys')
-        assert cur.fetchone()[0] == 1
-        yield cur
-        cnx.commit()
-    finally:
-        cnx.close()
 
 
 class Database:
@@ -47,12 +32,28 @@ class Database:
 
     def __init__(self, path=None):
         if path is None:
-            self.path = self.defaultpath
+            self.dbfile_path = self.defaultpath
         else:
-            self.path = path
+            self.dbfile_path = path
+        self._connect()
 
-    def connect(self):
-        return _connection_manager(self.path)
+    def _connect(self):
+        self.cnx = sqlite3.connect(self.dbfile_path)
+        cur = self.cursor()
+        cur.execute('PRAGMA foreign_keys = ON')
+        cur.execute('PRAGMA foreign_keys')
+        if cur.fetchone()[0] != 1:
+            _LOGGER.critical('Foreign keys are not supported.')
+            sys.exit(1)
+
+    def cursor(self):
+        return self.cnx.cursor()
+
+    def commit(self):
+        self.cnx.commit()
+
+    def close(self):
+        self.cnx.close()
 
     def insert(self, table, fields):
         """Insert a map of fields as a database row.
@@ -69,9 +70,10 @@ class Database:
             ', '.join('?' for key in keys),
         )
         values = list(fields[key] for key in keys)
-        with self.connect() as cur:
-            cur.execute(query, values)
-            return cur.lastrowid
+        cur = self.cursor()
+        cur.execute(query, values)
+        self.commit()
+        return cur.lastrowid
 
     def update_many(self, table, fields, values):
         """Update many rows.
@@ -95,8 +97,9 @@ class Database:
         query = ', '.join(('{}=?'.format(field) for field in fields))
         query = 'UPDATE {} SET {} WHERE id=?'.format(table, query)
         values = [row[1:] + row[0:1] for row in values]
-        with self.connect() as cur:
-            cur.executemany(query, values)
+        cur = self.cursor()
+        cur.executemany(query, values)
+        self.commit()
 
     def update_one(self, table, id, map):
         """Update one row."""
@@ -110,11 +113,11 @@ class Database:
             table,
             where_filter,
         )
-        with self.connect() as cur:
-            cur.execute(query, where_args)
-            while True:
-                row = cur.fetchone()
-                if row:
-                    yield row
-                else:
-                    break
+        cur = self.cursor()
+        cur.execute(query, where_args)
+        while True:
+            row = cur.fetchone()
+            if row:
+                yield row
+            else:
+                break
