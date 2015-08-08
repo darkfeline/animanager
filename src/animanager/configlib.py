@@ -19,6 +19,7 @@
 
 import configparser
 import os
+import re
 
 
 class Config:
@@ -41,3 +42,16 @@ class Config:
 
     def __setitem__(self, key, value):
         self.config[key] = value
+
+    def register(self, db, id):
+        results = db.select(
+            table='anime',
+            fields=['name'],
+            where_filter='id=?',
+            where_args=(id,)
+        )
+        name = next(results)[0]
+        self['series'][str(id)] = (
+            r'.*{}.*?'
+            r'(?P<ep>[0-9]+)'
+            r'(v(?P<ver>[0-9]+))?').format(re.escape(name))

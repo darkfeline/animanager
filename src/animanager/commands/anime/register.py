@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-
 from animanager import inputlib
 
 
@@ -30,21 +28,6 @@ def setup_parser(subparsers):
     parser.set_defaults(func=main)
 
 
-def register(db, config, id):
-    results = db.select(
-        table='anime',
-        fields=['name'],
-        where_filter='id=?',
-        where_args=(id,)
-    )
-    name = next(results)[0]
-    config['series'][str(id)] = (
-        r'.*{}.*?'
-        r'(?P<ep>[0-9]+)'
-        r'(v(?P<ver>[0-9]+))?').format(re.escape(name))
-    config.save()
-
-
 def main(args):
     results = args.db.select(
         'anime',
@@ -54,4 +37,5 @@ def main(args):
     )
     results = list(results)
     i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in results])
-    register(args.db, args.config, results[i][0])
+    args.config.register(args.db, results[i][0])
+    args.config.save()
