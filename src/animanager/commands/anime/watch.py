@@ -139,6 +139,7 @@ def main(args):
              for file in sorted(os.listdir('.'))
              if os.path.splitext(file)[1] in _VIDEO_EXT]
     series_info = _match_series_files(series_info, files)
+    del files
 
     while series_info:
         # Choose series to watch.
@@ -168,5 +169,5 @@ def main(args):
         # Remove the episode from our list.
         info.pop()
         # Also remove the series if there are no more episodes.
-        if not files:
-            del series_files[i]
+        if not info:
+            del series_info[i]
