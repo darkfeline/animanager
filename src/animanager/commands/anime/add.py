@@ -22,6 +22,7 @@ import logging
 
 from animanager import inputlib
 from animanager import mal
+from .register import register
 
 _LOGGER = logging.getLogger(__name__)
 _STATUSES = ('plan to watch', 'watching', 'complete')
@@ -39,36 +40,33 @@ def setup_parser(subparsers):
 
 def main(args):
 
-    """Add command."""
-
     # Get choices from MAL API.
     mal.query.setup(args.config)
     results = mal.query.anime_search(args.name)
     i = inputlib.get_choice(['({}) {}'.format(x.id, x.title) for x in results])
 
-    # Set data fields.
+    # Set the fields for the row to add to the database.
     chosen = results[i]
     fields = {
         'animedb_id': chosen.id,
         'name': chosen.title,
-        'ep_total': chosen.episodes,
         'type': chosen.type,
     }
-    if fields['ep_total'] == 0:
-        _LOGGER.warning('Received episode total of 0.')
-        del fields['ep_total']  # default is NULL/None
+    if chosen.episodes > 0:
+        fields['ep_total'] = chosen.episodes
 
     # Choose initial status to set.
     i = inputlib.get_choice(_STATUSES, 0)
     fields['status'] = _STATUSES[i]
-    if fields['status'] == 'watching':
-        if inputlib.get_yn('Set start date to today?'):
-            fields['date_started'] = date.today().isoformat()
-    elif fields['status'] == 'complete':
+    if fields['status'] == 'complete':
         fields['ep_watched'] = fields['ep_total']
-        if inputlib.get_yn('Set start and finish dates to today?'):
-            today = date.today().isoformat()
+        today = date.today().isoformat()
+        if inputlib.get_yn('Set start date to today?'):
             fields['date_started'] = today
+        if inputlib.get_yn('Set finish date to today?'):
             fields['date_finished'] = today
 
-    args.db.insert('anime', fields)
+    rowid = args.db.insert('anime', fields)
+
+    if fields['status'] == 'watching':
+        register(args.db, args.config, rowid)
