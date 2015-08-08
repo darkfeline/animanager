@@ -71,6 +71,7 @@ class Database:
         values = list(fields[key] for key in keys)
         with self.connect() as cur:
             cur.execute(query, values)
+            return cur.lastrowid
 
     def update_many(self, table, fields, values):
         """Update many rows.
