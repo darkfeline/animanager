@@ -22,7 +22,6 @@ import logging
 
 from animanager import inputlib
 from animanager import mal
-from .register import register
 
 _LOGGER = logging.getLogger(__name__)
 _STATUSES = ('plan to watch', 'watching', 'complete')
