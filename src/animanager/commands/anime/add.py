@@ -68,4 +68,5 @@ def main(args):
     rowid = args.db.insert('anime', fields)
 
     if fields['status'] == 'watching':
-        register(args.db, args.config, rowid)
+        args.config.register(args.db, rowid)
+        args.config.save()
