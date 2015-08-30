@@ -22,6 +22,7 @@ Automated anime watching and tracking script.
 import logging
 import os
 import subprocess
+import shlex
 import re
 from operator import itemgetter
 from collections import namedtuple
@@ -129,7 +130,7 @@ def main(args):
 
     config = args.config
     db = args.db
-    player = config['watch']['player']
+    player_args = shlex.split(config['watch']['player'])
 
     # Load series information.
     series_info = _get_series_info(db, config)
@@ -158,7 +159,7 @@ def main(args):
             continue
 
         # Play the episode.
-        subprocess.call([player, info.next.file])
+        subprocess.call(player_args + [info.next.file])
 
         if inputlib.get_yn('Bump?'):
             bump(db, info.id)
