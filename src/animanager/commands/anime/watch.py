@@ -24,7 +24,6 @@ import os
 import subprocess
 import shlex
 import re
-from operator import itemgetter
 from collections import namedtuple
 from collections import deque
 
@@ -43,37 +42,92 @@ def setup_parser(subparsers):
     )
     parser.set_defaults(func=main)
 
-_EpisodeInfo = namedtuple("_EpisodeInfo", ['ep_num', 'file'])
+_EpisodeInfo = namedtuple("_EpisodeInfo", ['episode', 'version', 'file'])
 
 
 class _SeriesInfo:
 
+    """Used for processing the files for a given series.
+
+    First add all files using match().  Afterward, call prep(), then use next()
+    and pop() to process the remaining files in sequence.
+
+    """
+
     def __init__(self, id, pattern, name, ep_watched):
         self.id = id
-        self.pattern = re.compile(pattern)
+        self._pattern = re.compile(pattern)
         self.name = name
         self.ep_watched = ep_watched
-        self.matched_files = list()
+        self._matched_files = list()
 
-    def add(self, ep_num, file):
-        self.matched_files.append(_EpisodeInfo(ep_num, file))
+    def match(self, filename):
+        """Attempt to add a file.
+
+        Return the _EpisodeInfo if successful, else None.
+
+        """
+        match = self._pattern.match(filename)
+        if match:
+            # Even if we match a file, we still check the episode number.
+            # If it has already been watched, remove the file and don't add
+            # it.
+            episode = int(match.group('ep'))
+            version = match.group('ver')
+            version = int(version) if version is not None else 1
+            info = _EpisodeInfo(episode, version, filename)
+            self._matched_files.append(info)
+            return info
+        else:
+            return None
 
     @property
     def next(self):
-        return self.matched_files[0]
+        return self._matched_files[0]
 
     def pop(self):
-        return self.matched_files.popleft()
+        return self._matched_files.popleft()
 
-    def sort(self):
-        self.matched_files = deque(
-            sorted(self.matched_files, key=itemgetter(0)))
+    def prep(self):
+        """Prep for use after adding files."""
+        self._sort()
+        self._clean()
+
+    def _sort(self):
+        """Sort matched files and put into deque for processing."""
+        # First sort by version reversed, then by episode.
+        # Final looks like: 1v2, 1v1, 2v2, 2v1
+        x = sorted(self._matched_files, key=lambda x: x.version, reverse=True)
+        x = sorted(self._matched_files, key=lambda x: x.episode)
+        self._matched_files = deque(x)
 
     def __bool__(self):
-        return bool(self.matched_files)
+        return bool(self._matched_files)
 
     def __len__(self):
-        return len(self.matched_files)
+        return len(self._matched_files)
+
+    def _clean(self):
+        """Remove files of unneeded episodes."""
+        # The goal is to remove all the files we don't need.  Specifically,
+        # these are files of episodes that have already been watched or files
+        # that have a newer version already.
+        #
+        # This assumes the file list has already been sorted.
+        #
+        # We use an index that says, all files with an episode less than this
+        # is unneeded.
+        cur_ep = self.ep_watched
+        i = 0
+        while i < len(self._matched_files):
+            episode_info = self._matched_files[i]
+            if episode_info.episode <= cur_ep:
+                os.remove(episode_info.file)
+                _LOGGER.info('Removed {}.'.format(episode_info.file))
+                del self._matched_files[i]
+            else:
+                cur_ep = episode_info.episode
+                i += 1
 
 
 def _get_series_info(db, config):
@@ -98,7 +152,7 @@ def _get_series_info(db, config):
     return processed_list
 
 
-def _match_series_files(series_info, files):
+def _series_load_files(series_info, files):
     """Match series files.
 
     Use series information to associate with the given list of files.
@@ -106,21 +160,10 @@ def _match_series_files(series_info, files):
     """
     for filename in files:
         for info in series_info:
-            match = info.pattern.match(filename)
-            if match:
-                # Even if we match a file, we still check the episode number.
-                # If it has already been watched, remove the file and don't add
-                # it.
-                ep_num = int(match.group('ep'))
-                if ep_num <= info.ep_watched:
-                    os.remove(filename)
-                    msg = 'Removed {} because it has already been watched.'
-                    _LOGGER.info(msg.format(filename))
-                else:
-                    info.add(ep_num, filename)
+            if info.match(filename):
                 break
     for info in series_info:
-        info.sort()
+        info.prep()
     return [info for info in series_info if info]
 
 _VIDEO_EXT = set(('.mkv', '.mp4'))
@@ -140,7 +183,7 @@ def main(args):
     files = [file
              for file in sorted(os.listdir('.'))
              if os.path.splitext(file)[1] in _VIDEO_EXT]
-    series_info = _match_series_files(series_info, files)
+    series_info = _series_load_files(series_info, files)
     del files
 
     while series_info:
