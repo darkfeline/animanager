@@ -93,6 +93,11 @@ class _SeriesInfo:
         self._sort()
         self._clean()
 
+    @property
+    def missing(self):
+        """Return whether the next episode to watch is missing."""
+        return self.next.episode != self.ep_watched + 1
+
     def _sort(self):
         """Sort matched files and put into deque for processing."""
         # First sort by version reversed, then by episode.
@@ -188,16 +193,18 @@ def main(args):
 
     while series_info:
         # Choose series to watch.
-        msg = "({}) {} (cur. ep. {}, {} eps. avail.)"
+        msg = "({id}) {name} (cur. {cur}, avail. {avail}){missing}"
         i = inputlib.get_choice(
-            [msg.format(info.id, info.name, info.ep_watched, len(info))
+            [msg.format(id=info.id, name=info.name, cur=info.ep_watched,
+                        avail=len(info),
+                        missing=' (missing)' if info.missing else '')
              for info in series_info]
         )
 
         info = series_info[i]
 
         # Check if next episode has the right number.
-        if info.next.episode != info.ep_watched + 1:
+        if info.missing:
             print('Next episode is missing.')
             continue
 
