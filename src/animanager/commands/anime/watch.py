@@ -197,7 +197,7 @@ def main(args):
         info = series_info[i]
 
         # Check if next episode has the right number.
-        if info.next.ep_num != info.ep_watched + 1:
+        if info.next.episode != info.ep_watched + 1:
             print('Next episode is missing.')
             continue
 
