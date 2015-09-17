@@ -102,8 +102,9 @@ class _SeriesInfo:
         """Sort matched files and put into deque for processing."""
         # First sort by version reversed, then by episode.
         # Final looks like: 1v2, 1v1, 2v2, 2v1
-        x = sorted(self._matched_files, key=lambda x: x.version, reverse=True)
-        x = sorted(self._matched_files, key=lambda x: x.episode)
+        x = self._matched_files
+        x = sorted(x, key=lambda x: x.version, reverse=True)
+        x = sorted(x, key=lambda x: x.episode)
         self._matched_files = deque(x)
 
     def __bool__(self):
