@@ -91,7 +91,6 @@ class _SeriesInfo:
     def prep(self):
         """Prep for use after adding files."""
         self._sort()
-        self._clean()
 
     @property
     def missing(self):
@@ -113,9 +112,9 @@ class _SeriesInfo:
     def __len__(self):
         return len(self._matched_files)
 
-    def _clean(self):
-        """Remove files of unneeded episodes."""
-        # The goal is to remove all the files we don't need.  Specifically,
+    def unneeded(self):
+        """Return list of unneeded episodes."""
+        # The goal is to find all the files we don't need.  Specifically,
         # these are files of episodes that have already been watched or files
         # that have a newer version already.
         #
@@ -123,18 +122,18 @@ class _SeriesInfo:
         #
         # We use an index that says, all files with an episode less than this
         # is unneeded.
+        unneeded = []
         cur_ep = self.ep_watched
         i = 0
         while i < len(self._matched_files):
             episode_info = self._matched_files[i]
             if episode_info.episode <= cur_ep:
-                os.remove(episode_info.file)
-                _LOGGER.info('Removed {}.'.format(episode_info.file))
+                unneeded.append(episode_info.file)
                 del self._matched_files[i]
             else:
                 cur_ep = episode_info.episode
                 i += 1
-
+        return unneeded
 
 def _get_series_info(db, config):
     """Get series info.
