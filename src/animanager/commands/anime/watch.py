@@ -194,12 +194,13 @@ def main(args):
 
     # Clean up unneeded files
     unneeded = list(itertools.chain(x.unneeded() for x in series_info))
-    print('Found unneeded:')
-    for x in unneeded:
-        print(x)
-    if inputlib.get_yn('Delete?'):
+    if unneeded:
+        print('Found unneeded:')
         for x in unneeded:
-            os.remove(x)
+            print(x)
+        if inputlib.get_yn('Delete?'):
+            for x in unneeded:
+                os.remove(x)
 
     while series_info:
         # Choose series to watch.
