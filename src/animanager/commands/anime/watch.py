@@ -193,7 +193,7 @@ def main(args):
     del files
 
     # Clean up unneeded files
-    unneeded = list(itertools.chain(x.unneeded() for x in series_info))
+    unneeded = list(itertools.chain(*(x.unneeded() for x in series_info)))
     if unneeded:
         print('Found unneeded:')
         for x in unneeded:
