@@ -26,6 +26,7 @@ import shlex
 import re
 from collections import namedtuple
 from collections import deque
+import itertools
 
 from animanager import inputlib
 
@@ -190,6 +191,15 @@ def main(args):
              if os.path.splitext(file)[1] in _VIDEO_EXT]
     series_info = _series_load_files(series_info, files)
     del files
+
+    # Clean up unneeded files
+    unneeded = list(itertools.chain(x.unneeded() for x in series_info))
+    print('Found unneeded:')
+    for x in unneeded:
+        print(x)
+    if inputlib.get_yn('Delete?'):
+        for x in unneeded:
+            os.remove(x)
 
     while series_info:
         # Choose series to watch.
