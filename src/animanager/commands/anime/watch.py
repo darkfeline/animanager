@@ -202,6 +202,8 @@ def main(args):
         if inputlib.get_yn('Delete?'):
             for x in unneeded:
                 os.remove(x)
+    # Remove series that now have no files
+    series_info = [x for x in series_info if x]
 
     while series_info:
         # Choose series to watch.
