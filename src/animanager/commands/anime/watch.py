@@ -136,6 +136,7 @@ class _SeriesInfo:
                 i += 1
         return unneeded
 
+
 def _get_series_info(db, config):
     """Get series info.
 
