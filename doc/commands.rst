@@ -1,8 +1,8 @@
 Commands reference
 ==================
 
-Global arguments
-----------------
+Global options
+--------------
 
 These go before any commands.
 
