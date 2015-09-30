@@ -7,6 +7,7 @@ Personal anime database management tool.
 ## Dependencies
 
 * Python 3
+* setuptools
 * [tabulate][1]
 
 [1]: https://pypi.python.org/pypi/tabulate
