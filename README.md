@@ -14,11 +14,11 @@ Personal anime database management tool.
 
 ## Installation
 
-    $ python setup.py install
+    $ python3 setup.py install
 
 or
 
-    $ python setup.py install --user
+    $ python3 setup.py install --user
 
 ## Configuration/Setup
 

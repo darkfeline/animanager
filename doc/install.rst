@@ -23,11 +23,11 @@ Installation
 
 Animanager can be installed manually::
 
-  # python setup.py install
+  # python3 setup.py install
 
 or::
 
-  $ python setup.py install --user
+  $ python3 setup.py install --user
 
 
 Database setup
