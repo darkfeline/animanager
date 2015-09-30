@@ -1,5 +1,7 @@
 # animanager
 
+Website: https://darkfeline.github.io/animanager/
+
 Personal anime database management tool.
 
 ## Dependencies

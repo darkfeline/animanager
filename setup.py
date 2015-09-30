@@ -18,5 +18,5 @@ setup(
     author_email='darkfeline@felesatra.moe',
     description='Anime manager MySQL frontend application',
     license='GPLv3',
-    url='',
+    url='https://darkfeline.github.io/animanager/',
 )
