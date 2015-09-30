@@ -7,6 +7,7 @@ Dependencies
 You need the following dependencies to run Animanager
 
 - Python 3
+- setuptools
 - `tabulate`_
 
 .. _tabulate: https://pypi.python.org/pypi/tabulate
