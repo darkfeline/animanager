@@ -32,5 +32,4 @@ Load the included database schema `schema.sql` into a SQLite3 database file at
 ## More information
 
 See the documentation for more detailed information.  It can be found in the
-`doc` directory, or online at `Read the Docs
-<http://animanager.readthedocs.org/>`_.
+`doc` directory, or online at [Read the Docs](http://animanager.readthedocs.org/).
