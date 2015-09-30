@@ -1,26 +1,19 @@
-# animanager
+animanager
+==========
 
 Website: https://darkfeline.github.io/animanager/
 
 Personal anime database management tool.
 
-## Dependencies
+Quick Install
+-------------
 
-* Python 3
-* setuptools
-* [tabulate][1]
+    $ pip3 install --user animanager
 
-[1]: https://pypi.python.org/pypi/tabulate
+I highly recommend that you read the documentation (see below).
 
-## Installation
-
-    $ python3 setup.py install
-
-or
-
-    $ python3 setup.py install --user
-
-## Configuration/Setup
+Configuration/Setup
+-------------------
 
 Copy the included configuration file `config.ini` to `~/.animanager/config.ini`.
 
@@ -29,7 +22,8 @@ Load the included database schema `schema.sql` into a SQLite3 database file at
 
     $ sqlite3 ~/.animanager/database.db '.read schema.sql'
 
-## More information
+More information
+----------------
 
 See the documentation for more detailed information.  It can be found in the
 `doc` directory, or online at [Read the Docs](http://animanager.readthedocs.org/).
