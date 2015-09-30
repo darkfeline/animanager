@@ -1,10 +1,20 @@
 Installation and configuration
 ==============================
 
-Dependencies
-------------
+pip/PyPi installation
+---------------------
 
-You need the following dependencies to run Animanager
+Animanager can be installed fairly easily using pip::
+
+  $ pip3 install --user animanager
+
+You need Python 3, pip for Python 3, and setuptools for this.  Other
+dependencies will be installed automatically.
+
+Manual installation
+-------------------
+
+You need the following dependencies to run Animanager:
 
 - Python 3
 - setuptools
@@ -12,24 +22,17 @@ You need the following dependencies to run Animanager
 
 .. _tabulate: https://pypi.python.org/pypi/tabulate
 
-Python 3 is needed to run Animanager.  tabulate is needed for printing pretty
-tables (e.g., ``anime search``).
+Python 3 is needed to run Animanager.  setuptools is neede for handling the
+installation.  tabulate is needed for printing pretty tables (e.g., ``anime
+search``).
 
-tabulate can be installed manually with pip::
+tabulate can be installed with pip::
 
-  $ pip3 install tabulate
-
-Installation
-------------
+  $ pip3 install --user tabulate
 
 Animanager can be installed manually::
 
-  # python3 setup.py install
-
-or::
-
   $ python3 setup.py install --user
-
 
 Database setup
 --------------
