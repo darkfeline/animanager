@@ -61,21 +61,21 @@ Navigate to the directory where your files are::
 
   $ cd anime
   $ ls
-  [SpoonSubs] Hidamari Sketch x365 - 01 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 02 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 03 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 04 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 05 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 06 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 06 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 07 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 08 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 09 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 09 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 10 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 11 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 12 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x365 - 13 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 01 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 02 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 03 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 04 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 05 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 06 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 06 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 07 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 08 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 09 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 09 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 10 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 11 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 12 (DVD).mkv
+  [SpoonSubs] Hidamari Sketch x 365 - 13 (DVD).mkv
 
 Now we can use Animanager to automatically watch our series::
 
