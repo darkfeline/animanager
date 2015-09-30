@@ -255,7 +255,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'animanager', 'Animanager Documentation',
+    ('man', 'animanager', 'Animanager Documentation',
      [author], 1)
 ]
 
