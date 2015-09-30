@@ -47,6 +47,7 @@ class ChoiceCmd(cmd.Cmd):
     def do_r(self, arg=None):
         """Reset choices."""
         self.choices = list(enumerate(self.original_choices))
+        self.do_p()
 
     def do_f(self, arg):
         """Filter choice set."""
