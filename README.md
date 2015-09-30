@@ -25,3 +25,8 @@ Load the included database schema `schema.sql` into a SQLite3 database file at
 `~/.animanager/database.db`:
 
     $ sqlite3 ~/.animanager/database.db '.read schema.sql'
+
+## More information
+
+See the documentation for more detailed information.  It can be found in the
+`doc` directory.
