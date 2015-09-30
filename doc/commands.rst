@@ -29,6 +29,8 @@ I suggest you make an alias for your shell; for Bash, put this in your
 
   alias anime="animanager anime"
 
+.. _add:
+
 add
 ^^^
 
@@ -69,6 +71,8 @@ clean
 Cleans up registered series in the config (see :ref:`register`).
 
 Removes all registered series in the config file that have been completed.
+
+.. _register:
 
 register
 ^^^^^^^^
@@ -167,6 +171,8 @@ it to update Animanager's database.
 
 Information that may be updated is the name of the series and total episode
 count.
+
+.. _watch:
 
 watch
 ^^^^^
