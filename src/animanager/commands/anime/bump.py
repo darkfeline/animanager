@@ -89,16 +89,18 @@ def bump(db, id):
     # Calculate what needs updating, putting it into a dictionary that we will
     # update at the end all at once.
     update_map = dict()
-    # First we update the episode count.
+
+    # We set the starting date if we haven't watched anything yet.
+    if watched == 0:
+        update_map['date_started'] = date.today().isoformat()
+
+    # We update the episode count.
     watched += 1
     update_map['ep_watched'] = watched
 
     # If the status wasn't watching, we set it so.
-    # Additionally if it was plan to watch, we set the starting date.
     if status != 'watching':
         update_map['status'] = 'watching'
-        if status == 'plan to watch':
-            update_map['date_started'] = date.today().isoformat()
 
     # Finally, if the series is now complete, we set the status and finish date
     # accordingly.
