@@ -165,9 +165,11 @@ update
 
 Update series data in database.
 
-This command queries MAL for all series that do not have total episode count
-information yet or have status "watching" for potentially changed data and uses
-it to update Animanager's database.
+This command queries MAL for updated series information to use to update
+Animanager's database.
+
+This command works on all series that do not have total episode count
+information yet or have status "watching".
 
 Information that may be updated is the name of the series and total episode
 count.
