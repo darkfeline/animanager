@@ -41,13 +41,17 @@ class ChoiceCmd(cmd.Cmd):
 
     def preloop(self):
         # Initialize choices and print
-        self.do_r()
+        self._reset()
         self.do_p()
+
+    def _reset(self):
+        """Reset or initialize choices."""
+        self.choices = list(enumerate(self.original_choices))
 
     def do_r(self, arg=None):
         """Reset choices."""
-        self.choices = list(enumerate(self.original_choices))
-        self.do_p()
+        self._reset()
+        self._print()
 
     def do_f(self, arg):
         """Filter choice set."""
@@ -56,14 +60,17 @@ class ChoiceCmd(cmd.Cmd):
                         if arg in choice.lower()]
         if not self.choices:
             print('No choices, resetting.')
-            self.do_r()
+            self._reset()
         else:
-            self.do_p()
+            self._print()
 
-    def do_p(self, arg=None):
+    def _print(self):
         """Print choices."""
         for i, choice in self.choices:
             print("{}: {}".format(i, choice))
+
+    def do_p(self, arg=None):
+        self._print()
 
     def emptyline(self):
         """Use default choice."""
