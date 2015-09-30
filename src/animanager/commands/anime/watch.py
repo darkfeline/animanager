@@ -231,9 +231,8 @@ def main(args):
 
         if inputlib.get_yn('Delete?'):
             os.unlink(info.next.file)
-
-        # Remove the episode from our list.
-        info.pop()
-        # Also remove the series if there are no more episodes.
-        if not info:
-            del series_info[i]
+            # Remove the episode from our list.
+            info.pop()
+            # Also remove the series if there are no more episodes.
+            if not info:
+                del series_info[i]
