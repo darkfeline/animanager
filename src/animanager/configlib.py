@@ -51,9 +51,10 @@ class Config:
             where_args=(id,)
         )
         name = next(results)[0]
-        self['series'][str(id)] = (
-            r'.*{}.*?'
-            r'(?P<ep>[0-9]+)').format(re.escape(name))
+        self['series'][str(id)] = ''.join((
+            r'.*{}.*?'.format(re.escape(name)),
+            r'(?P<ep>[0-9]+)',
+        ))
 
     def unregister(self, id):
         del self['series'][str(id)]
