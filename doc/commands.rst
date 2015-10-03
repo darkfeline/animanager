@@ -56,7 +56,7 @@ bump
 
 Animanager will selectively bump the episode watched count of one show.  By
 default Animanager will only search "watching" shows; use the option ``--all``
-to search from all incomplete shows, including "plan to watch" and "dropped".
+to search from all incomplete shows.
 
 Animanager will set the show to watching, update start and end date, and update
 completion status automagically.
@@ -81,8 +81,7 @@ drop
 
 Animanager will set the status of one series to "dropped".  By default
 Animanager will only search "watching" and "on hold" shows; use the option
-``--all`` to search from all incomplete shows, including "plan to watch" and
-"dropped".
+``--all`` to search from all incomplete shows.
 
 hold
 ^^^^
@@ -93,7 +92,7 @@ hold
 
 Animanager will set the status of one series to "on hold".  By
 default Animanager will only search "watching" shows; use the option ``--all``
-to search from all incomplete shows, including "plan to watch" and "dropped".
+to search from all incomplete shows.
 
 .. _register:
 
