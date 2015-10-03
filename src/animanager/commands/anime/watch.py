@@ -24,9 +24,7 @@ import os
 import subprocess
 import shlex
 import re
-from collections import namedtuple
-from collections import deque
-import itertools
+from collections import defaultdict
 
 from animanager import inputlib
 from animanager import trashlib
@@ -44,8 +42,6 @@ def setup_parser(subparsers):
     )
     parser.set_defaults(func=main)
 
-_EpisodeInfo = namedtuple("_EpisodeInfo", ['episode', 'version', 'file'])
-
 
 class _SeriesInfo:
 
@@ -61,12 +57,12 @@ class _SeriesInfo:
         self._pattern = re.compile(pattern)
         self.name = name
         self.ep_watched = ep_watched
-        self._matched_files = list()
+        self._files = defaultdict(list)
 
     def match(self, filename):
         """Attempt to add a file.
 
-        Return the _EpisodeInfo if successful, else None.
+        Return True if successful, else False.
 
         """
         match = self._pattern.match(filename)
@@ -75,73 +71,52 @@ class _SeriesInfo:
             # If it has already been watched, remove the file and don't add
             # it.
             episode = int(match.group('ep'))
-            version = match.group('ver')
-            version = int(version) if version is not None else 1
-            info = _EpisodeInfo(episode, version, filename)
-            self._matched_files.append(info)
-            return info
+            self._files[episode].append(filename)
+            return True
         else:
-            return None
+            return False
+
+    def has_next(self):
+        """Return whether there are files for the next episode."""
+        return self.next_ep in self._files
+
+    def peek(self):
+        """Return the list of files for the next episode."""
+        return self._files[self.next_ep]
 
     @property
-    def next(self):
-        return self._matched_files[0]
+    def next_ep(self):
+        """Return the integer of the next episode."""
+        return self.ep_watched + 1
 
     def pop(self):
-        return self._matched_files.popleft()
+        """Pop an episode.
 
-    def prep(self):
-        """Prep for use after adding files."""
-        self._sort()
+        Trash the files for the next episode and remove it from our structures.
 
-    @property
-    def missing(self):
-        """Return whether the next episode to watch is missing."""
-        return self.next.episode != self.ep_watched + 1
-
-    def _sort(self):
-        """Sort matched files and put into deque for processing."""
-        # First sort by version reversed, then by episode.
-        # Final looks like: 1v2, 1v1, 2v2, 2v1
-        x = self._matched_files
-        x = sorted(x, key=lambda x: x.version, reverse=True)
-        x = sorted(x, key=lambda x: x.episode)
-        self._matched_files = deque(x)
+        """
+        for file in self._files[self.next_ep]:
+            trashlib.trash(file)
+        del self._files[self.next_ep]
 
     def __bool__(self):
-        return bool(self._matched_files)
+        return bool(self._files)
 
     def __len__(self):
-        return len(self._matched_files)
+        return len(self._files)
 
-    def unneeded(self):
-        """Return list of unneeded episodes."""
-        # The goal is to find all the files we don't need.  Specifically,
-        # these are files of episodes that have already been watched or files
-        # that have a newer version already.
-        #
-        # This assumes the file list has already been sorted.
-        #
-        # We use an index that says, all files with an episode less than this
-        # is unneeded.
-        unneeded = []
-        cur_ep = self.ep_watched
-        i = 0
-        while i < len(self._matched_files):
-            episode_info = self._matched_files[i]
-            if episode_info.episode <= cur_ep:
-                unneeded.append(episode_info.file)
-                del self._matched_files[i]
-            else:
-                cur_ep = episode_info.episode
-                i += 1
-        return unneeded
+    def clean(self):
+        """Trash unneeded files."""
+        for ep in [ep for ep in self._files.keys() if ep <= self.ep_watched]:
+            for file in self._files[ep]:
+                trashlib.trash(file)
+            del self._files[ep]
 
 
-def _get_series_info(db, config):
-    """Get series info.
+def _load_series_info(db, config):
+    """Load series info.
 
-    Load series id and filename patterns from the config file and match it with
+    Read series id and filename patterns from the config file and match it with
     other necessary info from our database.
 
     """
@@ -160,19 +135,22 @@ def _get_series_info(db, config):
     return processed_list
 
 
-def _series_load_files(series_info, files):
+def _load_files(series_list, files):
     """Match series files.
 
     Use series information to associate with the given list of files.
 
     """
     for filename in files:
-        for info in series_info:
+        for info in series_list:
             if info.match(filename):
                 break
-    for info in series_info:
-        info.prep()
-    return [info for info in series_info if info]
+    return [info for info in series_list if info]
+
+
+def _file_ext(filename):
+    """Return file extension."""
+    return os.path.splitext(filename)[1]
 
 _VIDEO_EXT = set(('.mkv', '.mp4'))
 
@@ -184,51 +162,55 @@ def main(args):
     player_args = shlex.split(config['watch']['player'])
 
     # Load series information.
-    series_info = _get_series_info(db, config)
+    series_list = _load_series_info(db, config)
 
     # Use series information to search current directory for files and
     # match them with a series.
     files = [file
              for file in sorted(os.listdir('.'))
-             if os.path.splitext(file)[1] in _VIDEO_EXT]
-    series_info = _series_load_files(series_info, files)
+             if _file_ext(file) in _VIDEO_EXT]
+    series_list = _load_files(series_list, files)
     del files
 
-    # Clean up unneeded files
-    unneeded = list(itertools.chain(*(x.unneeded() for x in series_info)))
-    for file in unneeded:
-        _LOGGER.info('Trashing %s', file)
-        trashlib.trash(file)
-    # Remove series that now have no files
-    series_info = [x for x in series_info if x]
+    # Clean up unneeded files.
+    for x in series_list:
+        x.clean()
+    # Remove series that no longer have any files.
+    series_list = [x for x in series_list if x]
 
-    while series_info:
+    while series_list:
         # Choose series to watch.
         msg = "({id}) {name} (cur. {cur}, avail. {avail}){missing}"
         i = inputlib.get_choice(
             [msg.format(id=info.id, name=info.name, cur=info.ep_watched,
                         avail=len(info),
-                        missing=' (missing)' if info.missing else '')
-             for info in series_info]
+                        missing='' if info.has_next() else ' (missing)')
+             for info in series_list]
         )
 
-        info = series_info[i]
+        info = series_list[i]
 
-        # Check if next episode has the right number.
-        if info.missing:
+        # Check if we have the next episode.
+        if not info.has_next():
             print('Next episode is missing.')
             continue
 
+        # Choose the file to play if there is more than one.
+        files = info.peek()
+        if len(files) > 1:
+            i = inputlib.get_choice(files)
+            file = files[i]
+            del files
+        else:
+            file = files[0]
         # Play the episode.
-        subprocess.call(player_args + [info.next.file])
+        subprocess.call(player_args + [file])
+        del file
 
         if inputlib.get_yn('Bump?'):
             bump(db, info.id)
-            info.ep_watched += 1
-            # Trash file.
-            trashlib.trash(info.next.file)
             # Remove the episode from our list.
             info.pop()
-            # Also remove the series if there are no more episodes.
-            if not info:
-                del series_info[i]
+
+        # Filter out series that have no files.
+        series_list = [x for x in series_list if x]
