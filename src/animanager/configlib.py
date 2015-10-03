@@ -53,8 +53,7 @@ class Config:
         name = next(results)[0]
         self['series'][str(id)] = (
             r'.*{}.*?'
-            r'(?P<ep>[0-9]+)'
-            r'(v(?P<ver>[0-9]+))?').format(re.escape(name))
+            r'(?P<ep>[0-9]+)').format(re.escape(name))
 
     def unregister(self, id):
         del self['series'][str(id)]
