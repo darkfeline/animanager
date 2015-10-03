@@ -15,19 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from . import add
+from . import bump
+from . import clean
+from . import hold
+from . import register
+from . import search
 from . import stats
 from . import update
-from . import bump
-from . import add
-from . import search
 from . import watch
-from . import clean
-from . import register
 from . import watching
-from . import hold
 
-_COMMANDS = [stats, update, bump, add, search, watch, clean, register,
-             watching, hold]
+_COMMANDS = [
+    add,
+    bump,
+    clean,
+    hold,
+    register,
+    search,
+    stats,
+    update,
+    watch,
+    watching,
+]
 
 
 def setup_parser(subparsers):
