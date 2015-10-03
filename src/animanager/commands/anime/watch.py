@@ -98,6 +98,7 @@ class _SeriesInfo:
         for file in self._files[self.next_ep]:
             trashlib.trash(file)
         del self._files[self.next_ep]
+        self.ep_watched = self.next_ep
 
     def __bool__(self):
         return bool(self._files)
