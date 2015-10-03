@@ -2,3 +2,4 @@ include README.md
 include COPYING
 include schema.sql
 include config.ini
+include CHANGELOG.md

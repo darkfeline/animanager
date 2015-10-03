@@ -79,3 +79,17 @@ when new.vol_total is not NULL and new.vol_read > new.vol_total
 begin
 update manga set vol_read=new.vol_total where id=new.id;
 end;
+CREATE TRIGGER set_anime_complete
+after update of ep_watched, ep_total on anime for each row
+when new.ep_total is not NULL and new.ep_watched = new.ep_total
+begin
+update anime set status="complete" where id=new.id;
+end
+CREATE TRIGGER set_manga_complete
+after update of ch_read,ch_total,vol_read,vol_total on anime for each row
+when (new.vol_total is not NULL and new.vol_read = new.vol_total) or (new.ch_total is not NULL and new.ch_read = new.ch_total)
+begin
+update manga set status="complete" where id=new.id;
+update manga set vol_read= case when new.vol_total is not NULL then new.vol_total else vol_read end where id=new.id;
+update manga set ch_read= case when new.ch_total is not NULL then new.ch_total else ch_read end where id=new.id;
+end
