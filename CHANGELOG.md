@@ -6,6 +6,7 @@
 
 - Added watching command.
 - Added hold command.
+- Added drop command.
 
 ### Fixed
 

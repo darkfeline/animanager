@@ -72,6 +72,18 @@ Cleans up registered series in the config (see :ref:`register`).
 
 Removes all registered series in the config file that have been completed.
 
+drop
+^^^^
+
+::
+
+   $ animanager anime drop "series name search"
+
+Animanager will set the status of one series to "dropped".  By default
+Animanager will only search "watching" and "on hold" shows; use the option
+``--all`` to search from all incomplete shows, including "plan to watch" and
+"dropped".
+
 hold
 ^^^^
 
