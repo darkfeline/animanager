@@ -17,6 +17,8 @@
 
 from tabulate import tabulate
 
+from animanager.dblib import FIELDS
+
 
 def setup_parser(subparsers):
     parser = subparsers.add_parser(
@@ -27,15 +29,12 @@ def setup_parser(subparsers):
     parser.add_argument('name')
     parser.set_defaults(func=main)
 
-_FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
-           'date_started', 'date_finished', 'animedb_id']
-
 
 def main(args):
     shows = args.db.select(
         'anime',
-        _FIELDS,
+        FIELDS,
         'name LIKE ?',
         ['%{}%'.format(args.name)]
     )
-    print(tabulate(shows, headers=_FIELDS))
+    print(tabulate(shows, headers=FIELDS))
