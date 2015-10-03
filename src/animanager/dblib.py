@@ -24,6 +24,9 @@ import sys
 
 _LOGGER = logging.getLogger(__name__)
 
+FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
+          'date_started', 'date_finished', 'animedb_id']
+
 
 class Database:
 
