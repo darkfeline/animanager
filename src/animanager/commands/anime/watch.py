@@ -29,6 +29,7 @@ from collections import deque
 import itertools
 
 from animanager import inputlib
+from animanager import trashlib
 
 from .bump import bump
 
@@ -195,13 +196,9 @@ def main(args):
 
     # Clean up unneeded files
     unneeded = list(itertools.chain(*(x.unneeded() for x in series_info)))
-    if unneeded:
-        print('Found unneeded:')
-        for x in unneeded:
-            print(x)
-        if inputlib.get_yn('Delete?'):
-            for x in unneeded:
-                os.remove(x)
+    for file in unneeded:
+        _LOGGER.info('Trashing %s', file)
+        trashlib.trash(file)
     # Remove series that now have no files
     series_info = [x for x in series_info if x]
 
@@ -228,9 +225,8 @@ def main(args):
         if inputlib.get_yn('Bump?'):
             bump(db, info.id)
             info.ep_watched += 1
-
-        if inputlib.get_yn('Delete?'):
-            os.unlink(info.next.file)
+            # Trash file.
+            trashlib.trash(info.next.file)
             # Remove the episode from our list.
             info.pop()
             # Also remove the series if there are no more episodes.
