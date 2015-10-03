@@ -18,8 +18,10 @@
 """This module defines a trash function for reversibly deleting files."""
 
 import os
+import logging
 
 _TRASH_DIR = 'trash'
+_LOGGER = logging.getLogger(__name__)
 
 
 def trash(file):
@@ -28,6 +30,7 @@ def trash(file):
     Move file to a designated trash directory.
 
     """
+    _LOGGER.info('Trashing %s', file)
     if not os.path.exists(_TRASH_DIR):
         os.mkdir(_TRASH_DIR)
     os.rename(file, os.path.join(_TRASH_DIR, os.path.basename(file)))
