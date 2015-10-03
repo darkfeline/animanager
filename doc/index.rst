@@ -1,7 +1,9 @@
-Welcome to Animanager's documentation!
-======================================
+Animanager documentation
+========================
 
 Project website: https://darkfeline.github.io/animanager/
+
+This is the documentation for Animanager.
 
 Animanager is a simple anime watching and tracking program.
 
