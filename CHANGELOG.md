@@ -5,6 +5,7 @@
 ### Added
 
 - Added watching command.
+- Added hold command.
 
 ### Fixed
 

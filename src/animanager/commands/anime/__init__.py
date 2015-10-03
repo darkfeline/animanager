@@ -24,9 +24,10 @@ from . import watch
 from . import clean
 from . import register
 from . import watching
+from . import hold
 
 _COMMANDS = [stats, update, bump, add, search, watch, clean, register,
-             watching]
+             watching, hold]
 
 
 def setup_parser(subparsers):

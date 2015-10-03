@@ -72,6 +72,17 @@ Cleans up registered series in the config (see :ref:`register`).
 
 Removes all registered series in the config file that have been completed.
 
+hold
+^^^^
+
+::
+
+   $ animanager anime hold "series name search"
+
+Animanager will set the status of one series to "on hold".  By
+default Animanager will only search "watching" shows; use the option ``--all``
+to search from all incomplete shows, including "plan to watch" and "dropped".
+
 .. _register:
 
 register
