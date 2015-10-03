@@ -201,6 +201,15 @@ information and return to the initial menu.
 
 To exit, use CTRL-C or equivalent command to send SIGTERM in your terminal.
 
+watching
+^^^^^^^^
+
+::
+
+   $ animanager anime watching
+
+Print the databasea data for all currently watching series.
+
 Manga commands
 --------------
 

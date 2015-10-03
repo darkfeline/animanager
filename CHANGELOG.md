@@ -2,6 +2,10 @@
 
 ## master
 
+### Added
+
+- Added watching command.
+
 ### Fixed
 
 - Added missing triggers to schema to set complete when episode/chapter/volume
