@@ -100,12 +100,9 @@ using an ``mpv``-like player)::
 
 Animanager will prompt whether you want to bump your currently watched episode
 count.  The default is yes, so just hit Enter.  Alternatively, you can type
-``n`` to keep your currently watched episode at 0.
-
-Next, Animanager will prompt whether you want to delete the file.  Again, the
-default is yes::
-
-  Delete? [Y/n]
+``n`` to keep your currently watched episode at 0.  Animanager will
+automatically move the file to a "trash" directory to clean up the working
+directory.
 
 Now we're back at the menu::
 

@@ -210,18 +210,49 @@ Watch anime.
 This is Animanager's main command.  All you have to do is run this command and
 watch anime; Animanager will update the database automagically.
 
-It takes the list of registered series and matches it against all the files in
-the current directory, presenting you with a menu of series to watch::
+The following describes what the watch command does in detail.
 
-  0: (900) Hidamari Sketch x 365 (cur. 1, avail. 12)
+First, it takes reads the registered series information from the config and uses
+it to collate the files in the working directory.  Files are matched to a series
+and episode number.
+
+Any files corresponding to episodes that have already been watch will be trashed
+(placed in a subdirectory to clean up the working directory).
+
+Next, it enters the main loop.
+
+At the beginning of the loop, you are presented with a menu of series to watch,
+series which have files available::
+
+  0: (900) Hidamari Sketch x 365 (cur. 1, avail. 11) (missing)
   1: (877) Overlord (cur. 12, avail. 1)
   [-1]> 
 
-After selecting a series, your selected video player will open automatically.
-After it terminates, Animanager will prompt you to update your tracking
-information and return to the initial menu.
+The menu displays the currently watched episode for each series and the number
+of episodes available to watch.  In the event that the next episode in sequence
+is missing, the menu will display that too.
 
-To exit, use CTRL-C or equivalent command to send SIGTERM in your terminal.
+After selecting a series, if there are multiple files available for the next
+series, Animanager will prompt you to choose a file to watch::
+
+   0: [BakedFish] World Trigger - 48 [720p][AAC].mp4
+   1: [Leopard-Raws] World Trigger - 48 RAW (ABC 1280x720 x264 AAC).mp4
+   [-1]>
+
+This can be used for handling different release versions, different release
+groups, or subtitled vs un-subtitled files.
+
+Next, your selected video player will open automatically.  After it terminates,
+Animanager will prompt you to update your tracking information ("bump").  If you
+choose to do so (the default), Animanager will increment your currently watched
+episode, handling any other necessary updates such as completion date and
+status, and trash all of the files for the watched episode.  You can decline to
+bump, which will return you to the main menu without don't anything else.  This
+can be used to peek at an episode or a specific file, or to watch a different
+version of that episode.
+
+After this, the loop repeats.  To exit, use CTRL-C or equivalent command to send
+SIGTERM in your terminal.
 
 watching
 ^^^^^^^^
