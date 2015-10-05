@@ -7,6 +7,8 @@
 - Default status of added series is now "watching".
 - Default regexp for registered series changed.  It should now match more
   intelligently.
+- Ignore case when matching registered series.  This should now match more
+  intelligently.
 
 ## v0.7.0
 

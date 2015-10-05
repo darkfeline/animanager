@@ -65,7 +65,7 @@ class _SeriesInfo:
         Return True if successful, else False.
 
         """
-        match = self._pattern.match(filename)
+        match = self._pattern.match(filename, re.I)
         if match:
             # Even if we match a file, we still check the episode number.
             # If it has already been watched, remove the file and don't add
