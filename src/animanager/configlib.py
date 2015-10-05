@@ -51,6 +51,7 @@ class Config:
             where_args=(id,)
         )
         name = next(results)[0]
+        name = re.sub(r'\W', '', name)
         self['series'][str(id)] = '.*'.join((
             '.*'.join((re.escape(x) for x in name.split())),
             r'(?P<ep>[0-9]+)',
