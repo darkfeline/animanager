@@ -133,6 +133,8 @@ the second line will never match because the first line will match instead::
   1 = .*Overlord.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
   2 = .*Overlord.*?Special.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
 
+The patterns are matched at the beginning of the filename and ignore case.
+
 Refer to the Python documentation for more information about Python's regular
 expression syntax.
 
