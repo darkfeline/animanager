@@ -9,6 +9,7 @@
   intelligently.
 - Ignore case when matching registered series.  This should now match more
   intelligently.
+- Clean command now also removes series that are dropped.
 
 ### Fixed
 

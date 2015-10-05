@@ -70,7 +70,8 @@ clean
 
 Cleans up registered series in the config (see :ref:`register`).
 
-Removes all registered series in the config file that have been completed.
+Removes all registered series in the config file that have been completed or
+dropped.
 
 drop
 ^^^^

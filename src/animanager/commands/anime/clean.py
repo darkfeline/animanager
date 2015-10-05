@@ -39,7 +39,7 @@ def _filter_series(db, config):
             where_args=(id,),
         )
         status = list(results)[0][0]
-        if status == 'complete':
+        if status in ('complete', 'dropped'):
             to_delete.append(id)
     # Do removal
     if to_delete:
