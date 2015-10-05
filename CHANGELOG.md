@@ -10,6 +10,10 @@
 - Ignore case when matching registered series.  This should now match more
   intelligently.
 
+### Fixed
+
+- Catch MAL querying error so the user doesn't see a stack trace.
+
 ## v0.7.0
 
 ### Added

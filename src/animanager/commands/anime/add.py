@@ -19,6 +19,7 @@
 
 from datetime import date
 import logging
+import sys
 
 from animanager import inputlib
 from animanager import mal
@@ -41,7 +42,11 @@ def main(args):
 
     # Get choices from MAL API.
     mal.query.setup(args.config)
-    results = mal.query.anime_search(args.name)
+    try:
+        results = mal.query.anime_search(args.name)
+    except mal.query.ResponseError as e:
+        _LOGGER.error('Error querying MAL: %s', e)
+        sys.exit(1)
     i = inputlib.get_choice(['({}) {}'.format(x.id, x.title) for x in results])
 
     # Set the fields for the row to add to the database.
