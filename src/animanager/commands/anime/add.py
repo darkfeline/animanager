@@ -55,7 +55,7 @@ def main(args):
         fields['ep_total'] = chosen.episodes
 
     # Choose initial status to set.
-    i = inputlib.get_choice(_STATUSES, 0)
+    i = inputlib.get_choice(_STATUSES, 1)
     fields['status'] = _STATUSES[i]
     if fields['status'] == 'complete':
         fields['ep_watched'] = fields['ep_total']

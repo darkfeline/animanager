@@ -2,6 +2,12 @@
 
 ## master
 
+### Changed
+
+- Default status of added series is now "watching".
+
+## v0.7.0
+
 ### Added
 
 - Added watching command.
