@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def setup_parser(subparsers):
     parser = subparsers.add_parser(
@@ -34,16 +38,17 @@ def _filter_series(db, config):
         # Get series information from database.
         results = db.select(
             table='anime',
-            fields=['status'],
+            fields=['name', 'status'],
             where_filter='id=?',
             where_args=(id,),
         )
-        status = list(results)[0][0]
+        name, status = list(results)[0]
         if status in ('complete', 'dropped'):
-            to_delete.append(id)
+            to_delete.append((id, name))
     # Do removal
     if to_delete:
-        for id in to_delete:
+        for id, name in to_delete:
+            _LOGGER.info('Unregistered %s', name)
             config.unregister(id)
         config.save()
 
