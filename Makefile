@@ -1,20 +1,11 @@
 all:
-	@echo "make build - Build distributions"
-	@echo "make upload - Upload distributions to PyPi"
-	@echo "make clean - Clean distributions"
+	@echo "make publish - Publish to PyPi"
 
-build: sdist wheel
-
-sdist:
-	python3 setup.py sdist
-
-wheel:
-	python setup.py bdist_wheel
-
-clean:
+publish:
 	rm dist/*
-
-upload:
+	python3 setup.py sdist
+	python setup.py bdist_wheel
+	python setup.py register
 	twine upload dist/*
 
-.PHONY: all build sdist wheel clean upload
+.PHONY: all publish
