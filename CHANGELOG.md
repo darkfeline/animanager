@@ -2,6 +2,8 @@
 
 ## master
 
+## v0.7.1
+
 ### Changed
 
 - Default status of added series is now "watching".
