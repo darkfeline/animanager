@@ -20,14 +20,10 @@ Automated anime watching and tracking script.
 """
 
 import logging
-import os
 import subprocess
 import shlex
-import re
-from collections import defaultdict
 
 from animanager import inputlib
-from animanager import trashlib
 from animanager import watchlib
 
 _LOGGER = logging.getLogger(__name__)
