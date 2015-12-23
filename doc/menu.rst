@@ -111,4 +111,4 @@ The ``q`` command lets you cancel or quit the current selection, only if it is
 enabled for the current selection menu.  If quitting is enabled, a ``q`` will
 appear in the prompt::
 
-  [-1q]>
+  [-1](q)>

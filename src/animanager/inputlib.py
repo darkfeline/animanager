@@ -111,7 +111,7 @@ class QuittingChoiceCmd(ChoiceCmd):
 
     """
 
-    prompt = "[{}q]> "
+    prompt = "[{}](q)> "
 
     def do_q(self, arg=None):
         """Quit or cancel selection."""
