@@ -6,6 +6,10 @@ adjustments, complex queries, or batch transformations of data directly on the
 database file using the SQLite3 command line or a SQLite3 browser such as
 sqlitebrowser.
 
+Make sure to enable foreign key support when working with the database::
+
+  PRAGMA foreign_keys = ON
+
 Here is a description of the columns in the ``anime`` table:
 
 id
