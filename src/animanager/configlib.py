@@ -20,6 +20,7 @@
 import configparser
 import os
 import re
+import shlex
 from collections import defaultdict
 
 
@@ -49,13 +50,17 @@ class Config:
         'series': [],
         'mal_args': ['user', 'passwd'],
     }
+    _CONVERTERS = {
+        'path': os.path.expanduser,
+        'args': shlex.split,
+    }
 
     def __init__(self, path=None):
         if path is None:
             path = self.DEF_PATH
         self.path = path
         self.config = configparser.ConfigParser(
-            converters={'path': os.path.expanduser})
+            converters=self._CONVERTERS)
         self.config.read_dict(self.DEF_VALUES)
         self.config.read(self.path)
         self._check()
