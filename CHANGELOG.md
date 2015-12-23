@@ -13,13 +13,13 @@
 - Configuration loading now has defaults.
 - Configuration loading now checks for missing values.
 
-## v0.7.2
+## v0.7.2 - 2015-12-23
 
 ### Added
 
 - Added ability to quit watch command.
 
-## v0.7.1
+## v0.7.1 - 2015-10-05
 
 ### Changed
 
@@ -34,7 +34,7 @@
 
 - Catch MAL querying error so the user doesn't see a stack trace.
 
-## v0.7.0
+## v0.7.0 - 2015-10-04
 
 ### Added
 
