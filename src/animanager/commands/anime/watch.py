@@ -29,8 +29,6 @@ from collections import defaultdict
 from animanager import inputlib
 from animanager import trashlib
 
-from .bump import bump
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -212,7 +210,7 @@ def main(args):
         del file
 
         if inputlib.get_yn('Bump?'):
-            bump(db, info.id)
+            db.bump(info.id)
             # Remove the episode from our list.
             info.pop()
 

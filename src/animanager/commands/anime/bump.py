@@ -17,7 +17,6 @@
 
 """Bump command."""
 
-from datetime import date
 import logging
 
 from animanager import inputlib
@@ -56,7 +55,6 @@ def _search(db, name, all=False):
 def _ibump(db, choices):
     "Interactively bump anime episode count."""
 
-    # There's a lot of stuff to do here.
     # First, we prompt the user to choose a series to bump.
     i = inputlib.get_choice(['({}) {}'.format(x[0], x[1]) for x in choices])
     choice = choices[i]
@@ -73,43 +71,8 @@ def _ibump(db, choices):
         print('Aborting...')
         return
 
-    bump(db, choice_id)
+    db.bump(choice_id)
     print('Now {}/{}'.format(watched + 1, total))
-
-
-def bump(db, id):
-    results = db.select(
-        table='anime',
-        fields=['ep_watched', 'ep_total', 'status'],
-        where_filter='id=?',
-        where_args=(id,)
-    )
-    watched, total, status = next(results)
-
-    # Calculate what needs updating, putting it into a dictionary that we will
-    # update at the end all at once.
-    update_map = dict()
-
-    # We set the starting date if we haven't watched anything yet.
-    if watched == 0:
-        update_map['date_started'] = date.today().isoformat()
-
-    # We update the episode count.
-    watched += 1
-    update_map['ep_watched'] = watched
-
-    # If the status wasn't watching, we set it so.
-    if status != 'watching':
-        update_map['status'] = 'watching'
-
-    # Finally, if the series is now complete, we set the status and finish date
-    # accordingly.
-    if watched == total and total is not None:
-        update_map['status'] = 'complete'
-        update_map['date_finished'] = date.today().isoformat()
-
-    # Now we update all of the changes we have gathered.
-    db.update_one('anime', id, update_map)
 
 
 def main(args):
