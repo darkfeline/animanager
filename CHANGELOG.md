@@ -2,6 +2,12 @@
 
 ## master
 
+## v0.7.2
+
+### Added
+
+- Added ability to quit watch command.
+
 ## v0.7.1
 
 ### Changed
