@@ -17,6 +17,7 @@
 
 """Tools for animanager MySQL database."""
 
+from datetime import date
 import logging
 import sqlite3
 import sys
@@ -54,6 +55,46 @@ class Database:
 
     def close(self):
         self.cnx.close()
+
+    def bump(self, id):
+        """Bump a series.
+
+        Increment the episodes watched count of one series, and do all of the
+        housekeeping that it entails.
+
+        """
+        results = self.select(
+            table='anime',
+            fields=['ep_watched', 'ep_total', 'status'],
+            where_filter='id=?',
+            where_args=(id,)
+        )
+        watched, total, status = next(results)
+
+        # Calculate what needs updating, putting it into a dictionary that we will
+        # update at the end all at once.
+        update_map = dict()
+
+        # We set the starting date if we haven't watched anything yet.
+        if watched == 0:
+            update_map['date_started'] = date.today().isoformat()
+
+        # We update the episode count.
+        watched += 1
+        update_map['ep_watched'] = watched
+
+        # If the status wasn't watching, we set it so.
+        if status != 'watching':
+            update_map['status'] = 'watching'
+
+        # Finally, if the series is now complete, we set the status and finish date
+        # accordingly.
+        if watched == total and total is not None:
+            update_map['status'] = 'complete'
+            update_map['date_finished'] = date.today().isoformat()
+
+        # Now we update all of the changes we have gathered.
+        self.update_one('anime', id, update_map)
 
     def insert(self, table, fields):
         """Insert a map of fields as a database row.
