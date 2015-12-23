@@ -57,6 +57,7 @@ class SeriesInfo:
         Return True if successful, else False.
 
         """
+        filename = os.path.basename(filename)
         match = self._pattern.match(filename, re.I)
         if match:
             # Even if we match a file, we still check the episode number.
@@ -130,9 +131,9 @@ def load_series_info(db, config):
 
 def find_files(config):
     """Find video files to watch."""
-    return [file
-            for file in sorted(os.listdir(
-                    config['watch'].getpath('directory')))
+    dir = config['watch'].getpath('directory')
+    return [os.path.join(dir, file)
+            for file in sorted(os.listdir(dir))
             if _file_ext(file) in _VIDEO_EXT]
 
 
