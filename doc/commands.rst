@@ -1,5 +1,5 @@
-Commands reference
-==================
+Command reference
+=================
 
 Global options
 --------------
