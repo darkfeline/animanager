@@ -50,25 +50,35 @@ class MainWindow(Gtk.Window):
         mainbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(mainbox)
 
-        self.store = Gtk.ListStore(str)
+        self.store = Gtk.ListStore(int, str, int, int, bool)
         self.view = Gtk.TreeView(self.store)
         renderer = Gtk.CellRendererText()
-        column = Gtk.TreeViewColumn("Title", renderer, text=0)
+        column = Gtk.TreeViewColumn("id", renderer, text=0)
+        self.view.append_column(column)
+        column = Gtk.TreeViewColumn("series", renderer, text=1)
+        self.view.append_column(column)
+        column = Gtk.TreeViewColumn("cur.", renderer, text=2)
+        self.view.append_column(column)
+        column = Gtk.TreeViewColumn("avail.", renderer, text=3)
+        self.view.append_column(column)
+        column = Gtk.TreeViewColumn("missing?", renderer, text=4)
         self.view.append_column(column)
         mainbox.pack_start(self.view, True, True, 2)
 
         subbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         mainbox.pack_start(subbox, True, True, 2)
 
-        self.button = Gtk.Button(label="Reload")
-        self.button.connect("clicked", self.load_files_to_watch())
-        subbox.pack_start(self.button, True, True, 2)
+        button = Gtk.Button(label="Reload")
+        button.connect("clicked", self.load_files_to_watch)
+        subbox.pack_start(button, True, True, 2)
 
-        self.button = Gtk.Button(label="Watch")
-        self.button.connect("clicked", self.watch_show())
-        subbox.pack_start(self.button, True, True, 2)
+        button = Gtk.Button(label="Watch")
+        button.connect("clicked", self.watch_show)
+        subbox.pack_start(button, True, True, 2)
 
-    def load_files_to_watch(self, widget):
+        self.load_files_to_watch()
+
+    def load_files_to_watch(self, widget=None):
         # Load series information.
         series_list = watchlib.load_series_info(self.db, self.config)
 
@@ -84,7 +94,17 @@ class MainWindow(Gtk.Window):
         # Remove series that no longer have any files.
         series_list = [x for x in series_list if x]
 
-    def watch_show(self, widget):
+        self.series_list = series_list
+        self._update_view()
+
+    def _update_view(self):
+        """Update GUI view using series_list."""
+        self.store.clear()
+        for info in self.series_list:
+            self.store.append([info.id, info.name, info.ep_watched, len(info),
+                               not info.has_next()])
+
+    def watch_show(self, widget=None):
         pass
 
 
