@@ -229,7 +229,7 @@ series which have files available::
 
   0: (900) Hidamari Sketch x 365 (cur. 1, avail. 11) (missing)
   1: (877) Overlord (cur. 12, avail. 1)
-  [-1]> 
+  [-1](q)>
 
 The menu displays the currently watched episode for each series and the number
 of episodes available to watch.  In the event that the next episode in sequence
@@ -240,7 +240,7 @@ series, Animanager will prompt you to choose a file to watch::
 
    0: [BakedFish] World Trigger - 48 [720p][AAC].mp4
    1: [Leopard-Raws] World Trigger - 48 RAW (ABC 1280x720 x264 AAC).mp4
-   [-1]>
+   [-1](q)>
 
 This can be used for handling different release versions, different release
 groups, or subtitled vs un-subtitled files.
@@ -254,8 +254,7 @@ bump, which will return you to the main menu without don't anything else.  This
 can be used to peek at an episode or a specific file, or to watch a different
 version of that episode.
 
-After this, the loop repeats.  To exit, use CTRL-C or equivalent command to send
-SIGTERM in your terminal.
+After this, the loop repeats.  To exit, type ``q`` and press Enter.
 
 watching
 ^^^^^^^^
