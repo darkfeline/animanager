@@ -28,6 +28,7 @@ from collections import defaultdict
 
 from animanager import inputlib
 from animanager import trashlib
+from animanager import watchlib
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,119 +42,6 @@ def setup_parser(subparsers):
     parser.set_defaults(func=main)
 
 
-class _SeriesInfo:
-
-    """Used for processing the files for a given series.
-
-    First add all files using match().  Afterward, call prep(), then use next()
-    and pop() to process the remaining files in sequence.
-
-    """
-
-    def __init__(self, id, pattern, name, ep_watched):
-        self.id = id
-        self._pattern = re.compile(pattern)
-        self.name = name
-        self.ep_watched = ep_watched
-        self._files = defaultdict(list)
-
-    def match(self, filename):
-        """Attempt to add a file.
-
-        Return True if successful, else False.
-
-        """
-        match = self._pattern.match(filename, re.I)
-        if match:
-            # Even if we match a file, we still check the episode number.
-            # If it has already been watched, remove the file and don't add
-            # it.
-            episode = int(match.group('ep'))
-            self._files[episode].append(filename)
-            return True
-        else:
-            return False
-
-    def has_next(self):
-        """Return whether there are files for the next episode."""
-        return self.next_ep in self._files
-
-    def peek(self):
-        """Return the list of files for the next episode."""
-        return self._files[self.next_ep]
-
-    @property
-    def next_ep(self):
-        """Return the integer of the next episode."""
-        return self.ep_watched + 1
-
-    def pop(self):
-        """Pop an episode.
-
-        Trash the files for the next episode and remove it from our structures.
-
-        """
-        for file in self._files[self.next_ep]:
-            trashlib.trash(file)
-        del self._files[self.next_ep]
-        self.ep_watched = self.next_ep
-
-    def __bool__(self):
-        return bool(self._files)
-
-    def __len__(self):
-        return len(self._files)
-
-    def clean(self):
-        """Trash unneeded files."""
-        for ep in [ep for ep in self._files.keys() if ep <= self.ep_watched]:
-            for file in self._files[ep]:
-                trashlib.trash(file)
-            del self._files[ep]
-
-
-def _load_series_info(db, config):
-    """Load series info.
-
-    Read series id and filename patterns from the config file and match it with
-    other necessary info from our database.
-
-    """
-    processed_list = []
-    for id, pattern in config['series'].items():
-        id = int(id)
-        # Get series information from database.
-        results = db.select(
-            table='anime',
-            fields=['name', 'ep_watched'],
-            where_filter='id=?',
-            where_args=(id,),
-        )
-        name, ep_watched = list(results)[0]
-        processed_list.append(_SeriesInfo(id, pattern, name, ep_watched))
-    return processed_list
-
-
-def _load_files(series_list, files):
-    """Match series files.
-
-    Use series information to associate with the given list of files.
-
-    """
-    for filename in files:
-        for info in series_list:
-            if info.match(filename):
-                break
-    return [info for info in series_list if info]
-
-
-def _file_ext(filename):
-    """Return file extension."""
-    return os.path.splitext(filename)[1]
-
-_VIDEO_EXT = set(('.mkv', '.mp4'))
-
-
 def main(args):
 
     config = args.config
@@ -161,14 +49,12 @@ def main(args):
     player_args = shlex.split(config['watch']['player'])
 
     # Load series information.
-    series_list = _load_series_info(db, config)
+    series_list = watchlib.load_series_info(db, config)
 
-    # Use series information to search current directory for files and
+    # Use series information to search for files and
     # match them with a series.
-    files = [file
-             for file in sorted(os.listdir('.'))
-             if _file_ext(file) in _VIDEO_EXT]
-    series_list = _load_files(series_list, files)
+    files = watchlib.find_files(config)
+    series_list = watchlib.load_files(series_list, files)
     del files
 
     # Clean up unneeded files.
