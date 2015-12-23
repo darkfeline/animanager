@@ -70,6 +70,7 @@ class ChoiceCmd(cmd.Cmd):
             print("{}: {}".format(i, choice))
 
     def do_p(self, arg=None):
+        """Print choices."""
         self._print()
 
     def emptyline(self):
