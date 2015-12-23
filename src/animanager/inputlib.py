@@ -103,6 +103,20 @@ class ChoiceCmd(cmd.Cmd):
             self.choice = i
 
 
+class QuittingChoiceCmd(ChoiceCmd):
+
+    """This class extends ChoiceCmd with the ability to quit or cancel.
+
+    """
+
+    prompt = "[{}q]> "
+
+    def do_q(self, arg=None):
+        """Quit or cancel selection."""
+        self.choice = None
+        return True
+
+
 def get_choice(choices, default=-1):
     """Prompt for user to pick a choice.
 
