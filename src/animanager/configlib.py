@@ -45,7 +45,7 @@ class Config:
     }
     REQ_VALUES = {
         'general': ['database'],
-        'watch': ['player'],
+        'watch': ['player', 'directory'],
         'series': [],
         'mal_args': ['user', 'passwd'],
     }
