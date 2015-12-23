@@ -21,7 +21,11 @@ Automated anime watching and tracking script.
 
 import logging
 
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+
+from animanager import watchlib
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,15 +70,19 @@ class MainWindow(Gtk.Window):
 
     def load_files_to_watch(self, widget):
         # Load series information.
-        series_list = _load_series_info(db, config)
+        series_list = watchlib.load_series_info(self.db, self.config)
 
-        # Use series information to search current directory for files and
+        # Use series information to search for files and
         # match them with a series.
-        files = [file
-                for file in sorted(config['watch'].getpath('directory'))
-                if _file_ext(file) in _VIDEO_EXT]
-        series_list = _load_files(series_list, files)
+        files = watchlib.find_files(self.config)
+        series_list = watchlib.load_files(series_list, files)
         del files
+
+        # Clean up unneeded files.
+        for x in series_list:
+            x.clean()
+        # Remove series that no longer have any files.
+        series_list = [x for x in series_list if x]
 
     def watch_show(self, widget):
         pass
