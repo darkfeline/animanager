@@ -105,3 +105,10 @@ The ``r`` command resets all search filters::
   13: (28913) Hidamari Sketch x 365 Recap
   14: (28915) Hidamari Sketch x ☆☆☆ Recap
   [-1]>
+
+
+The ``q`` command lets you cancel or quit the current selection, only if it is
+enabled for the current selection menu.  If quitting is enabled, a ``q`` will
+appear in the prompt::
+
+  [-1q]>
