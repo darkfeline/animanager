@@ -19,6 +19,7 @@ from . import add
 from . import bump
 from . import clean
 from . import drop
+from . import gui
 from . import hold
 from . import register
 from . import search
@@ -32,6 +33,7 @@ _COMMANDS = [
     bump,
     clean,
     drop,
+    gui,
     hold,
     register,
     search,
