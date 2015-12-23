@@ -15,27 +15,63 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module contains config file related stuff.
-
-Loading, saving, and setting configuration options.
-
-"""
+"""This module contains stuff related to configuration."""
 
 import configparser
 import os
 import re
+from collections import defaultdict
 
 
 class Config:
 
-    defaultpath = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
+    """Config class.
+
+    This class handles configuration loading, saving, checking, and
+    manipulation.
+
+    """
+
+    DEF_PATH = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
+    DEF_VALUES = {
+        'general': {
+            'database': '~/.animanager/database.db',
+        },
+        'watch': {
+            'player': 'mpv',
+        },
+        'series': {},
+        'mal_args': {},
+    }
+    REQ_VALUES = {
+        'general': ['database'],
+        'watch': ['player'],
+        'series': [],
+        'mal_args': ['user', 'passwd'],
+    }
 
     def __init__(self, path=None):
         if path is None:
-            path = self.defaultpath()
+            path = self.DEF_PATH
         self.path = path
         self.config = configparser.ConfigParser()
+        self.config.read_dict(self.DEF_VALUES)
         self.config.read(self.path)
+        self._check()
+
+    def _check(self):
+        """Check that all required configuration keys have been provided.
+
+        Raises MissingConfigKeysError.
+
+        """
+        missing = defaultdict(list)
+        for section in self.REQ_VALUES:
+            for key in self.REQ_VALUES[section]:
+                if key not in self.config[section]:
+                    missing[section].append(key)
+        if missing:
+            raise MissingConfigKeysError(missing)
 
     def save(self):
         with open(self.path, 'w') as file:
@@ -63,3 +99,19 @@ class Config:
 
     def unregister(self, id):
         del self['series'][str(id)]
+
+
+class ConfigError(Exception):
+    pass
+
+
+class MissingConfigKeysError(Exception):
+
+    def __init__(self, missing):
+        self.missing = missing
+
+    def __str__(self):
+        return "Missing configuration values: {}".format(
+            '; '.join(
+                'in [{}], {}'.format(section, ', '.join(self.missing[section]))
+                for section in self.missing))
