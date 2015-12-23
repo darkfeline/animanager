@@ -107,6 +107,8 @@ class QuittingChoiceCmd(ChoiceCmd):
 
     """This class extends ChoiceCmd with the ability to quit or cancel.
 
+    Quitting sets the choice to None.
+
     """
 
     prompt = "[{}q]> "
