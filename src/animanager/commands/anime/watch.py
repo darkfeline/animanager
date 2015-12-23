@@ -186,8 +186,11 @@ def main(args):
             [msg.format(id=info.id, name=info.name, cur=info.ep_watched,
                         avail=len(info),
                         missing='' if info.has_next() else ' (missing)')
-             for info in series_list]
+             for info in series_list],
+            quit=True
         )
+        if i is None:
+            return
 
         info = series_list[i]
 
