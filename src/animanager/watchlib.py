@@ -21,12 +21,9 @@ This module contains stuff needed to set up the watching of anime.
 
 import logging
 import os
-import subprocess
-import shlex
 import re
 from collections import defaultdict
 
-from animanager import inputlib
 from animanager import trashlib
 
 _LOGGER = logging.getLogger(__name__)
