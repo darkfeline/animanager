@@ -19,7 +19,6 @@
 
 import logging
 import sqlite3
-import os
 import sys
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,24 +29,25 @@ FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
 
 class Database:
 
-    defaultpath = os.path.join(os.environ['HOME'], '.animanager',
-                               'database.db')
-
-    def __init__(self, path=None):
+    def __init__(self, path):
         if path is None:
-            self.dbfile_path = self.defaultpath
+            self.dbfile = self.defaultpath
         else:
-            self.dbfile_path = path
+            self.dbfile = path
         self._connect()
 
     def _connect(self):
-        self.cnx = sqlite3.connect(self.dbfile_path)
+        self.cnx = sqlite3.connect(self.dbfile)
         cur = self.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         cur.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
             _LOGGER.critical('Foreign keys are not supported.')
             sys.exit(1)
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(config['general']['database'])
 
     def cursor(self):
         return self.cnx.cursor()
