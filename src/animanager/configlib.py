@@ -54,7 +54,8 @@ class Config:
         if path is None:
             path = self.DEF_PATH
         self.path = path
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(
+            converters={'path': os.path.expanduser})
         self.config.read_dict(self.DEF_VALUES)
         self.config.read(self.path)
         self._check()

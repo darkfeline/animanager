@@ -31,10 +31,10 @@ def _make_parser():
     # Set up main parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
-                        default=configlib.Config.defaultpath,
+                        default=None,
                         help='Alternate configuration file to use.')
     parser.add_argument('--db',
-                        default=dblib.Database.defaultpath,
+                        default=None,
                         help='Alternate database file to use.')
 
     # Set up subparsers
@@ -51,7 +51,10 @@ def main():
     args = parser.parse_args()
 
     args.config = configlib.Config(args.config)
-    args.db = dblib.Database(args.db)
+    if args.db is not None:
+        args.db = dblib.Database(args.db)
+    else:
+        args.db = dblib.Database.from_config(args.config)
 
     # Run command.
     try:

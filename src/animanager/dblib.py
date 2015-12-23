@@ -44,7 +44,7 @@ class Database:
 
     @classmethod
     def from_config(cls, config):
-        return cls(config['general']['database'])
+        return cls(config['general'].getpath('database'))
 
     def cursor(self):
         return self.cnx.cursor()
