@@ -2,6 +2,10 @@
 
 ## master
 
+### Added
+
+- Added gui command, with GTK GUI for watching shows.
+
 ### Changed
 
 - The database file path is now configured in the configuration file.  It can
