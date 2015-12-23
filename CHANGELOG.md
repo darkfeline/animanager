@@ -2,6 +2,13 @@
 
 ## master
 
+### Changed
+
+- The database file path is now configured in the configuration file.  It can
+  still be overridden at the command line.
+- Configuration loading now has defaults.
+- Configuration loading now checks for missing values.
+
 ## v0.7.2
 
 ### Added

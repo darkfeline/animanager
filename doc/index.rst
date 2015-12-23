@@ -13,6 +13,7 @@ Animanager is a simple anime watching and tracking program.
    intro
    install
    quickstart
+   config
    commands
    database
    menu
