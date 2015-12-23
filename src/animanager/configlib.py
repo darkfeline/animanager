@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Config loading stuff."""
+"""This module contains config file related stuff.
+
+Loading, saving, and setting configuration options.
+
+"""
 
 import configparser
 import os
