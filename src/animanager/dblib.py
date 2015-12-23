@@ -30,10 +30,7 @@ FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
 class Database:
 
     def __init__(self, path):
-        if path is None:
-            self.dbfile = self.defaultpath
-        else:
-            self.dbfile = path
+        self.dbfile = path
         self._connect()
 
     def _connect(self):
