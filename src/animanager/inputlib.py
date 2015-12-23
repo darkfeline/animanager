@@ -117,19 +117,21 @@ class QuittingChoiceCmd(ChoiceCmd):
         return True
 
 
-def get_choice(choices, default=-1):
+def get_choice(choices, default=-1, quit=False):
     """Prompt for user to pick a choice.
 
     Args:
         choices: A list of choices strings.
+        quit: Whether selection is cancellable.
 
     Returns:
         An int index of the given choice: choices[i].
 
     """
-    cmd_interp = ChoiceCmd(choices, default)
-    cmd_interp.cmdloop()
-    return cmd_interp.choice
+    command = ChoiceCmd if not quit else QuittingChoiceCmd
+    command = command(choices, default)
+    command.cmdloop()
+    return command.choice
 
 
 def get_yn(prompt, default=True):
