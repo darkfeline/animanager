@@ -95,6 +95,15 @@ Animanager will set the status of one series to "on hold".  By
 default Animanager will only search "watching" shows; use the option ``--all``
 to search from all incomplete shows.
 
+plan
+^^^^
+
+::
+
+   $ animanager anime plan
+
+Show series that have status "plan to watch".
+
 .. _register:
 
 register

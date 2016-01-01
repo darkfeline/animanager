@@ -5,6 +5,7 @@
 ### Added
 
 - Added gui command, with GTK GUI for watching shows.
+- Added plan command.
 
 ### Changed
 

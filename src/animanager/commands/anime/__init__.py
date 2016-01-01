@@ -1,4 +1,4 @@
-# Copyright (C) 2015  Allen Li
+# Copyright (C) 2015-2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -21,6 +21,7 @@ from . import clean
 from . import drop
 from . import gui
 from . import hold
+from . import plan
 from . import register
 from . import search
 from . import stats
@@ -35,6 +36,7 @@ _COMMANDS = [
     drop,
     gui,
     hold,
+    plan,
     register,
     search,
     stats,
