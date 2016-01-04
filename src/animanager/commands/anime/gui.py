@@ -28,6 +28,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 from animanager import watchlib
+from animanager import trashlib
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -203,7 +204,9 @@ class MainWindow(Gtk.Window):
 
         self.db.bump(info.id)
         # Remove the episode from our list.
-        info.pop()
+        old = info.pop()
+        for file in old:
+            trashlib.trash(self.config, file)
 
         # Filter out series that have no files.
         self.series_list = [x for x in self.series_list if x]

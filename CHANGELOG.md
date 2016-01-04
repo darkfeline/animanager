@@ -13,6 +13,9 @@
   still be overridden at the command line.
 - Configuration loading now has defaults.
 - Configuration loading now checks for missing values.
+- watch command now searches in a configured directory instead of the current
+  directory.
+- watch command now searches for files recursively in designated directory.
 
 ## v0.7.2 - 2015-12-23
 

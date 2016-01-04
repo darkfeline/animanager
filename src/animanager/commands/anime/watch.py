@@ -25,6 +25,7 @@ import shlex
 
 from animanager import inputlib
 from animanager import watchlib
+from animanager import trashlib
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -94,7 +95,9 @@ def main(args):
         if inputlib.get_yn('Bump?'):
             db.bump(info.id)
             # Remove the episode from our list.
-            info.pop()
+            old = info.pop()
+            for file in old:
+                trashlib.trash(config, file)
 
         # Filter out series that have no files.
         series_list = [x for x in series_list if x]

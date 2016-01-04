@@ -84,13 +84,14 @@ class SeriesInfo:
     def pop(self):
         """Pop an episode.
 
-        Trash the files for the next episode and remove it from our structures.
+        Return the files for the next episode and remove it from our
+        structures.
 
         """
-        for file in self._files[self.next_ep]:
-            trashlib.trash(file)
+        old = self._files[self.next_ep]
         del self._files[self.next_ep]
         self.ep_watched = self.next_ep
+        return old
 
     def __bool__(self):
         return bool(self._files)
@@ -131,9 +132,15 @@ def load_series_info(db, config):
 def find_files(config):
     """Find video files to watch."""
     dir = config['watch'].getpath('directory')
-    return [os.path.join(dir, file)
-            for file in sorted(os.listdir(dir))
-            if _file_ext(file) in _VIDEO_EXT]
+    files = []
+    for dirpath, _, filenames in os.walk(dir):
+        for filename in filenames:
+            if os.stat(dirpath) == os.stat(trashlib.trashdir(config)):
+                continue
+            file = os.path.join(dirpath, filename)
+            if _file_ext(file) in _VIDEO_EXT:
+                files.append(file)
+    return sorted(files)
 
 
 def load_files(series_list, files):
