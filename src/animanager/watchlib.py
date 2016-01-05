@@ -59,9 +59,6 @@ class SeriesInfo:
         """
         match = self._pattern.match(os.path.basename(filename), re.I)
         if match:
-            # Even if we match a file, we still check the episode number.
-            # If it has already been watched, remove the file and don't add
-            # it.
             episode = int(match.group('ep'))
             self._files[episode].append(filename)
             return True
