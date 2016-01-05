@@ -55,8 +55,11 @@ def main(args):
     del files
 
     # Clean up unneeded files.
+    unneeded = []
     for x in series_list:
-        x.clean()
+        unneeded.extend(x.clean())
+    for file in unneeded:
+        trashlib.trash(config, file)
     # Remove series that no longer have any files.
     series_list = [x for x in series_list if x]
 

@@ -100,11 +100,13 @@ class SeriesInfo:
         return len(self._files)
 
     def clean(self):
-        """Trash unneeded files."""
+        """Return list of unneeded files."""
+        unneeded = []
         for ep in [ep for ep in self._files.keys() if ep <= self.ep_watched]:
             for file in self._files[ep]:
-                trashlib.trash(file)
+                unneeded.append(file)
             del self._files[ep]
+        return unneeded
 
 
 def load_series_info(db, config):

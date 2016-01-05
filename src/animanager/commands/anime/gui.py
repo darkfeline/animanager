@@ -148,9 +148,12 @@ class MainWindow(Gtk.Window):
         del files
 
         # Clean up unneeded files.
+        unneeded = []
         for x in series_list:
-            x.clean()
-            # Remove series that no longer have any files.
+            unneeded.extend(x.clean())
+        for file in unneeded:
+            trashlib.trash(self.config, file)
+        # Remove series that no longer have any files.
         series_list = [x for x in series_list if x]
 
         self.series_list = series_list
