@@ -46,7 +46,7 @@ class SeriesInfo:
 
     def __init__(self, id, pattern, name, ep_watched):
         self.id = id
-        self._pattern = re.compile(pattern)
+        self._pattern = re.compile(pattern, re.I)
         self.name = name
         self.ep_watched = ep_watched
         self._files = defaultdict(list)
@@ -57,7 +57,7 @@ class SeriesInfo:
         Return True if successful, else False.
 
         """
-        match = self._pattern.match(os.path.basename(filename), re.I)
+        match = self._pattern.match(os.path.basename(filename))
         if match:
             episode = int(match.group('ep'))
             self._files[episode].append(filename)
