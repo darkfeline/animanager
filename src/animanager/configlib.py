@@ -111,7 +111,7 @@ class ConfigError(Exception):
     pass
 
 
-class MissingConfigKeysError(Exception):
+class MissingConfigKeysError(ConfigError):
 
     def __init__(self, missing):
         self.missing = missing
