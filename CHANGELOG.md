@@ -22,13 +22,13 @@
 - Fixed bug where episode regexp patterns matched case sensitive, and matched
   starting from the second character.
 
-## v0.7.2 - 2015-12-23
+## 0.7.2 - 2015-12-23
 
 ### Added
 
 - Added ability to quit watch command.
 
-## v0.7.1 - 2015-10-05
+## 0.7.1 - 2015-10-05
 
 ### Changed
 
@@ -43,7 +43,7 @@
 
 - Catch MAL querying error so the user doesn't see a stack trace.
 
-## v0.7.0 - 2015-10-04
+## 0.7.0 - 2015-10-04
 
 ### Added
 
