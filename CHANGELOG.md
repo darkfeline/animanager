@@ -17,7 +17,7 @@
   directory.
 - watch command now searches for files recursively in designated directory.
 
-## Fixed
+### Fixed
 
 - Fixed bug where episode regexp patterns matched case sensitive, and matched
   starting from the second character.
