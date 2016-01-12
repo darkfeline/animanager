@@ -130,7 +130,7 @@ configuration file under the ``[series]`` section.
 Here is an example::
 
   [series]
-  877 = .*Overlord.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
+  877 = Overlord.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
 
 These map the internal ID of a series in the database to a regular expression
 pattern that is used by Animanager to match files to series.
@@ -148,10 +148,10 @@ The patterns are tried sequentially.  That means that for the following example,
 the second line will never match because the first line will match instead::
 
   [series]
-  1 = .*Overlord.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
-  2 = .*Overlord.*?Special.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
+  1 = Overlord.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
+  2 = Overlord.*?Special.*?(?P<ep>[0-9]+)(v(?P<ver>[0-9]+))?
 
-The patterns are matched at the beginning of the filename and ignore case.
+The first pattern match in the filename is used.  The search is case insensitive.
 
 Refer to the Python documentation for more information about Python's regular
 expression syntax.

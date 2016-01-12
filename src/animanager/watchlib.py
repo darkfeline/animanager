@@ -57,7 +57,7 @@ class SeriesInfo:
         Return True if successful, else False.
 
         """
-        match = self._pattern.match(os.path.basename(filename))
+        match = self._pattern.search(os.path.basename(filename))
         if match:
             episode = int(match.group('ep'))
             self._files[episode].append(filename)

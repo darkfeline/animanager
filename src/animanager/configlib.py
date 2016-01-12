@@ -103,8 +103,6 @@ class Config:
             pattern,
             r'(?P<ep>\b[0-9]+\b)',
         ))
-        # Prepend wildcard.
-        pattern = '.*' + pattern
         self['series'][str(id)] = pattern
 
     def unregister(self, id):

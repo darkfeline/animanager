@@ -16,6 +16,9 @@
 - watch command now searches in a configured directory instead of the current
   directory.
 - watch command now searches for files recursively in designated directory.
+- Registered series regular expressions now match anywhere in the filename, not
+  just at the beginning.  The preceeding `.*` in the default pattern has been
+  removed.
 
 ### Fixed
 
