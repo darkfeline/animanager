@@ -51,7 +51,7 @@ class SeriesInfo:
         self.ep_watched = ep_watched
         self._files = defaultdict(list)
 
-    def match(self, filename):
+    def add(self, filename):
         """Attempt to add a file.
 
         Return True if successful, else False.
@@ -150,6 +150,6 @@ def load_files(series_list, files):
     """
     for filename in files:
         for info in series_list:
-            if info.match(filename):
+            if info.add(filename):
                 break
     return [info for info in series_list if info]
