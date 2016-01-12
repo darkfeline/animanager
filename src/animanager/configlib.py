@@ -94,11 +94,18 @@ class Config:
             where_args=(id,)
         )
         name = next(results)[0]
-        name = re.sub(r'[^\w\s]', ' ', name)
-        self['series'][str(id)] = '.*' + '.*?'.join((
-            '.*'.join(re.escape(x) for x in name.split()),
-            r'(?P<ep>[0-9]+)',
+        # Replace non-word, non-whitespace with whitespace.
+        pattern = re.sub(r'[^\w\s]', ' ', name)
+        # Split on whitespace and join with wildcard regexp.
+        pattern = '.*'.join(re.escape(x) for x in name.split())
+        # Append episode matching pattern.
+        pattern = '.*?'.join((
+            pattern,
+            r'(?P<ep>\b[0-9]+\b)',
         ))
+        # Prepend wildcard.
+        pattern = '.*' + pattern
+        self['series'][str(id)] = pattern
 
     def unregister(self, id):
         del self['series'][str(id)]
