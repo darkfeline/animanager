@@ -97,7 +97,7 @@ class Config:
         # Replace non-word, non-whitespace with whitespace.
         pattern = re.sub(r'[^\w\s]', ' ', name)
         # Split on whitespace and join with wildcard regexp.
-        pattern = '.*'.join(re.escape(x) for x in name.split())
+        pattern = '.*'.join(re.escape(x) for x in pattern.split())
         # Append episode matching pattern.
         pattern = '.*?'.join((
             pattern,
