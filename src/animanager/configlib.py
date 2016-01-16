@@ -101,7 +101,7 @@ class Config:
         # Append episode matching pattern.
         pattern = '.*?'.join((
             pattern,
-            r'(?P<ep>\b[0-9]+\b)',
+            r'\b(?P<ep>[0-9]+)(v[0-9]+)?',
         ))
         self['series'][str(id)] = pattern
 
