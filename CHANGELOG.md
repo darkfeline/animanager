@@ -24,6 +24,7 @@
 
 - Fixed bug where episode regexp patterns matched case sensitive, and matched
   starting from the second character.
+- Fixed exception catching in update command.
 
 ## 0.7.2 - 2015-12-23
 

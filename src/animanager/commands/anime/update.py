@@ -62,7 +62,7 @@ def main(args):
         # Search for our show on MAL, and make sure to match our MAL id.
         try:
             results = mal.query.anime_search(name)
-        except mal.ResponseError:
+        except mal.query.ResponseError:
             _LOGGER.warning('No results found for id=%r, name=%r', id, name)
             continue
         results = dict((result.id, result) for result in results)
