@@ -4,8 +4,10 @@
 
 ### Added
 
-- Added gui command, with GTK GUI for watching shows.
 - Added plan command.
+- (gui command (GTK GUI for watching shows) was added, and then removed in
+  0457e2 because it is useless and cumbersome. Its existence is noted here for
+  reference.)
 
 ### Changed
 

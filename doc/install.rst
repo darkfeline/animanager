@@ -19,8 +19,6 @@ You need the following dependencies to run Animanager:
 - Python 3
 - setuptools
 - `tabulate`_
-- PyGObject (for GUI)
-- GTK (for GUI)
 
 .. _tabulate: https://pypi.python.org/pypi/tabulate
 

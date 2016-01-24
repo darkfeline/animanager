@@ -19,7 +19,6 @@ from . import add
 from . import bump
 from . import clean
 from . import drop
-from . import gui
 from . import hold
 from . import plan
 from . import register
@@ -34,7 +33,6 @@ _COMMANDS = [
     bump,
     clean,
     drop,
-    gui,
     hold,
     plan,
     register,

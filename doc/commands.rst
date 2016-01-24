@@ -84,15 +84,6 @@ Animanager will set the status of one series to "dropped".  By default
 Animanager will only search "watching" and "on hold" shows; use the option
 ``--all`` to search from all incomplete shows.
 
-gui
-^^^
-
-::
-
-   $ animanager anime gui
-
-Opens a GTK GUI for the ``watch`` command.
-
 hold
 ^^^^
 
