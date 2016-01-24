@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Animanager'
-copyright = '2015, Allen Li'
+copyright = 'Copyright (C) 2015-2016 Allen Li'
 author = 'Allen Li'
 
 # The version info for the project you're documenting, acts as replacement for
