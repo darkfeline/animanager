@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='animanager',
-    version='0.7.2',
+    version='0.8.0',
     package_dir={'': 'src'},
     packages=find_packages('src'),
     requires=['tabulate'],

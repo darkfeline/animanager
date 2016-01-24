@@ -2,7 +2,7 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
-## master
+## 0.8.0 - 2016-01-23
 
 ### Added
 
