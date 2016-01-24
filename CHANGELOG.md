@@ -1,5 +1,7 @@
 # Change log
 
+This projects uses [semantic versioning](http://semver.org/).
+
 ## master
 
 ### Added
