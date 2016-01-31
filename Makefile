@@ -11,7 +11,7 @@ build: index.html
 
 package:
 	mkdir -p ${OUTPUTDIR}
-	mv *.html ${OUTPUTDIR}
+	find . -path ./${OUTPUTDIR} -prune -o -name "*.html" -exec mv {} ${OUTPUTDIR}/{} \;
 
 %.html: %.m4
 	m4 -Iinclude $< > $@
