@@ -1,5 +1,5 @@
 include README.md
-include COPYING
+include LICENSE
 include schema.sql
 include config.ini
 include CHANGELOG.md
