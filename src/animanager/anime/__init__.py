@@ -15,34 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from . import add
-from . import bump
-from . import clean
-from . import drop
-from . import hold
-from . import plan
-from . import register
-from . import search
-from . import stats
-from . import update
-from . import watch
-from . import watching
-
-_COMMANDS = [
-    add,
-    bump,
-    clean,
-    drop,
-    hold,
-    plan,
-    register,
-    search,
-    stats,
-    update,
-    watch,
-    watching,
-]
-
 
 def setup_parser(subparsers):
 
@@ -51,11 +23,11 @@ def setup_parser(subparsers):
     # Set up anime command parser.
     parser = subparsers.add_parser(
         'anime',
-        description='Anime database manager.',
-        help='Commands for interacting with anime database.',
+        description='Anime manager.',
+        help='Start anime manager.',
     )
-    subparsers = parser.add_subparsers(title='Commands')
+    parser.set_defaults(func=main)
 
-    # Add anime subcommand parsers.
-    for command in _COMMANDS:
-        command.setup_parser(subparsers)
+
+def main(args):
+    pass
