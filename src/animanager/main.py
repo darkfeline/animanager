@@ -1,4 +1,4 @@
-# Copyright (C) 2015  Allen Li
+# Copyright (C) 2015-2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -18,26 +18,17 @@
 import logging
 import argparse
 
-from animanager import configlib
-from animanager import dblib
-
 from animanager.commands import anime
 
 
 def _make_parser():
-
-    """Make the root argument parser for the animanager program."""
-
-    # Set up main parser
+    # Set up main parser.
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
                         default=None,
                         help='Alternate configuration file to use.')
-    parser.add_argument('--db',
-                        default=None,
-                        help='Alternate database file to use.')
 
-    # Set up subparsers
+    # Set up subparsers.
     subparsers = parser.add_subparsers(title='Managers')
     anime.setup_parser(subparsers)
 
@@ -45,16 +36,10 @@ def _make_parser():
 
 
 def main():
-    """Entry function."""
     logging.basicConfig(level='INFO')
+
     parser = _make_parser()
     args = parser.parse_args()
-
-    args.config = configlib.Config(args.config)
-    if args.db is not None:
-        args.db = dblib.Database(args.db)
-    else:
-        args.db = dblib.Database.from_config(args.config)
 
     # Run command.
     try:
