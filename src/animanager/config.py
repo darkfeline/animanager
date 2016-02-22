@@ -27,6 +27,7 @@ class Config:
     DEF_VALUES = {
         'anime': {
             'database': '~/.animanager/database.db',
+            'anidb_cache': '~/.animanager/anidb',
             'watchdir': '~/anime',
             'player': 'mpv',
         },
@@ -52,6 +53,7 @@ class Config:
     def __getitem__(self, key):
         return self.config[key]
 
+    ###########################################################################
     # XXX Move
     def register(self, db, id):
         results = db.select(
