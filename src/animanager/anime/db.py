@@ -18,7 +18,8 @@
 from datetime import date
 import logging
 import sqlite3
-import sys
+
+from animanager import errors
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,35 +31,26 @@ class AnimeDB:
 
     def __init__(self, path):
         self.dbfile = path
+        self.connect()
 
+    @classmethod
+    def from_config(cls, config):
+        """Create instance from config."""
+        return cls(config['anime'].getpath('database'))
 
-class Database:
-
-    def __init__(self, path):
-        self.dbfile = path
-        self._connect()
-
-    def _connect(self):
+    def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
         cur = self.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         cur.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
-            _LOGGER.critical('Foreign keys are not supported.')
-            sys.exit(1)
-
-    @classmethod
-    def from_config(cls, config):
-        return cls(config['general'].getpath('database'))
-
-    def cursor(self):
-        return self.cnx.cursor()
-
-    def commit(self):
-        self.cnx.commit()
+            raise errors.DBError('Foreign keys are not supported.')
 
     def close(self):
         self.cnx.close()
+
+
+class Database:
 
     def bump(self, id):
         """Bump a series.
