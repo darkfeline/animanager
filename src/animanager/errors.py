@@ -4,3 +4,7 @@ class Error(Exception):
 
 class DBError(Error):
     """Database error."""
+
+
+class APIError(Error):
+    """API error."""
