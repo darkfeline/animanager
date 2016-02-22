@@ -63,9 +63,13 @@ class AnimeCmd(cmd.Cmd):
             self.do_help('add')
         elif arg.isdigit():
             # XXX Handle count
+            pass
+        elif arg[0] == '#' and arg[1:].isdigit():
             # XXX Handle aid
+            pass
         else:
             # XXX search
+            pass
 
     ###########################################################################
     # watch
