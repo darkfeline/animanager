@@ -36,6 +36,14 @@ class AnimeCmd(cmd.Cmd):
     This is free software, and you are welcome to redistribute it
     under certain conditions; type "gpl c" for details.''').format(_pkgver)
     prompt = 'A> '
+    use_rawinput = False  # Use readline
+
+    def default(self, line):
+        """Repeat the last command with new arguments."""
+        return self.onecmd(' '.join((self.lastcmd, line)))
+
+    ###########################################################################
+    # quit
 
     def do_quit(self, arg):
         """Quit."""
@@ -46,10 +54,31 @@ class AnimeCmd(cmd.Cmd):
     def help_q(self):
         print('Alias for "quit".')
 
+    ###########################################################################
+    # add
+
+    def do_add(self, arg):
+        """Add a series."""
+        if not arg:
+            self.do_help('add')
+        elif arg.isdigit():
+            # XXX Handle count
+            # XXX Handle aid
+        else:
+            # XXX search
+
+    ###########################################################################
+    # watch
+
     def do_watch(self, arg):
         """Watch series."""
-        pass
+        # XXX get watching shows
+        # XXX find files
+        # XXX match rules
+        # XXX play file
+        # XXX bump
 
+    ###########################################################################
     # GPL information.
     GPL_COPYING = dedent('''\
     Animanager is free software: you can redistribute it and/or modify
