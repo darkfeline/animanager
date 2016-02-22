@@ -27,6 +27,8 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
+from animanager import errors
+
 
 class APIRequest(metaclass=ABCMeta):
 
@@ -91,14 +93,14 @@ class LookupResponse:
     def tree(self):
         """Return the lookup data as a LookupTree.
 
-        Can raise Error in case of error.  Errors include being banned or a
+        Can raise APIError in case of error.  Errors include being banned or a
         non-existent AID.
 
         """
         body = self._response_body()
         tree = LookupTree(ET.ElementTree(ET.fromstring(body)))
         if tree.error:
-            raise Error(tree)
+            raise errors.APIError(tree)
         return tree
 
 
@@ -188,7 +190,6 @@ class LookupTree:
 class Episode:
 
     _EPNO_PREFIX = re.compile(r'^[SCPTO]?')
-    # _NAMESPACE = {'xml': }
 
     def __init__(self, element):
         self.element = element
@@ -214,8 +215,3 @@ class Episode:
                 return title.text
         # In case there's no Japanese title.
         return self.element.find('title').text
-
-
-class Error(Exception):
-
-    """anidb module error class."""

@@ -15,10 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from .cache import AniDBCache
+from . import api
 
-def lookup(config, aid):
-    """Look up given AID.
 
-    Uses cache if available.
+class AniDB:
 
-    """
+    """Provides access to AniDB data, via cache and API."""
+
+    def __init__(self, config):
+        self.cache = AniDBCache.from_config(config)
+
+    def lookup(self, aid):
+        """Look up given AID.
+
+        Uses cache if available.
+
+        """
+        if self.cache.has(aid):
+            pass
+        else:
+            pass

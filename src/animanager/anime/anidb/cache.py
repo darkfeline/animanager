@@ -25,9 +25,18 @@ class AniDBCache:
     def __init__(self, cachedir):
         self.cachedir = cachedir
 
+    @classmethod
+    def from_config(cls, config):
+        """Create instance from config."""
+        return cls(config['anime'].getpath('anidb_cache'))
+
     def filepath(self, aid):
         """Return the path to the respective cache file."""
         return os.path.join(self.cachedir, '{}.xml'.format(aid))
+
+    def has(self, aid):
+        """Return whether entry is in the cache."""
+        return os.path.exists(self.filepath(aid))
 
     def store(self, tree):
         """Store a LookupTree in the cache."""
