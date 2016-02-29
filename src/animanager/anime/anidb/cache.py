@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import namedtuple
 import logging
 import os
 import pickle
@@ -57,6 +58,8 @@ class AniDBCache:
         """Retrieve a LookupTree from the cache."""
         return LookupTree.parse(self.filepath(aid))
 
+SearchEntry = namedtuple('SearchEntry', ['aid', 'main_title', 'titles'])
+
 
 class AniDBSearchCache:
 
@@ -68,6 +71,7 @@ class AniDBSearchCache:
 
     def __init__(self, tree):
         self.tree = tree
+        self.root = tree.getroot()
 
     @classmethod
     def from_config(cls, config):
@@ -88,7 +92,6 @@ class AniDBSearchCache:
         cache.dump(pickle_file)
         return cache
 
-
     @classmethod
     def from_file(cls, filename):
         """Create search cache from an XML file."""
@@ -104,3 +107,23 @@ class AniDBSearchCache:
         """Dump XML tree into pickled file."""
         with open(filename, 'wb') as file:
             pickle.dump(self.tree, file)
+
+    @staticmethod
+    def _get_main_title(anime):
+        """Get main title of anime Element."""
+        for title in anime:
+            if title.attrib['type'] == 'main':
+                return title.text
+
+    def search(self, query):
+        """Search titles using compiled RE query."""
+        found = []
+        for anime in self.root:
+            for title in anime:
+                if query.search(title.text):
+                    aid = anime.attrib['aid']
+                    main_title = self._get_main_title(anime)
+                    titles = [title.text for title in anime]
+                    found.append(SearchEntry(aid, main_title, titles))
+                    break
+        return sorted(found, key=lambda anime: anime.aid)
