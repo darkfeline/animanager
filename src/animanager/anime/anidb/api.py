@@ -39,6 +39,18 @@ class APIRequest(metaclass=ABCMeta):
         """Perform request."""
 
 
+class TitlesRequest(APIRequest):
+
+    """Special AniDB request for titles data."""
+
+    request_uri = "http://anidb.net/api/anime-titles.xml.gz"
+
+    def open(self):
+        return urllib.request.urlopen(self.request_uri)
+
+# XXX how to handle the response
+
+
 class HTTPRequest(APIRequest):
 
     """AniDB HTTP API request abstract class."""

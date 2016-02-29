@@ -50,6 +50,7 @@ class AnimeDB:
         self.cnx.close()
 
 
+# XXX old
 class Database:
 
     def bump(self, id):

@@ -15,15 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import cmd
 from textwrap import dedent
 # Needed for line editing.
 import readline  # noqa
 
-import pkg_resources
+from animanager.constants import VERSION
 
-_pkgver = pkg_resources.require("animanager")[0].version
+from . import anidb
 
 
 class AnimeCmd(cmd.Cmd):
@@ -34,9 +33,20 @@ class AnimeCmd(cmd.Cmd):
 
     This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
     This is free software, and you are welcome to redistribute it
-    under certain conditions; type "gpl c" for details.''').format(_pkgver)
+    under certain conditions; type "gpl c" for details.''').format(VERSION)
     prompt = 'A> '
     use_rawinput = False  # Use readline
+
+    def __init__(self, config, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.anidb = anidb.AniDB(config)
+
+    @classmethod
+    def run_with_file(cls, config, file):
+        """Use a file as a script and run commands."""
+        animecmd = cls(config, stdin=file)
+        animecmd.prompt = ''
+        animecmd.cmdloop('')
 
     def default(self, line):
         """Repeat the last command with new arguments."""
@@ -44,7 +54,6 @@ class AnimeCmd(cmd.Cmd):
 
     ###########################################################################
     # quit
-
     def do_quit(self, arg):
         """Quit."""
         return True
@@ -56,9 +65,9 @@ class AnimeCmd(cmd.Cmd):
 
     ###########################################################################
     # add
-
     def do_add(self, arg):
         """Add a series."""
+        # XXX
         if not arg:
             self.do_help('add')
         elif arg.isdigit():
@@ -73,7 +82,6 @@ class AnimeCmd(cmd.Cmd):
 
     ###########################################################################
     # watch
-
     def do_watch(self, arg):
         """Watch series."""
         # XXX get watching shows

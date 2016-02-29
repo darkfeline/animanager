@@ -17,6 +17,8 @@
 
 from .cmd import AnimeCmd
 
+from animanager.config import Config
+
 
 def setup_parser(subparsers):
 
@@ -28,11 +30,14 @@ def setup_parser(subparsers):
         description='Anime manager.',
         help='Start anime manager.',
     )
-    # XXX -c argument
-    # XXX script argument
+    parser.add_argument('script', nargs='?')
     parser.set_defaults(func=main)
 
 
 def main(args):
-    cmd = AnimeCmd()
-    cmd.cmdloop()
+    config = Config(args.config)
+    if args.script:
+        AnimeCmd.run_with_file(config, args.script)
+    else:
+        cmd = AnimeCmd(config)
+        cmd.cmdloop()
