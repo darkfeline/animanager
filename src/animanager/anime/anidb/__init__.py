@@ -33,6 +33,8 @@ class AniDB:
 
         """
         if self.cache.has(aid):
-            pass
+            return self.cache.retrieve(aid)
         else:
-            pass
+            request = api.LookupRequest(aid)
+            response = request.open()
+            return response.tree()
