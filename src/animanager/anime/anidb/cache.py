@@ -22,6 +22,12 @@ from .api import LookupTree
 
 class AniDBCache:
 
+    """Provides access to local cache of AniDB data.
+
+    The AniDB cache is simply a directory containing XML files named <AID>.xml.
+
+    """
+
     def __init__(self, cachedir):
         self.cachedir = cachedir
 

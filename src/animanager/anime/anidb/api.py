@@ -105,6 +105,7 @@ class LookupResponse:
 
 
 def _parse_date(str):
+    """Parse an ISO format date (YYYY-mm-dd)."""
     dt = datetime.datetime.strptime(str, '%Y-%m-%d')
     return dt.date()
 
