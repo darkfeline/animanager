@@ -60,7 +60,7 @@ class TitlesTree(base.XMLTree):
         for anime in self.root:
             for title in anime:
                 if query.search(title.text):
-                    aid = anime.attrib['aid']
+                    aid = int(anime.attrib['aid'])
                     main_title = self._get_main_title(anime)
                     titles = [title.text for title in anime]
                     found.append(SearchEntry(aid, main_title, titles))
