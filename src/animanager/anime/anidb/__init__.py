@@ -15,8 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .cache import AniDBCache
-from . import api
+import logging
+import os
+
+from . import anime
+from . import titles
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AniDB:
@@ -24,7 +29,7 @@ class AniDB:
     """Provides access to AniDB data, via cache and API."""
 
     def __init__(self, config):
-        self.cache = AniDBCache.from_config(config)
+        self.cache = anime.AnimeCache.from_config(config)
 
     def lookup(self, aid):
         """Look up given AID.
@@ -35,6 +40,49 @@ class AniDB:
         if self.cache.has(aid):
             return self.cache.retrieve(aid)
         else:
-            request = api.LookupRequest(aid)
+            request = anime.AnimeRequest(aid)
             response = request.open()
-            return response.tree()
+            return response.xml()
+
+
+class SearchDB:
+
+    """Provides access to local cache of AniDB titles data.
+
+    The titles data is used for searching.
+
+    """
+
+    def __init__(self, config):
+        self.config = config
+
+    @property
+    def titles(self):
+        try:
+            return self._titles
+        except AttributeError:
+            self.load_tree()
+            return self._titles
+
+    def load_tree(self):
+        cachedir = self.config['anime'].getpath('anidb_cache')
+        pickle_file = os.path.join(cachedir, 'anime-titles.pickle')
+        # Try to load from pickled file courageously.
+        try:
+            return titles.TitlesTree.load(pickle_file)
+        except Exception as e:
+            _LOGGER.warning('Error loading pickled search cache: %s', e)
+        titles_file = os.path.join(cachedir, 'anime-titles.xml')
+        # Download titles data if we don't have it.
+        if not os.path.exists(titles_file):
+            request = titles.TitlesRequest()
+            response = request.open()
+            self._titles = response.xml()
+        else:
+            self._titles = titles.TitlesTree.parse(titles_file)
+        # Dump a pickled file for next time.
+        self.titles.dump(pickle_file)
+
+    def search(self, query):
+        """Search titles using a compiled RE query."""
+        return self.titles.search(query)

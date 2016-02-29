@@ -17,9 +17,11 @@
 
 import cmd
 from textwrap import dedent
-# Needed for line editing.
-import readline  # noqa
+import re
+import readline  # noqa, needed for readline functionality
+import shlex
 
+from animanager import errors
 from animanager.constants import VERSION
 
 from . import anidb
@@ -40,6 +42,7 @@ class AnimeCmd(cmd.Cmd):
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.anidb = anidb.AniDB(config)
+        self.searchdb = anidb.SearchDB(config)
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -51,6 +54,21 @@ class AnimeCmd(cmd.Cmd):
     def default(self, line):
         """Repeat the last command with new arguments."""
         return self.onecmd(' '.join((self.lastcmd, line)))
+
+    ###########################################################################
+    # Last command results handling
+    last_cmd = None
+    last_cmd_results = None
+
+    def _set_last_cmd(self, cmd, results):
+        self.last_cmd = cmd
+        self.last_cmd_results = results
+
+    def _get_last_cmd(self, cmd):
+        if self.last_cmd == cmd:
+            return self.last_cmd_results
+        else:
+            return None
 
     ###########################################################################
     # quit
@@ -67,18 +85,30 @@ class AnimeCmd(cmd.Cmd):
     # add
     def do_add(self, arg):
         """Add a series."""
-        # XXX
         if not arg:
             self.do_help('add')
         elif arg.isdigit():
-            # XXX Handle count
-            pass
+            # Handle count.
+            results = self._get_last_cmd('add')
+            if results is None:
+                print('No last search results.')
+                return
+            aid = results[int(arg)].aid
+            self.do_add('#{}')
+            # XXX
         elif arg[0] == '#' and arg[1:].isdigit():
+            # Handle aid.
             # XXX Handle aid
             pass
         else:
-            # XXX search
-            pass
+            # Handle search.
+            query = re.compile('.*'.join(shlex.split(arg)), re.I)
+            results = self.searchdb.search(query)
+            width = len(results) % 10 + 1
+            template = '{{:{}}} - {{}}'.format(width)
+            for i, anime in enumerate(results):
+                print(template.format(i, anime.main_title))
+            self._set_last_cmd('add', results)
 
     ###########################################################################
     # watch
