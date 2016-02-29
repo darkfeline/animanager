@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+# XXX old
+
 """
 This module contains stuff needed to set up the watching of anime.
 """
