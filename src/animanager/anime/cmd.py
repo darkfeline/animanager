@@ -94,8 +94,7 @@ class AnimeCmd(cmd.Cmd):
                 print('No last search results.')
                 return
             aid = results[int(arg)].aid
-            self.do_add('#{}')
-            # XXX
+            self.do_add('#{}'.format(aid))
         elif arg[0] == '#' and arg[1:].isdigit():
             # Handle aid.
             # XXX Handle aid
