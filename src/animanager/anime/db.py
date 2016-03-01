@@ -29,6 +29,8 @@ FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
 
 class AnimeDB:
 
+    """Our anime database."""
+
     def __init__(self, path):
         self.dbfile = path
         self.connect()
