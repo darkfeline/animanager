@@ -1,4 +1,3 @@
-
 # Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
