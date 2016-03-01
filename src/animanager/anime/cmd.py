@@ -21,7 +21,6 @@ import re
 import readline  # noqa, needed for readline functionality
 import shlex
 
-from animanager import errors
 from animanager.constants import VERSION
 
 from . import anidb
