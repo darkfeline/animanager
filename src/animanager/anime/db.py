@@ -20,6 +20,7 @@ import logging
 import sqlite3
 
 from animanager import errors
+from animanager import sqlbuilder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,11 +43,28 @@ class AnimeDB:
 
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
-        cur = self.cursor()
+        cur = self.cnx.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         cur.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
             raise errors.DBError('Foreign keys are not supported.')
+
+    def add(self, anime):
+        """Add an anime.
+
+        anime is an AnimeTree containing the necessary information.
+
+        """
+        query = sqlbuilder.Insert('anime')
+        for col in ('aid', 'title','type', 'episodes', 'startdate', 'enddate'):
+            query.add_column(col)
+        self.cnx.execute(
+            query.build(),
+            (anime.aid, anime.title, anime.type, anime.episodecount,
+             anime.startdate, anime.enddate),
+        )
+        # XXX
+        self.cnx.commit()
 
     def close(self):
         self.cnx.close()
