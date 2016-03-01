@@ -24,6 +24,7 @@ import shlex
 from animanager.constants import VERSION
 
 from . import anidb
+from .db import AnimeDB
 
 
 class AnimeCmd(cmd.Cmd):
@@ -42,6 +43,7 @@ class AnimeCmd(cmd.Cmd):
         super().__init__(*args, **kwargs)
         self.anidb = anidb.AniDB(config)
         self.searchdb = anidb.SearchDB(config)
+        self.db = AnimeDB.from_config(config)
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -96,8 +98,9 @@ class AnimeCmd(cmd.Cmd):
             self.do_add('#{}'.format(aid))
         elif arg[0] == '#' and arg[1:].isdigit():
             # Handle aid.
-            # XXX Handle aid
-            pass
+            aid = int(arg[1:])
+            anime = self.anidb.lookup(aid)
+            self.db.add(anime)
         else:
             # Handle search.
             query = re.compile('.*'.join(shlex.split(arg)), re.I)
