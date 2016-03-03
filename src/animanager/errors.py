@@ -20,8 +20,20 @@ class Error(Exception):
     """Animanager error."""
 
 
-class DBError(Error):
+class DatabaseError(Error):
     """Database error."""
+
+
+class DatabaseVersionError(DatabaseError):
+    """Bad database version."""
+
+    def __init__(self, wanted, found):
+        self.wanted = wanted
+        self.found = found
+
+    def __str__(self):
+        return 'Bad database version: wanted {}, found {}'.format(
+            self.wanted, self.found)
 
 
 class APIError(Error):

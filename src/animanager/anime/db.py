@@ -32,6 +32,8 @@ class AnimeDB:
 
     """Our anime database."""
 
+    VERSION = 1
+
     def __init__(self, path):
         self.dbfile = path
         self.connect()
@@ -43,9 +45,12 @@ class AnimeDB:
 
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
-        cur = self.cnx.cursor()
-        cur.execute('PRAGMA foreign_keys = ON')
-        cur.execute('PRAGMA foreign_keys')
+        cur = self.cnx.execute('PRAGMA user_version')
+        version = cur.fetchone()[0]
+        if version != self.VERSION:
+            raise errors.DatabaseVersionError(self.VERSION, version)
+        self.cnx.execute('PRAGMA foreign_keys = ON')
+        cur = self.cnx.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
             raise errors.DBError('Foreign keys are not supported.')
 
