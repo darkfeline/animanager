@@ -31,6 +31,8 @@ class SQLBuilder(metaclass=ABCMeta):
 
 class Insert:
 
+    """Simple INSERT statement builder."""
+
     def __init__(self, table_name):
         self.table_name = table_name
         self.columns = []
