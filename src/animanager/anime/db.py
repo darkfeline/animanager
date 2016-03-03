@@ -98,8 +98,8 @@ class Database:
         )
         watched, total, status = next(results)
 
-        # Calculate what needs updating, putting it into a dictionary that we will
-        # update at the end all at once.
+        # Calculate what needs updating, putting it into a dictionary that we
+        # will update at the end all at once.
         update_map = dict()
 
         # We set the starting date if we haven't watched anything yet.
@@ -114,8 +114,8 @@ class Database:
         if status != 'watching':
             update_map['status'] = 'watching'
 
-        # Finally, if the series is now complete, we set the status and finish date
-        # accordingly.
+        # Finally, if the series is now complete, we set the status and finish
+        # date accordingly.
         if watched == total and total is not None:
             update_map['status'] = 'complete'
             update_map['date_finished'] = date.today().isoformat()
