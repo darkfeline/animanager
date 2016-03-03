@@ -37,6 +37,7 @@ class AnimeDB:
     def __init__(self, path):
         self.dbfile = path
         self.connect()
+        self._episode_types = None
 
     @classmethod
     def from_config(cls, config):
@@ -53,6 +54,16 @@ class AnimeDB:
         cur = self.cnx.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
             raise errors.DBError('Foreign keys are not supported.')
+
+    @property
+    def episode_types(self):
+        if self._episode_types:
+            return self._episode_types
+        self._episode_types = dict()
+        cur = self.cnx.execute('SELECT id, value, prefix FROM episode_tupe')
+        for id, value, prefix in cur:
+            self._episode_types[value] = (id, prefix)
+        return self._episode_types
 
     def add(self, anime):
         """Add an anime.
