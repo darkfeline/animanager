@@ -17,6 +17,7 @@
 
 from datetime import date
 import logging
+import re
 import sqlite3
 
 from animanager import errors
@@ -91,6 +92,20 @@ class AnimeDB:
                  episode.length, 0),
             )
         self.cnx.commit()
+
+    class WatchingAnime:
+
+        __slots__ = ['aid', 'regexp']
+
+        def __init__(self, aid, regexp):
+            self.aid = aid
+            self.regexp = re.compile(self.regexp, re.I)
+
+    def get_watching(self):
+        """Return watching series."""
+        cur = self.cnx.execute('SELECT aid, regexp FROM watching')
+        return [self.WatchingAnime(aid, regexp)
+                for aid, regexp in cur.fetchall()]
 
     def close(self):
         self.cnx.close()
