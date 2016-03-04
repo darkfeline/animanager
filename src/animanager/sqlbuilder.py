@@ -22,6 +22,7 @@ class SQLBuilder(metaclass=ABCMeta):
 
     @staticmethod
     def quote(token):
+        """Quote a SQL token."""
         return '"{}"'.format(token)
 
     @abstractmethod
