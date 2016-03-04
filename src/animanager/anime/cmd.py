@@ -41,9 +41,9 @@ class AnimeCmd(cmd.Cmd):
 
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.anidb = anidb.AniDB(config)
-        self.searchdb = anidb.SearchDB(config)
-        self.db = AnimeDB.from_config(config)
+        self.anidb = anidb.AniDB(config.anime.anidb_cache)
+        self.searchdb = anidb.SearchDB(config.anime.anidb_cache)
+        self.db = AnimeDB(config.anime.database)
 
     @classmethod
     def run_with_file(cls, config, file):

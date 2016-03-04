@@ -40,11 +40,6 @@ class AnimeDB:
         self.connect()
         self._episode_types = None
 
-    @classmethod
-    def from_config(cls, config):
-        """Create instance from config."""
-        return cls(config.anime.database)
-
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
         cur = self.cnx.execute('PRAGMA user_version')

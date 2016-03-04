@@ -28,8 +28,8 @@ class AniDB:
 
     """Provides access to AniDB data, via cache and API."""
 
-    def __init__(self, config):
-        self.cache = anime.AnimeCache.from_config(config)
+    def __init__(self, cachedir):
+        self.cache = anime.AnimeCache(cachedir)
 
     def lookup(self, aid):
         """Look up given AID.
@@ -53,8 +53,8 @@ class SearchDB:
 
     """
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, cachedir):
+        self.cachedir = cachedir
 
     @property
     def titles(self):
@@ -65,14 +65,13 @@ class SearchDB:
             return self._titles
 
     def load_tree(self):
-        cachedir = self.config.anime.anidb_cache
-        pickle_file = os.path.join(cachedir, 'anime-titles.pickle')
+        pickle_file = os.path.join(self.cachedir, 'anime-titles.pickle')
         # Try to load from pickled file courageously.
         try:
             return titles.TitlesTree.load(pickle_file)
         except Exception as e:
             _LOGGER.warning('Error loading pickled search cache: %s', e)
-        titles_file = os.path.join(cachedir, 'anime-titles.xml')
+        titles_file = os.path.join(self.cachedir, 'anime-titles.xml')
         # Download titles data if we don't have it.
         if not os.path.exists(titles_file):
             request = titles.TitlesRequest()

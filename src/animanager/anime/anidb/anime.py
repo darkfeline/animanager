@@ -131,11 +131,6 @@ class AnimeCache:
     def __init__(self, cachedir):
         self.cachedir = cachedir
 
-    @classmethod
-    def from_config(cls, config):
-        """Create instance from config."""
-        return cls(config.anime.anidb_cache)
-
     def filepath(self, aid):
         """Return the path to the respective cache file."""
         return os.path.join(self.cachedir, '{}.xml'.format(aid))
