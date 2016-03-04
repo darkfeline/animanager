@@ -25,6 +25,11 @@ class SQLBuilder(metaclass=ABCMeta):
         """Quote a SQL token."""
         return '"{}"'.format(token)
 
+    @staticmethod
+    def join(tokens):
+        """Join tokens to make a SQL query."""
+        return ' '.join(tokens)
+
     @abstractmethod
     def build(self):
         pass
@@ -52,3 +57,4 @@ class Insert:
         tokens += ['(']
         tokens += [','.join('?' for col in self.columns)]
         tokens += [')']
+        return self.join(tokens)
