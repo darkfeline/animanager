@@ -50,12 +50,9 @@ class Config:
         with open(self.path, 'w') as file:
             self.config.write(file)
 
-    def __getitem__(self, key):
-        return self.config[key]
-
     @property
     def anime(self):
-        return self.Anime(self['anime'])
+        return self.Anime(self.config['anime'])
 
     class Anime:
 
