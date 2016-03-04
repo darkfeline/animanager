@@ -80,11 +80,11 @@ class AnimeDB:
             (anime.aid, anime.title, anime.type, anime.episodecount,
              anime.startdate, anime.enddate),
         )
+        query = sqlbuilder.Insert('episode')
+        for col in ('anime', 'type', 'number', 'title', 'length',
+                    'user_watched'):
+            query.add_column(col)
         for episode in anime.episodes:
-            query = sqlbuilder.Insert('episode')
-            for col in ('anime', 'type', 'number', 'title', 'length',
-                        'user_watched'):
-                query.add_column(col)
             self.cnx.execute(
                 query.build(),
                 (anime.aid, episode.type, episode.number, episode.title,
