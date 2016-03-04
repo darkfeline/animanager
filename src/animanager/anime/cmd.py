@@ -85,7 +85,7 @@ class AnimeCmd(cmd.Cmd):
     ###########################################################################
     # add
     def do_add(self, arg):
-        """Add a series."""
+        """Add an anime."""
         if not arg:
             self.do_help('add')
         elif arg.isdigit():
