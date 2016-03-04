@@ -47,8 +47,7 @@ class Insert:
         self.columns.append(key)
 
     def build(self):
-        tokens = []
-        tokens += ['INSERT', 'INTO']
+        tokens = ['INSERT', 'INTO']
         tokens += [self.quote(self.table_name)]
         tokens += ['(']
         tokens += [','.join(self.quote(col) for col in self.columns)]
