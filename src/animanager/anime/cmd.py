@@ -114,7 +114,7 @@ class AnimeCmd(cmd.Cmd):
     ###########################################################################
     # watch
     def do_watch(self, arg):
-        """Watch series."""
+        """Watch an anime."""
         # XXX get watching shows
         # XXX find files
         # XXX match rules
