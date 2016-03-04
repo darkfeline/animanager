@@ -18,17 +18,17 @@
 from abc import ABCMeta, abstractmethod
 
 
+def quote(token):
+    """Quote a SQL token."""
+    return '"{}"'.format(token)
+
+
+def join(tokens):
+    """Join tokens to make a SQL query."""
+    return ' '.join(tokens)
+
+
 class SQLBuilder(metaclass=ABCMeta):
-
-    @staticmethod
-    def quote(token):
-        """Quote a SQL token."""
-        return '"{}"'.format(token)
-
-    @staticmethod
-    def join(tokens):
-        """Join tokens to make a SQL query."""
-        return ' '.join(tokens)
 
     @abstractmethod
     def build(self):
@@ -50,10 +50,10 @@ class Insert:
         tokens = ['INSERT', 'INTO']
         tokens += [self.quote(self.table_name)]
         tokens += ['(']
-        tokens += [','.join(self.quote(col) for col in self.columns)]
+        tokens += [','.join(quote(col) for col in self.columns)]
         tokens += [')']
         tokens += ['VALUES']
         tokens += ['(']
         tokens += [','.join('?' for col in self.columns)]
         tokens += [')']
-        return self.join(tokens)
+        return join(tokens)
