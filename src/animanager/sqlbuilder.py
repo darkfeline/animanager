@@ -57,3 +57,31 @@ class Insert:
         tokens += [','.join('?' for col in self.columns)]
         tokens += [')']
         return join(tokens)
+
+
+class CreateTable:
+
+    def __init__(self, table_name):
+        self.table_name = table_name
+        self.column_defs = []
+        self.table_constraints = []
+
+    def add_column(self, column_name, type=None, pk=False):
+        tokens = [quote(column_name)]
+        if type:
+            tokens += [type]
+        self.column_defs += [join(tokens)]
+        if pk:
+            tokens = ['PRIMARY', 'KEY', '(', quote(column_name), ')']
+            self.table_constraints += [join(tokens)]
+
+    def build(self):
+        tokens = ['CREATE', 'TABLE']
+        tokens += [self.quote(self.table_name)]
+        tokens += ['(']
+        tokens += [','.join(col for col in self.column_defs)]
+        for constraint in self.table_constraints:
+            tokens += [',']
+        tokens += [','.join(col for col in self.column_defs)]
+        tokens += [')']
+        return join(tokens)
