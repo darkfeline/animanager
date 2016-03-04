@@ -39,6 +39,7 @@ class AnimeDB:
         self.dbfile = path
         self.connect()
         self._episode_types = None
+        self.cache = self.CacheDB()
 
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
@@ -53,6 +54,11 @@ class AnimeDB:
 
     def close(self):
         self.cnx.close()
+
+    class CacheDB:
+
+        def __init__(self):
+            self.cnx = sqlite3.connect(':memory:')
 
     @property
     def episode_types(self):
