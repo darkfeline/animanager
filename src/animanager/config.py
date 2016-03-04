@@ -53,6 +53,37 @@ class Config:
     def __getitem__(self, key):
         return self.config[key]
 
+    @property
+    def anime(self):
+        return self.Anime(self['anime'])
+
+    class Anime:
+
+        __slots__ = ['config']
+
+        def __init__(self, config):
+            self.config = config
+
+        @property
+        def database(self):
+            """Anime database file."""
+            return self.config.getpath('database')
+
+        @property
+        def anidb_cache(self):
+            """AniDB cache directory."""
+            return self.config.getpath('anidb_cache')
+
+        @property
+        def watchdir(self):
+            """Directory to look for watching anime files."""
+            return self.config.getpath('watchdir')
+
+        @property
+        def player(self):
+            """Video player to use."""
+            return self.config['player']
+
     ###########################################################################
     # XXX Move
     def register(self, db, id):
