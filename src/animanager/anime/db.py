@@ -51,6 +51,9 @@ class AnimeDB:
         if cur.fetchone()[0] != 1:
             raise errors.DBError('Foreign keys are not supported.')
 
+    def close(self):
+        self.cnx.close()
+
     @property
     def episode_types(self):
         if self._episode_types:
@@ -101,9 +104,6 @@ class AnimeDB:
         cur = self.cnx.execute('SELECT aid, regexp FROM watching')
         return [self.WatchingAnime(aid, regexp)
                 for aid, regexp in cur.fetchall()]
-
-    def close(self):
-        self.cnx.close()
 
 
 # XXX old
