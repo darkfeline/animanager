@@ -43,7 +43,7 @@ class AnimeDB:
     @classmethod
     def from_config(cls, config):
         """Create instance from config."""
-        return cls(config['anime'].getpath('database'))
+        return cls(config.anime.database)
 
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)

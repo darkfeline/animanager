@@ -65,7 +65,7 @@ class SearchDB:
             return self._titles
 
     def load_tree(self):
-        cachedir = self.config['anime'].getpath('anidb_cache')
+        cachedir = self.config.anime.anidb_cache
         pickle_file = os.path.join(cachedir, 'anime-titles.pickle')
         # Try to load from pickled file courageously.
         try:

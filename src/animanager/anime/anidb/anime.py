@@ -134,7 +134,7 @@ class AnimeCache:
     @classmethod
     def from_config(cls, config):
         """Create instance from config."""
-        return cls(config['anime'].getpath('anidb_cache'))
+        return cls(config.anime.anidb_cache)
 
     def filepath(self, aid):
         """Return the path to the respective cache file."""
