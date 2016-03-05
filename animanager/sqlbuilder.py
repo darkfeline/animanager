@@ -39,7 +39,7 @@ class SQLBuilder(metaclass=ABCMeta):
         return join(self.tokens())
 
 
-class Insert:
+class Insert(SQLBuilder):
 
     """Simple INSERT statement builder."""
 
@@ -63,7 +63,7 @@ class Insert:
         return tokens
 
 
-class CreateTable:
+class CreateTable(SQLBuilder):
 
     def __init__(self, table_name):
         self.table_name = table_name
