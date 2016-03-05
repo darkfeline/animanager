@@ -23,7 +23,7 @@ import logging
 from animanager import mal
 from animanager import inputlib
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def setup_parser(subparsers):
@@ -57,18 +57,18 @@ def main(args):
     # Tuples of ids and series names to update.
     to_rename = []
     for id, mal_id, name, eps in _anime_iter(db):
-        _LOGGER.debug("Our entry id=%r, name=%r, eps=%r", id, name, eps)
+        logger.debug("Our entry id=%r, name=%r, eps=%r", id, name, eps)
 
         # Search for our show on MAL, and make sure to match our MAL id.
         try:
             results = mal.query.anime_search(name)
         except mal.query.ResponseError:
-            _LOGGER.warning('No results found for id=%r, name=%r', id, name)
+            logger.warning('No results found for id=%r, name=%r', id, name)
             continue
         results = dict((result.id, result) for result in results)
         found = results[mal_id]
         found_title, found_eps = found.title, found.episodes
-        _LOGGER.debug('Found mal_id=%r, name=%r, eps=%r',
+        logger.debug('Found mal_id=%r, name=%r, eps=%r',
                       mal_id, found_title, found_eps)
 
         # If their name is different from our name, prompt for action.
@@ -80,16 +80,16 @@ def main(args):
             if choice == 0:
                 to_rename.append((id, found_title))
             elif choice == 2:
-                _LOGGER.info('Aborting...')
+                logger.info('Aborting...')
                 sys.exit(1)
         if found_eps != 0:
             assert found_eps > 0
             to_update.append((id, found_eps))
     if to_rename:
-        _LOGGER.info('Renaming local entries...')
+        logger.info('Renaming local entries...')
         db.update_many('anime', ['name'], to_rename)
     if to_update:
-        _LOGGER.info('Updating local entries...')
+        logger.info('Updating local entries...')
         db.update_many('anime', ['ep_total'], to_update)
 
 

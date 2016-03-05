@@ -23,7 +23,7 @@ import sqlite3
 from animanager import errors
 from animanager import sqlbuilder
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
           'date_started', 'date_finished', 'animedb_id']

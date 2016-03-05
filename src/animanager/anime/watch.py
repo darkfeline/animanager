@@ -27,7 +27,7 @@ from animanager import inputlib
 from animanager import watchlib
 from animanager import trashlib
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def setup_parser(subparsers):

@@ -21,7 +21,7 @@ import os
 from . import anime
 from . import titles
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AniDB:
@@ -70,7 +70,7 @@ class SearchDB:
         try:
             return titles.TitlesTree.load(pickle_file)
         except Exception as e:
-            _LOGGER.warning('Error loading pickled search cache: %s', e)
+            logger.warning('Error loading pickled search cache: %s', e)
         titles_file = os.path.join(self.cachedir, 'anime-titles.xml')
         # Download titles data if we don't have it.
         if not os.path.exists(titles_file):

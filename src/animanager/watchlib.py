@@ -28,7 +28,7 @@ from collections import defaultdict
 
 from animanager import trashlib
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 _VIDEO_EXT = set(('.mkv', '.mp4', '.avi'))
 
 

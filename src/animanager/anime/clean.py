@@ -17,7 +17,7 @@
 
 import logging
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def setup_parser(subparsers):
@@ -48,7 +48,7 @@ def _filter_series(db, config):
     # Do removal
     if to_delete:
         for id, name in to_delete:
-            _LOGGER.info('Unregistered %s', name)
+            logger.info('Unregistered %s', name)
             config.unregister(id)
         config.save()
 

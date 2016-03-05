@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 from animanager import errors
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Request(metaclass=ABCMeta):
@@ -36,7 +36,7 @@ class Request(metaclass=ABCMeta):
     @abstractmethod
     def open(self):
         """Perform request."""
-        _LOGGER.debug('Opened request %s', self)
+        logger.debug('Opened request %s', self)
 
 
 class HTTPRequest(Request, metaclass=ABCMeta):

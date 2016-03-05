@@ -26,7 +26,7 @@ import sys
 from animanager import inputlib
 from animanager import mal
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 _STATUSES = ('plan to watch', 'watching', 'complete')
 
 
@@ -47,7 +47,7 @@ def main(args):
     try:
         results = mal.query.anime_search(args.name)
     except mal.query.ResponseError as e:
-        _LOGGER.error('Error querying MAL: %s', e)
+        logger.error('Error querying MAL: %s', e)
         sys.exit(1)
     i = inputlib.get_choice(['({}) {}'.format(x.id, x.title) for x in results])
 

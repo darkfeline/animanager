@@ -22,7 +22,7 @@
 import os
 import logging
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def trashdir(config):
@@ -37,7 +37,7 @@ def trash(config, file):
     Move file to a designated trash directory.
 
     """
-    _LOGGER.info('Trashing %s', file)
+    logger.info('Trashing %s', file)
     td = trashdir(config)
     if not os.path.exists(td):
         os.mkdir(td)

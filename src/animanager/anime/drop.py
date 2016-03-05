@@ -19,7 +19,7 @@ import logging
 
 from animanager import inputlib
 
-_LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def setup_parser(subparsers):
