@@ -31,8 +31,12 @@ def join(tokens):
 class SQLBuilder(metaclass=ABCMeta):
 
     @abstractmethod
+    def tokens(self):
+        """Return an iterable of tokens for the query."""
+
     def build(self):
-        pass
+        """Return the query as a string."""
+        return join(self.tokens())
 
 
 class Insert:
@@ -46,7 +50,7 @@ class Insert:
     def add_column(self, key):
         self.columns.append(key)
 
-    def build(self):
+    def tokens(self):
         tokens = ['INSERT', 'INTO']
         tokens += [self.quote(self.table_name)]
         tokens += ['(']
@@ -56,7 +60,7 @@ class Insert:
         tokens += ['(']
         tokens += [','.join('?' for col in self.columns)]
         tokens += [')']
-        return join(tokens)
+        return tokens
 
 
 class CreateTable:
@@ -75,7 +79,7 @@ class CreateTable:
             tokens = ['PRIMARY', 'KEY', '(', quote(column_name), ')']
             self.table_constraints += [join(tokens)]
 
-    def build(self):
+    def tokens(self):
         tokens = ['CREATE', 'TABLE']
         tokens += [self.quote(self.table_name)]
         tokens += ['(']
@@ -84,4 +88,4 @@ class CreateTable:
             tokens += [',']
         tokens += [','.join(col for col in self.column_defs)]
         tokens += [')']
-        return join(tokens)
+        return tokens
