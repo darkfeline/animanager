@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from collections import namedtuple
 from datetime import date
 import logging
 import re
@@ -59,6 +60,10 @@ class AnimeDB:
 
         def __init__(self):
             self.cnx = sqlite3.connect(':memory:')
+            query = sqlbuilder.CreateTable('anime')
+            query.add_column('aid', type='INTEGER', pk=True)
+            query.add_column('watched_episodes', type='INTEGER', pk=True)
+            self.cnx.execute(query.build())
 
     @property
     def episode_types(self):
@@ -96,6 +101,12 @@ class AnimeDB:
                  episode.length, 0),
             )
         self.cnx.commit()
+
+    Anime = namedtuple('Anime', ['aid', 'title', 'type', 'episodes',
+                                 'watched_episodes'])
+
+    def get_anime(self, aid):
+        pass
 
     class WatchingAnime:
 

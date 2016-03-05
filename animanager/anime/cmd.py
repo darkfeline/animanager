@@ -41,6 +41,7 @@ class AnimeCmd(cmd.Cmd):
 
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = config
         self.anidb = anidb.AniDB(config.anime.anidb_cache)
         self.searchdb = anidb.SearchDB(config.anime.anidb_cache)
         self.db = AnimeDB(config.anime.database)
@@ -112,9 +113,38 @@ class AnimeCmd(cmd.Cmd):
             self._set_last_cmd('add', results)
 
     ###########################################################################
+    # bump
+    def do_bump(self, arg):
+        """Bump anime."""
+        if not arg:
+            self.do_help('bump')
+        elif arg.isdigit():
+            # Handle count.
+            pass  # XXX
+        elif arg[0] == '#' and arg[1:].isdigit():
+            # Handle aid.
+            pass  # XXX
+        else:
+            # Handle search.
+            pass  # XXX
+
+    ###########################################################################
     # watch
     def do_watch(self, arg):
         """Watch an anime."""
+        if not arg:
+            # Find and show watching anime.
+            watching = self.db.get_watching()
+            watchdir = self.config.anime.watchdir
+            pass  # XXX
+        elif arg.isdigit():
+            # Handle count.
+            pass  # XXX
+        elif arg[0] == '#' and arg[1:].isdigit():
+            # Handle aid.
+            pass  # XXX
+        else:
+            pass  # XXX
         # XXX get watching shows
         # XXX find files
         # XXX match rules
