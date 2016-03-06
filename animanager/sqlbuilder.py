@@ -55,6 +55,11 @@ class Tokens:
     >>> str(Tokens('foo', 'bar'))
     'foo bar'
 
+    Tokens instances can be concatenated
+
+    >>> Tokens('foo') + Tokens('bar')
+    Tokens('foo', 'bar')
+
     """
 
     def __init__(self, *tokens):
@@ -70,6 +75,12 @@ class Tokens:
         return 'Tokens({})'.format(
             ', '.join(repr(token) for token in self.tokens)
         )
+
+    def __add__(self, other):
+        if not isinstance(other, Tokens):
+                raise TypeError('Cannot add with {}'.format(other))
+        tokens = self.tokens + other.tokens
+        return Tokens(*tokens)
 
     @staticmethod
     def quote(token):
