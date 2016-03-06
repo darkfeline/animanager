@@ -65,7 +65,7 @@ class Tokens:
     def __init__(self, *tokens):
         for token in tokens:
             if not isinstance(token, str):
-                raise TypeError('Invalid token type for {}'.format(token))
+                raise TypeError('tokens must be string')
         self._tokens = tuple(tokens)
 
     def __str__(self):
@@ -77,14 +77,10 @@ class Tokens:
         )
 
     def __add__(self, other):
-        self._assert_tokens(other)
+        if not isinstance(other, Tokens):
+            raise TypeError('can only add with Tokens instances')
         tokens = self._tokens + other._tokens
         return Tokens(*tokens)
-
-    @staticmethod
-    def _assert_tokens(tokens):
-        if not isinstance(tokens, Tokens):
-            raise TypeError('Not a Tokens instance: {}'.format(tokens))
 
     @staticmethod
     def quote(token):
@@ -123,7 +119,9 @@ class Tokens:
         # We store the iterable's results so we can iterate multiple times.
         tokens_list = list(tokens_list)
         for tokens in tokens_list:
-            cls._assert_tokens(tokens)
+            if not isinstance(tokens, Tokens):
+                raise TypeError(
+                    'tokens_list must contain only Tokens instances')
         if not tokens_list:
             return cls()
         tokens = chain(
