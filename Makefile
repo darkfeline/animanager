@@ -1,5 +1,6 @@
 all:
 	@echo "make publish - Publish to PyPi"
+	@echo "make test - Run tests"
 
 publish:
 	rm dist/*
@@ -8,4 +9,7 @@ publish:
 	python3 setup.py register
 	twine upload dist/*
 
-.PHONY: all publish
+test:
+	python3 -m unittest discover
+
+.PHONY: all publish test
