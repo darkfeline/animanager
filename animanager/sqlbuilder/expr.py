@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from numbers import Real
+
 from .base import SQLBuilder
 from .tokens import Tokens
 
@@ -44,6 +46,103 @@ class BinaryOp(BaseExpr):
             self.expr1.tokens(),
             Tokens(self.operator),
             self.expr2.tokens()])
+
+
+class Literal(BaseExpr):
+
+    """A SQL literal.
+
+    Literal will return the proper subclass for its argument:
+
+    >>> Literal(9)
+    NumericLiteral(9)
+
+    >>> Literal('hi')
+    TextLiteral('hi')
+
+    >>> Literal(dict())
+    Traceback (most recent call last):
+        ...
+    TypeError: value must be a supported literal type
+
+    """
+
+    def __new__(cls, value):
+        if isinstance(value, str):
+            return TextLiteral(value)
+        elif isinstance(value, Real):
+            return NumericLiteral(value)
+        else:
+            raise TypeError('value must be a supported literal type')
+
+
+class TextLiteral(Literal):
+
+    """A SQL text literal.
+
+    >>> TextLiteral('hello world')
+    TextLiteral('hello world')
+
+    >>> TextLiteral('hello world').tokens()
+    Tokens("'hello world'")
+
+    Single quotes will be escaped:
+
+    >>> TextLiteral("megumin's megumins").tokens()
+    Tokens("'megumin''s megumins'")
+
+    text must be a string:
+
+    >>> TextLiteral(9)
+    Traceback (most recent call last):
+        ...
+    TypeError: text must be a string
+
+    """
+
+    def __init__(self, text):
+        if not isinstance(text, str):
+            raise TypeError('text must be a string')
+        self.text = text
+
+    def __repr__(self):
+        return 'TextLiteral({!r})'.format(self.text)
+
+    def tokens(self):
+        # Escape single quotes for SQL.
+        text = self.text.replace("'", "''")
+        return Tokens("'{}'".format(text))
+
+
+class NumericLiteral(Literal):
+
+    """A SQL numeric literal.
+
+    >>> NumericLiteral(9)
+    NumericLiteral(9)
+
+    >>> NumericLiteral(9).tokens()
+    Tokens('9')
+
+    numeric must be a Real, that is, any Python non-imaginary numeric type:
+
+    >>> NumericLiteral(1j)
+    Traceback (most recent call last):
+        ...
+    TypeError: numeric must be a Real
+
+    """
+
+    def __init__(self, numeric):
+        if not isinstance(numeric, Real):
+            raise TypeError('numeric must be a Real')
+        self.numeric = numeric
+
+    def __repr__(self):
+        return 'NumericLiteral({})'.format(self.numeric)
+
+    def tokens(self):
+        return Tokens(str(self.numeric))
 
 
 class Identifier(BaseExpr):
