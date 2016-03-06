@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta
-
 from .base import SQLBuilder
 from .errors import IncompleteQueryError
 from .tokens import Tokens
@@ -26,7 +24,7 @@ from .expr import Identifier
 __all__ = ['Select', 'Insert', 'CreateTable']
 
 
-class BuilderWithTable(SQLBuilder, metaclass=ABCMeta):
+class BuilderWithTable(SQLBuilder):
 
     """Abstract class for SQLBuilder subclasses that work on a table."""
 
@@ -120,7 +118,7 @@ class CreateTable(BuilderWithTable):
                 tokens += self.type.tokens()
             return tokens
 
-    class Constraint(SQLBuilder, metaclass=ABCMeta):
+    class Constraint(SQLBuilder):
         pass
 
     class PrimaryKey(Constraint):
