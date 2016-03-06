@@ -226,12 +226,10 @@ class CreateTable(SQLBuilder):
     def tokens(self):
         tokens = Tokens('CREATE', 'TABLE')
         tokens += Tokens.quoted(self.table_name)
-        tokens += Tokens.paren_wrap(
-            Tokens.comma_join(
-                chain(
-                    (tokens for tokens in self.column_defs),
-                    (tokens for tokens in self.table_constraints),
-                )
+        tokens += Tokens.comma_join(
+            chain(
+                (tokens for tokens in self.column_defs),
+                (tokens for tokens in self.table_constraints),
             )
-        )
+        ).paren_wrap()
         return tokens
