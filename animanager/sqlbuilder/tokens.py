@@ -33,12 +33,24 @@ class Tokens:
     >>> Tokens()
     Tokens()
 
+    Leading and trailing whitespace will be stripped from the arguments:
+
+    >>> Tokens('  foo  ')
+    Tokens('foo')
+
     TypeError will be raised if non-strings are passed:
 
     >>> Tokens(9)
     Traceback (most recent call last):
         ...
     TypeError: tokens must be strings
+
+    Furthermore, tokens cannot be empty strings:
+
+    >>> Tokens('')
+    Traceback (most recent call last):
+        ...
+    ValueError: tokens cannot be empty
 
     The string representation for Tokens instances is a query string that
     tokenizes to the same tokens.  The current implementation merely joins the
@@ -67,15 +79,23 @@ class Tokens:
         ...
     TypeError: can only add with Tokens instances
 
+    Prefer using the join() method instead of concatenating many Tokens
+    instances.
+
     """
 
     __slots__ = ['tokens']
 
     def __init__(self, *tokens):
+        cleaned_tokens = list()
         for token in tokens:
             if not isinstance(token, str):
                 raise TypeError('tokens must be strings')
-        self.tokens = tuple(tokens)
+            token = token.strip()
+            if not token:
+                raise ValueError('tokens cannot be empty')
+            cleaned_tokens.append(token)
+        self.tokens = tuple(cleaned_tokens)
 
     def __str__(self):
         return ' '.join(self.tokens)
