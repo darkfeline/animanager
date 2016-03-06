@@ -169,7 +169,7 @@ class Identifier(BaseExpr):
     >>> Identifier('')
     Traceback (most recent call last):
         ...
-    TypeError: identifier cannot be empty
+    ValueError: identifier cannot be empty
 
     """
 
