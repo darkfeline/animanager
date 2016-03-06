@@ -20,6 +20,8 @@ from abc import ABCMeta, abstractmethod
 
 class SQLBuilder(metaclass=ABCMeta):
 
+    """Base SQLBuilder abstract class."""
+
     @abstractmethod
     def tokens(self):
         """Return a Tokens for the current query."""
