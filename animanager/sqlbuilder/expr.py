@@ -50,6 +50,9 @@ class Identifier(BaseExpr):
 
     """Represents a quoted identifier.
 
+    >>> Identifier('column')
+    Identifier('column')
+
     >>> Identifier('column').tokens()
     Tokens('"column"')
 
@@ -73,6 +76,9 @@ class Identifier(BaseExpr):
         if not identifier:
             raise ValueError('identifier cannot be empty')
         self.identifier = identifier
+
+    def __repr__(self):
+        return 'Identifier({!r})'.format(self.identifier)
 
     def tokens(self):
         return Tokens('"{}"'.format(self.identifier))
