@@ -29,43 +29,43 @@ def load_tests(loader, tests, pattern):
 
 class SQLBuilderTestCase(unittest.TestCase):
 
-    def test_select(self):
-        query = sqlbuilder.Select('table')
-        query.add_column('foo')
-        query.add_column('bar')
-        query = query.build()
+    def _test_builder(self, builder, expected):
+        query = builder.build()
         expected = 'SELECT "foo" , "bar" FROM "table"'
         self.assertEqual(query, expected)
 
+    def test_select(self):
+        builder = sqlbuilder.Select('table')
+        builder.add_column('foo')
+        builder.add_column('bar')
+        expected = 'SELECT "foo" , "bar" FROM "table"'
+        self._test_builder(builder, expected)
+
     def test_insert(self):
-        query = sqlbuilder.Insert('table')
-        query.add_column('foo')
-        query.add_column('bar')
-        query = query.build()
+        builder = sqlbuilder.Insert('table')
+        builder.add_column('foo')
+        builder.add_column('bar')
         expected = 'INSERT INTO "table" ( "foo" , "bar" ) VALUES ( ? , ? )'
-        self.assertEqual(query, expected)
+        self._test_builder(builder, expected)
 
     def test_create_table(self):
-        query = sqlbuilder.CreateTable('table')
-        query.add_column('foo')
-        query.add_column('bar')
-        query = query.build()
+        builder = sqlbuilder.CreateTable('table')
+        builder.add_column('foo')
+        builder.add_column('bar')
         expected = 'CREATE TABLE "table" ( "foo" , "bar" )'
-        self.assertEqual(query, expected)
+        self._test_builder(builder, expected)
 
     def test_create_table_with_types(self):
-        query = sqlbuilder.CreateTable('table')
-        query.add_column('foo', type='INTEGER')
-        query.add_column('bar', type='TEXT')
-        query = query.build()
+        builder = sqlbuilder.CreateTable('table')
+        builder.add_column('foo', type='INTEGER')
+        builder.add_column('bar', type='TEXT')
         expected = 'CREATE TABLE "table" ( "foo" INTEGER , "bar" TEXT )'
-        self.assertEqual(query, expected)
+        self._test_builder(builder, expected)
 
     def test_create_table_with_pk(self):
-        query = sqlbuilder.CreateTable('table')
-        query.add_column('foo', pk=True)
-        query.add_column('bar')
-        query = query.build()
+        builder = sqlbuilder.CreateTable('table')
+        builder.add_column('foo', pk=True)
+        builder.add_column('bar')
         expected = ' '.join(('CREATE TABLE "table" ( "foo" , "bar" ,',
                              'PRIMARY KEY ( "foo" ) )'))
-        self.assertEqual(query, expected)
+        self._test_builder(builder, expected)
