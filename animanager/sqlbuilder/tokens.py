@@ -16,6 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from itertools import chain
+from functools import reduce
+import operator
 
 
 class Tokens:
@@ -97,6 +99,7 @@ class Tokens:
         Tokens('foo', 'bar')
 
         """
+        return reduce(operator.add, tokens_list)
 
     @classmethod
     def comma_join(cls, tokens_list):
