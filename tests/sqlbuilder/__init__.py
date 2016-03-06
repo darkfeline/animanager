@@ -20,61 +20,12 @@ import unittest
 from animanager import sqlbuilder
 
 from . import tokens
+from . import expr
+from . import statements
 
 
 def load_tests(loader, tests, pattern):
     tests.addTest(loader.loadTestsFromModule(tokens))
+    tests.addTest(loader.loadTestsFromModule(expr))
+    tests.addTest(loader.loadTestsFromModule(statements))
     return tests
-
-
-class SQLBuilderTestCase(unittest.TestCase):
-
-    def _test_builder(self, builder, expected):
-        query = builder.build()
-        self.assertEqual(query, expected)
-
-    def test_select(self):
-        builder = sqlbuilder.Select('table')
-        builder.add_column('foo')
-        builder.add_column('bar')
-        expected = 'SELECT "foo" , "bar" FROM "table"'
-        self._test_builder(builder, expected)
-
-    def test_select_where(self):
-        self.skipTest('not done yet')
-        builder = sqlbuilder.Select('table')
-        builder.add_column('foo')
-        builder.add_column('bar')
-        builder.where(Expr())
-
-        expected = 'SELECT "foo" , "bar" FROM "table"'
-        self._test_builder(builder, expected)
-
-    def test_insert(self):
-        builder = sqlbuilder.Insert('table')
-        builder.add_column('foo')
-        builder.add_column('bar')
-        expected = 'INSERT INTO "table" ( "foo" , "bar" ) VALUES ( ? , ? )'
-        self._test_builder(builder, expected)
-
-    def test_create_table(self):
-        builder = sqlbuilder.CreateTable('table')
-        builder.add_column('foo')
-        builder.add_column('bar')
-        expected = 'CREATE TABLE "table" ( "foo" , "bar" )'
-        self._test_builder(builder, expected)
-
-    def test_create_table_with_types(self):
-        builder = sqlbuilder.CreateTable('table')
-        builder.add_column('foo', type='INTEGER')
-        builder.add_column('bar', type='TEXT')
-        expected = 'CREATE TABLE "table" ( "foo" INTEGER , "bar" TEXT )'
-        self._test_builder(builder, expected)
-
-    def test_create_table_with_pk(self):
-        builder = sqlbuilder.CreateTable('table')
-        builder.add_column('foo', pk=True)
-        builder.add_column('bar')
-        expected = ' '.join(('CREATE TABLE "table" ( "foo" , "bar" ,',
-                             'PRIMARY KEY ( "foo" ) )'))
-        self._test_builder(builder, expected)
