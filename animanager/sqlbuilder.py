@@ -94,16 +94,21 @@ class Tokens:
         )
         return cls(*tokens)
 
+    def append(self, token):
+        """Append a token."""
+        self._check_token(token)
+        self.tokens.append(token)
+
 
 class SQLBuilder(metaclass=ABCMeta):
 
     @abstractmethod
     def tokens(self):
-        """Return an iterable of tokens for the query."""
+        """Return a Tokens for the query."""
 
     def build(self):
         """Return the query as a string."""
-        return join(self.tokens())
+        return str(self.tokens())
 
 
 class Select(SQLBuilder):
