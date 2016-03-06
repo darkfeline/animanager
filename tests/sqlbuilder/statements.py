@@ -59,14 +59,14 @@ class SQLBuilderTestCase(unittest.TestCase):
 
     def test_create_table_with_types(self):
         builder = sqlbuilder.CreateTable('table')
-        builder.add_column('foo', type='INTEGER')
-        builder.add_column('bar', type='TEXT')
-        expected = 'CREATE TABLE "table" ( "foo" INTEGER , "bar" TEXT )'
+        builder.add_column('foo', type_name='INTEGER')
+        builder.add_column('bar', type_name='TEXT')
+        expected = 'CREATE TABLE "table" ( "foo" "INTEGER" , "bar" "TEXT" )'
         self._test_builder(builder, expected)
 
-    def test_create_table_with_pk(self):
+    def test_create_table_with_primary_key(self):
         builder = sqlbuilder.CreateTable('table')
-        builder.add_column('foo', pk=True)
+        builder.add_column('foo', primary_key=True)
         builder.add_column('bar')
         expected = ' '.join(('CREATE TABLE "table" ( "foo" , "bar" ,',
                              'PRIMARY KEY ( "foo" ) )'))
