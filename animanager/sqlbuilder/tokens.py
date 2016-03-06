@@ -24,16 +24,16 @@ class Tokens:
 
     Instances of Tokens represent a list of string tokens.
 
-    Tokens can be created using any number of arguments.
+    Tokens can be created using any number of arguments:
 
-    >>> Tokens('foo').tokens
-    ['foo']
+    >>> Tokens('foo')
+    Tokens('foo')
 
-    >>> Tokens('foo', 'bar').tokens
-    ['foo', 'bar']
+    >>> Tokens('foo', 'bar')
+    Tokens('foo', 'bar')
 
-    >>> Tokens().tokens
-    []
+    >>> Tokens()
+    Tokens()
 
     TypeError will be raised if non-strings are passed:
 
@@ -43,15 +43,22 @@ class Tokens:
     TypeError: tokens must be strings
 
     The string representation for Tokens instances is the tokens the instance
-    represents joined with spaces.
+    represents joined with spaces:
 
     >>> str(Tokens('foo', 'bar'))
     'foo bar'
 
-    Tokens instances can be concatenated
+    Tokens can be accessed as a list of strings via the tokens property:
+
+    >>> Tokens('foo', 'bar')
+    ['foo', 'bar']
+
+    Tokens instances can be concatenated:
 
     >>> Tokens('foo') + Tokens('bar')
     Tokens('foo', 'bar')
+
+    Tokens instances can only be added with other Tokens instances:
 
     >>> Tokens('foo') + 9
     Traceback (most recent call last):
@@ -83,17 +90,26 @@ class Tokens:
         return Tokens(*tokens)
 
     @classmethod
+    def join(cls, tokens_list):
+        """Join Tokens.
+
+        >>> Tokens.join([Tokens('foo'), Tokens('bar')])
+        Tokens('foo', 'bar')
+
+        """
+
+    @classmethod
     def comma_join(cls, tokens_list):
         """Join Tokens with commas.
 
         Return a Tokens instance that represents the Tokens in tokens_list
         joined with comma tokens.  tokens_list is an iterable.
 
-        >>> Tokens.comma_join([Tokens('col1', 'int'), Tokens('col2')]).tokens
-        ['col1', 'int', ',', 'col2']
+        >>> Tokens.comma_join([Tokens('col1', 'INTEGER'), Tokens('col2')])
+        Tokens('col1', 'INTEGER', ',', 'col2')
 
-        >>> Tokens.comma_join([]).tokens
-        []
+        >>> Tokens.comma_join([])
+        Tokens()
 
         """
         # We store the iterable's results so we can iterate multiple times.
@@ -114,6 +130,7 @@ class Tokens:
 
     @property
     def tokens(self):
+        """Return a list of token strings."""
         return list(self._tokens)
 
     def paren_wrap(self):
@@ -121,8 +138,8 @@ class Tokens:
 
         Returns a new Tokens instance without modifying the original.
 
-        >>> Tokens('foo', 'bar').paren_wrap().tokens
-        ['(', 'foo', 'bar', ')']
+        >>> Tokens('foo', 'bar').paren_wrap()
+        Tokens('(', 'foo', 'bar', ')')
 
         """
         return Tokens('(', *self._tokens, ')',)
