@@ -28,7 +28,7 @@ class BaseExpr(SQLBuilder, metaclass=ABCMeta):
 
 class Expr(BaseExpr):
 
-    """Simple SQLite epxression, with tokens provided manually."""
+    """Simple SQLite expression, with tokens provided manually."""
 
     def __init__(self, *tokens):
         self.tokens = Tokens(*tokens)
