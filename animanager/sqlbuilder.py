@@ -54,6 +54,28 @@ class SQLBuilder(metaclass=ABCMeta):
         return join(self.tokens())
 
 
+class Select(SQLBuilder):
+
+    def __init__(self, table_name):
+        self.table_name = table_name
+        self.columns = []
+
+    def add_column(self, key):
+        self.columns.append(key)
+
+    def tokens(self):
+        tokens = ['SELECT']
+        tokens += [self.quote(self.table_name)]
+        tokens += ['(']
+        tokens += [','.join(quote(col) for col in self.columns)]
+        tokens += [')']
+        tokens += ['VALUES']
+        tokens += ['(']
+        tokens += [','.join('?' for col in self.columns)]
+        tokens += [')']
+        return tokens
+
+
 class Insert(SQLBuilder):
 
     """Simple INSERT statement builder."""
