@@ -155,15 +155,19 @@ class Select(SQLBuilder):
         self.columns.append(key)
 
     def tokens(self):
-        tokens = ['SELECT']
-        tokens += [self.quote(self.table_name)]
-        tokens += ['(']
-        tokens += [','.join(quote(col) for col in self.columns)]
-        tokens += [')']
-        tokens += ['VALUES']
-        tokens += ['(']
-        tokens += [','.join('?' for col in self.columns)]
-        tokens += [')']
+        tokens = Tokens('SELECT')
+        tokens += Tokens.quoted(self.table_name)
+        tokens += Tokens.paren_wrap(
+            Tokens.comma_join(
+                Tokens.quoted(col) for col in self.columns
+            )
+        )
+        tokens += Tokens('VALUES')
+        tokens += Tokens.paren_wrap(
+            Tokens.comma_join(
+                '?' for col in self.columns
+            )
+        )
         return tokens
 
 
