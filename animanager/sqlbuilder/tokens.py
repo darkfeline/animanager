@@ -24,7 +24,7 @@ class Tokens:
 
     Instances of Tokens represent a list of string tokens.
 
-    Tokens can be created using any number of str.
+    Tokens can be created using any number of arguments.
 
     >>> Tokens('foo').tokens
     ['foo']
