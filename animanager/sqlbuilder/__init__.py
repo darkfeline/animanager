@@ -22,6 +22,7 @@ from itertools import chain
 from .tokens import Tokens
 from .base import BuilderWithTable
 from .expr import BaseExpr
+from .expr import Expr  # noqa
 
 
 class Select(BuilderWithTable):
