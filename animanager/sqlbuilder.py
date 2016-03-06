@@ -66,6 +66,11 @@ class Tokens:
     def __str__(self):
         return ' '.join(self.tokens)
 
+    def __repr__(self):
+        return 'Tokens({})'.format(
+            ', '.join(repr(token) for token in self.tokens)
+        )
+
     @staticmethod
     def quote(token):
         """Quote a SQL token."""
