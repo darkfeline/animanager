@@ -82,26 +82,6 @@ class Tokens:
         tokens = self._tokens + other._tokens
         return Tokens(*tokens)
 
-    @staticmethod
-    def quote(token):
-        """Quote a SQL token.
-
-        >>> Tokens.quote('foo')
-        '"foo"'
-
-        """
-        return '"{}"'.format(token)
-
-    @classmethod
-    def quoted(cls, token):
-        """Create a Tokens with a quoted token.
-
-        >>> Tokens.quoted('foo')
-        Tokens('"foo"')
-
-        """
-        return cls(cls.quote(token))
-
     @classmethod
     def comma_join(cls, tokens_list):
         """Join Tokens with commas.
