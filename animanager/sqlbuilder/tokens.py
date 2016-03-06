@@ -15,10 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from itertools import chain
-from functools import reduce
-import operator
-
 
 class Tokens:
 
@@ -93,45 +89,35 @@ class Tokens:
         tokens = self._tokens + other._tokens
         return Tokens(*tokens)
 
-    @classmethod
-    def join(cls, tokens_list):
-        """Join Tokens instances.
+    def join(self, tokens_list):
+        """Join Tokens instances with self.
 
-        >>> Tokens.join([Tokens('foo'), Tokens('bar')])
+        This works like str.join().
+
+        >>> Tokens().join([Tokens('foo'), Tokens('bar')])
         Tokens('foo', 'bar')
 
-        """
-        return reduce(operator.add, tokens_list)
-
-    @classmethod
-    def comma_join(cls, tokens_list):
-        """Join Tokens with commas.
-
-        Return a Tokens instance that represents the Tokens in tokens_list
-        joined with comma tokens.  tokens_list is an iterable.
-
-        >>> Tokens.comma_join([Tokens('col1', 'INTEGER'), Tokens('col2')])
+        >>> Tokens(',').join([Tokens('col1', 'INTEGER'), Tokens('col2')])
         Tokens('col1', 'INTEGER', ',', 'col2')
 
-        >>> Tokens.comma_join([])
+        >>> Tokens(',').join([])
         Tokens()
 
         """
+
         # We store the iterable's results so we can iterate multiple times.
         tokens_list = list(tokens_list)
+        if not tokens_list:
+            return Tokens()
         for tokens in tokens_list:
             if not isinstance(tokens, Tokens):
                 raise TypeError(
                     'tokens_list must contain only Tokens instances')
-        if not tokens_list:
-            return cls()
-        tokens = chain(
-            tokens_list[0]._tokens,
-            chain.from_iterable([','] + tokens.tokens  # Use a list here.
-                                for tokens in tokens_list[1:]),
-        )
-        tokens = list(tokens)
-        return cls(*tokens)
+        joined_tokens = tokens_list[0].tokens  # Use a list here.
+        for tokens in tokens_list[1:]:
+            joined_tokens.extend(self._tokens)
+            joined_tokens.extend(tokens._tokens)
+        return Tokens(*joined_tokens)
 
     @property
     def tokens(self):
