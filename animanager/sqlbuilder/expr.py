@@ -18,6 +18,7 @@
 from abc import ABCMeta
 
 from .base import SQLBuilder
+from .tokens import Tokens
 
 
 class BaseExpr(SQLBuilder, metaclass=ABCMeta):
