@@ -26,6 +26,26 @@ class BaseExpr(SQLBuilder):
     """Abstract class for SQLite expr."""
 
 
+class BinaryOp(BaseExpr):
+
+    """Represents a binary operation."""
+
+    def __init__(self, operator, expr1, expr2):
+        if not isinstance(operator, str):
+            raise TypeError('operator must be a string')
+        if not isinstance(expr1, BaseExpr) or not isinstance(expr2, BaseExpr):
+            raise TypeError('exprs must be BaseExpr instances')
+        self.operator = operator
+        self.expr1 = expr1
+        self.expr2 = expr2
+
+    def tokens(self):
+        return Tokens().join([
+            self.expr1.tokens(),
+            Tokens(self.operator),
+            self.expr2.tokens()])
+
+
 class Identifier(BaseExpr):
 
     """Represents a quoted identifier.
