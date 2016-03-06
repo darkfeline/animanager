@@ -196,17 +196,13 @@ class Insert(SQLBuilder):
     def tokens(self):
         tokens = Tokens('INSERT', 'INTO')
         tokens += Tokens.quoted(self.table_name)
-        tokens += Tokens.paren_wrap(
-            Tokens.comma_join(
-                Tokens.quoted(col) for col in self.columns
-            )
-        )
+        tokens += Tokens.comma_join(
+            Tokens.quoted(col) for col in self.columns
+        ).paren_wrap()
         tokens += Tokens('VALUES')
-        tokens += Tokens.paren_wrap(
-            Tokens.comma_join(
-                '?' for col in self.columns
-            )
-        )
+        tokens += Tokens.comma_join(
+            Tokens('?') for col in self.columns
+        ).paren_wrap()
         return tokens
 
 
