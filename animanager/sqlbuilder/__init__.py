@@ -168,6 +168,7 @@ class Select(SQLBuilder):
     def __init__(self, table_name):
         self.table_name = table_name
         self.columns = []
+        self.where = None
 
     def add_column(self, key):
         self.columns.append(key)
