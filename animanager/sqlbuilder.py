@@ -89,11 +89,6 @@ class Tokens:
         )
         return cls(*tokens)
 
-    def append(self, token):
-        """Append a token."""
-        self._check_token(token)
-        self.tokens.append(token)
-
 
 class SQLBuilder(metaclass=ABCMeta):
 
