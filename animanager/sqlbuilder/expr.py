@@ -20,6 +20,8 @@ from abc import ABCMeta
 from .base import SQLBuilder
 from .tokens import Tokens
 
+__all__ = ['Identifier']
+
 
 class BaseExpr(SQLBuilder, metaclass=ABCMeta):
 
