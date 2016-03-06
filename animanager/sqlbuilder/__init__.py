@@ -38,10 +38,13 @@ class Select(SQLBuilder):
     def __init__(self, table_name):
         self.table_name = table_name
         self.columns = []
-        self.where = None
+        self.where_expr = None
 
     def add_column(self, key):
         self.columns.append(key)
+
+    def where(self, where_expr):
+        self.where_expr = where_expr
 
     def tokens(self):
         tokens = Tokens('SELECT')
@@ -50,6 +53,9 @@ class Select(SQLBuilder):
         )
         tokens += Tokens('FROM')
         tokens += Tokens.quoted(self.table_name)
+        if self.where_expr:
+            tokens += Tokens('WHERE')
+            tokens += self.where_expr.tokens()
         return tokens
 
 
