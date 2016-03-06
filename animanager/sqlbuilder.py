@@ -59,8 +59,7 @@ class Tokens:
 
     def __init__(self, *tokens):
         for token in tokens:
-            if not isinstance(token, str):
-                raise TypeError('Invalid token type for {!r}'.format(token))
+            self._check_token(token)
         self.tokens = list(tokens)
 
     def __str__(self):
@@ -70,6 +69,12 @@ class Tokens:
     def quote(token):
         """Quote a SQL token."""
         return '"{}"'.format(token)
+
+    @staticmethod
+    def _check_token(token):
+        """Check token type."""
+        if not isinstance(token, str):
+            raise TypeError('Invalid token type for {!r}'.format(token))
 
     @classmethod
     def comma_join(cls, *tokens_list):
