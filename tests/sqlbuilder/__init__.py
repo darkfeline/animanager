@@ -40,6 +40,16 @@ class SQLBuilderTestCase(unittest.TestCase):
         expected = 'SELECT "foo" , "bar" FROM "table"'
         self._test_builder(builder, expected)
 
+    def test_select_where(self):
+        self.skipTest('not done yet')
+        builder = sqlbuilder.Select('table')
+        builder.add_column('foo')
+        builder.add_column('bar')
+        builder.where(Expr())
+
+        expected = 'SELECT "foo" , "bar" FROM "table"'
+        self._test_builder(builder, expected)
+
     def test_insert(self):
         builder = sqlbuilder.Insert('table')
         builder.add_column('foo')
