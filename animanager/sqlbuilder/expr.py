@@ -26,12 +26,17 @@ class BaseExpr(SQLBuilder, metaclass=ABCMeta):
     """Abstract class for SQLite expr."""
 
 
-class Expr(BaseExpr):
+class Identifier(BaseExpr):
 
-    """Simple SQLite expression, with tokens provided manually."""
+    """Represents a quoted identifier.
 
-    def __init__(self, *tokens):
-        self.tokens = Tokens(*tokens)
+    >>> Identifier('column').tokens()
+    Tokens('"column"')
+
+    """
+
+    def __init__(self, identifier):
+        self.identifier = identifier
 
     def tokens(self):
-        return self.tokens
+        return Tokens('"{}"'.format(self.identifier))
