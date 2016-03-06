@@ -18,7 +18,7 @@
 from .base import SQLBuilder
 from .tokens import Tokens
 
-__all__ = ['Identifier']
+__all__ = ['BinaryOp', 'Identifier']
 
 
 class BaseExpr(SQLBuilder):
