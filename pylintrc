@@ -1,0 +1,2 @@
+[DEFAULT]
+disable=missing-docstring,abstract-method
