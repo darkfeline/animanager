@@ -27,7 +27,7 @@ from .expr import BaseExpr
 class Select(BuilderWithTable):
 
     def __init__(self, table_name):
-        super().__init__(self, table_name)
+        super().__init__(table_name)
         self.columns = []
         self.where_expr = None
 
@@ -57,7 +57,7 @@ class Insert(BuilderWithTable):
     """Simple INSERT statement builder."""
 
     def __init__(self, table_name):
-        super().__init__(self, table_name)
+        super().__init__(table_name)
         self.columns = []
 
     def add_column(self, key):
@@ -79,7 +79,7 @@ class Insert(BuilderWithTable):
 class CreateTable(BuilderWithTable):
 
     def __init__(self, table_name):
-        super().__init__(self, table_name)
+        super().__init__(table_name)
         self.column_defs = []
         self.table_constraints = []
 
