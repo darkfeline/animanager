@@ -21,6 +21,7 @@ from itertools import chain
 
 from .tokens import Tokens
 from .base import BuilderWithTable
+from .expr import BaseExpr
 
 
 class Select(BuilderWithTable):
@@ -34,6 +35,8 @@ class Select(BuilderWithTable):
         self.columns.append(key)
 
     def where(self, where_expr):
+        if not isinstance(where_expr, BaseExpr):
+            raise TypeError('where_expr must be a BaseExpr')
         self.where_expr = where_expr
 
     def tokens(self):
