@@ -56,6 +56,10 @@ class Identifier(BaseExpr):
     """
 
     def __init__(self, identifier):
+        if not isinstance(identifier, str):
+            raise TypeError('identifier must be a string')
+        if not identifier:
+            raise ValueError('identifier cannot be empty')
         self.identifier = identifier
 
     def tokens(self):
