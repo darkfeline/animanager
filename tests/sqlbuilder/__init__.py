@@ -31,7 +31,6 @@ class SQLBuilderTestCase(unittest.TestCase):
 
     def _test_builder(self, builder, expected):
         query = builder.build()
-        expected = 'SELECT "foo" , "bar" FROM "table"'
         self.assertEqual(query, expected)
 
     def test_select(self):
