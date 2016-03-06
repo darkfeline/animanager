@@ -48,7 +48,11 @@ class BinaryOp(BaseExpr):
             self.expr2.tokens()])
 
 
-class Literal(BaseExpr):
+class BaseLiteral(BaseExpr):
+    pass
+
+
+class Literal(BaseLiteral):
 
     """A SQL literal.
 
@@ -76,7 +80,7 @@ class Literal(BaseExpr):
             raise TypeError('value must be a supported literal type')
 
 
-class TextLiteral(Literal):
+class TextLiteral(BaseLiteral):
 
     """A SQL text literal.
 
@@ -114,7 +118,7 @@ class TextLiteral(Literal):
         return Tokens("'{}'".format(text))
 
 
-class NumericLiteral(Literal):
+class NumericLiteral(BaseLiteral):
 
     """A SQL numeric literal.
 
