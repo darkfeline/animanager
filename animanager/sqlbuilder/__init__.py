@@ -20,13 +20,13 @@
 from itertools import chain
 
 from .tokens import Tokens
-from .base import SQLBuilder
+from .base import BuilderWithTable
 
 
-class Select(SQLBuilder):
+class Select(BuilderWithTable):
 
     def __init__(self, table_name):
-        self.table_name = table_name
+        super().__init__(self, table_name)
         self.columns = []
         self.where_expr = None
 
@@ -49,12 +49,12 @@ class Select(SQLBuilder):
         return tokens
 
 
-class Insert(SQLBuilder):
+class Insert(BuilderWithTable):
 
     """Simple INSERT statement builder."""
 
     def __init__(self, table_name):
-        self.table_name = table_name
+        super().__init__(self, table_name)
         self.columns = []
 
     def add_column(self, key):
@@ -73,10 +73,10 @@ class Insert(SQLBuilder):
         return tokens
 
 
-class CreateTable(SQLBuilder):
+class CreateTable(BuilderWithTable):
 
     def __init__(self, table_name):
-        self.table_name = table_name
+        super().__init__(self, table_name)
         self.column_defs = []
         self.table_constraints = []
 
