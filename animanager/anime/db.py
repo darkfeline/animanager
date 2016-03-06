@@ -35,7 +35,13 @@ class AnimeDB:
         self.dbfile = path
         self.connect()
         self._episode_types = None
-        self.cache = self.CacheDB()
+        self.cache = sqlite3.connect(':memory:')
+        self.cache.execute("""
+        CREATE TABLE watched_episodes (
+            aid INTEGER,
+            number INTEGER,
+            PRIMARY KEY (aid)
+        )""")
 
     def connect(self):
         self.cnx = sqlite3.connect(self.dbfile)
@@ -50,26 +56,6 @@ class AnimeDB:
 
     def close(self):
         self.cnx.close()
-
-    class CacheDB:
-
-        def __init__(self):
-            self.cnx = sqlite3.connect(':memory:')
-            self.cnx.execute("""
-            CREATE TABLE anime (
-                aid INTEGER,
-                watched_episodes INTEGER,
-                PRIMARY KEY (aid)
-            )""")
-
-        def get_watched_episodes(self, aid):
-            cur = self.cnx.execute("""
-                SELECT watched_episodes FROM anime
-                WHERE aid = ?""", (aid,))
-            row = cur.fetchone()
-            if row is None:
-                raise ValueError('aid provided does not exist')
-            return row[0]
 
     EpisodeType = namedtuple('EpisodeType', ['id', 'prefix'])
 
@@ -116,6 +102,39 @@ class AnimeDB:
             raise ValueError('aid provided does not exist')
         watched_episodes = self.cache.get_watched_episodes(aid)
         return self.Anime(*row, watched_episodes)
+
+    def get_watched_episodes(self, aid):
+        # Try to fetch from cache.
+        cur = self.cache.execute("""
+            SELECT number FROM watched_episodes
+            WHERE aid = ?""", (aid,))
+        row = cur.fetchone()
+        if row is not None:
+            return row[0]
+        # Check if AID exists.
+        cur = self.cnx.execute("""
+            SELECT 1 FROM anime WHERE aid = ?
+            """, (aid,))
+        if cur.fetchone() is None:
+            raise ValueError('aid provided does not exist')
+        # We need to calculate watched_episodes.  We select the first regular episode that is
+        # not watched.  Our watched_episodes is one less than that.
+        cur = self.cnx.execute("""
+            SELECT number FROM episode
+            WHERE aid = ? AND user_watched = 0 AND type = ?
+            ORDER BY number ASC
+            LIMIT 1
+            """, (aid, self.episode_types['regular']))
+        row = cur.fetchone()
+        if row is None:
+            raise errors.DatabaseError('anime is missing episodes')
+        episodes_watched = row[0] - 1
+        # We store this in the cache.
+        self.cache.execute("""
+            INSERT OR REPLACE INTO watched_episodes
+            (aid, number) VALUES (?, ?)
+            """, (aid, episodes_watched))
+        return episodes_watched
 
     class WatchingAnime:
 
