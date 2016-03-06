@@ -22,12 +22,8 @@ import re
 import sqlite3
 
 from animanager import errors
-from animanager import sqlbuilder
 
 logger = logging.getLogger(__name__)
-
-FIELDS = ['id', 'name', 'type', 'ep_watched', 'ep_total', 'status',
-          'date_started', 'date_finished', 'animedb_id']
 
 
 class AnimeDB:
@@ -51,7 +47,7 @@ class AnimeDB:
         self.cnx.execute('PRAGMA foreign_keys = ON')
         cur = self.cnx.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
-            raise errors.DBError('Foreign keys are not supported.')
+            raise errors.DatabaseError('Foreign keys are not supported.')
 
     def close(self):
         self.cnx.close()
@@ -60,53 +56,67 @@ class AnimeDB:
 
         def __init__(self):
             self.cnx = sqlite3.connect(':memory:')
-            query = sqlbuilder.CreateTable('anime')
-            query.add_column('aid', type='INTEGER', pk=True)
-            query.add_column('watched_episodes', type='INTEGER', pk=True)
-            self.cnx.execute(query.build())
+            self.cnx.execute("""
+            CREATE TABLE anime (
+                aid INTEGER,
+                watched_episodes INTEGER,
+                PRIMARY KEY (aid)
+            )""")
+
+        def get_watched_episodes(self, aid):
+            cur = self.cnx.execute("""
+                SELECT watched_episodes FROM anime
+                WHERE aid = ?""", (aid,))
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError('aid provided does not exist')
+            return row[0]
+
+    EpisodeType = namedtuple('EpisodeType', ['id', 'prefix'])
 
     @property
     def episode_types(self):
-        if self._episode_types:
-            return self._episode_types
-        self._episode_types = dict()
-        cur = self.cnx.execute('SELECT id, value, prefix FROM episode_tupe')
-        for id, value, prefix in cur:
-            self._episode_types[value] = (id, prefix)
+        if self._episode_types is None:
+            self._episode_types = dict()
+            cur = self.cnx.execute('SELECT id, name, prefix FROM episode_tupe')
+            for type_id, name, prefix in cur:
+                self._episode_types[name] = self.EpisodeType(type_id, prefix)
         return self._episode_types
 
     def add(self, anime):
         """Add an anime.
 
-        anime is an AnimeTree containing the necessary information.
+        anime is an AnimeTree instance.
 
         """
-        query = sqlbuilder.Insert('anime')
-        for col in ('aid', 'title', 'type', 'episodes', 'startdate',
-                    'enddate'):
-            query.add_column(col)
-        self.cnx.execute(
-            query.build(),
+        self.cnx.execute("""
+            INSERT INTO anime
+            (aid, title, type, episodes, startdate, enddate)
+            VALUES (?, ?, ?, ?, ?, ?)""",
             (anime.aid, anime.title, anime.type, anime.episodecount,
-             anime.startdate, anime.enddate),
-        )
-        query = sqlbuilder.Insert('episode')
-        for col in ('anime', 'type', 'number', 'title', 'length',
-                    'user_watched'):
-            query.add_column(col)
+             anime.startdate, anime.enddate))
         for episode in anime.episodes:
-            self.cnx.execute(
-                query.build(),
+            self.cnx.execute("""
+                INSERT INTO episode
+                (anime, type, number, title, length, user_watched)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
                 (anime.aid, episode.type, episode.number, episode.title,
-                 episode.length, 0),
-            )
+                 episode.length, 0))
         self.cnx.commit()
 
     Anime = namedtuple('Anime', ['aid', 'title', 'type', 'episodes',
                                  'watched_episodes'])
 
     def get_anime(self, aid):
-        pass
+        cur = self.cnx.execute("""
+            SELECT aid, title, type, episode FROM anime
+            WHERE aid = ?""", (aid,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError('aid provided does not exist')
+        watched_episodes = self.cache.get_watched_episodes(aid)
+        return self.Anime(*row, watched_episodes)
 
     class WatchingAnime:
 
@@ -114,121 +124,10 @@ class AnimeDB:
 
         def __init__(self, aid, regexp):
             self.aid = aid
-            self.regexp = re.compile(self.regexp, re.I)
+            self.regexp = re.compile(regexp, re.I)
 
     def get_watching(self):
         """Return watching series."""
         cur = self.cnx.execute('SELECT aid, regexp FROM watching')
         return [self.WatchingAnime(aid, regexp)
                 for aid, regexp in cur.fetchall()]
-
-
-# XXX old
-class Database:
-
-    def bump(self, id):
-        """Bump a series.
-
-        Increment the episodes watched count of one series, and do all of the
-        housekeeping that it entails.
-
-        """
-        results = self.select(
-            table='anime',
-            fields=['ep_watched', 'ep_total', 'status'],
-            where_filter='id=?',
-            where_args=(id,)
-        )
-        watched, total, status = next(results)
-
-        # Calculate what needs updating, putting it into a dictionary that we
-        # will update at the end all at once.
-        update_map = dict()
-
-        # We set the starting date if we haven't watched anything yet.
-        if watched == 0:
-            update_map['date_started'] = date.today().isoformat()
-
-        # We update the episode count.
-        watched += 1
-        update_map['ep_watched'] = watched
-
-        # If the status wasn't watching, we set it so.
-        if status != 'watching':
-            update_map['status'] = 'watching'
-
-        # Finally, if the series is now complete, we set the status and finish
-        # date accordingly.
-        if watched == total and total is not None:
-            update_map['status'] = 'complete'
-            update_map['date_finished'] = date.today().isoformat()
-
-        # Now we update all of the changes we have gathered.
-        self.update_one('anime', id, update_map)
-
-    def insert(self, table, fields):
-        """Insert a map of fields as a database row.
-
-        Args:
-            table: database table.
-            fields: dict of database fields.
-
-        """
-        keys = list(fields.keys())
-        query = 'INSERT INTO {} ({}) VALUES ({})'.format(
-            table,
-            ', '.join(key for key in keys),
-            ', '.join('?' for key in keys),
-        )
-        values = list(fields[key] for key in keys)
-        cur = self.cursor()
-        cur.execute(query, values)
-        self.commit()
-        return cur.lastrowid
-
-    def update_many(self, table, fields, values):
-        """Update many rows.
-
-        Example:
-
-        db.update_many(
-            ['foo', 'bar'],
-            [
-                # id, then field values
-                (1, 'foo_value', 'bar_value'),
-            ]
-        )
-
-        Args:
-            table: database table.
-            fields: list of database fields.
-            values: list of tuples containing values
-
-        """
-        query = ', '.join(('{}=?'.format(field) for field in fields))
-        query = 'UPDATE {} SET {} WHERE id=?'.format(table, query)
-        values = [row[1:] + row[0:1] for row in values]
-        cur = self.cursor()
-        cur.executemany(query, values)
-        self.commit()
-
-    def update_one(self, table, id, map):
-        """Update one row."""
-        keys = list(map.keys())
-        self.update_many(table, keys, ([id] + [map[k] for k in keys],))
-
-    def select(self, table, fields, where_filter, where_args=tuple()):
-        """Do a SELECT query and return a generator."""
-        query = 'SELECT {} FROM {} WHERE {}'.format(
-            ', '.join(fields),
-            table,
-            where_filter,
-        )
-        cur = self.cursor()
-        cur.execute(query, where_args)
-        while True:
-            row = cur.fetchone()
-            if row:
-                yield row
-            else:
-                break
