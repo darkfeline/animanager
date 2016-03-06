@@ -135,7 +135,9 @@ class CreateTable(BuilderWithTable):
 
         def tokens(self):
             tokens = Tokens('PRIMARY KEY')
-            tokens += Tokens.comma_join(col.tokens() for col in self.columns)
+            tokens += Tokens.comma_join(
+                col.tokens() for col in self.columns
+            ).paren_wrap()
             return tokens
 
         def build(self):
