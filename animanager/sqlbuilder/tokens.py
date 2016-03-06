@@ -48,10 +48,12 @@ class Tokens:
     >>> str(Tokens('foo', 'bar'))
     'foo bar'
 
-    Tokens can be accessed as a list of strings via the tokens property:
+    Tokens instances are also iterables and yield their token strings.
 
-    >>> Tokens('foo', 'bar').tokens
-    ['foo', 'bar']
+    >>> for x in Tokens('foo', 'bar'):
+    ...     print(repr(x))
+    'foo'
+    'bar'
 
     Tokens instances can be concatenated:
 
@@ -67,27 +69,30 @@ class Tokens:
 
     """
 
-    __slots__ = ['_tokens']
+    __slots__ = ['tokens']
 
     def __init__(self, *tokens):
         for token in tokens:
             if not isinstance(token, str):
                 raise TypeError('tokens must be strings')
-        self._tokens = tuple(tokens)
+        self.tokens = tuple(tokens)
 
     def __str__(self):
-        return ' '.join(self._tokens)
+        return ' '.join(self.tokens)
 
     def __repr__(self):
         return 'Tokens({})'.format(
-            ', '.join(repr(token) for token in self._tokens)
+            ', '.join(repr(token) for token in self.tokens)
         )
 
     def __add__(self, other):
         if not isinstance(other, Tokens):
             raise TypeError('can only add with Tokens instances')
-        tokens = self._tokens + other._tokens
+        tokens = self.tokens + other.tokens
         return Tokens(*tokens)
+
+    def __iter__(self):
+        return iter(self.tokens)
 
     def join(self, tokens_list):
         """Join Tokens instances with self.
@@ -117,16 +122,11 @@ class Tokens:
             if not isinstance(tokens, Tokens):
                 raise TypeError(
                     'tokens_list must contain only Tokens instances')
-        joined_tokens = tokens_list[0].tokens  # Use a list here.
+        joined_tokens = list(tokens_list[0].tokens)
         for tokens in tokens_list[1:]:
-            joined_tokens.extend(self._tokens)
-            joined_tokens.extend(tokens._tokens)
+            joined_tokens.extend(self.tokens)
+            joined_tokens.extend(tokens.tokens)
         return Tokens(*joined_tokens)
-
-    @property
-    def tokens(self):
-        """Return a list of token strings."""
-        return list(self._tokens)
 
     def paren_wrap(self):
         """Wrap Tokens with parentheses.
@@ -137,4 +137,4 @@ class Tokens:
         Tokens('(', 'foo', 'bar', ')')
 
         """
-        return Tokens('(', *self._tokens, ')',)
+        return Tokens('(', *self.tokens, ')',)
