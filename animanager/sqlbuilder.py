@@ -62,25 +62,25 @@ class Tokens:
 
     """
 
-    __slots__ = ['tokens']
+    __slots__ = ['_tokens']
 
     def __init__(self, *tokens):
         for token in tokens:
             if not isinstance(token, str):
                 raise TypeError('Invalid token type for {}'.format(token))
-        self.tokens = tuple(tokens)
+        self._tokens = tuple(tokens)
 
     def __str__(self):
-        return ' '.join(self.tokens)
+        return ' '.join(self._tokens)
 
     def __repr__(self):
         return 'Tokens({})'.format(
-            ', '.join(repr(token) for token in self.tokens)
+            ', '.join(repr(token) for token in self._tokens)
         )
 
     def __add__(self, other):
         self._assert_tokens(other)
-        tokens = self.tokens + other.tokens
+        tokens = self._tokens + other._tokens
         return Tokens(*tokens)
 
     @staticmethod
@@ -129,6 +129,10 @@ class Tokens:
         )
         return cls(*tokens)
 
+    @property
+    def tokens(self):
+        return list(self._tokens)
+
     def paren_wrap(self):
         """Wrap Tokens with parentheses.
 
@@ -138,7 +142,7 @@ class Tokens:
         ['(', 'foo', 'bar', ')']
 
         """
-        return Tokens('(', *self.tokens, ')',)
+        return Tokens('(', *self._tokens, ')',)
 
 
 class SQLBuilder(metaclass=ABCMeta):
