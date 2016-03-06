@@ -15,15 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta
-
 from .base import SQLBuilder
 from .tokens import Tokens
 
 __all__ = ['Identifier']
 
 
-class BaseExpr(SQLBuilder, metaclass=ABCMeta):
+class BaseExpr(SQLBuilder):
 
     """Abstract class for SQLite expr."""
 
