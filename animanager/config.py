@@ -29,6 +29,7 @@ class Config:
             'database': '~/.animanager/database.db',
             'anidb_cache': '~/.animanager/anidb',
             'watchdir': '~/anime',
+            'trashdir': '~/anime/trash',
             'player': 'mpv',
         },
     }
@@ -75,6 +76,11 @@ class Config:
         def watchdir(self):
             """Directory to look for watching anime files."""
             return self.config.getpath('watchdir')
+
+        @property
+        def trashdir(self):
+            """Directory to trash anime files."""
+            return self.config.getpath('trashdir')
 
         @property
         def player(self):
