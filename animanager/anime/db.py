@@ -37,9 +37,9 @@ class AnimeDB:
         self._episode_types = None
         self.cache = sqlite3.connect(':memory:')
         self.cache.execute("""
-        CREATE TABLE watched_episodes (
+        CREATE TABLE anime (
             aid INTEGER,
-            number INTEGER,
+            watched_episodes INTEGER,
             PRIMARY KEY (aid)
         )""")
 
@@ -106,7 +106,7 @@ class AnimeDB:
     def get_watched_episodes(self, aid):
         # Try to fetch from cache.
         cur = self.cache.execute("""
-            SELECT number FROM watched_episodes
+            SELECT watched_episodes FROM anime
             WHERE aid = ?""", (aid,))
         row = cur.fetchone()
         if row is not None:
@@ -131,8 +131,8 @@ class AnimeDB:
         episodes_watched = row[0] - 1
         # We store this in the cache.
         self.cache.execute("""
-            INSERT OR REPLACE INTO watched_episodes
-            (aid, number) VALUES (?, ?)
+            INSERT OR REPLACE INTO anime
+            (aid, watched_episodes) VALUES (?, ?)
             """, (aid, episodes_watched))
         return episodes_watched
 
