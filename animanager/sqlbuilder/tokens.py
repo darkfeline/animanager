@@ -35,17 +35,12 @@ class Tokens:
     >>> Tokens().tokens
     []
 
-    TypeError will be raised in other cases:
+    TypeError will be raised if non-strings are passed:
 
-    >>> Tokens(10)
+    >>> Tokens(9)
     Traceback (most recent call last):
         ...
-    TypeError: Invalid token type for 10
-
-    >>> Tokens('foo', 10)
-    Traceback (most recent call last):
-        ...
-    TypeError: Invalid token type for 10
+    TypeError: tokens must be strings
 
     The string representation for Tokens instances is the tokens the instance
     represents joined with spaces.
@@ -57,6 +52,11 @@ class Tokens:
 
     >>> Tokens('foo') + Tokens('bar')
     Tokens('foo', 'bar')
+
+    >>> Tokens('foo') + 9
+    Traceback (most recent call last):
+        ...
+    TypeError: can only add with Tokens instances
 
     """
 
