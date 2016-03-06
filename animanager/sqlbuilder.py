@@ -138,7 +138,7 @@ class Tokens:
 
         Returns a new Tokens instance without modifying the original.
 
-        >>> Tokens('foo', 'bar')).paren_wrap().tokens
+        >>> Tokens('foo', 'bar').paren_wrap().tokens
         ['(', 'foo', 'bar', ')']
 
         """
