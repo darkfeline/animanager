@@ -53,6 +53,18 @@ class Identifier(BaseExpr):
     >>> Identifier('column').tokens()
     Tokens('"column"')
 
+    identifier must be a non-empty string:
+
+    >>> Identifier(9)
+    Traceback (most recent call last):
+        ...
+    TypeError: identifier must be a string
+
+    >>> Identifier('')
+    Traceback (most recent call last):
+        ...
+    TypeError: identifier cannot be empty
+
     """
 
     def __init__(self, identifier):
