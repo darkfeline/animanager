@@ -16,9 +16,9 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Error(Exception):
+class SQLBuilderError(Exception):
     """sqlbuilder error."""
 
 
-class IncompleteQueryError(Error):
+class IncompleteQueryError(SQLBuilderError):
     """Attempted to build incomplete query."""

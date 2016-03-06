@@ -16,11 +16,11 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class Error(Exception):
+class AnimanagerError(Exception):
     """Animanager error."""
 
 
-class DatabaseError(Error):
+class DatabaseError(AnimanagerError):
     """Database error."""
 
 
@@ -36,5 +36,5 @@ class DatabaseVersionError(DatabaseError):
             self.wanted, self.found)
 
 
-class APIError(Error):
+class APIError(AnimanagerError):
     """API error."""
