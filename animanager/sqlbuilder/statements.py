@@ -152,7 +152,7 @@ class CreateTable(BuilderWithTable):
 
     def tokens(self):
         tokens = Tokens('CREATE', 'TABLE')
-        tokens += Tokens.quoted(self.table_name)
+        tokens += self.table.tokens()
         table_spec = [col.tokens() for col in self.column_defs]
         if self.pk:
             table_spec.append(self.pk.tokens())
