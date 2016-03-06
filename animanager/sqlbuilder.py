@@ -113,20 +113,27 @@ class Tokens:
         """Join Tokens with commas.
 
         Return a Tokens instance that represents the Tokens in tokens_list
-        joined with comma tokens.
+        joined with comma tokens.  tokens_list is an iterable.
 
         >>> Tokens.comma_join([Tokens('col1', 'int'), Tokens('col2')]).tokens
         ['col1', 'int', ',', 'col2']
 
+        >>> Tokens.comma_join([]).tokens
+        []
+
         """
+        # We store the iterable's results so we can iterate multiple times.
+        tokens_list = list(tokens_list)
         for tokens in tokens_list:
             cls._assert_tokens(tokens)
-        tokens_list = iter(tokens_list)
+        if not tokens_list:
+            return cls()
         tokens = chain(
-            next(tokens_list).tokens,
-            chain.from_iterable([','] + tokens.tokens
-                                for tokens in tokens_list),
+            tokens_list[0]._tokens,
+            chain.from_iterable([','] + tokens.tokens  # Use a list here.
+                                for tokens in tokens_list[1:]),
         )
+        tokens = list(tokens)
         return cls(*tokens)
 
     @property
