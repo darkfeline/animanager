@@ -51,7 +51,7 @@ class Select(BuilderWithTable):
 
     def tokens(self):
         tokens = Tokens('SELECT')
-        tokens += Tokens.comma_join(
+        tokens += Tokens(',').join(
             col.tokens() for col in self.columns
         )
         tokens += Tokens('FROM')
@@ -81,11 +81,11 @@ class Insert(BuilderWithTable):
     def tokens(self):
         tokens = Tokens('INSERT', 'INTO')
         tokens += self.table.tokens()
-        tokens += Tokens.comma_join(
+        tokens += Tokens(',').join(
             col.tokens() for col in self.columns
         ).paren_wrap()
         tokens += Tokens('VALUES')
-        tokens += Tokens.comma_join(
+        tokens += Tokens(',').join(
             Tokens('?') for col in self.columns
         ).paren_wrap()
         return tokens
@@ -135,7 +135,7 @@ class CreateTable(BuilderWithTable):
 
         def tokens(self):
             tokens = Tokens('PRIMARY KEY')
-            tokens += Tokens.comma_join(
+            tokens += Tokens(',').join(
                 col.tokens() for col in self.columns
             ).paren_wrap()
             return tokens
@@ -156,7 +156,7 @@ class CreateTable(BuilderWithTable):
         table_spec = [col.tokens() for col in self.column_defs]
         if self.pk:
             table_spec.append(self.pk.tokens())
-        tokens += Tokens.comma_join(table_spec).paren_wrap()
+        tokens += Tokens(',').join(table_spec).paren_wrap()
         return tokens
 
     def build(self):
