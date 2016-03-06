@@ -1,2 +1,2 @@
 [DEFAULT]
-disable=missing-docstring,abstract-method,wildcard-import
+disable=missing-docstring,abstract-method
