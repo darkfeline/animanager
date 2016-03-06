@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='animanager',
     version='0.8.0',
-    packages=find_packages(),
+    packages=['animanager'],
     requires=['tabulate'],
     entry_points={
         'console_scripts': [
