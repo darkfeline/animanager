@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from itertools import chain
+
 from abc import ABCMeta, abstractmethod
 
 
@@ -26,6 +28,19 @@ def quote(token):
 def join(tokens):
     """Join tokens to make a SQL query."""
     return ' '.join(tokens)
+
+
+def comma_join(tokens):
+    """Join tokens with commas.
+
+    Takes a list of tokens and returns a list of those tokens separated with
+    comma tokens.
+
+    """
+    return list(
+        chain([tokens[0]],
+              chain.from_iterable([',', token] for token in tokens[1:]))
+    )
 
 
 class SQLBuilder(metaclass=ABCMeta):
