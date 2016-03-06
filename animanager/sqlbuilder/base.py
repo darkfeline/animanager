@@ -29,3 +29,11 @@ class SQLBuilder(metaclass=ABCMeta):
     def build(self):
         """Return the query as a string."""
         return str(self.tokens())
+
+
+class BuilderWithTable(SQLBuilder, metaclass=ABCMeta):
+
+    """Abstract class for SQLBuilder subclasses that work on a table."""
+
+    def __init__(self, table_name):
+        self.table_name = table_name
