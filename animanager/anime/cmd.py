@@ -15,11 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import cmd
-from textwrap import dedent
+from cmd import Cmd
+import os
 import re
-import readline  # noqa, needed for readline functionality
+# readline is needed for command editing.
+import readline  # pylint: disable=unused-import
 import shlex
+from textwrap import dedent
 
 from animanager.constants import VERSION
 
@@ -27,7 +29,7 @@ from . import anidb
 from .db import AnimeDB
 
 
-class AnimeCmd(cmd.Cmd):
+class AnimeCmd(Cmd):
 
     intro = dedent('''\
     Animanager {}
@@ -130,12 +132,26 @@ class AnimeCmd(cmd.Cmd):
 
     ###########################################################################
     # watch
+    @staticmethod
+    def _is_video(filename):
+        """Return whether the filename is a video file."""
+        extension = os.path.splitext(filename)[1]
+        return extension in ('.mkv', '.mp4', '.avi')
+
     def do_watch(self, arg):
         """Watch an anime."""
         if not arg:
             # Find and show watching anime.
-            watching = self.db.get_watching()
             watchdir = self.config.anime.watchdir
+            files = []
+            for dirpath, _, filenames in os.walk(watchdir):
+                # Skip the trash directory.
+                if os.stat(dirpath) == os.stat(self.config.anime.trashdir):
+                    continue
+                for filename in filenames:
+                    if self._is_video(filename):
+                        files.append(os.path.join(dirpath, filename))
+            watching = self.db.get_watching()
             pass  # XXX
         elif arg.isdigit():
             # Handle count.
