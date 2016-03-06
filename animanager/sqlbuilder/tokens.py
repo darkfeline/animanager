@@ -65,7 +65,7 @@ class Tokens:
     def __init__(self, *tokens):
         for token in tokens:
             if not isinstance(token, str):
-                raise TypeError('tokens must be string')
+                raise TypeError('tokens must be strings')
         self._tokens = tuple(tokens)
 
     def __str__(self):
