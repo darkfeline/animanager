@@ -200,21 +200,24 @@ class CreateTable(SQLBuilder):
         self.table_constraints = []
 
     def add_column(self, column_name, type=None, pk=False):
-        tokens = [quote(column_name)]
+        tokens = Tokens.quoted(column_name)
         if type:
-            tokens += [type]
-        self.column_defs += [join(tokens)]
+            tokens += Tokens(type)
+        self.column_defs.append(tokens)
         if pk:
-            tokens = ['PRIMARY', 'KEY', '(', quote(column_name), ')']
-            self.table_constraints += [join(tokens)]
+            tokens = Tokens('PRIMARY', 'KEY',
+                            '(', Tokens.quote(column_name), ')')
+            self.table_constraints.append(tokens)
 
     def tokens(self):
-        tokens = ['CREATE', 'TABLE']
-        tokens += [self.quote(self.table_name)]
-        tokens += ['(']
-        tokens += [','.join(col for col in self.column_defs)]
-        for constraint in self.table_constraints:
-            tokens += [',']
-        tokens += [','.join(col for col in self.column_defs)]
-        tokens += [')']
+        tokens = Tokens('CREATE', 'TABLE')
+        tokens += Tokens.quoted(self.table_name)
+        tokens += Tokens.paren_wrap(
+            Tokens.comma_join(
+                chain(
+                    (tokens for tokens in self.column_defs),
+                    (tokens for tokens in self.table_constraints),
+                )
+            )
+        )
         return tokens
