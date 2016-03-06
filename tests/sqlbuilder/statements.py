@@ -18,6 +18,7 @@
 import unittest
 
 from animanager import sqlbuilder
+from animanager.sqlbuilder import errors
 from animanager.sqlbuilder.expr import *  # pylint: disable=wildcard-import
 
 
@@ -73,3 +74,44 @@ class SQLBuilderTestCase(unittest.TestCase):
         expected = ' '.join(('CREATE TABLE "table" ( "foo" , "bar" ,',
                              'PRIMARY KEY ( "foo" ) )'))
         self._test_builder(builder, expected)
+
+    def test_column(self):
+        builder = sqlbuilder.CreateTable.Column('foo')
+        expected = '"foo"'
+        self._test_builder(builder, expected)
+
+    def test_column_with_type(self):
+        builder = sqlbuilder.CreateTable.Column('foo', type_name='INTEGER')
+        expected = '"foo" "INTEGER"'
+        self._test_builder(builder, expected)
+
+    def test_column_with_bad_type(self):
+        self.assertRaises(
+            TypeError,
+            sqlbuilder.CreateTable.Column, 'foo', type_name=9)
+
+    def test_primary_key(self):
+        builder = sqlbuilder.CreateTable.PrimaryKey()
+        builder.add_column('foo')
+        expected = 'PRIMARY KEY ( "foo" )'
+        self._test_builder(builder, expected)
+
+    def test_primary_key_multiple(self):
+        builder = sqlbuilder.CreateTable.PrimaryKey()
+        builder.add_column('foo')
+        builder.add_column('bar')
+        expected = 'PRIMARY KEY ( "foo" , "bar" )'
+        self._test_builder(builder, expected)
+
+    def test_primary_key_empty(self):
+        builder = sqlbuilder.CreateTable.PrimaryKey()
+        self.assertFalse(builder)
+
+    def test_primary_key_nonempty(self):
+        builder = sqlbuilder.CreateTable.PrimaryKey()
+        builder.add_column('foo')
+        self.assertTrue(builder)
+
+    def test_primary_invalid_build(self):
+        builder = sqlbuilder.CreateTable.PrimaryKey()
+        self.assertRaises(errors.IncompleteQueryError, builder.build)
