@@ -129,18 +129,16 @@ class Tokens:
         )
         return cls(*tokens)
 
-    @classmethod
-    def paren_wrap(cls, *tokens_list):
+    def paren_wrap(self):
         """Wrap Tokens with parentheses.
 
-        >>> Tokens.paren_wrap(Tokens('foo'), Tokens('bar')).tokens
+        Returns a new Tokens instance without modifying the original.
+
+        >>> Tokens('foo', 'bar')).paren_wrap().tokens
         ['(', 'foo', 'bar', ')']
 
         """
-        return cls(
-            '(',
-            *chain.from_iterable(tokens.tokens for tokens in tokens_list),
-            ')')
+        return Tokens('(', *self.tokens, ')',)
 
 
 class SQLBuilder(metaclass=ABCMeta):
