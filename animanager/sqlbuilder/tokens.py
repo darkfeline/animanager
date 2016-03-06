@@ -103,6 +103,10 @@ class Tokens:
         >>> Tokens(',').join([])
         Tokens()
 
+        This is more efficient than concatenating many Tokens, since
+        concatenation creates a new Tokens instance at each step, while join()
+        only creates one new Tokens instance.
+
         """
 
         # We store the iterable's results so we can iterate multiple times.
