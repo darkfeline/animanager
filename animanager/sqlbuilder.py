@@ -183,15 +183,19 @@ class Insert(SQLBuilder):
         self.columns.append(key)
 
     def tokens(self):
-        tokens = ['INSERT', 'INTO']
-        tokens += [self.quote(self.table_name)]
-        tokens += ['(']
-        tokens += [','.join(quote(col) for col in self.columns)]
-        tokens += [')']
-        tokens += ['VALUES']
-        tokens += ['(']
-        tokens += [','.join('?' for col in self.columns)]
-        tokens += [')']
+        tokens = Tokens('INSERT', 'INTO')
+        tokens += Tokens.quoted(self.table_name)
+        tokens += Tokens.paren_wrap(
+            Tokens.comma_join(
+                Tokens.quoted(col) for col in self.columns
+            )
+        )
+        tokens += Tokens('VALUES')
+        tokens += Tokens.paren_wrap(
+            Tokens.comma_join(
+                '?' for col in self.columns
+            )
+        )
         return tokens
 
 
