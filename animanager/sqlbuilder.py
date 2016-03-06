@@ -20,27 +20,74 @@ from itertools import chain
 from abc import ABCMeta, abstractmethod
 
 
-def quote(token):
-    """Quote a SQL token."""
-    return '"{}"'.format(token)
+class Tokens:
 
+    """Class for working with tokens.
 
-def join(tokens):
-    """Join tokens to make a SQL query."""
-    return ' '.join(tokens)
+    Instances of Tokens represent a list of string tokens.
 
+    Tokens can be created using any number of str.
 
-def comma_join(tokens):
-    """Join tokens with commas.
+    >>> Tokens('foo').tokens
+    ['foo']
 
-    Takes a list of tokens and returns a list of those tokens separated with
-    comma tokens.
+    >>> Tokens('foo', 'bar').tokens
+    ['foo', 'bar']
+
+    >>> Tokens().tokens
+    []
+
+    TypeError will be raised in other cases:
+
+    >>> Tokens(10)
+    Traceback (most recent call last):
+        ...
+    TypeError: Invalid token type for 10
+
+    >>> Tokens('foo', 10)
+    Traceback (most recent call last):
+        ...
+    TypeError: Invalid token type for 10
+
+    The string representation for Tokens instances is the tokens the instance
+    represents joined with spaces.
+
+    >>> str(Tokens('foo', 'bar'))
+    'foo bar'
 
     """
-    return list(
-        chain([tokens[0]],
-              chain.from_iterable([',', token] for token in tokens[1:]))
-    )
+
+    def __init__(self, *tokens):
+        for token in tokens:
+            if not isinstance(token, str):
+                raise TypeError('Invalid token type for {!r}'.format(token))
+        self.tokens = list(tokens)
+
+    def __str__(self):
+        return ' '.join(self.tokens)
+
+    @staticmethod
+    def quote(token):
+        """Quote a SQL token."""
+        return '"{}"'.format(token)
+
+    @classmethod
+    def comma_join(cls, *tokens_list):
+        """Join Tokens with commas.
+
+        Return a Tokens instance that represents the Tokens arguments joined
+        with comma tokens.
+
+        >>> Tokens.comma_join(Tokens('col1', 'int'), Tokens('col2')).tokens
+        ['col1', 'int', ',', 'col2']
+
+        """
+        tokens = chain(
+            tokens_list[0].tokens,
+            chain.from_iterable([','] + tokens.tokens
+                                for tokens in tokens_list[1:]),
+        )
+        return cls(*tokens)
 
 
 class SQLBuilder(metaclass=ABCMeta):
