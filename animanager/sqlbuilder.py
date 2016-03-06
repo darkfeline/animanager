@@ -68,7 +68,7 @@ class Tokens:
         for token in tokens:
             if not isinstance(token, str):
                 raise TypeError('Invalid token type for {}'.format(token))
-        self.tokens = list(tokens)
+        self.tokens = tuple(tokens)
 
     def __str__(self):
         return ' '.join(self.tokens)
