@@ -156,18 +156,11 @@ class Select(SQLBuilder):
 
     def tokens(self):
         tokens = Tokens('SELECT')
+        tokens += Tokens.comma_join(
+            Tokens.quoted(col) for col in self.columns
+        )
+        tokens += Tokens('FROM')
         tokens += Tokens.quoted(self.table_name)
-        tokens += Tokens.paren_wrap(
-            Tokens.comma_join(
-                Tokens.quoted(col) for col in self.columns
-            )
-        )
-        tokens += Tokens('VALUES')
-        tokens += Tokens.paren_wrap(
-            Tokens.comma_join(
-                '?' for col in self.columns
-            )
-        )
         return tokens
 
 
