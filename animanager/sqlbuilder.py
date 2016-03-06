@@ -125,7 +125,7 @@ class SQLBuilder(metaclass=ABCMeta):
 
     @abstractmethod
     def tokens(self):
-        """Return a Tokens for the query."""
+        """Return a Tokens for the current query."""
 
     def build(self):
         """Return the query as a string."""
