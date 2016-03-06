@@ -17,5 +17,7 @@
 
 """SQLite query builder package."""
 
+# pylint: disable=wildcard-import
+
 from .statements import *
 from .expr import *
