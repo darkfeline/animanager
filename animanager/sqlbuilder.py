@@ -84,7 +84,12 @@ class Tokens:
 
     @staticmethod
     def quote(token):
-        """Quote a SQL token."""
+        """Quote a SQL token.
+
+        >>> Tokens.quote('foo')
+        '"foo"'
+
+        """
         return '"{}"'.format(token)
 
     @classmethod
