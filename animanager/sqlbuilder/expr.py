@@ -20,7 +20,7 @@ from numbers import Real
 from .base import SQLBuilder
 from .tokens import Tokens
 
-__all__ = ['BinaryOp', 'Literal', 'Identifier']
+__all__ = ['BinaryOp', 'literal', 'Identifier']
 
 
 class BaseExpr(SQLBuilder):
@@ -49,31 +49,32 @@ class BinaryOp(BaseExpr):
 
 
 class Literal(BaseExpr):
+    pass
 
-    @staticmethod
-    def new(value):
-        """Make a SQL literal.
 
-        new() will return the proper subclass for its argument:
+def literal(value):
+    """Make a SQL literal.
 
-        >>> Literal.new(9)
-        NumericLiteral(9)
+    literal() will return the proper subclass for its argument:
 
-        >>> Literal.new('hi')
-        TextLiteral('hi')
+    >>> literal(9)
+    NumericLiteral(9)
 
-        >>> Literal.new(dict())
-        Traceback (most recent call last):
-            ...
-        TypeError: value must be a supported literal type
+    >>> literal('hi')
+    TextLiteral('hi')
 
-        """
-        if isinstance(value, str):
-            return TextLiteral(value)
-        elif isinstance(value, Real):
-            return NumericLiteral(value)
-        else:
-            raise TypeError('value must be a supported literal type')
+    >>> literal(dict())
+    Traceback (most recent call last):
+        ...
+    TypeError: value must be a supported literal type
+
+    """
+    if isinstance(value, str):
+        return TextLiteral(value)
+    elif isinstance(value, Real):
+        return NumericLiteral(value)
+    else:
+        raise TypeError('value must be a supported literal type')
 
 
 class TextLiteral(Literal):

@@ -41,8 +41,7 @@ class SQLBuilderTestCase(unittest.TestCase):
         builder = sqlbuilder.Select('table')
         builder.add_column('foo')
         builder.add_column('bar')
-        builder.where(BinaryOp('=', Identifier('foo'), Literal.new('spam')))
-
+        builder.where(BinaryOp('=', Identifier('foo'), literal('spam')))
         expected = 'SELECT "foo" , "bar" FROM "table" WHERE "foo" = \'spam\''
         self._test_builder(builder, expected)
 
