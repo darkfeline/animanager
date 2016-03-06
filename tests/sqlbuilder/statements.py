@@ -18,9 +18,13 @@
 import unittest
 
 from animanager import sqlbuilder
+from animanager.sqlbuilder.expr import *  # pylint: disable=wildcard-import
 
 
 class SQLBuilderTestCase(unittest.TestCase):
+
+    # These are test names, so they can be longer than normal.
+    # pylint: disable=invalid-name
 
     def _test_builder(self, builder, expected):
         query = builder.build()
@@ -34,13 +38,12 @@ class SQLBuilderTestCase(unittest.TestCase):
         self._test_builder(builder, expected)
 
     def test_select_where(self):
-        self.skipTest('not done yet')
         builder = sqlbuilder.Select('table')
         builder.add_column('foo')
         builder.add_column('bar')
-        builder.where(Expr())
+        builder.where(BinaryOp('=', Identifier('foo'), Literal.new('spam')))
 
-        expected = 'SELECT "foo" , "bar" FROM "table"'
+        expected = 'SELECT "foo" , "bar" FROM "table" WHERE "foo" = \'spam\''
         self._test_builder(builder, expected)
 
     def test_insert(self):
