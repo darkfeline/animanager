@@ -79,10 +79,14 @@ class Tokens:
         )
 
     def __add__(self, other):
-        if not isinstance(other, Tokens):
-                raise TypeError('Cannot add with {}'.format(other))
+        self._assert_tokens(other)
         tokens = self.tokens + other.tokens
         return Tokens(*tokens)
+
+    @staticmethod
+    def _assert_tokens(tokens):
+        if not isinstance(tokens, Tokens):
+            raise TypeError('Not a Tokens instance: {}'.format(tokens))
 
     @staticmethod
     def quote(token):
