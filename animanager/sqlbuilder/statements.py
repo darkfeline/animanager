@@ -126,7 +126,7 @@ class CreateTable(BuilderWithTable):
             self.columns = []
 
         def __bool__(self):
-            return self.columns
+            return bool(self.columns)
 
         def add_column(self, column_name):
             if not isinstance(column_name, str):
