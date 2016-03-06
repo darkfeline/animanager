@@ -17,8 +17,6 @@
 
 from abc import ABCMeta, abstractmethod
 
-from .expr import Identifier
-
 
 class SQLBuilder(metaclass=ABCMeta):
 
@@ -31,11 +29,3 @@ class SQLBuilder(metaclass=ABCMeta):
     def build(self):
         """Return the query as a string."""
         return str(self.tokens())
-
-
-class BuilderWithTable(SQLBuilder, metaclass=ABCMeta):
-
-    """Abstract class for SQLBuilder subclasses that work on a table."""
-
-    def __init__(self, table_name):
-        self.table = Identifier(table_name)
