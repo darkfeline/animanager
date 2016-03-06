@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import namedtuple
-from datetime import date
 import logging
 import re
 import sqlite3
