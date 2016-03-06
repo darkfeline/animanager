@@ -16,8 +16,14 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import doctest
 
 from animanager import sqlbuilder
+
+
+def load_tests(loader, tests, pattern):
+    tests.addTest(doctest.DocTestSuite(sqlbuilder))
+    return tests
 
 
 class SQLBuilderTestCase(unittest.TestCase):
