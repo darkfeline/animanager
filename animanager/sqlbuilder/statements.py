@@ -101,20 +101,20 @@ class CreateTable(BuilderWithTable):
     def __init__(self, table_name):
         super().__init__(table_name)
         self.column_defs = []
-        self.pk = self.PrimaryKey()
+        self.primary_key = self.PrimaryKey()
 
     class Column(SQLBuilder):
 
-        def __init__(self, column_name, type=None):
-            if type is not None and not isinstance(type, str):
+        def __init__(self, column_name, type_name=None):
+            if type_name is not None and not isinstance(type_name, str):
                 raise TypeError('type must be a string')
             self.column = Identifier(column_name)
-            self.type = type
+            self.type = Identifier(type_name)
 
         def tokens(self):
             tokens = self.column.tokens()
             if self.type:
-                tokens += Tokens(self.type)
+                tokens += self.type.tokens()
             return tokens
 
     class Constraint(SQLBuilder, metaclass=ABCMeta):
@@ -145,17 +145,17 @@ class CreateTable(BuilderWithTable):
                 raise IncompleteQueryError('must add at least one column')
             return super().build()
 
-    def add_column(self, column_name, type=None, pk=False):
-        self.column_defs.append(self.Column(column_name, type))
-        if pk:
-            self.pk.add_column(column_name)
+    def add_column(self, column_name, type_name=None, primary_key=False):
+        self.column_defs.append(self.Column(column_name, type_name))
+        if primary_key:
+            self.primary_key.add_column(column_name)
 
     def tokens(self):
         tokens = Tokens('CREATE', 'TABLE')
         tokens += self.table.tokens()
         table_spec = [col.tokens() for col in self.column_defs]
-        if self.pk:
-            table_spec.append(self.pk.tokens())
+        if self.primary_key:
+            table_spec.append(self.primary_key.tokens())
         tokens += Tokens(',').join(table_spec).paren_wrap()
         return tokens
 
