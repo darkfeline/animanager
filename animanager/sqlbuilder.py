@@ -109,20 +109,23 @@ class Tokens:
         return cls(cls.quote(token))
 
     @classmethod
-    def comma_join(cls, *tokens_list):
+    def comma_join(cls, tokens_list):
         """Join Tokens with commas.
 
-        Return a Tokens instance that represents the Tokens arguments joined
-        with comma tokens.
+        Return a Tokens instance that represents the Tokens in tokens_list
+        joined with comma tokens.
 
-        >>> Tokens.comma_join(Tokens('col1', 'int'), Tokens('col2')).tokens
+        >>> Tokens.comma_join([Tokens('col1', 'int'), Tokens('col2')]).tokens
         ['col1', 'int', ',', 'col2']
 
         """
+        for tokens in tokens_list:
+            cls._assert_tokens(tokens)
+        tokens_list = iter(tokens_list)
         tokens = chain(
-            tokens_list[0].tokens,
+            next(tokens_list).tokens,
             chain.from_iterable([','] + tokens.tokens
-                                for tokens in tokens_list[1:]),
+                                for tokens in tokens_list),
         )
         return cls(*tokens)
 
