@@ -28,17 +28,26 @@ def load_tests(loader, tests, pattern):
 
 class SQLBuilderTestCase(unittest.TestCase):
 
-    def test_quote(self):
-        result = sqlbuilder.quote('token to escape')
-        expected = '"token to escape"'
-        self.assertEqual(result, expected)
+    def test_select(self):
+        query = sqlbuilder.Select('table')
+        query.add_column('foo')
+        query.add_column('bar')
+        query = query.build()
+        expected = 'SELECT "foo" , "bar" FROM "table"'
+        self.assertEqual(query, expected)
 
-    def test_join(self):
-        result = sqlbuilder.join(['tokens', 'to', 'join'])
-        expected = 'tokens to join'
-        self.assertEqual(result, expected)
+    def test_insert(self):
+        query = sqlbuilder.Insert('table')
+        query.add_column('foo')
+        query.add_column('bar')
+        query = query.build()
+        expected = 'INSERT INTO "table" ( "foo" , "bar" ) VALUES ( ? , ? )'
+        self.assertEqual(query, expected)
 
-    def test_comma_join(self):
-        result = sqlbuilder.comma_join(['tokens', 'to', 'join'])
-        expected = ['tokens', ',', 'to', ',', 'join']
-        self.assertEqual(result, expected)
+    def test_create_table(self):
+        query = sqlbuilder.CreateTable('table')
+        query.add_column('foo')
+        query.add_column('bar')
+        query = query.build()
+        expected = 'CREATE TABLE "table" ( "foo" , "bar" )'
+        self.assertEqual(query, expected)
