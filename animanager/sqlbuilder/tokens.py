@@ -44,8 +44,10 @@ class Tokens:
         ...
     TypeError: tokens must be strings
 
-    The string representation for Tokens instances is the tokens the instance
-    represents joined with spaces:
+    The string representation for Tokens instances is a query string that
+    tokenizes to the same tokens.  The current implementation merely joins the
+    tokens with spaces.  This behavior is part of the interface and can be
+    relied upon.
 
     >>> str(Tokens('foo', 'bar'))
     'foo bar'
@@ -93,7 +95,7 @@ class Tokens:
 
     @classmethod
     def join(cls, tokens_list):
-        """Join Tokens.
+        """Join Tokens instances.
 
         >>> Tokens.join([Tokens('foo'), Tokens('bar')])
         Tokens('foo', 'bar')
