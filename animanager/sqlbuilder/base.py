@@ -17,6 +17,8 @@
 
 from abc import ABCMeta, abstractmethod
 
+from .expr import Identifier
+
 
 class SQLBuilder(metaclass=ABCMeta):
 
@@ -36,4 +38,4 @@ class BuilderWithTable(SQLBuilder, metaclass=ABCMeta):
     """Abstract class for SQLBuilder subclasses that work on a table."""
 
     def __init__(self, table_name):
-        self.table_name = table_name
+        self.table = Identifier(table_name)
