@@ -62,6 +62,8 @@ class Tokens:
 
     """
 
+    __slots__ = ['tokens']
+
     def __init__(self, *tokens):
         for token in tokens:
             if not isinstance(token, str):
