@@ -109,11 +109,14 @@ class CreateTable(BuilderWithTable):
             if type_name is not None and not isinstance(type_name, str):
                 raise TypeError('type must be a string')
             self.column = Identifier(column_name)
-            self.type = Identifier(type_name)
+            if type_name is not None:
+                self.type = Identifier(type_name)
+            else:
+                self.type = None
 
         def tokens(self):
             tokens = self.column.tokens()
-            if self.type:
+            if self.type is not None:
                 tokens += self.type.tokens()
             return tokens
 
