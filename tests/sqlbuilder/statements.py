@@ -19,7 +19,7 @@ import unittest
 
 from animanager import sqlbuilder
 from animanager.sqlbuilder import errors
-from animanager.sqlbuilder.expr import *  # pylint: disable=wildcard-import
+from animanager.sqlbuilder.expr import *
 
 
 class SQLBuilderTestCase(unittest.TestCase):
