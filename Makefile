@@ -1,6 +1,7 @@
 all:
 	@echo "make publish - Publish to PyPi"
 	@echo "make test - Run tests"
+	@echo "make lint - Lint code"
 
 publish:
 	rm dist/*
@@ -12,4 +13,7 @@ publish:
 test:
 	python3 -m unittest discover
 
-.PHONY: all publish test
+lint:
+	pylint animanager tests
+
+.PHONY: all publish test lint
