@@ -52,7 +52,7 @@ class Tokens:
 
     Tokens can be accessed as a list of strings via the tokens property:
 
-    >>> Tokens('foo', 'bar')
+    >>> Tokens('foo', 'bar').tokens
     ['foo', 'bar']
 
     Tokens instances can be concatenated:
