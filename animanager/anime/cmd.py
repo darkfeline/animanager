@@ -64,7 +64,7 @@ class AnimeCmd(Cmd):
 
     def onecmd(self, str):
         try:
-            super().onecmd(str)
+            return super().onecmd(str)
         except Exception:
             traceback.print_exc()
 
