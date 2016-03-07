@@ -74,7 +74,7 @@ class AnimeDB(
         for episode in anime.episodes:
             cur = self.cnx.execute(
                 """INSERT OR IGNORE INTO episode
-                (anime, type, number, title, length, user_watched)
+                (aid, type, number, title, length, user_watched)
                 VALUES (?, ?, ?, ?, ?, ?)""",
                 (anime.aid, episode.type, episode.number, episode.title,
                  episode.length, 0))
@@ -82,7 +82,7 @@ class AnimeDB(
                 self.cnx.execute(
                     """UPDATE episode
                     SET title=:title, length=:length
-                    WHERE anime=:aid AND type=:type AND number=:number""",
+                    WHERE aid=:aid AND type=:type AND number=:number""",
                     {
                         'aid': anime.aid,
                         'type': episode.type,
@@ -100,7 +100,7 @@ class AnimeDB(
         episode = anime_full.watched_episodes + 1
         self.cnx.execute(
             """UPDATE episode SET user_watched=:watched
-            WHERE anime=:aid AND type=:type AND number=:number""",
+            WHERE aid=:aid AND type=:type AND number=:number""",
             {
                 'aid': aid,
                 'type': self.episode_types['regular'],
@@ -165,7 +165,7 @@ class AnimeDB(
 
         # Check if anime exists.
         cur = self.cnx.execute("""
-            SELECT episodes FROM anime WHERE aid = ?
+            SELECT episodes FROM anime WHERE aid=?
             """, (aid,))
         row = cur.fetchone()
         if row is None:
@@ -175,7 +175,7 @@ class AnimeDB(
         # Select all regular episodes in ascending order.
         cur = self.cnx.execute("""
             SELECT number, user_watched FROM episode
-            WHERE aid = ? AND type = ?
+            WHERE aid=? AND type=?
             ORDER BY number ASC
             """, (aid, self.episode_types['regular']))
         rows = cur.fetchall()
