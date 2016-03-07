@@ -127,7 +127,7 @@ class AnimeDB(
     def get_anime(self, aid):
         """Get anime row from our permanent database.
 
-        Returns AnimDB.Anime or raises ValueError.
+        Returns an Anime instance or raises ValueError.
 
         """
         cur = self.cnx.execute("""
