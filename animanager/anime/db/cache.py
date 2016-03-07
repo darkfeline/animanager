@@ -27,7 +27,7 @@ class AnimeCacheMixin(BaseCacheTableMixin):
         self.cnx.execute("""
         CREATE TABLE IF NOT EXISTS cache_anime (
             aid INTEGER,
-            complete INTEGER NOT NULL CHECK(status IN (0, 1)),
+            complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
             watched_episodes INTEGER NOT NULL,
             PRIMARY KEY (aid),
             FOREIGN KEY (aid) REFERENCES anime(aid)
