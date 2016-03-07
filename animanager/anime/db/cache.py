@@ -52,7 +52,11 @@ class CacheDB:
             raise ValueError('AID not in cache database')
 
     def set_anime_status(self, anime_status):
-        """Set anime status."""
+        """Set anime status.
+
+        anime_status is an AnimeStatus instance or identical tuple.
+
+        """
         self.cnx.execute("""
             INSERT OR REPLACE INTO anime
             (aid, status, watched_episodes)

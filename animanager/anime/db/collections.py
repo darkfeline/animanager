@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from collections import namedtuple
+import re
 
 EpisodeType = namedtuple(
     'EpisodeType',
@@ -23,12 +24,27 @@ EpisodeType = namedtuple(
 
 Anime = namedtuple(
     'Anime',
-    ['aid', 'title', 'type', 'episodes'])
+    ['aid', 'title', 'type', 'episodes', 'startdate', 'enddate'])
 
 AnimeFull = namedtuple(
     'AnimeFull',
-    ['aid', 'title', 'type', 'episodes', 'status', 'watched_episodes'])
+    ['aid', 'title', 'type', 'episodes', 'startdate', 'enddate', 'status',
+     'watched_episodes'])
 
 AnimeStatus = namedtuple(
     'AnimeStatus',
     ['aid', 'status', 'watched_episodes'])
+
+class WatchingAnime(tuple):
+
+    def __new__(cls, aid, regexp):
+        regexp = re.compile(regexp, re.I)
+        return cls(aid, regexp)
+
+    @property
+    def aid(self):
+        return self[0]
+
+    @property
+    def regexp(self):
+        return self[1]
