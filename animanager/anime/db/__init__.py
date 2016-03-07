@@ -103,7 +103,7 @@ class AnimeDB(
             WHERE aid=:aid AND type=:type AND number=:number""",
             {
                 'aid': aid,
-                'type': self.episode_types['regular'],
+                'type': self.episode_types['regular'].id,
                 'number': episode,
                 'watched': 1,
             })
@@ -177,7 +177,7 @@ class AnimeDB(
             SELECT number, user_watched FROM episode
             WHERE aid=? AND type=?
             ORDER BY number ASC
-            """, (aid, self.episode_types['regular']))
+            """, (aid, self.episode_types['regular'].id))
         rows = cur.fetchall()
         if not rows:
             raise db.DatabaseError('anime is missing episodes')
