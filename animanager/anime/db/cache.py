@@ -29,7 +29,7 @@ class AnimeCacheMixin(BaseCacheTableMixin):
         self.cnx.execute("""
         CREATE TABLE IF NOT EXISTS cache_anime (
             aid INTEGER,
-            status INTEGER NOT NULL CHECK(status IN (0, 1)),
+            complete INTEGER NOT NULL CHECK(status IN (0, 1)),
             watched_episodes INTEGER NOT NULL,
             PRIMARY KEY (aid),
             FOREIGN KEY (aid) REFERENCES anime(aid)
@@ -57,7 +57,7 @@ class AnimeCacheDispatcher(BaseDispatcher):
 
         """
         cur = self.cnx.execute("""
-            SELECT status, watched_episodes FROM cache_anime
+            SELECT complete, watched_episodes FROM cache_anime
             WHERE aid=?""", (aid,))
         if cur is None:
             raise ValueError('aid is not in cache')
@@ -67,7 +67,7 @@ class AnimeCacheDispatcher(BaseDispatcher):
         """Set anime status."""
         self.cnx.execute(
             """INSERT OR REPLACE INTO cache_anime
-            (aid, status, watched_episodes)
+            (aid, complete, watched_episodes)
             VALUES (?, ?, ?)""",
             anime_status)
         self.cnx.commit()

@@ -28,12 +28,12 @@ Anime = namedtuple(
 
 AnimeFull = namedtuple(
     'AnimeFull',
-    ['aid', 'title', 'type', 'episodes', 'startdate', 'enddate', 'status',
+    ['aid', 'title', 'type', 'episodes', 'startdate', 'enddate', 'complete',
      'watched_episodes'])
 
 AnimeStatus = namedtuple(
     'AnimeStatus',
-    ['aid', 'status', 'watched_episodes'])
+    ['aid', 'complete', 'watched_episodes'])
 
 class WatchingAnime(tuple):
 
