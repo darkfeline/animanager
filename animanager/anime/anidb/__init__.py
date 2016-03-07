@@ -55,22 +55,23 @@ class SearchDB:
 
     def __init__(self, cachedir):
         self.cachedir = cachedir
+        self._titles = None
 
     @property
     def titles(self):
-        try:
-            return self._titles
-        except AttributeError:
+        if self._titles is None:
             self.load_tree()
-            return self._titles
+        return self._titles
 
     def load_tree(self):
         pickle_file = os.path.join(self.cachedir, 'anime-titles.pickle')
         # Try to load from pickled file courageously.
         try:
-            return titles.TitlesTree.load(pickle_file)
+            self._titles = titles.TitlesTree.load(pickle_file)
         except Exception as e:
             logger.warning('Error loading pickled search cache: %s', e)
+        else:
+            return
         titles_file = os.path.join(self.cachedir, 'anime-titles.xml')
         # Download titles data if we don't have it.
         if not os.path.exists(titles_file):
