@@ -92,6 +92,25 @@ class AnimeDB(
                     })
         self.cnx.commit()
 
+    def bump(self, aid):
+        """Bump anime regular episode count."""
+        anime_full = self.get_anime_full(aid)
+        if anime_full.complete:
+            return
+        episode = anime_full.watched_episodes + 1
+        self.cnx.execute(
+            """UPDATE episode SET user_watched=:watched
+            WHERE anime=:aid AND type=:type AND number=:number""",
+            {
+                'aid': aid,
+                'type': self.episode_types['regular'],
+                'number': episode,
+                'watched': 1,
+            })
+        self.cnx.commit()
+        self.anime_cache.set_anime_status(
+            AnimeStatus(aid, episode >= anime_full.episodes, episode))
+
     def get_anime(self, aid):
         """Get anime row from our permanent database.
 
