@@ -111,6 +111,19 @@ class AnimeDB(
         self.anime_cache.set_anime_status(
             AnimeStatus(aid, episode >= anime_full.episodes, episode))
 
+    def search_anime(self, query):
+        """Perform a LIKE title search on the anime table.
+
+        Returns an Anime instance generator.
+
+        """
+        cur = self.cnx.execute("""
+            SELECT aid, title, type, episodes, startdate, enddate
+            FROM anime WHERE title LIKE ?
+            """, (query,))
+        for row in cur:
+            yield Anime(*row)
+
     def get_anime(self, aid):
         """Get anime row from our permanent database.
 
