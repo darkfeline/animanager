@@ -144,18 +144,36 @@ class AnimeCmd(Cmd):
     # bump
     def do_bump(self, arg):
         """Bump anime."""
-        raise NotImplementedError
         if not arg:
             self.do_help('bump')
         elif arg.isdigit():
-            # Handle count.
-            pass  # XXX
+            self._bump_by_count(int(arg))
         elif arg[0] == '#' and arg[1:].isdigit():
-            # Handle aid.
-            pass  # XXX
+            aid = int(arg[1:])
+            self._bump_by_aid(aid)
         else:
-            # Handle search.
-            pass  # XXX
+            query = '%{}%'.format('%'.join(shlex.split(arg)))
+            self._bump_do_search(query)
+
+    def _bump_by_count(self, count):
+        results = self._get_last_cmd('bump')
+        try:
+            anime = results[count]
+        except IndexError:
+            print('Invalid count or stale results.')
+        else:
+            self._bump_by_aid(anime.aid)
+
+    def _bump_by_aid(self, aid):
+        self.animedb.bump(aid)
+
+    def _bump_do_search(self, query):
+        results = list(self.animedb.search_anime(query))
+        width = len(results) % 10 + 1
+        template = '{{:{}}} - {{}}'.format(width)
+        for i, anime in enumerate(results):
+            print(template.format(i, anime.title))
+        self._set_last_cmd('bump', results)
 
     ###########################################################################
     # watch
