@@ -73,6 +73,9 @@ class AnimeCmd(Cmd):
     last_cmd = None
     last_cmd_results = None
 
+    def _clear_last_cmd(self):
+        self.last_cmd = None
+
     def _set_last_cmd(self, cmd, results):
         self.last_cmd = cmd
         self.last_cmd_results = results
@@ -81,7 +84,7 @@ class AnimeCmd(Cmd):
         if self.last_cmd == cmd:
             return self.last_cmd_results
         else:
-            return None
+            return ()
 
     ###########################################################################
     # quit
@@ -108,32 +111,40 @@ class AnimeCmd(Cmd):
         if not arg:
             self.do_help('add')
         elif arg.isdigit():
-            # Handle count.
-            results = self._get_last_cmd('add')
-            if results is None:
-                print('No last search results.')
-                return
-            aid = results[int(arg)].aid
-            self.do_add('#{}'.format(aid))
+            self._add_by_count(int(arg))
         elif arg[0] == '#' and arg[1:].isdigit():
-            # Handle aid.
             aid = int(arg[1:])
-            anime = self.anidb.lookup(aid)
-            self.animedb.add(anime)
+            self._add_by_aid(aid)
         else:
-            # Handle search.
             query = re.compile('.*'.join(shlex.split(arg)), re.I)
-            results = self.searchdb.search(query)
-            width = len(results) % 10 + 1
-            template = '{{:{}}} - {{}}'.format(width)
-            for i, anime in enumerate(results):
-                print(template.format(i, anime.main_title))
-            self._set_last_cmd('add', results)
+            self._add_do_search(query)
+
+    def _add_by_count(self, count):
+        results = self._get_last_cmd('add')
+        try:
+            anime = results[count]
+        except IndexError:
+            print('Invalid count or stale results.')
+        else:
+            self._add_by_aid(anime.aid)
+
+    def _add_by_aid(self, aid):
+        anime = self.anidb.lookup(aid)
+        self.animedb.add(anime)
+
+    def _add_do_search(self, query):
+        results = self.searchdb.search(query)
+        width = len(results) % 10 + 1
+        template = '{{:{}}} - {{}}'.format(width)
+        for i, anime in enumerate(results):
+            print(template.format(i, anime.main_title))
+        self._set_last_cmd('add', results)
 
     ###########################################################################
     # bump
     def do_bump(self, arg):
         """Bump anime."""
+        raise NotImplementedError
         if not arg:
             self.do_help('bump')
         elif arg.isdigit():
@@ -168,6 +179,7 @@ class AnimeCmd(Cmd):
 
     def do_watch(self, arg):
         """Watch an anime."""
+        raise NotImplementedError
         if not arg:
             # Find and show watching anime.
             watchdir = self.config.anime.watchdir
