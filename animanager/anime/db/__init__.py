@@ -54,7 +54,7 @@ class AnimeDB(
         """
         if self._episode_types is None:
             self._episode_types = dict()
-            cur = self.cnx.execute('SELECT id, name, prefix FROM episode_tupe')
+            cur = self.cnx.execute('SELECT id, name, prefix FROM episode_type')
             for type_id, name, prefix in cur:
                 self._episode_types[name] = EpisodeType(type_id, prefix)
         return self._episode_types
