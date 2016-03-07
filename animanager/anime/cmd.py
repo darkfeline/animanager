@@ -31,6 +31,8 @@ from .db import AnimeDB
 
 class AnimeCmd(Cmd):
 
+    # pylint: disable=no-self-use,unused-argument
+
     intro = dedent('''\
     Animanager {}
     Copyright (C) 2015-2016  Allen Li
@@ -46,7 +48,7 @@ class AnimeCmd(Cmd):
         self.config = config
         self.anidb = anidb.AniDB(config.anime.anidb_cache)
         self.searchdb = anidb.SearchDB(config.anime.anidb_cache)
-        self.db = AnimeDB(config.anime.database)
+        self.animedb = AnimeDB(config.anime.database)
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -88,7 +90,7 @@ class AnimeCmd(Cmd):
     ###########################################################################
     # add
     def do_add(self, arg):
-        """Add an anime."""
+        """Add an anime or update an existing anime."""
         if not arg:
             self.do_help('add')
         elif arg.isdigit():
@@ -103,7 +105,7 @@ class AnimeCmd(Cmd):
             # Handle aid.
             aid = int(arg[1:])
             anime = self.anidb.lookup(aid)
-            self.db.add(anime)
+            self.animedb.add(anime)
         else:
             # Handle search.
             query = re.compile('.*'.join(shlex.split(arg)), re.I)
@@ -138,20 +140,25 @@ class AnimeCmd(Cmd):
         extension = os.path.splitext(filename)[1]
         return extension in ('.mkv', '.mp4', '.avi')
 
+    def _find_files(self, watchdir):
+        """Find video files to watch."""
+        files = []
+        for dirpath, _, filenames in os.walk(watchdir):
+            # Skip the trash directory.
+            if os.stat(dirpath) == os.stat(self.config.anime.trashdir):
+                continue
+            for filename in filenames:
+                if self._is_video(filename):
+                    files.append(os.path.join(dirpath, filename))
+        return sorted(files)
+
     def do_watch(self, arg):
         """Watch an anime."""
         if not arg:
             # Find and show watching anime.
             watchdir = self.config.anime.watchdir
-            files = []
-            for dirpath, _, filenames in os.walk(watchdir):
-                # Skip the trash directory.
-                if os.stat(dirpath) == os.stat(self.config.anime.trashdir):
-                    continue
-                for filename in filenames:
-                    if self._is_video(filename):
-                        files.append(os.path.join(dirpath, filename))
-            watching = self.db.get_watching()
+            files = self._find_files(watchdir)
+            watching = self.animedb.get_watching()
             pass  # XXX
         elif arg.isdigit():
             # Handle count.
