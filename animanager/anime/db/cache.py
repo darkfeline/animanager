@@ -57,9 +57,10 @@ class AnimeCacheDispatcher(BaseDispatcher):
         cur = self.cnx.execute("""
             SELECT complete, watched_episodes FROM cache_anime
             WHERE aid=?""", (aid,))
-        if cur is None:
+        row = cur.fetchone()
+        if row is None:
             raise ValueError('aid is not in cache')
-        return AnimeStatus(aid, *cur)
+        return AnimeStatus(aid, *row)
 
     def set_anime_status(self, anime_status):
         """Set anime status."""
