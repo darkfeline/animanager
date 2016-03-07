@@ -76,8 +76,8 @@ class UserVersionMixin(SQLiteDB):
         super().connect(database)
         cur = self.cnx.execute('PRAGMA user_version')
         version = cur.fetchone()[0]
-        if version != self.VERSION:
-            raise DatabaseVersionError(self.VERSION, version)
+        if version != self.version:
+            raise DatabaseVersionError(self.version, version)
 
 
 class BaseCacheTableMixin(BaseDB):
