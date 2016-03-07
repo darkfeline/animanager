@@ -35,10 +35,9 @@ class AnimeRequest(base.HTTPAPIRequest):
         return AnimeResponse(response)
 
 
-def _parse_date(str):
+def _parse_date(string):
     """Parse an ISO format date (YYYY-mm-dd)."""
-    dt = datetime.datetime.strptime(str, '%Y-%m-%d')
-    return dt.date()
+    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
 
 
 class AnimeTree(base.XMLTree):

@@ -17,7 +17,7 @@
 
 """AniDB API bindings."""
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import gzip
 import logging
 import urllib.parse
@@ -29,7 +29,7 @@ from animanager import errors
 logger = logging.getLogger(__name__)
 
 
-class Request(metaclass=ABCMeta):
+class Request(ABC):
 
     """API request abstract class."""
 
@@ -39,7 +39,7 @@ class Request(metaclass=ABCMeta):
         logger.debug('Opened request %s', self)
 
 
-class HTTPRequest(Request, metaclass=ABCMeta):
+class HTTPRequest(Request):
 
     """Implements basic HTTP request behavior."""
 
@@ -70,7 +70,14 @@ class HTTPAPIRequest(HTTPRequest):
             urllib.parse.urlencode(self.params)
 
 
-class HTTPResponse:
+class Response(ABC):
+
+    @abstractmethod
+    def response_content(self):
+        pass
+
+
+class HTTPResponse(Response):
 
     """HTTP response.  Handles gzipped content."""
 
@@ -84,7 +91,7 @@ class HTTPResponse:
         return content.decode()
 
 
-class XMLResponse(HTTPResponse, metaclass=ABCMeta):
+class XMLResponse(HTTPResponse):
 
     """Abstract class for returning XMLResponseTree.
 
@@ -108,9 +115,9 @@ class XMLResponse(HTTPResponse, metaclass=ABCMeta):
         return tree
 
 
-class XMLTree(metaclass=ABCMeta):
+class XMLTree:
 
-    """Abstract class for handling API XML responses.
+    """Base class for handling API XML responses.
 
     Check error() for any errors.
 
