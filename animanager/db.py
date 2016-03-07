@@ -17,7 +17,6 @@
 
 from abc import ABC, abstractmethod
 import sqlite3
-import weakref
 
 
 class BaseDB(ABC):
@@ -101,14 +100,10 @@ class BaseDispatcher:
 
     """Base class for dispatchers for BaseCacheTableMixin subclasses."""
 
-    __slots__ = ('_cnx',)
+    __slots__ = ('cnx',)
 
     def __init__(self, parent):
-        self._cnx = weakref.ref(parent.cnx)
-
-    @property
-    def cnx(self):
-        return self._cnx()
+        self.cnx = parent.cnx
 
 
 class DatabaseError(Exception):
