@@ -18,9 +18,9 @@
 import logging
 import sqlite3
 
-from animanager import errors
+from animanager import db
 
-from .cache import CacheDB
+from .cache import AnimeCacheMixin
 from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
@@ -30,31 +30,19 @@ from .collections import WatchingAnime
 logger = logging.getLogger(__name__)
 
 
-class AnimeDB:
+class AnimeDB(
+        AnimeCacheMixin, db.UserVersionMixin, db.ForeignKeyMixin
+): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
 
-    VERSION = 1
-
     def __init__(self, database):
-        self.connect(database)
-        self.cache = CacheDB()
+        super().__init__(database)
         self._episode_types = None
 
-    def connect(self, database):
-        self.cnx = sqlite3.connect(database)
-        cur = self.cnx.execute('PRAGMA user_version')
-        version = cur.fetchone()[0]
-        if version != self.VERSION:
-            raise errors.DatabaseVersionError(self.VERSION, version)
-        self.cnx.execute('PRAGMA foreign_keys = ON')
-        cur = self.cnx.execute('PRAGMA foreign_keys')
-        if cur.fetchone()[0] != 1:
-            raise errors.DatabaseError('Foreign keys are not supported.')
-
-    def close(self):
-        self.cnx.close()
-        self.cache.close()
+    @property
+    def version(self):
+        return 1
 
     @property
     def episode_types(self):
@@ -139,7 +127,7 @@ class AnimeDB:
 
         # Try to fetch from cache.
         try:
-            return self.cache.get_anime_status(aid)
+            return self.anime_cache.get_anime_status(aid)
         except ValueError:
             pass
 
@@ -152,6 +140,7 @@ class AnimeDB:
             raise ValueError('aid provided does not exist')
         episodes = row[0]
 
+        # Select all regular episodes in ascending order.
         cur = self.cnx.execute("""
             SELECT number, user_watched FROM episode
             WHERE aid = ? AND type = ?
@@ -159,17 +148,19 @@ class AnimeDB:
             """, (aid, self.episode_types['regular']))
         rows = cur.fetchall()
         if not rows:
-            raise errors.DatabaseError('anime is missing episodes')
+            raise db.DatabaseError('anime is missing episodes')
 
         # We find the last consecutive episode that is user_watched.
         number = 0
         for number, watched in rows:
-            if watched == 0:  # if not watched
-                number -= 1  # The highest watched episode is the last one.
+            # Once we find the first unwatched episode, we set the last
+            # consecutive watched episode to the previous episode (or 0).
+            if watched == 0:
+                number -= 1
                 break
         # We store this in the cache.
         anime_status = AnimeStatus(aid, episodes <= number, number)
-        self.cache.set_anime_status(anime_status)
+        self.anime_cache.set_anime_status(anime_status)
         return anime_status
 
     def get_watching(self):

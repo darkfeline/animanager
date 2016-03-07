@@ -24,8 +24,6 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
-from animanager import errors
-
 logger = logging.getLogger(__name__)
 
 
@@ -42,6 +40,11 @@ class Request(ABC):
 class HTTPRequest(Request):
 
     """Implements basic HTTP request behavior."""
+
+    @property
+    @abstractmethod
+    def request_uri(self):
+        return ''
 
     def open(self):
         super().open()
@@ -74,7 +77,7 @@ class Response(ABC):
 
     @abstractmethod
     def response_content(self):
-        pass
+        return ''
 
 
 class HTTPResponse(Response):
@@ -99,7 +102,10 @@ class XMLResponse(HTTPResponse):
 
     """
 
-    tree_class = None
+    @property
+    @abstractmethod
+    def tree_class(self):
+        return None
 
     def xml(self):
         """Return the lookup data as an XMLResponseTree subclass.
@@ -111,7 +117,7 @@ class XMLResponse(HTTPResponse):
         content = self.response_content()
         tree = self.tree_class(ET.ElementTree(ET.fromstring(content)))
         if tree.error:
-            raise errors.APIError(tree)
+            raise APIError(tree)
         return tree
 
 
@@ -152,3 +158,7 @@ class XMLTree:
     @property
     def error(self):
         return self.root.find('error')
+
+
+class APIError(Exception):
+    pass

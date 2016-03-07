@@ -15,50 +15,59 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import sqlite3
+import weakref
+
+from animanager.db import BaseCacheTableMixin
+from animanager.db import BaseDispatcher
 
 from .collections import AnimeStatus
 
 
-class CacheDB:
+class AnimeCacheMixin(BaseCacheTableMixin):
 
-    def __init__(self):
-        self.cnx = sqlite3.connect(':memory:')
+    def setup_cache_tables(self):
         self.cnx.execute("""
-        CREATE TABLE anime (
+        CREATE TABLE IF NOT EXISTS cache_anime (
             aid INTEGER,
             status INTEGER NOT NULL CHECK(status IN (0, 1)),
             watched_episodes INTEGER NOT NULL,
-            PRIMARY KEY (aid)
+            PRIMARY KEY (aid),
+            FOREIGN KEY (aid) REFERENCES anime(aid)
+                ON DELETE CASCADE ON UPDATE CASCADE
         )""")
+        super().setup_cache_tables()
 
-    def close(self):
-        self.cnx.close()
+    def cleanup_cache_tables(self):
+        self.cnx.execute('DROP TABLE IF EXISTS cache_anime')
+        super().cleanup_cache_tables()
+
+    @property
+    def anime_cache(self):
+        return AnimeCacheDispatcher(self)
+
+
+class AnimeCacheDispatcher(BaseDispatcher):
+
+    __slots__ = ()
 
     def get_anime_status(self, aid):
-        """Try to get anime status from cache.
+        """Get anime status.
 
-        Returns a tuple (status, watched_episodes).  If AID is not in cache,
-        raises ValueError.
+        Returns AnimeStatus or raises ValueError.
 
         """
         cur = self.cnx.execute("""
-            SELECT status, watched_episodes FROM anime
-            WHERE aid = ?""", (aid,))
-        row = cur.fetchone()
-        if row is not None:
-            return AnimeStatus(aid, *row)
-        else:
-            raise ValueError('AID not in cache database')
+            SELECT status, watched_episodes FROM cache_anime
+            WHERE aid=?""", (aid,))
+        if cur is None:
+            raise ValueError('aid is not in cache')
+        return AnimeStatus(aid, *cur)
 
     def set_anime_status(self, anime_status):
-        """Set anime status.
-
-        anime_status is an AnimeStatus instance or identical tuple.
-
-        """
-        self.cnx.execute("""
-            INSERT OR REPLACE INTO anime
+        """Set anime status."""
+        self.cnx.execute(
+            """INSERT OR REPLACE INTO cache_anime
             (aid, status, watched_episodes)
-            VALUES (?, ?, ?)
-            """, anime_status)
+            VALUES (?, ?, ?)""",
+            anime_status)
+        self.cnx.commit()

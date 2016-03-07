@@ -25,7 +25,9 @@ class TitlesRequest(base.HTTPRequest):
 
     """Special AniDB request for titles data."""
 
-    request_uri = "http://anidb.net/api/anime-titles.xml.gz"
+    @property
+    def request_uri(self):
+        return "http://anidb.net/api/anime-titles.xml.gz"
 
     def open(self):
         response = super().open()
@@ -70,4 +72,6 @@ class TitlesTree(base.XMLTree):
 
 class TitlesResponse(base.XMLResponse):
 
-    tree_class = TitlesTree
+    @property
+    def tree_class(self):
+        return TitlesTree

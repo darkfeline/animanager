@@ -35,6 +35,15 @@ class AnimeRequest(base.HTTPAPIRequest):
         return AnimeResponse(response)
 
 
+class AnimeResponse(base.XMLResponse):
+
+    """Response from AnimeRequest."""
+
+    @property
+    def tree_class(self):
+        return AnimeTree
+
+
 def _parse_date(string):
     """Parse an ISO format date (YYYY-mm-dd)."""
     return datetime.datetime.strptime(string, '%Y-%m-%d').date()
@@ -110,13 +119,6 @@ class Episode:
                 return title.text
         # In case there's no Japanese title.
         return self.element.find('title').text
-
-
-class AnimeResponse(base.XMLResponse):
-
-    """Response from AnimeRequest."""
-
-    tree_class = AnimeTree
 
 
 class AnimeCache:

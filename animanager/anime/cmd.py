@@ -22,6 +22,7 @@ import re
 import readline  # pylint: disable=unused-import
 import shlex
 from textwrap import dedent
+import traceback
 
 from animanager.constants import VERSION
 
@@ -61,6 +62,12 @@ class AnimeCmd(Cmd):
         """Repeat the last command with new arguments."""
         return self.onecmd(' '.join((self.lastcmd, line)))
 
+    def onecmd(self, str):
+        try:
+            super().onecmd(str)
+        except Exception:
+            traceback.print_exc()
+
     ###########################################################################
     # Last command results handling
     last_cmd = None
@@ -86,6 +93,13 @@ class AnimeCmd(Cmd):
 
     def help_q(self):
         print('Alias for "quit".')
+
+    ###########################################################################
+    # administrative
+    def do_purgecache(self, arg):
+        """Purge cache tables."""
+        self.animedb.cleanup_cache_tables()
+        self.animedb.setup_cache_tables()
 
     ###########################################################################
     # add

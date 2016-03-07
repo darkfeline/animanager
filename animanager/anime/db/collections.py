@@ -37,6 +37,8 @@ AnimeStatus = namedtuple(
 
 class WatchingAnime(tuple):
 
+    __slots__ = []
+
     def __new__(cls, aid, regexp):
         regexp = re.compile(regexp, re.I)
         return cls(aid, regexp)
