@@ -48,6 +48,10 @@ Run `fetch.py`:
 Again, this may take a lot of time.  Do not remove the sleep call unless you
 want to get banned or you have a very small database.
 
+After all the data has been fetch, to do the migration, run:
+
+    $ python3 migrate.py
+
 Finally, use `manual.py` to dump those shows that could not be migrated
 automatically:
 
