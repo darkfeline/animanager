@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='animanager',
-    version='0.8.0',
+    version='0.9.0',
     packages=['animanager'],
     requires=['tabulate'],
     entry_points={
