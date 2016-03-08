@@ -2,6 +2,13 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
+## 0.9.0 - 2016-03-07
+
+This release is provided to "receive" migrated databases from 0.8.1.  This
+release is not feature complete or documented in any meaningful sense, but enough
+features have been provided for basic life-support management; type `?` after
+running `animanager anime`.
+
 ## 0.8.1 - 2016-03-07
 
 This release is provided solely to explain migration to 0.9.0.
