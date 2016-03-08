@@ -21,6 +21,7 @@ import sqlite3
 from animanager import db
 
 from .cache import AnimeCacheMixin
+from . import migrations
 from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
@@ -31,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
-        AnimeCacheMixin, db.UserVersionMixin, db.ForeignKeyMixin
+        AnimeCacheMixin, db.UserVersionMixin, db.ForeignKeyMixin, db.MigrationMixin
 ): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
@@ -43,6 +44,9 @@ class AnimeDB(
     @property
     def version(self):
         return 1
+
+    def migrate(self, cnx):
+        migrations.migrate(cnx)
 
     @property
     def episode_types(self):

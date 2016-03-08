@@ -62,6 +62,22 @@ class ForeignKeyMixin(SQLiteDB):
             raise DatabaseError('Foreign keys are not supported.')
 
 
+class MigrationMixin(SQLiteDB):
+
+    """Automated migration.
+
+    Make sure to include this after UserVersionMixin.
+
+    """
+    def connect(self, database):
+        super().connect(database)
+        self.migrate(self.cnx)
+
+    @abstractmethod
+    def migrate(self, cnx):
+        pass
+
+
 class UserVersionMixin(SQLiteDB):
 
     """Enables SQLite database user version checking."""
