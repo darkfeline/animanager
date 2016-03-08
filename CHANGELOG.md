@@ -2,11 +2,9 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
-## master
+## 0.8.1 - 2016-03-07
 
-### Changed
-
-- watch command now detects .avi files.
+This release is provided solely to explain migration to 0.9.0.
 
 ## 0.8.0 - 2016-01-23
 
