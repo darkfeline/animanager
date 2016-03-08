@@ -73,8 +73,7 @@ class UserVersionMixin(SQLiteDB):
 
     def connect(self, database):
         super().connect(database)
-        cur = self.cnx.execute('PRAGMA user_version')
-        version = cur.fetchone()[0]
+        version = get_user_version(self.cnx)
         if version != self.version:
             raise DatabaseVersionError(self.version, version)
 
@@ -106,8 +105,88 @@ class BaseDispatcher:
         self.cnx = parent.cnx
 
 
+def get_user_version(cnx):
+    return cnx.execute('PRAGMA user_version').fetchone()[0]
+
+
+def set_user_version(cnx, version):
+    return cnx.execute('PRAGMA user_version = ?', (version,))
+
+
+class MigrationManager:
+
+    """Simple database migration manager."""
+
+    def __init__(self, initial_version=0):
+        self.migrations = dict()
+        self.initial_version = initial_version
+        self.current_version = initial_version
+
+    def register(self, migration):
+        """Register a migration for version.
+
+        migration is a function taking a DB-API connection object that migrates
+        the database from the previous version to the supplied version.
+
+        You can only register migrations in order.  For example, you can
+        register migrations from version 1 to 2, then 2 to 3, then 3 to 4.  You
+        cannot register 1 to 2 followed by 3 to 4.  ValueError will be raised.
+
+        """
+        if migration.from_version != self.current_version:
+            raise ValueError('cannot register disjoint migration')
+        if migration.to_version <= migration.from_version:
+            raise ValueError('migration must upgrade version')
+        self.migrations[migration.from_version] = migration.from_version
+        self.current_version = migration.to_version
+
+    def migrate(self, cnx):
+        """Migrate a database as needed.
+
+        cnx is a DB-API connection object.  This is safe to call on an up to
+        date database, on an old database, or an uninitialized database
+        (version 0).
+
+        """
+        version = get_user_version(cnx)
+        while version < self.current_version:
+            try:
+                migration = self.migrations[version]
+            except KeyError:
+                raise DatabaseMigrationError(
+                    'no registered migration for database version')
+            migration.migrate(cnx)
+            version = migration.version
+            set_user_version(cnx, version)
+
+
+class BaseMigration(ABC):
+
+    @property
+    @abstractmethod
+    def from_version(self):
+        return 0
+
+    @property
+    @abstractmethod
+    def to_version(self):
+        return 0
+
+    @abstractmethod
+    def migrate(self, cnx):
+        """Migrate a database to the current version.
+
+        cnx is a DB-API connection object.
+
+        """
+
+
 class DatabaseError(Exception):
     """Database error."""
+
+
+class DatabaseMigrationError(DatabaseError):
+    """Database migration error."""
 
 
 class DatabaseVersionError(DatabaseError):
