@@ -158,7 +158,9 @@ class AnimeDB(
     def get_anime_status(self, aid):
         """Get anime status.
 
-        Returns an AnimeStatus instance.
+        Returns an AnimeStatus instance or raises ValueError.  Anime status
+        information is non-canonical and must be calculated or retrieved from
+        cache.
 
         """
 
