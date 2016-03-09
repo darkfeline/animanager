@@ -86,6 +86,13 @@ class AnimeCmd(Cmd):
         else:
             return ()
 
+    @staticmethod
+    def _print_results(results):
+        width = len(results) % 10 + 1
+        template = '{{:{}}} - {{}}'.format(width)
+        for i, text in enumerate(results):
+            print(template.format(i, text))
+
     ###########################################################################
     # quit
     def do_quit(self, arg):
@@ -133,11 +140,8 @@ class AnimeCmd(Cmd):
         self.animedb.add(anime)
 
     def _add_do_search(self, query):
-        results = self.searchdb.search(query)
-        width = len(results) % 10 + 1
-        template = '{{:{}}} - {{}}'.format(width)
-        for i, anime in enumerate(results):
-            print(template.format(i, anime.main_title))
+        results = [anime.main_title for anime in self.searchdb.search(query)]
+        self._print_results(results)
         self._set_last_cmd('add', results)
 
     ###########################################################################
@@ -168,11 +172,8 @@ class AnimeCmd(Cmd):
         self.animedb.bump(aid)
 
     def _bump_do_search(self, query):
-        results = list(self.animedb.search_anime(query))
-        width = len(results) % 10 + 1
-        template = '{{:{}}} - {{}}'.format(width)
-        for i, anime in enumerate(results):
-            print(template.format(i, anime.title))
+        results = [anime.title for anime in self.animedb.search_anime(query)]
+        self._print_results(results)
         self._set_last_cmd('bump', results)
 
     ###########################################################################
