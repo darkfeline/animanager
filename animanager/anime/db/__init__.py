@@ -144,17 +144,6 @@ class AnimeDB(
             raise ValueError('aid provided does not exist')
         return Anime(*row)
 
-    def get_anime_full(self, aid):
-        """Get full anime row.
-
-        This includes information that is not in the permanent database and
-        will need to either be calculated or fetched from cache.
-
-        """
-        anime = self.get_anime(aid)
-        anime_status = self.get_anime_status(aid)
-        return AnimeFull(*anime, *anime_status[1:])
-
     def get_anime_status(self, aid):
         """Get anime status.
 
