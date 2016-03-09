@@ -193,6 +193,8 @@ class AnimeDB(
 
     def get_watching(self):
         """Return watching series."""
-        cur = self.cnx.execute('SELECT aid, regexp FROM watching')
-        return [WatchingAnime(aid, re.compile(regexp, re.I))
-                for aid, regexp in cur.fetchall()]
+        cur = self.cnx.execute(
+            """SELECT anime.aid, title, type, episodes, regexp
+            FROM anime JOIN watching ON aid""")
+        return [WatchingAnime(*row[:-1], re.compile(row[-1], re.I))
+                for row in cur.fetchall()]

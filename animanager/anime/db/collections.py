@@ -31,4 +31,4 @@ AnimeStatus = namedtuple(
 
 WatchingAnime = namedtuple(
     'WatchingAnime',
-    ['aid', 'regexp'])
+    ['aid', 'title', 'type', 'episodes', 'regexp'])
