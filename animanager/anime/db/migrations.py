@@ -39,13 +39,8 @@ def migrate(cnx):
 @_register
 class Migration1(BaseMigration):
 
-    @property
-    def from_version(self):
-        return 0
-
-    @property
-    def to_version(self):
-        return 1
+    _from_version = 0
+    _to_version = 1
 
     def migrate(self, cnx):
         cnx.execute("""

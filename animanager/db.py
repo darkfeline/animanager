@@ -178,15 +178,16 @@ class MigrationManager:
 
 class BaseMigration(ABC):
 
-    @property
-    @abstractmethod
-    def from_version(self):
-        return 0
+    _from_version = 0
+    _to_version = 0
 
     @property
-    @abstractmethod
+    def from_version(self):
+        return self._from_version
+
+    @property
     def to_version(self):
-        return 0
+        return self._to_version
 
     @abstractmethod
     def migrate(self, cnx):
