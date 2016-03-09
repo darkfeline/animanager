@@ -62,7 +62,7 @@ class ForeignKeyMixin(SQLiteDB):
             raise DatabaseError('Foreign keys are not supported.')
 
 
-class MigrationMixin(SQLiteDB):
+class BaseMigrationMixin(SQLiteDB):
 
     """Automated migration.
 
