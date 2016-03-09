@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import re
 import sqlite3
 
 from animanager import db
@@ -202,5 +203,5 @@ class AnimeDB(
     def get_watching(self):
         """Return watching series."""
         cur = self.cnx.execute('SELECT aid, regexp FROM watching')
-        return [WatchingAnime(aid, regexp)
+        return [WatchingAnime(aid, re.compile(regexp, re.I))
                 for aid, regexp in cur.fetchall()]
