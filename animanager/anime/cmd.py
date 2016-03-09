@@ -16,6 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from cmd import Cmd
+from collections import defaultdict
+import logging
 import os
 import re
 # readline is needed for command editing.
@@ -29,10 +31,12 @@ from animanager.constants import VERSION
 from . import anidb
 from .db import AnimeDB
 
+logger = logging.getLogger(__name__)
+
 
 class AnimeCmd(Cmd):
 
-    # pylint: disable=no-self-use,unused-argument
+    # pylint: disable=no-self-use,unused-argument,too-many-instance-attributes
 
     intro = dedent('''\
     Animanager {}
@@ -200,11 +204,7 @@ class AnimeCmd(Cmd):
         """Watch an anime."""
         raise NotImplementedError
         if not arg:
-            # Find and show watching anime.
-            watchdir = self.config.anime.watchdir
-            files = self._find_files(watchdir)
-            watching = self.animedb.get_watching()
-            pass  # XXX
+            self._watch_list_all()
         elif arg.isdigit():
             # Handle count.
             pass  # XXX
@@ -218,6 +218,31 @@ class AnimeCmd(Cmd):
         # XXX match rules
         # XXX play file
         # XXX bump
+
+    def _watch_list_all(self):
+        # Find files.
+        watchdir = self.config.anime.watchdir
+        files = self._find_files(watchdir)
+
+        # Associate files with watching anime.
+        watching_list = self.animedb.get_watching()
+        anime_files = dict((anime.aid, defaultdict(list)) for anime in watching_list)
+        for filename in files:
+            for anime in watching_list:
+                match = anime.regexp.search(os.path.basename(filename))
+                if match:
+                    try:
+                        ep = int(match.group('ep'))
+                    except ValueError:
+                        logger.error(
+                            'Invalid episode matched using %s for %s',
+                            anime.title, filename)
+                        continue
+                    anime_files[anime.aid][ep].append(files)
+                    break
+
+        # Print
+        pass  # XXX
 
     ###########################################################################
     # GPL information.
