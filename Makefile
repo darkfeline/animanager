@@ -14,6 +14,6 @@ test:
 	python3 -m unittest discover
 
 lint:
-	pylint animanager
+	pylint animanager tests || true
 
 .PHONY: all publish test lint
