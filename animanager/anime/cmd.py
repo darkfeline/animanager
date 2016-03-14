@@ -286,7 +286,7 @@ class AnimeCmd(Cmd):
     def do_show(self, arg):
         """Show anime data."""
         aid = self.get_aid(arg)
-        anime = self.animedb.lookup(aid)
+        anime = self.animedb.lookup(aid, episodes=True)
 
         print('AID: {}'.format(anime.aid))
         print('Title: {}'.format(anime.title))
@@ -317,33 +317,8 @@ class AnimeCmd(Cmd):
     # bump
     def do_bump(self, arg):
         """Bump anime."""
-        if not arg:
-            self.do_help('bump')
-        elif arg.isdigit():
-            self._bump_by_count(int(arg))
-        elif arg[0] == '#' and arg[1:].isdigit():
-            aid = int(arg[1:])
-            self._bump_by_aid(aid)
-        else:
-            query = '%{}%'.format('%'.join(shlex.split(arg)))
-            self._bump_do_search(query)
-
-    def _bump_by_count(self, count):
-        results = self._get_last_cmd('bump')
-        try:
-            anime = results[count]
-        except IndexError:
-            print('Invalid count or stale results.')
-        else:
-            self._bump_by_aid(anime.aid)
-
-    def _bump_by_aid(self, aid):
+        aid = self.get_aid(arg)
         self.animedb.bump(aid)
-
-    def _bump_do_search(self, query):
-        results = [anime.title for anime in self.animedb.search_anime(query)]
-        self._print_results(results)
-        self._set_last_cmd('bump', results)
 
     ###########################################################################
     # watch

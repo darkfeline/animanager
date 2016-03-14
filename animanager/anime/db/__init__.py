@@ -146,12 +146,17 @@ class AnimeDB(
                 WHERE anime.aid=?""", (aid,))
             yield Anime(*cur.fetchone())
 
-    def lookup(self, aid):
+    def lookup(self, aid, episodes=False):
         """Look up full information for a single anime.
 
-        Force status calculation.
+        If episodes is True, individual episodes will be looked up and included
+        in the returned AnimeFull instance.  Otherwise, the episodes attribute
+        on the returned AnimeFull instance will be None.
+
+        This forces status calculation.
 
         """
+        self.cache_status(aid, force=True)
         cur = self.cnx.execute("""
             SELECT anime.aid, title, type, episodes, startdate, enddate,
                 watched_episodes, complete
@@ -160,31 +165,37 @@ class AnimeDB(
         anime = cur.fetchone()
         if anime is None:
             raise ValueError('Invalid aid')
-        cur = self.cnx.execute("""
-            SELECT aid, type, number, title, length, user_watched
-            FROM episode WHERE aid=?""", (aid,))
-        episodes = [Episode(*row)for row in cur]
-        return AnimeFull(*anime, episodes)
+        if episodes:
+            cur = self.cnx.execute("""
+                SELECT aid, type, number, title, length, user_watched
+                FROM episode WHERE aid=?""", (aid,))
+            episodes = [Episode(*row)for row in cur]
+            return AnimeFull(*anime, episodes)
+        else:
+            return AnimeFull(*anime, None)
 
-    # XXX
-    def bump(self, aid):
-        """Bump anime regular episode count."""
-        anime_full = self.get_anime_full(aid)
-        if anime_full.complete:
-            return
-        episode = anime_full.watched_episodes + 1
+    def set_watched(self, aid, ep_type, number):
+        """Set episode as watched."""
         self.cnx.execute(
             """UPDATE episode SET user_watched=:watched
             WHERE aid=:aid AND type=:type AND number=:number""",
             {
                 'aid': aid,
-                'type': self.episode_types['regular'].id,
-                'number': episode,
+                'type': ep_type,
+                'number': number,
                 'watched': 1,
             })
         self.cnx.commit()
-        self.anime_cache.set_anime_status(
-            AnimeStatus(aid, episode >= anime_full.episodes, episode))
+
+    def bump(self, aid):
+        """Bump anime regular episode count."""
+        anime = self.lookup(aid)
+        if anime.complete:
+            return
+        episode = anime.watched_episodes + 1
+        self.set_watched(aid, self.episode_types['regular'].id, episode)
+        self.anime_cache.set_status(
+            AnimeStatus(aid, episode >= anime.episodecount, episode))
 
     def cache_status(self, aid, force=False):
         """Calculate and cache status for given anime.
