@@ -236,7 +236,7 @@ class AnimeCmd(Cmd):
             print('    Length: {}'.format(episode.length))
             print('    Title: {}'.format(episode.title))
 
-    do_ash = do_asearch
+    do_ash = do_ashow
 
     def help_ash(self):
         print('Alias for ashow.')
