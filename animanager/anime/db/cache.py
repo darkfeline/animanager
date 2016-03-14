@@ -18,8 +18,6 @@
 from animanager.db import BaseCacheTableMixin
 from animanager.db import BaseDispatcher
 
-from .collections import AnimeStatus
-
 
 class AnimeCacheMixin(BaseCacheTableMixin):
 
