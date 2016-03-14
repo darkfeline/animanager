@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-import os
 import re
 
 from . import base
@@ -123,31 +122,3 @@ class Episode:
                 return title.text
         # In case there's no Japanese title.
         return self.element.find('title').text
-
-
-class AnimeCache:
-
-    """Provides access to local cache of AniDB data.
-
-    The AniDB cache is simply a directory containing XML files named <AID>.xml.
-
-    """
-
-    def __init__(self, cachedir):
-        self.cachedir = cachedir
-
-    def filepath(self, aid):
-        """Return the path to the respective cache file."""
-        return os.path.join(self.cachedir, '{}.xml'.format(aid))
-
-    def has(self, aid):
-        """Return whether entry is in the cache."""
-        return os.path.exists(self.filepath(aid))
-
-    def store(self, tree):
-        """Store an entry in the cache."""
-        tree.write(self.filepath(tree.aid))
-
-    def retrieve(self, aid):
-        """Retrieve an entry from the cache."""
-        return AnimeTree.parse(self.filepath(aid))
