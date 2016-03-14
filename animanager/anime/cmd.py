@@ -285,25 +285,27 @@ class AnimeCmd(Cmd):
     # show
     def do_show(self, arg):
         """Show anime data."""
-        # XXX
-        aid = self.get_aid(arg, aresults=True)
-        anime = self.anidb.lookup(aid)
+        aid = self.get_aid(arg)
+        anime = self.animedb.lookup(aid)
 
         print('AID: {}'.format(anime.aid))
         print('Title: {}'.format(anime.title))
         print('Type: {}'.format(anime.type))
-        print('Episodes: {}'.format(anime.episodecount))
+        print('Episodes: {}/{}'.format(anime.watched_episodes,
+                                       anime.episodecount))
+        print('Complete: {}'.format('yes' if anime.complete else 'no'))
         print('Start date: {}'.format(anime.startdate))
         print('End date: {}\n'.format(anime.enddate))
 
         print(tabulate(
-            [
-                (episode.epno, episode.title, episode.length)
+            (
+                (self.animedb.get_epno(episode), episode.title, episode.length,
+                 'yes' if episode.user_watched else '')
                 for episode in sorted(
                      anime.episodes,
                      key=lambda x: (x.type, x.number))
-            ],
-            headers=['Number', 'Title', 'min'],
+            ),
+            headers=['Number', 'Title', 'min', 'Watched'],
         ))
 
     do_sh = do_show

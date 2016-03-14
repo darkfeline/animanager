@@ -43,6 +43,7 @@ class AnimeDB(
     def __init__(self, database):
         super().__init__(database)
         self._episode_types = None
+        self._episode_types_by_id = None
 
     @property
     def version(self):
@@ -56,15 +57,42 @@ class AnimeDB(
         """Episode types.
 
         Returns a dictionary mapping episode type name strings to EpisodeType
-        instances.  EpisodeType instances have two attributes, id and prefix.
+        instances.
 
         """
         if self._episode_types is None:
-            self._episode_types = dict()
+            ep_types = dict()
             cur = self.cnx.execute('SELECT id, name, prefix FROM episode_type')
             for type_id, name, prefix in cur:
-                self._episode_types[name] = EpisodeType(type_id, prefix)
+                ep_types[name] = EpisodeType(type_id, prefix)
+            self._episode_types = ep_types
         return self._episode_types
+
+    @property
+    def episode_types_by_id(self):
+        """Episode types by id.
+
+        Returns a dictionary mapping episode type ids to EpisodeType
+        instances.
+
+        """
+        if self._episode_types_by_id is None:
+            ep_types = dict()
+            cur = self.cnx.execute('SELECT id, prefix FROM episode_type')
+            for type_id, prefix in cur:
+                ep_types[type_id] = EpisodeType(type_id, prefix)
+            self._episode_types_by_id = ep_types
+        return self._episode_types_by_id
+
+    def get_epno(self, episode):
+        """Return epno for Episode instance.
+
+        epno is a string formatted with the episode number and type,
+        e.g., S1, T2.
+
+        """
+        return '{}{}'.format(self.episode_types_by_id[episode.type].prefix,
+                             episode.number)
 
     def add(self, anime):
         """Add an anime (or update existing).
@@ -125,7 +153,7 @@ class AnimeDB(
 
         """
         cur = self.cnx.execute("""
-            SELECT anime.aid, title, type, episodes,
+            SELECT anime.aid, title, type, episodes, startdate, enddate,
                 watched_episodes, complete
             FROM anime LEFT JOIN cache_anime USING (aid)
             WHERE anime.aid=?""", (aid,))
