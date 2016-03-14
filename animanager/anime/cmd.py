@@ -26,12 +26,76 @@ import shlex
 from textwrap import dedent
 import traceback
 
+from tabulate import tabulate
+
 from animanager.constants import VERSION
 
 from . import anidb
 from .db import AnimeDB
 
 logger = logging.getLogger(__name__)
+
+
+class SearchResults:
+
+    """Class for managing search results for commands to access.
+
+    >>> SearchResults(['title'])
+    SearchResults(['title'], [])
+
+    >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
+    SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
+
+    """
+
+    def __init__(self, headers, results=None):
+        self.headers = ['#'] + headers
+        if results is None:
+            self.results = list()
+        else:
+            self.results = results
+
+    def __repr__(self):
+        return 'SearchResults({}, {})'.format(
+            self.headers[1:],
+            self.results
+        )
+
+    def set(self, results):
+        """Set results.
+
+        results is an iterable of tuples, where each tuple is a row of results.
+
+        >>> x = SearchResults(['title'])
+        >>> x.set([('Konosuba',), ('Oreimo',)])
+        >>> x
+        SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
+
+        """
+        self.results = list(results)
+
+    def get(self, number):
+        """Get a result row.
+
+        results are indexed from 1.
+
+        >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)]).get(1)
+        ('Konosuba',)
+
+        """
+        return self.results[number + 1]
+
+    def print(self):
+        """Print results table.
+
+        >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)]).print()
+        XXX
+
+        """
+        print(tabulate(
+            (tuple(i, *row) for i, row in enumerate(self.results, 1)),
+            headers=self.headers,
+        ))
 
 
 class AnimeCmd(Cmd):
@@ -51,9 +115,16 @@ class AnimeCmd(Cmd):
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = config
+
         self.anidb = anidb.AniDB(config.anime.anidb_cache)
         self.searchdb = anidb.SearchDB(config.anime.anidb_cache)
         self.animedb = AnimeDB(config.anime.database)
+
+        # Set lastaid, so I don't have to handle None/uninitialized case.
+        # First thing that came to mind was Madoka.  No deep meaning to it.
+        self.lastaid = 8069
+        self.results = SearchResults(['Title'])
+        self.aresults = SearchResults(['AID', 'Title'])
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -73,29 +144,48 @@ class AnimeCmd(Cmd):
             traceback.print_exc()
 
     ###########################################################################
-    # Last command results handling
-    last_cmd = None
-    last_cmd_results = None
+    # Parsing
+    def parse_aid(self, text, aresults=False):
+        """Parse argument text for aid.
 
-    def _clear_last_cmd(self):
-        self.last_cmd = None
+        May retrieve the aid from search result tables as necessary.  aresults
+        determines which search results to use by default; True means aresults
+        is the default.
 
-    def _set_last_cmd(self, cmd, results):
-        self.last_cmd = cmd
-        self.last_cmd_results = results
+        The accepted formats, in order:
 
-    def _get_last_cmd(self, cmd):
-        if self.last_cmd == cmd:
-            return self.last_cmd_results
+        Explicit AID:              aid:12345
+        Explicit results number:   #:12
+        Explicit aresults number:  a#:12
+        Default results number:    12
+
+        """
+        if text.startswith('aid:'):
+            return int(text[len('aid:'):])
+        elif text.startswith('#:'):
+            number = int(text[len('#:'):])
+            return self.results.get(number)
+        elif text.startswith('a#:'):
+            number = int(text[len('a#:'):])
+            return self.aresults.get(number)
         else:
-            return ()
+            number = int(text)
+            if aresults:
+                return self.aresults.get(number)
+            else:
+                return self.results.get(number)
 
-    @staticmethod
-    def _print_results(results):
-        width = len(results) % 10 + 1
-        template = '{{:{}}} - {{}}'.format(width)
-        for i, text in enumerate(results):
-            print(template.format(i, text))
+    def get_aid(self, arg, aresults=False):
+        """Get aid from argument string.
+
+        This extends parse_aid() with lastaid handling.
+
+        """
+        if arg:
+            aid = self.parse_aid(arg, aresults=aresults)
+            self.lastaid = aid
+        else:
+            aid = self.lastaid
 
     ###########################################################################
     # quit
@@ -116,37 +206,52 @@ class AnimeCmd(Cmd):
         self.animedb.setup_cache_tables()
 
     ###########################################################################
+    # asearch
+    def do_asearch(self, arg):
+        """Search AniDB."""
+        query = re.compile('.*'.join(shlex.split(arg)), re.I)
+        results = [anime for anime in self.searchdb.search(query)]
+        results = [(anime.aid, anime.main_title) for anime in results]
+        self.aresults.set(results)
+        self.aresults.print()
+
+    do_as = do_asearch
+
+    def help_as(self):
+        print('Alias for asearch.')
+
+    ###########################################################################
+    # ashow
+    def do_ashow(self, arg):
+        """Show information about anime in AniDB."""
+        aid = self.get_aid(arg, aresults=True)
+        anime = self.anidb.lookup(aid)
+
+        print('AID: {}'.format(anime.aid))
+        print('Title: {}'.format(anime.title))
+        print('Type: {}'.format(anime.type))
+        print('Episodes: {}'.format(anime.episodecount))
+        print('Start date: {}'.format(anime.startdate))
+        print('End date: {}'.format(anime.enddate))
+        print('\nEpisodes:\n')
+
+        for episode in anime.episodes:
+            print('    Number: {}'.format(episode.epno))
+            print('    Length: {}'.format(episode.length))
+            print('    Title: {}'.format(episode.title))
+
+    do_ash = do_asearch
+
+    def help_ash(self):
+        print('Alias for ashow.')
+
+    ###########################################################################
     # add
     def do_add(self, arg):
         """Add an anime or update an existing anime."""
-        if not arg:
-            self.do_help('add')
-        elif arg.isdigit():
-            self._add_by_count(int(arg))
-        elif arg[0] == '#' and arg[1:].isdigit():
-            aid = int(arg[1:])
-            self._add_by_aid(aid)
-        else:
-            query = re.compile('.*'.join(shlex.split(arg)), re.I)
-            self._add_do_search(query)
-
-    def _add_by_count(self, count):
-        results = self._get_last_cmd('add')
-        try:
-            anime = results[count]
-        except IndexError:
-            print('Invalid count or stale results.')
-        else:
-            self._add_by_aid(anime.aid)
-
-    def _add_by_aid(self, aid):
+        aid = self.get_aid(arg, aresults=True)
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
-
-    def _add_do_search(self, query):
-        results = [anime.main_title for anime in self.searchdb.search(query)]
-        self._print_results(results)
-        self._set_last_cmd('add', results)
 
     ###########################################################################
     # bump
