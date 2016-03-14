@@ -99,6 +99,10 @@ class Episode:
         self.element = element
 
     @property
+    def epno(self):
+        return self.element.find('epno').text
+
+    @property
     def number(self):
         epno = self.element.find('epno').text
         epno = self._EPNO_PREFIX.sub('', epno)
