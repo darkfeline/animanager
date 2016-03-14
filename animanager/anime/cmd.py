@@ -238,9 +238,9 @@ class AnimeCmd(Cmd):
                 (episode.epno, episode.title, episode.length)
                 for episode in sorted(
                      anime.episodes,
-                     key=lambda x: x.epno)
+                     key=lambda x: (x.type, x.number))
             ],
-            headers=['Number', 'Title', 'Length'],
+            headers=['Number', 'Title', 'min'],
         ))
 
     do_ash = do_ashow
