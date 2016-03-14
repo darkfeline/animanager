@@ -83,15 +83,10 @@ class SearchResults:
         ('Konosuba',)
 
         """
-        return self.results[number + 1]
+        return self.results[number - 1]
 
     def print(self):
-        """Print results table.
-
-        >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)]).print()
-        XXX
-
-        """
+        """Print results table."""
         print(tabulate(
             ((i, *row) for i, row in enumerate(self.results, 1)),
             headers=self.headers,
@@ -159,16 +154,16 @@ class AnimeCmd(Cmd):
             return int(text[len('aid:'):])
         elif text.startswith('#:'):
             number = int(text[len('#:'):])
-            return self.results.get(number)
+            return self.results.get(number)[0]
         elif text.startswith('a#:'):
             number = int(text[len('a#:'):])
-            return self.aresults.get(number)
+            return self.aresults.get(number)[0]
         else:
             number = int(text)
             if aresults:
-                return self.aresults.get(number)
+                return self.aresults.get(number)[0]
             else:
-                return self.results.get(number)
+                return self.results.get(number)[0]
 
     def get_aid(self, arg, aresults=False):
         """Get aid from argument string.
