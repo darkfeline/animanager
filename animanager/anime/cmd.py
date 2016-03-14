@@ -93,7 +93,7 @@ class SearchResults:
 
         """
         print(tabulate(
-            (tuple(i, *row) for i, row in enumerate(self.results, 1)),
+            ((i, *row) for i, row in enumerate(self.results, 1)),
             headers=self.headers,
         ))
 
