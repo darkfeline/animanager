@@ -25,7 +25,6 @@ from .cache import AnimeCacheMixin
 from . import migrations
 from .collections import EpisodeType
 from .collections import Anime
-from .collections import AnimeFull
 from .collections import AnimeStatus
 from .collections import WatchingAnime
 
