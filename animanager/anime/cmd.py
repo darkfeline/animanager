@@ -117,7 +117,9 @@ class AnimeCmd(Cmd):
         # Set lastaid, so I don't have to handle None/uninitialized case.
         # First thing that came to mind was Madoka.  No deep meaning to it.
         self.lastaid = 8069
-        self.results = SearchResults(['Title'])
+        self.results = SearchResults([
+            'AID', 'Title', 'Type', 'Episodes', 'Complete',
+        ])
         self.aresults = SearchResults(['AID', 'Title'])
 
     @classmethod
@@ -255,6 +257,59 @@ class AnimeCmd(Cmd):
         aid = self.get_aid(arg, aresults=True)
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
+
+    ###########################################################################
+    # search
+    def do_search(self, arg):
+        """Search Animanager database."""
+        if not arg:
+            print('Missing query.')
+            return
+        query = '%{}%'.format('%'.join(shlex.split(arg)))
+        results = self.animedb.search(query)
+        results = [
+            (anime.aid, anime.title, anime.type,
+             '{}/{}'.format(anime.watched_episodes, anime.episodes),
+             'yes' if anime.complete else '')
+            for anime in results
+        ]
+        self.results.set(results)
+        self.results.print()
+
+    do_s = do_search
+
+    def help_s(self):
+        print('Alias for search.')
+
+    ###########################################################################
+    # show
+    def do_show(self, arg):
+        """Show anime data."""
+        # XXX
+        aid = self.get_aid(arg, aresults=True)
+        anime = self.anidb.lookup(aid)
+
+        print('AID: {}'.format(anime.aid))
+        print('Title: {}'.format(anime.title))
+        print('Type: {}'.format(anime.type))
+        print('Episodes: {}'.format(anime.episodecount))
+        print('Start date: {}'.format(anime.startdate))
+        print('End date: {}\n'.format(anime.enddate))
+
+        print(tabulate(
+            [
+                (episode.epno, episode.title, episode.length)
+                for episode in sorted(
+                     anime.episodes,
+                     key=lambda x: (x.type, x.number))
+            ],
+            headers=['Number', 'Title', 'min'],
+        ))
+
+    do_sh = do_show
+
+    def help_sh(self):
+        print('Alias for show.')
 
     ###########################################################################
     # bump

@@ -104,14 +104,16 @@ class AnimeDB(
         Returns an Anime instance generator.  Caches anime status lazily.
 
         """
-        cur = self.cnx.execute('SELECT aid FROM anime LIKE ?', (query,))
+        cur = self.cnx.execute('SELECT aid FROM anime WHERE title LIKE ?',
+                               (query,))
         aids = [row[0] for row in cur]
         for aid in aids:
             self.cache_status(aid)
             cur = self.cnx.execute("""
-                SELECT aid, title, type, episodes, watched_episodes, complete
-                FROM anime LEFT JOIN cache_anime ON aid
-                WHERE aid=?""", (aid,))
+                SELECT anime.aid, title, type, episodes,
+                    watched_episodes, complete
+                FROM anime LEFT JOIN cache_anime USING (aid)
+                WHERE anime.aid=?""", (aid,))
             yield Anime(*cur.fetchone())
 
     # XXX
