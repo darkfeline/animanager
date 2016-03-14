@@ -182,6 +182,7 @@ class AnimeCmd(Cmd):
             self.lastaid = aid
         else:
             aid = self.lastaid
+        return aid
 
     ###########################################################################
     # quit
