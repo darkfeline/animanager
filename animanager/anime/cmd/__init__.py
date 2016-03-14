@@ -63,12 +63,10 @@ class AnimeCmd(Cmd):
         # First thing that came to mind was Madoka.  No deep meaning to it.
         self.lastaid = 8069
         self.results = AIDResultsManager()
-        self.results.register('db', AIDSearchResults([
-            'AID', 'Title', 'Type', 'Episodes', 'Complete',
-        ]))
-        self.results.register('anidb', AIDSearchResults([
-            'AID', 'Title',
-        ]))
+        self.results['db'] = AIDSearchResults([
+            'Title', 'Type', 'Episodes', 'Complete',
+        ])
+        self.results['anidb'] = AIDSearchResults(['Title'])
 
     @classmethod
     def run_with_file(cls, config, file):
