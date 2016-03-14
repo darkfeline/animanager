@@ -18,10 +18,10 @@
 
 import unittest
 
-from . import results
+from . import searchresults
 
 
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    suite.addTests(loader.loadTestsFromModule(results))
+    suite.addTests(loader.loadTestsFromModule(searchresults))
     return suite
