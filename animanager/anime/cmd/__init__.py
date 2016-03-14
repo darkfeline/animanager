@@ -169,6 +169,11 @@ class AnimeCmd(Cmd):
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
 
+    do_a = do_add
+
+    def help_a(self):
+        print('Alias for add.')
+
     ###########################################################################
     # search
     def do_search(self, arg):
@@ -230,6 +235,11 @@ class AnimeCmd(Cmd):
         """Bump anime."""
         aid = self.get_aid(arg, default_key='db')
         self.animedb.bump(aid)
+
+    do_b = do_bump
+
+    def help_b(self):
+        print('Alias for bump.')
 
     ###########################################################################
     # watch
