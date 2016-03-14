@@ -29,68 +29,12 @@ import traceback
 from tabulate import tabulate
 
 from animanager.constants import VERSION
+from animanager.anime import anidb
+from animanager.anime.db import AnimeDB
 
-from . import anidb
-from .db import AnimeDB
+from .results import AIDSearchResults
 
 logger = logging.getLogger(__name__)
-
-
-class SearchResults:
-
-    """Class for managing search results for commands to access.
-
-    >>> SearchResults(['title'])
-    SearchResults(['title'], [])
-
-    >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-    SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-
-    """
-
-    def __init__(self, headers, results=None):
-        self.headers = ['#'] + headers
-        if results is None:
-            self.results = list()
-        else:
-            self.results = results
-
-    def __repr__(self):
-        return 'SearchResults({}, {})'.format(
-            self.headers[1:],
-            self.results
-        )
-
-    def set(self, results):
-        """Set results.
-
-        results is an iterable of tuples, where each tuple is a row of results.
-
-        >>> x = SearchResults(['title'])
-        >>> x.set([('Konosuba',), ('Oreimo',)])
-        >>> x
-        SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-
-        """
-        self.results = list(results)
-
-    def get(self, number):
-        """Get a result row.
-
-        results are indexed from 1.
-
-        >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)]).get(1)
-        ('Konosuba',)
-
-        """
-        return self.results[number - 1]
-
-    def print(self):
-        """Print results table."""
-        print(tabulate(
-            ((i, *row) for i, row in enumerate(self.results, 1)),
-            headers=self.headers,
-        ))
 
 
 class AnimeCmd(Cmd):
@@ -117,10 +61,10 @@ class AnimeCmd(Cmd):
         # Set lastaid, so I don't have to handle None/uninitialized case.
         # First thing that came to mind was Madoka.  No deep meaning to it.
         self.lastaid = 8069
-        self.results = SearchResults([
+        self.results = AIDSearchResults([
             'AID', 'Title', 'Type', 'Episodes', 'Complete',
         ])
-        self.aresults = SearchResults(['AID', 'Title'])
+        self.aresults = AIDSearchResults(['AID', 'Title'])
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -156,16 +100,16 @@ class AnimeCmd(Cmd):
             return int(text[len('aid:'):])
         elif text.startswith('#:'):
             number = int(text[len('#:'):])
-            return self.results.get(number)[0]
+            return self.results.get_aid(number)
         elif text.startswith('a#:'):
             number = int(text[len('a#:'):])
-            return self.aresults.get(number)[0]
+            return self.aresults.get_aid(number)
         else:
             number = int(text)
             if aresults:
-                return self.aresults.get(number)[0]
+                return self.aresults.get_aid(number)
             else:
-                return self.results.get(number)[0]
+                return self.results.get_aid(number)
 
     def get_aid(self, arg, aresults=False):
         """Get aid from argument string.

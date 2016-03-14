@@ -19,12 +19,12 @@
 import unittest
 import doctest
 
-from animanager.anime import cmd
+from animanager.anime.cmd import results
 
 from . import parse_aid
 
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    suite.addTests(doctest.DocTestSuite(cmd))
+    suite.addTests(doctest.DocTestSuite(results))
     suite.addTests(loader.loadTestsFromModule(parse_aid))
     return suite

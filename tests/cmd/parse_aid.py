@@ -18,15 +18,15 @@
 import unittest
 
 from animanager.anime.cmd import AnimeCmd
-from animanager.anime.cmd import SearchResults
+from animanager.anime.cmd.results import AIDSearchResults
 
 
 class FakeAnimeCmd:
 
     def __init__(self, results, aresults):
-        self.results = SearchResults(['aid'])
+        self.results = AIDSearchResults(['aid'])
         self.results.set(results)
-        self.aresults = SearchResults(['aid'])
+        self.aresults = AIDSearchResults(['aid'])
         self.aresults.set(aresults)
 
     parse_aid = AnimeCmd.parse_aid
@@ -36,8 +36,8 @@ class ParseAIDTestCase(unittest.TestCase):
 
     def setUp(self):
         self.cmd = FakeAnimeCmd(
-            [(1,), (2,), (3,)],
-            [(4,), (5,), (6,)])
+            [(1, 'Madoka'), (2, 'Madoka'), (3, 'Madoka')],
+            [(4, 'Madoka'), (5, 'Madoka'), (6, 'Madoka')])
         self.parse_aid = self.cmd.parse_aid
 
     def test_explicit_aid(self):
