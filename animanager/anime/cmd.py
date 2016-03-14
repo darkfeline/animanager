@@ -226,13 +226,17 @@ class AnimeCmd(Cmd):
         print('Type: {}'.format(anime.type))
         print('Episodes: {}'.format(anime.episodecount))
         print('Start date: {}'.format(anime.startdate))
-        print('End date: {}'.format(anime.enddate))
-        print('\nEpisodes:\n')
+        print('End date: {}\n'.format(anime.enddate))
 
-        for episode in anime.episodes:
-            print('    Number: {}'.format(episode.epno))
-            print('    Length: {}'.format(episode.length))
-            print('    Title: {}'.format(episode.title))
+        print(tabulate(
+            [
+                (episode.epno, episode.title, episode.length)
+                for episode in sorted(
+                     anime.episodes,
+                     key=lambda x: x.epno)
+            ],
+            headers=['Number', 'Title', 'Length'],
+        ))
 
     do_ash = do_ashow
 
