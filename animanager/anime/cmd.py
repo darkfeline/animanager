@@ -168,11 +168,16 @@ class AnimeCmd(Cmd):
     def get_aid(self, arg, aresults=False):
         """Get aid from argument string.
 
-        This extends parse_aid() with lastaid handling.
+        This extends parse_aid() with lastaid handling and other user-friendly
+        features.  parse_aid() is kept separate for testing and modularity.
 
         """
         if arg:
-            aid = self.parse_aid(arg, aresults=aresults)
+            try:
+                aid = self.parse_aid(arg, aresults=aresults)
+            except IndexError as e:
+                logger.debug('Error parsing aid: %s', e)
+                print('Error parsing aid.')
             self.lastaid = aid
         else:
             aid = self.lastaid
