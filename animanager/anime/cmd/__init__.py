@@ -33,6 +33,7 @@ from animanager.anime import anidb
 from animanager.anime.db import AnimeDB
 
 from .searchresults import AIDSearchResults
+from .searchresults import AIDResultsManager
 
 logger = logging.getLogger(__name__)
 
@@ -61,10 +62,13 @@ class AnimeCmd(Cmd):
         # Set lastaid, so I don't have to handle None/uninitialized case.
         # First thing that came to mind was Madoka.  No deep meaning to it.
         self.lastaid = 8069
-        self.results = AIDSearchResults([
+        self.results = AIDResultsManager()
+        self.results.register('db', AIDSearchResults([
             'AID', 'Title', 'Type', 'Episodes', 'Complete',
-        ])
-        self.aresults = AIDSearchResults(['AID', 'Title'])
+        ]))
+        self.results.register('anidb', AIDSearchResults([
+            'AID', 'Title',
+        ]))
 
     @classmethod
     def run_with_file(cls, config, file):
@@ -81,46 +85,11 @@ class AnimeCmd(Cmd):
 
     ###########################################################################
     # Parsing
-    def parse_aid(self, text, aresults=False):
-        """Parse argument text for aid.
-
-        May retrieve the aid from search result tables as necessary.  aresults
-        determines which search results to use by default; True means aresults
-        is the default.
-
-        The accepted formats, in order:
-
-        Explicit AID:              aid:12345
-        Explicit results number:   #:12
-        Explicit aresults number:  a#:12
-        Default results number:    12
-
-        """
-        if text.startswith('aid:'):
-            return int(text[len('aid:'):])
-        elif text.startswith('#:'):
-            number = int(text[len('#:'):])
-            return self.results.get_aid(number)
-        elif text.startswith('a#:'):
-            number = int(text[len('a#:'):])
-            return self.aresults.get_aid(number)
-        else:
-            number = int(text)
-            if aresults:
-                return self.aresults.get_aid(number)
-            else:
-                return self.results.get_aid(number)
-
-    def get_aid(self, arg, aresults=False):
-        """Get aid from argument string.
-
-        This extends parse_aid() with lastaid handling and other user-friendly
-        features.  parse_aid() is kept separate for testing and modularity.
-
-        """
+    def get_aid(self, arg, default_key=None):
+        """Get aid from argument string."""
         if arg:
             try:
-                aid = self.parse_aid(arg, aresults=aresults)
+                aid = self.results.parse_aid(arg, default_key=default_key)
             except IndexError as e:
                 logger.debug('Error parsing aid: %s', e)
                 print('Error parsing aid.')
@@ -157,8 +126,8 @@ class AnimeCmd(Cmd):
         query = re.compile('.*'.join(shlex.split(arg)), re.I)
         results = self.searchdb.search(query)
         results = [(anime.aid, anime.main_title) for anime in results]
-        self.aresults.set(results)
-        self.aresults.print()
+        self.results['anidb'].set(results)
+        self.results['anidb'].print()
 
     do_as = do_asearch
 
@@ -169,7 +138,7 @@ class AnimeCmd(Cmd):
     # ashow
     def do_ashow(self, arg):
         """Show information about anime in AniDB."""
-        aid = self.get_aid(arg, aresults=True)
+        aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
 
         print('AID: {}'.format(anime.aid))
@@ -198,7 +167,7 @@ class AnimeCmd(Cmd):
     # add
     def do_add(self, arg):
         """Add an anime or update an existing anime."""
-        aid = self.get_aid(arg, aresults=True)
+        aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
 
@@ -217,8 +186,8 @@ class AnimeCmd(Cmd):
              'yes' if anime.complete else '')
             for anime in results
         ]
-        self.results.set(results)
-        self.results.print()
+        self.results['db'].set(results)
+        self.results['db'].print()
 
     do_s = do_search
 
@@ -229,7 +198,7 @@ class AnimeCmd(Cmd):
     # show
     def do_show(self, arg):
         """Show anime data."""
-        aid = self.get_aid(arg)
+        aid = self.get_aid(arg, default_key='db')
         anime = self.animedb.lookup(aid, episodes=True)
 
         print('AID: {}'.format(anime.aid))
@@ -261,7 +230,7 @@ class AnimeCmd(Cmd):
     # bump
     def do_bump(self, arg):
         """Bump anime."""
-        aid = self.get_aid(arg)
+        aid = self.get_aid(arg, default_key='db')
         self.animedb.bump(aid)
 
     ###########################################################################
