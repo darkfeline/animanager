@@ -110,7 +110,6 @@ class AnimeCmd(Cmd):
     This is free software, and you are welcome to redistribute it
     under certain conditions; type "gpl c" for details.''').format(VERSION)
     prompt = 'A> '
-    use_rawinput = False  # Use readline
 
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
