@@ -269,7 +269,7 @@ class AnimeCmd(Cmd):
         results = self.animedb.search(query)
         results = [
             (anime.aid, anime.title, anime.type,
-             '{}/{}'.format(anime.watched_episodes, anime.episodes),
+             '{}/{}'.format(anime.watched_episodes, anime.episodecount),
              'yes' if anime.complete else '')
             for anime in results
         ]
