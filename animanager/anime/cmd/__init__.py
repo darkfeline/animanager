@@ -32,7 +32,7 @@ from animanager.constants import VERSION
 from animanager.anime import anidb
 from animanager.anime.db import AnimeDB
 
-from .results import AIDSearchResults
+from .searchresults import AIDSearchResults
 
 logger = logging.getLogger(__name__)
 

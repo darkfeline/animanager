@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 from tabulate import tabulate
 
 
@@ -109,3 +111,46 @@ class AIDSearchResults(SearchResults):
 
     def get_aid(self, number):
         return self.get(number)[0]
+
+
+class AIDResultsManager:
+
+    """Class for managing results and AID parsing."""
+
+    def __init__(self):
+        self.results = dict()
+
+    def __getitem__(self, key):
+        return self.results[key]
+
+    def __setitem__(self, key, value):
+        self.results[key] = value
+
+    _key_pattern = re.compile(r'#(\w+):(\d+)')
+
+    def parse_aid(self, text, default_key=None):
+        """Parse argument text for aid.
+
+        May retrieve the aid from search result tables as necessary.  aresults
+        determines which search results to use by default; True means aresults
+        is the default.
+
+        The accepted formats, in order:
+
+        Explicit AID:             aid:12345
+        Explicit result number:   #key:12
+        Default result number:    12
+
+        """
+        if text.startswith('aid:'):
+            return int(text[len('aid:'):])
+        elif text.startswith('#'):
+            match = self._key_pattern.match(text)
+            if not match:
+                raise ValueError('Invalid aid syntax')
+            key, number = match.groups()
+            number = int(number)
+        else:
+            key = default_key
+            number = int(text)
+        return self[key].get_aid(number)

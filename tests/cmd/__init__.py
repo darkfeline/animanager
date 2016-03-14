@@ -17,14 +17,11 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import doctest
 
-from animanager.anime.cmd import results
+from . import results
 
-from . import parse_aid
 
 def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
-    suite.addTests(doctest.DocTestSuite(results))
-    suite.addTests(loader.loadTestsFromModule(parse_aid))
+    suite.addTests(loader.loadTestsFromModule(results))
     return suite
