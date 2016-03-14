@@ -28,7 +28,7 @@ from .collections import Anime
 from .collections import AnimeFull
 from .collections import Episode
 from .collections import AnimeStatus
-from .collections import WatchingAnime
+from .collections import WatchingRule
 
 logger = logging.getLogger(__name__)
 
@@ -242,11 +242,12 @@ class AnimeDB(
         anime_status = AnimeStatus(aid, episodes <= number, number)
         self.anime_cache.set_status(anime_status)
 
-    # XXX
-    def get_watching(self):
-        """Return watching series."""
+    def get_watching(self, aid):
+        """Return watching rule for given aid."""
         cur = self.cnx.execute(
-            """SELECT anime.aid, title, type, episodes, regexp
-            FROM anime JOIN watching ON aid""")
-        return [WatchingAnime(*row[:-1], re.compile(row[-1], re.I))
-                for row in cur.fetchall()]
+            """SELECT aid, regexp
+            FROM watching WHERE aid=?""", (aid,))
+        row = cur.fetchone()
+        if row is None:
+            raise ValueError('No watching rule for given aid')
+        return WatchingRule(*row)

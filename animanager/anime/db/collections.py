@@ -40,6 +40,6 @@ AnimeStatus = namedtuple(
     'AnimeStatus',
     ['aid', 'complete', 'watched_episodes'])
 
-WatchingAnime = namedtuple(
-    'WatchingAnime',
-    ['aid', 'title', 'type', 'episodes', 'regexp'])
+WatchingRule = namedtuple(
+    'WatchingRule',
+    ['aid', 'regexp'])
