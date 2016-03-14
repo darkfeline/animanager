@@ -6,7 +6,7 @@ setup(
     name='animanager',
     version='0.9.0',
     packages=['animanager'],
-    requires=['tabulate'],
+    install_requires=['tabulate'],
     entry_points={
         'console_scripts': [
             'animanager = animanager.main:main',
