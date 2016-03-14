@@ -98,6 +98,23 @@ class AnimeDB(
                 })
         self.cnx.commit()
 
+    def search(self, query):
+        """Perform a LIKE title search on the anime table.
+
+        Returns an Anime instance generator.  Caches anime status lazily.
+
+        """
+        cur = self.cnx.execute('SELECT aid FROM anime LIKE ?', (query,))
+        aids = [row[0] for row in cur]
+        for aid in aids:
+            self.cache_status(aid)
+            cur = self.cnx.execute("""
+                SELECT aid, title, type, episodes, watched_episodes, complete
+                FROM anime LEFT JOIN cache_anime ON aid
+                WHERE aid=?""", (aid,))
+            yield Anime(*cur.fetchone())
+
+    # XXX
     def bump(self, aid):
         """Bump anime regular episode count."""
         anime_full = self.get_anime_full(aid)
@@ -117,19 +134,7 @@ class AnimeDB(
         self.anime_cache.set_anime_status(
             AnimeStatus(aid, episode >= anime_full.episodes, episode))
 
-    def search_anime(self, query):
-        """Perform a LIKE title search on the anime table.
-
-        Returns an Anime instance generator.
-
-        """
-        cur = self.cnx.execute("""
-            SELECT aid, title, type, episodes, startdate, enddate
-            FROM anime WHERE title LIKE ?
-            """, (query,))
-        for row in cur:
-            yield Anime(*row)
-
+    # XXX
     def get_anime(self, aid):
         """Get anime row from our permanent database.
 
@@ -145,22 +150,21 @@ class AnimeDB(
             raise ValueError('aid provided does not exist')
         return Anime(*row)
 
-    def get_anime_status(self, aid):
-        """Get anime status.
+    def cache_status(self, aid, force=False):
+        """Calculate and cache status for given anime.
 
-        Returns an AnimeStatus instance or raises ValueError.  Anime status
-        information is non-canonical and must be calculated or retrieved from
-        cache.
+        Don't do anything if status already exists and force is False.
 
         """
+        if not force:
+            # We don't do anything if we already have this aid in our cache.
+            cur = self.cnx.execute(
+                'SELECT 1 FROM cache_anime WHERE aid=?',
+                (aid,))
+            if cur.fetchone() is not None:
+                return
 
-        # Try to fetch from cache.
-        try:
-            return self.anime_cache.get_anime_status(aid)
-        except ValueError:
-            pass
-
-        # Check if anime exists.
+        # Retrieve number of episodes for this anime.
         cur = self.cnx.execute("""
             SELECT episodes FROM anime WHERE aid=?
             """, (aid,))
@@ -189,9 +193,9 @@ class AnimeDB(
                 break
         # We store this in the cache.
         anime_status = AnimeStatus(aid, episodes <= number, number)
-        self.anime_cache.set_anime_status(anime_status)
-        return anime_status
+        self.anime_cache.set_status(anime_status)
 
+    # XXX
     def get_watching(self):
         """Return watching series."""
         cur = self.cnx.execute(

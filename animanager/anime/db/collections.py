@@ -23,6 +23,12 @@ EpisodeType = namedtuple(
 
 Anime = namedtuple(
     'Anime',
+    ['aid', 'title', 'type', 'episodes',
+     'watched_episodes', 'complete'
+    ])
+
+AnimeFull = namedtuple(
+    'AnimeFull',
     ['aid', 'title', 'type', 'episodes', 'startdate', 'enddate'])
 
 AnimeStatus = namedtuple(

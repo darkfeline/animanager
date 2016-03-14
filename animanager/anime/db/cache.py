@@ -48,7 +48,8 @@ class AnimeCacheDispatcher(BaseDispatcher):
 
     __slots__ = ()
 
-    def get_anime_status(self, aid):
+    # XXX Remove if unused
+    def get_status(self, aid):
         """Get anime status.
 
         Returns AnimeStatus or raises ValueError.
@@ -62,7 +63,7 @@ class AnimeCacheDispatcher(BaseDispatcher):
             raise ValueError('aid is not in cache')
         return AnimeStatus(aid, *row)
 
-    def set_anime_status(self, anime_status):
+    def set_status(self, anime_status):
         """Set anime status."""
         self.cnx.execute(
             """INSERT OR REPLACE INTO cache_anime
