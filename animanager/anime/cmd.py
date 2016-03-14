@@ -300,8 +300,6 @@ class AnimeCmd(Cmd):
 
     See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
 
-    _gpl_flags = {'c': GPL_COPYING, 'w': GPL_WARRANTY}
-
     def help_gpl(self):
         print(dedent('''\
         Show GPL information.
@@ -311,8 +309,9 @@ class AnimeCmd(Cmd):
 
     def do_gpl(self, arg):
         """Show GPL information."""
-        text = self._gpl_flags.get(arg)
-        if text:
-            print(text)
+        if arg == 'c':
+            print(self.GPL_COPYING)
+        elif arg == 'w':
+            print(self.GPL_WARRANTY)
         else:
             self.do_help('gpl')
