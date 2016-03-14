@@ -25,6 +25,8 @@ from .cache import AnimeCacheMixin
 from . import migrations
 from .collections import EpisodeType
 from .collections import Anime
+from .collections import AnimeFull
+from .collections import Episode
 from .collections import AnimeStatus
 from .collections import WatchingAnime
 
@@ -116,6 +118,26 @@ class AnimeDB(
                 WHERE anime.aid=?""", (aid,))
             yield Anime(*cur.fetchone())
 
+    def lookup(self, aid):
+        """Look up full information for a single anime.
+
+        Force status calculation.
+
+        """
+        cur = self.cnx.execute("""
+            SELECT anime.aid, title, type, episodes,
+                watched_episodes, complete
+            FROM anime LEFT JOIN cache_anime USING (aid)
+            WHERE anime.aid=?""", (aid,))
+        anime = cur.fetchone()
+        if anime is None:
+            raise ValueError('Invalid aid')
+        cur = self.cnx.execute("""
+            SELECT aid, type, number, title, length, user_watched
+            FROM episode WHERE aid=?""", (aid,))
+        episodes = [Episode(*row)for row in cur]
+        return AnimeFull(*anime, episodes)
+
     # XXX
     def bump(self, aid):
         """Bump anime regular episode count."""
@@ -135,22 +157,6 @@ class AnimeDB(
         self.cnx.commit()
         self.anime_cache.set_anime_status(
             AnimeStatus(aid, episode >= anime_full.episodes, episode))
-
-    # XXX
-    def get_anime(self, aid):
-        """Get anime row from our permanent database.
-
-        Returns an Anime instance or raises ValueError.
-
-        """
-        cur = self.cnx.execute("""
-            SELECT aid, title, type, episodes, startdate, enddate
-            FROM anime
-            WHERE aid = ?""", (aid,))
-        row = cur.fetchone()
-        if row is None:
-            raise ValueError('aid provided does not exist')
-        return Anime(*row)
 
     def cache_status(self, aid, force=False):
         """Calculate and cache status for given anime.
