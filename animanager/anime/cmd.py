@@ -133,10 +133,6 @@ class AnimeCmd(Cmd):
         animecmd.prompt = ''
         animecmd.cmdloop('')
 
-    def default(self, line):
-        """Repeat the last command with new arguments."""
-        return self.onecmd(' '.join((self.lastcmd, line)))
-
     def onecmd(self, str):
         try:
             return super().onecmd(str)
