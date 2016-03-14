@@ -322,24 +322,6 @@ class AnimeCmd(Cmd):
 
     ###########################################################################
     # watch
-    @staticmethod
-    def _is_video(filename):
-        """Return whether the filename is a video file."""
-        extension = os.path.splitext(filename)[1]
-        return extension in ('.mkv', '.mp4', '.avi')
-
-    def _find_files(self, watchdir):
-        """Find video files to watch."""
-        files = []
-        for dirpath, _, filenames in os.walk(watchdir):
-            # Skip the trash directory.
-            if os.stat(dirpath) == os.stat(self.config.anime.trashdir):
-                continue
-            for filename in filenames:
-                if self._is_video(filename):
-                    files.append(os.path.join(dirpath, filename))
-        return sorted(files)
-
     def do_watch(self, arg):
         """Watch an anime."""
         raise NotImplementedError
