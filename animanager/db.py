@@ -137,7 +137,9 @@ def get_user_version(cnx):
 
 
 def set_user_version(cnx, version):
-    return cnx.execute('PRAGMA user_version = ?', (version,))
+    # Parameterization doesn't work with PRAGMA.  This should still be safe
+    # from injections and such.
+    return cnx.execute('PRAGMA user_version={:d}'.format(version))
 
 
 class MigrationManager:
@@ -184,7 +186,7 @@ class MigrationManager:
                     'no registered migration for database version')
             migration.migrate(cnx)
             version = migration.to_version
-            set_user_version(cnx, version)
+            set_user_version(cnx, version)  # This commits implicitly.
 
 
 class BaseMigration(ABC):
@@ -192,6 +194,8 @@ class BaseMigration(ABC):
     """Base Migration class.
 
     Subclasses define database migrations from one version to another version.
+    Migration subclasses should not commit their transaction nor increment the
+    database user version; the MigrationManager handles that.
 
     """
 
