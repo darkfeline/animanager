@@ -205,6 +205,9 @@ class AnimeCmd(Cmd):
     # asearch
     def do_asearch(self, arg):
         """Search AniDB."""
+        if not arg:
+            print('Missing query.')
+            return
         query = re.compile('.*'.join(shlex.split(arg)), re.I)
         results = [anime for anime in self.searchdb.search(query)]
         results = [(anime.aid, anime.main_title) for anime in results]
