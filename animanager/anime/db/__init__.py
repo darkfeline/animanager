@@ -83,18 +83,19 @@ class AnimeDB(
                 VALUES (?, ?, ?, ?, ?, ?)""",
                 (anime.aid, episode.type, episode.number, episode.title,
                  episode.length, 0))
-            if cur.rowcount == 0:
-                self.cnx.execute(
-                    """UPDATE episode
-                    SET title=:title, length=:length
-                    WHERE aid=:aid AND type=:type AND number=:number""",
-                    {
-                        'aid': anime.aid,
-                        'type': episode.type,
-                        'number': episode.number,
-                        'title': episode.title,
-                        'length': episode.length,
-                    })
+            if cur.rowcount != 0:
+                continue
+            self.cnx.execute(
+                """UPDATE episode
+                SET title=:title, length=:length
+                WHERE aid=:aid AND type=:type AND number=:number""",
+                {
+                    'aid': anime.aid,
+                    'type': episode.type,
+                    'number': episode.number,
+                    'title': episode.title,
+                    'length': episode.length,
+                })
         self.cnx.commit()
 
     def bump(self, aid):
