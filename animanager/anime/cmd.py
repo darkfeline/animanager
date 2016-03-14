@@ -236,12 +236,12 @@ class AnimeCmd(Cmd):
         print('End date: {}\n'.format(anime.enddate))
 
         print(tabulate(
-            [
+            (
                 (episode.epno, episode.title, episode.length)
                 for episode in sorted(
                      anime.episodes,
                      key=lambda x: (x.type, x.number))
-            ],
+            ),
             headers=['Number', 'Title', 'min'],
         ))
 
