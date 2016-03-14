@@ -36,7 +36,15 @@ class SQLiteDB(BaseDB):
 
     """SQLite database.
 
-    Provides minimum functionality for SQLite connection.
+    Provides minimum functionality for a SQLite connection.
+
+    SQLiteDB mixins that extend __init__() should call super().__init__()
+    before running their own code, especially if they need access to the SQLite
+    connection.  Mixins should therefore be included in reverse order:
+
+        class Foo(SpamMixin, EggsMixin, SQLiteDB):
+
+    This will run __init__() in order: SQLiteDB, EggsMixin, SpamMixin
 
     """
 
@@ -65,6 +73,9 @@ class ForeignKeyMixin(SQLiteDB):
 class BaseMigrationMixin(SQLiteDB):
 
     """Automated migration.
+
+    Implement the migrate() method in subclasses for handling the migration.
+    The method should be idempotent.
 
     Make sure to include this after UserVersionMixin.
 
@@ -153,7 +164,7 @@ class MigrationManager:
             raise ValueError('cannot register disjoint migration')
         if migration.to_version <= migration.from_version:
             raise ValueError('migration must upgrade version')
-        self.migrations[migration.from_version] = migration.from_version
+        self.migrations[migration.from_version] = migration
         self.current_version = migration.to_version
 
     def migrate(self, cnx):
@@ -172,11 +183,17 @@ class MigrationManager:
                 raise DatabaseMigrationError(
                     'no registered migration for database version')
             migration.migrate(cnx)
-            version = migration.version
+            version = migration.to_version
             set_user_version(cnx, version)
 
 
 class BaseMigration(ABC):
+
+    """Base Migration class.
+
+    Subclasses define database migrations from one version to another version.
+
+    """
 
     _from_version = 0
     _to_version = 0
