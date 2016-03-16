@@ -232,7 +232,7 @@ class AnimeCmd(Cmd):
         if anime.regexp is not None:
             regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
         else:
-            regexp_string = '\n'
+            regexp_string = ''
         print(self._show_msg.format(
             anime.aid,
             anime.title,
