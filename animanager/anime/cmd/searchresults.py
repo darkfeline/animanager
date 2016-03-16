@@ -35,6 +35,7 @@ class SearchResults:
     """
 
     def __init__(self, headers, results=()):
+        self.table_width = len(headers)
         self.headers = ['#'] + headers
         self.set(results)
 
@@ -57,9 +58,14 @@ class SearchResults:
             ...
         ValueError: Wrong result row length
 
+        >>> x = SearchResults(['title', 'type'])
+        >>> x.append(('Konosuba', 'OVA', 'extra_data'))
+        >>> x
+        SearchResults(['title', 'type'], [('Konosuba', 'OVA', 'extra_data')])
+
         """
         row = tuple(row)
-        if len(row) != len(self.headers) - 1:
+        if len(row) < self.table_width:
             raise ValueError('Wrong result row length')
         self.results.append(row)
 
@@ -91,8 +97,9 @@ class SearchResults:
 
     def print(self):
         """Print results table."""
+        width = self.table_width
         print(tabulate(
-            ((i, *row) for i, row in enumerate(self.results, 1)),
+            ((i, *row[:width]) for i, row in enumerate(self.results, 1)),
             headers=self.headers,
         ))
 
