@@ -146,7 +146,14 @@ class AnimeCmd(Cmd):
         """Show information about anime in AniDB."""
         aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
-        print(self._ashow_msg.format(*anime[:-1]))
+        print(self._ashow_msg.format(
+            anime.aid,
+            anime.title,
+            anime.type,
+            anime.episodecount,
+            anime.startdate,
+            anime.enddate,
+        ))
         print(tabulate(
             (
                 (episode.epno, episode.title, episode.length)
