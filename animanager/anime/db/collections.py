@@ -29,7 +29,7 @@ Anime = namedtuple(
 AnimeFull = namedtuple(
     'AnimeFull',
     ['aid', 'title', 'type', 'episodecount', 'startdate', 'enddate',
-     'watched_episodes', 'complete', 'episodes',
+     'watched_episodes', 'complete', 'regexp', 'episodes',
     ])
 
 Episode = namedtuple(

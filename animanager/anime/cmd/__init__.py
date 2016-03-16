@@ -211,7 +211,11 @@ class AnimeCmd(Cmd):
                                        anime.episodecount))
         print('Complete: {}'.format('yes' if anime.complete else 'no'))
         print('Start date: {}'.format(anime.startdate))
-        print('End date: {}\n'.format(anime.enddate))
+        print('End date: {}'.format(anime.enddate))
+        if anime.regexp:
+            print('Watching regexp: {}\n'.format(anime.regexp))
+        else:
+            print()
 
         print(tabulate(
             (
