@@ -85,16 +85,16 @@ class AnimeCmd(Cmd):
     # Parsing
     def get_aid(self, arg, default_key=None):
         """Get aid from argument string."""
-        if arg:
+        if arg == '.':
+            return self.lastaid
+        else:
             try:
                 aid = self.results.parse_aid(arg, default_key=default_key)
-            except IndexError as e:
+            except ValueError as e:
                 raise ValueError('Error parsing aid') from e
             else:
                 self.lastaid = aid
                 return aid
-        else:
-            return self.lastaid
 
     ###########################################################################
     # quit
