@@ -51,6 +51,7 @@ class SearchResults:
         >>> x.append(('Konosuba', 'TV'))
         >>> x
         SearchResults(['title', 'type'], [('Konosuba', 'TV')])
+
         >>> x.append(('Konosuba',))
         Traceback (most recent call last):
             ...
