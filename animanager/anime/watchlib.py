@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from abc import ABC
+from abc import abstractmethod
+from collections import defaultdict
 import os
 import re
 
@@ -37,16 +40,68 @@ def find_files(dirpath):
                 yield os.path.join(dirpath, filename)
 
 
-class AnimeFiles:
+class BaseAnimeFiles(ABC):
+
+    """Interface for AnimeFiles."""
+
+    @abstractmethod
+    def maybe_add(self, filename):
+        pass
+
+    @abstractmethod
+    def maybe_add_iter(self, filenames):
+        pass
+
+    @abstractmethod
+    def available_string(self):
+        return ''
+
+
+class FakeAnimeFiles(BaseAnimeFiles):
+
+    """Fake AnimeFiles to return to avoid the OOP NULL."""
+
+    def maybe_add(self, filename):
+        pass
+
+    def maybe_add_iter(self, filenames):
+        pass
+
+    def available_string(self):
+        return ''
+
+
+class AnimeFiles(BaseAnimeFiles):
+
+    """Used for matching and grouping files for an anime.
+
+    Use the animefiles() module function instead of instantiating directly.
+
+    """
 
     def __init__(self, regexp):
         self.regexp = re.compile(regexp)
-        self.by_episode = dict()
+        self.by_episode = defaultdict(list)
 
     def maybe_add(self, filename):
         basename = os.path.basename(filename)
         match = self.regexp.search(basename)
         if match:
-            self.by_episode[int(match.ep)] = filename
+            self.by_episode[int(match.ep)].append(filename)
             return True
         return False
+
+    def maybe_add_iter(self, filenames):
+        for filename in filenames:
+            self.maybe_add(filename)
+
+    def available_string(self):
+        """Return a string of available episodes."""
+        return ','.join(sorted(self.by_episode.keys()))
+
+
+def animefiles(regexp):
+    if regexp is None:
+        return FakeAnimeFiles()
+    else:
+        return AnimeFiles(regexp)
