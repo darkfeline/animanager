@@ -212,9 +212,10 @@ class AnimeCmd(Cmd):
         Title: {}
         Type: {}
         Episodes: {}
-        Complete: {}
         Start date: {}
         End date: {}
+        Watched episodes: {}
+        Complete: {}
         {}""")
 
     def do_show(self, arg):
@@ -222,11 +223,14 @@ class AnimeCmd(Cmd):
         aid = self.get_aid(arg, default_key='db')
         anime = self.animedb.lookup(aid, episodes=True)
 
+        complete_string = 'yes' if anime.complete else 'no'
         if anime.regexp is not None:
             regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
         else:
             regexp_string = '\n'
-        print(self._show_msg.format(*anime[:-2], regexp_string))
+        print(self._show_msg.format(
+            *anime[:-3], complete_string, regexp_string
+        ))
         print(tabulate(
             (
                 (self.animedb.get_epno(episode), episode.title, episode.length,
