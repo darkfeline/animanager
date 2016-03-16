@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import re
 
 
 def is_video(filename):
@@ -34,3 +35,18 @@ def find_files(dirpath):
         for filename in filenames:
             if is_video(filename):
                 yield os.path.join(dirpath, filename)
+
+
+class AnimeFiles:
+
+    def __init__(self, regexp):
+        self.regexp = re.compile(regexp)
+        self.by_episode = dict()
+
+    def maybe_add(self, filename):
+        basename = os.path.basename(filename)
+        match = self.regexp.search(basename)
+        if match:
+            self.by_episode[int(match.ep)] = filename
+            return True
+        return False
