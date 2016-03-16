@@ -134,18 +134,19 @@ class AnimeCmd(Cmd):
 
     ###########################################################################
     # ashow
+    _ashow_msg = dedent("""\
+        AID: {}
+        Title: {}
+        Type: {}
+        Episodes: {}
+        Start date: {}
+        End date: {}\n""")
+
     def do_ashow(self, arg):
         """Show information about anime in AniDB."""
         aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
-
-        print('AID: {}'.format(anime.aid))
-        print('Title: {}'.format(anime.title))
-        print('Type: {}'.format(anime.type))
-        print('Episodes: {}'.format(anime.episodecount))
-        print('Start date: {}'.format(anime.startdate))
-        print('End date: {}\n'.format(anime.enddate))
-
+        print(self._ashow_msg.format(*anime[:-1]))
         print(tabulate(
             (
                 (episode.epno, episode.title, episode.length)
@@ -199,24 +200,26 @@ class AnimeCmd(Cmd):
 
     ###########################################################################
     # show
+    _show_msg = dedent("""\
+        AID: {}
+        Title: {}
+        Type: {}
+        Episodes: {}
+        Complete: {}
+        Start date: {}
+        End date: {}
+        {}""")
+
     def do_show(self, arg):
         """Show anime data."""
         aid = self.get_aid(arg, default_key='db')
         anime = self.animedb.lookup(aid, episodes=True)
 
-        print('AID: {}'.format(anime.aid))
-        print('Title: {}'.format(anime.title))
-        print('Type: {}'.format(anime.type))
-        print('Episodes: {}/{}'.format(anime.watched_episodes,
-                                       anime.episodecount))
-        print('Complete: {}'.format('yes' if anime.complete else 'no'))
-        print('Start date: {}'.format(anime.startdate))
-        print('End date: {}'.format(anime.enddate))
-        if anime.regexp:
-            print('Watching regexp: {}\n'.format(anime.regexp))
+        if anime.regexp is not None:
+            regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
         else:
-            print()
-
+            regexp_string = '\n'
+        print(self._show_msg.format(*anime[:-2], regexp_string))
         print(tabulate(
             (
                 (self.animedb.get_epno(episode), episode.title, episode.length,
