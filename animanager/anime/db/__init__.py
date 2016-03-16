@@ -141,8 +141,9 @@ class AnimeDB(
             self.cache_status(aid)
             cur = self.cnx.execute("""
                 SELECT anime.aid, title, type, episodes,
-                    watched_episodes, complete
-                FROM anime LEFT JOIN cache_anime USING (aid)
+                    watched_episodes, complete, regexp
+                FROM anime JOIN cache_anime USING (aid)
+                LEFT JOIN watching USING (aid)
                 WHERE anime.aid=?""", (aid,))
             yield Anime(*cur.fetchone())
 
