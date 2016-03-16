@@ -30,6 +30,7 @@ from tabulate import tabulate
 
 from animanager.constants import VERSION
 from animanager.anime import anidb
+from animanager.anime import watchlib
 from animanager.anime.db import AnimeDB
 
 from .searchresults import AIDSearchResults
@@ -64,7 +65,7 @@ class AnimeCmd(Cmd):
         self.lastaid = 8069
         self.results = AIDResultsManager()
         self.results['db'] = AIDSearchResults([
-            'Title', 'Type', 'Episodes', 'Complete',
+            'Title', 'Type', 'Episodes', 'Complete', 'Available',
         ])
         self.results['anidb'] = AIDSearchResults(['Title'])
 
@@ -190,13 +191,18 @@ class AnimeCmd(Cmd):
             print('Missing query.')
             return
         query = '%{}%'.format('%'.join(shlex.split(arg)))
-        results = self.animedb.search(query)
-        results = [
-            (anime.aid, anime.title, anime.type,
-             '{}/{}'.format(anime.watched_episodes, anime.episodecount),
-             'yes' if anime.complete else '')
-            for anime in results
-        ]
+        all_files = watchlib.find_files(self.config.anime.watchdir)
+        results = list()
+        for anime in self.animedb.search(query):
+            anime_files = watchlib.animefiles(anime.regexp)
+            anime_files.maybe_add_iter(all_files)
+            results.append((
+                anime.aid, anime.title, anime.type,
+                '{}/{}'.format(anime.watched_episodes, anime.episodecount),
+                'yes' if anime.complete else '',
+                anime_files.available_string(),
+                anime_files,
+            ))
         self.results['db'].set(results)
         self.results['db'].print()
 
