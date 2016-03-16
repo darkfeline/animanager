@@ -89,12 +89,12 @@ class AnimeCmd(Cmd):
             try:
                 aid = self.results.parse_aid(arg, default_key=default_key)
             except IndexError as e:
-                logger.debug('Error parsing aid: %s', e)
-                print('Error parsing aid.')
-            self.lastaid = aid
+                raise ValueError('Error parsing aid') from e
+            else:
+                self.lastaid = aid
+                return aid
         else:
-            aid = self.lastaid
-        return aid
+            return self.lastaid
 
     ###########################################################################
     # quit
