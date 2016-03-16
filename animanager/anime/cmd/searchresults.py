@@ -157,7 +157,4 @@ class AIDResultsManager:
         else:
             key = default_key
             number = int(text)
-        if key in self:
-            return self[key].get_aid(number)
-        else:
-            raise ValueError('Invalid key')
+        return self[key].get_aid(number)
