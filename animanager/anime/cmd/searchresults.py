@@ -126,6 +126,9 @@ class AIDResultsManager:
     def __setitem__(self, key, value):
         self.results[key] = value
 
+    def __contains__(self, key):
+        return key in self.results
+
     _key_pattern = re.compile(r'#(\w+):(\d+)')
 
     def parse_aid(self, text, default_key=None):
@@ -153,4 +156,7 @@ class AIDResultsManager:
         else:
             key = default_key
             number = int(text)
-        return self[key].get_aid(number)
+        if key in self:
+            return self[key].get_aid(number)
+        else:
+            raise ValueError('Invalid key')
