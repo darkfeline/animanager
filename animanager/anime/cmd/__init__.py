@@ -217,10 +217,9 @@ class AnimeCmd(Cmd):
         AID: {}
         Title: {}
         Type: {}
-        Episodes: {}
+        Episodes: {}/{}
         Start date: {}
         End date: {}
-        Watched episodes: {}
         Complete: {}
         {}""")
 
@@ -235,7 +234,15 @@ class AnimeCmd(Cmd):
         else:
             regexp_string = '\n'
         print(self._show_msg.format(
-            *anime[:-3], complete_string, regexp_string
+            anime.aid,
+            anime.title,
+            anime.type,
+            anime.watched_episodes,
+            anime.episodecount,
+            anime.startdate,
+            anime.enddate,
+            complete_string,
+            regexp_string,
         ))
         print(tabulate(
             (
