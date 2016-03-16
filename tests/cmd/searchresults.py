@@ -55,3 +55,7 @@ class ParseAIDTestCase(unittest.TestCase):
     def test_invalid_key(self):
         with self.assertRaises(KeyError):
             self.manager.parse_aid('#spam:3')
+
+    def test_invalid_number(self):
+        with self.assertRaises(IndexError):
+            self.manager.parse_aid('#foo:5')
