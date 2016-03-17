@@ -55,8 +55,8 @@ class AnimeCacheDispatcher(BaseDispatcher):
             SET complete=?, watched_episodes=?
             WHERE aid=?""",
             (anime_status.complete,
-            anime_status.watched_episodes,
-            anime_status.aid))
+             anime_status.watched_episodes,
+             anime_status.aid))
         if cur.rowcount == 0:
             self.cnx.execute(
                 """INSERT OR IGNORE INTO cache_anime
