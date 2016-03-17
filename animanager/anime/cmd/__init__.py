@@ -145,6 +145,7 @@ class AnimeCmd(Cmd):
 
     def do_ashow(self, arg):
         """Show information about anime in AniDB."""
+        arg = shlex.split(arg)[0]
         aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
         print(self._ashow_msg.format(
@@ -174,6 +175,7 @@ class AnimeCmd(Cmd):
     # add
     def do_add(self, arg):
         """Add an anime or update an existing anime."""
+        arg = shlex.split(arg)[0]
         aid = self.get_aid(arg, default_key='anidb')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
@@ -225,6 +227,7 @@ class AnimeCmd(Cmd):
 
     def do_show(self, arg):
         """Show anime data."""
+        arg = shlex.split(arg)[0]
         aid = self.get_aid(arg, default_key='db')
         anime = self.animedb.lookup(aid, episodes=True)
 
@@ -264,6 +267,7 @@ class AnimeCmd(Cmd):
     # bump
     def do_bump(self, arg):
         """Bump anime."""
+        arg = shlex.split(arg)[0]
         aid = self.get_aid(arg, default_key='db')
         self.animedb.bump(aid)
 
