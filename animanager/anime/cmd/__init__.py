@@ -203,7 +203,6 @@ class AnimeCmd(Cmd):
                 '{}/{}'.format(anime.watched_episodes, anime.episodecount),
                 'yes' if anime.complete else '',
                 anime_files.available_string(),
-                anime_files,
             ))
         self.results['db'].set(results)
         self.results['db'].print()
