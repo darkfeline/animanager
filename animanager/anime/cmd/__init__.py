@@ -277,6 +277,34 @@ class AnimeCmd(Cmd):
         print('Alias for bump.')
 
     ###########################################################################
+    # register
+    def do_register(self, arg):
+        """Register watching regexp for an anime."""
+        args = shlex.split(arg)
+        aid = self.get_aid(args.pop(0), default_key='db')
+        if args:
+            # Use regexp provided by user.
+            pattern = '.*'.join(args)
+        else:
+            # Make default regexp.
+            title = self.animedb.lookup_title(aid)
+            # Replace non-word, non-whitespace with whitespace.
+            pattern = re.sub(r'[^\w\s]', ' ', title)
+            # Split on whitespace and join with wildcard regexp.
+            pattern = '.*'.join(re.escape(x) for x in pattern.split())
+            # Append episode matching pattern.
+            pattern = '.*?'.join((
+                pattern,
+                r'\b(?P<ep>[0-9]+)(v[0-9]+)?',
+            ))
+        self.animedb.set_regexp(aid, pattern)
+
+    do_r = do_register
+
+    def help_r(self):
+        print('Alias for register.')
+
+    ###########################################################################
     # watch
     def do_watch(self, arg):
         """Watch an anime."""
