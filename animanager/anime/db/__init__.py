@@ -149,6 +149,14 @@ class AnimeDB(
                 WHERE anime.aid=?""", (aid,))
             yield Anime(*cur.fetchone())
 
+    def lookup_title(self, aid):
+        """Look up anime title."""
+        cur = self.cnx.execute('SELECT title FROM anime WHERE aid=?', (aid,))
+        anime = cur.fetchone()
+        if anime is None:
+            raise ValueError('Invalid aid')
+        return anime[0]
+
     def lookup(self, aid, episodes=False):
         """Look up full information for a single anime.
 
