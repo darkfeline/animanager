@@ -246,6 +246,16 @@ class AnimeDB(
         anime_status = AnimeStatus(aid, episodes <= number, number)
         self.anime_cache.set_status(anime_status)
 
+    def cache_files(self, aid, anime_files):
+        self.cnx.execute('SAVEPOINT cache_files')
+        self.cache_status(aid)
+        self.cnx.execute(
+            """UPDATE cache_anime
+            SET anime_files=?
+            WHERE aid=?""",
+            (aid, anime_files))
+        self.cnx.execute('RELEASE cache_files')
+
     def get_watching(self, aid):
         """Return watching rule for given aid."""
         cur = self.cnx.execute(
