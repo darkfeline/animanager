@@ -108,14 +108,6 @@ class AnimeDB(
              anime.startdate, anime.enddate))
         for episode in anime.episodes:
             cur = self.cnx.execute(
-                """INSERT OR IGNORE INTO episode
-                (aid, type, number, title, length, user_watched)
-                VALUES (?, ?, ?, ?, ?, ?)""",
-                (anime.aid, episode.type, episode.number, episode.title,
-                 episode.length, 0))
-            if cur.rowcount != 0:
-                continue
-            self.cnx.execute(
                 """UPDATE episode
                 SET title=:title, length=:length
                 WHERE aid=:aid AND type=:type AND number=:number""",
@@ -126,6 +118,14 @@ class AnimeDB(
                     'title': episode.title,
                     'length': episode.length,
                 })
+            if cur.rowcount > 0:
+                continue
+            self.cnx.execute(
+                """INSERT OR IGNORE INTO episode
+                (aid, type, number, title, length, user_watched)
+                VALUES (?, ?, ?, ?, ?, ?)""",
+                (anime.aid, episode.type, episode.number, episode.title,
+                 episode.length, 0))
         self.cnx.commit()
 
     def search(self, query):
