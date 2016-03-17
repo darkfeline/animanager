@@ -48,11 +48,11 @@ class SQLiteDB(BaseDB):
 
     """
 
-    def __init__(self, database):
-        self.connect(database)
+    def __init__(self, *args, **kwargs):
+        self.connect(*args, **kwargs)
 
-    def connect(self, database):
-        self.cnx = sqlite3.connect(database)
+    def connect(self, *args, **kwargs):
+        self.cnx = sqlite3.connect(*args, **kwargs)
 
     def close(self):
         self.cnx.close()
@@ -62,8 +62,8 @@ class ForeignKeyMixin(SQLiteDB):
 
     """Enables SQLite foreign key support."""
 
-    def connect(self, database):
-        super().connect(database)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.cnx.execute('PRAGMA foreign_keys = ON')
         cur = self.cnx.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
@@ -80,8 +80,8 @@ class BaseMigrationMixin(SQLiteDB):
     Make sure to include this after UserVersionMixin.
 
     """
-    def connect(self, database):
-        super().connect(database)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.migrate(self.cnx)
 
     @abstractmethod
@@ -93,16 +93,16 @@ class UserVersionMixin(SQLiteDB):
 
     """Enables SQLite database user version checking."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        version = get_user_version(self.cnx)
+        if version != self.version:
+            raise DatabaseVersionError(self.version, version)
+
     @property
     @abstractmethod
     def version(self):
         return 0
-
-    def connect(self, database):
-        super().connect(database)
-        version = get_user_version(self.cnx)
-        if version != self.version:
-            raise DatabaseVersionError(self.version, version)
 
 
 class BaseCacheTableMixin(BaseDB):
