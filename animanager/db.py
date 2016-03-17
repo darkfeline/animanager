@@ -16,7 +16,10 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABC, abstractmethod
+import pickle
 import sqlite3
+
+sqlite3.register_converter('PICKLE', pickle.loads)
 
 
 class BaseDB(ABC):
@@ -103,6 +106,15 @@ class UserVersionMixin(SQLiteDB):
     @abstractmethod
     def version(self):
         return 0
+
+
+class UserTypesMixin(SQLiteDB):
+
+    """Enables user type converters."""
+
+    def connect(self, *args, **kwargs):
+        kwargs.pop('detect_types', None)
+        super().connect(*args, detect_types=sqlite3.PARSE_DECLTYPES, **kwargs)
 
 
 class BaseCacheTableMixin(BaseDB):

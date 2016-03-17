@@ -34,8 +34,10 @@ logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
-        AnimeCacheMixin, db.UserVersionMixin, db.ForeignKeyMixin,
-        db.BaseMigrationMixin
+        AnimeCacheMixin,
+        db.UserTypesMixin,
+        db.UserVersionMixin, db.BaseMigrationMixin,
+        db.ForeignKeyMixin,
 ): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
