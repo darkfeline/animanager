@@ -264,6 +264,15 @@ class AnimeDB(
             (aid, anime_files))
         self.cnx.execute('RELEASE cache_files')
 
+    def set_regexp(self, aid, regexp):
+        """Set watching regexp for anime."""
+        cur = self.cnx.execute(
+            'UPDATE watching SET regexp=? WHERE aid=?',
+            (regexp, aid))
+        if cur.rowcount == 0:
+            raise ValueError('Invalid aid')
+
+    # XXX Remove if unused
     def get_watching(self, aid):
         """Return watching rule for given aid."""
         cur = self.cnx.execute(
