@@ -48,9 +48,19 @@ class AnimeCacheDispatcher(BaseDispatcher):
 
     def set_status(self, anime_status):
         """Set anime status."""
-        self.cnx.execute(
-            """INSERT OR REPLACE INTO cache_anime
-            (aid, complete, watched_episodes)
-            VALUES (?, ?, ?)""",
-            anime_status)
+        if not isinstance(anime_status, AnimeStatus):
+            raise TypeError('anime_status must be an instance of AnimeStatus')
+        cur = self.cnx.execute(
+            """UPDATE cache_anime
+            SET complete=?, watched_episodes=?
+            WHERE aid=?""",
+            (anime_status.complete,
+            anime_status.watched_episodes,
+            anime_status.aid))
+        if cur.rowcount == 0:
+            self.cnx.execute(
+                """INSERT OR IGNORE INTO cache_anime
+                (aid, complete, watched_episodes)
+                VALUES (?, ?, ?)""",
+                anime_status)
         self.cnx.commit()
