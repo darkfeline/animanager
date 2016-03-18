@@ -305,6 +305,19 @@ class AnimeCmd(Cmd):
         print('Alias for register.')
 
     ###########################################################################
+    # unregister
+    def do_unregister(self, arg):
+        """Unregister watching regexp for an anime."""
+        arg = shlex.split(arg)[0]
+        aid = self.get_aid(arg, default_key='db')
+        self.animedb.delete_regexp(aid)
+
+    do_ur = do_unregister
+
+    def help_ur(self):
+        print('Alias for unregister.')
+
+    ###########################################################################
     # watch
     def do_watch(self, arg):
         """Watch an anime."""
