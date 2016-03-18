@@ -43,55 +43,57 @@ class Migration1(BaseMigration):
     _to_version = 1
 
     def migrate(self, cnx):
-        cnx.execute("""
-        CREATE TABLE anime (
-            aid INTEGER,
-            title TEXT NOT NULL UNIQUE,
-            type TEXT NOT NULL,
-            episodes INTEGER,
-            startdate DATE,
-            enddate DATE,
-            PRIMARY KEY (aid)
-        )""")
-        cnx.execute("""
-        CREATE TABLE "episode" (
-            id INTEGER,
-            aid INTEGER NOT NULL,
-            type INTEGER NOT NULL,
-            number INTEGER NOT NULL,
-            title TEXT NOT NULL,
-            length INTEGER NOT NULL,
-            user_watched INTEGER NOT NULL CHECK (user_watched IN (0, 1)),
-            PRIMARY KEY (id),
-            UNIQUE (aid, type, number),
-            FOREIGN KEY (aid) REFERENCES anime (aid)
-                ON DELETE CASCADE ON UPDATE CASCADE,
-            FOREIGN KEY (type) REFERENCES episode_type (id)
-                ON DELETE RESTRICT ON UPDATE CASCADE
-        )""")
-        cnx.execute("""
-        CREATE TABLE episode_type (
-            id INTEGER,
-            name TEXT NOT NULL UNIQUE,
-            prefix TEXT NOT NULL UNIQUE,
-            PRIMARY KEY(id)
-        )""")
-        cnx.execute("""
-        INSERT INTO episode_type
-        (id, name, prefix)
-        VALUES
-        (1, 'regular', ''),
-        (2, 'special', 'S'),
-        (3, 'credit', 'C'),
-        (4, 'trailer', 'T'),
-        (5, 'parody', 'P'),
-        (6, 'other', 'O')
-        """)
-        cnx.execute("""
-        CREATE TABLE watching (
-            aid INTEGER,
-            regexp TEXT NOT NULL,
-            PRIMARY KEY (aid),
-            FOREIGN KEY (aid) REFERENCES anime (aid)
-                ON DELETE CASCADE ON UPDATE CASCADE
-        )""")
+        with cnx:
+            cur = cnx.cursor()
+            cur.execute("""
+            CREATE TABLE anime (
+                aid INTEGER,
+                title TEXT NOT NULL UNIQUE,
+                type TEXT NOT NULL,
+                episodes INTEGER,
+                startdate DATE,
+                enddate DATE,
+                PRIMARY KEY (aid)
+            )""")
+            cur.execute("""
+            CREATE TABLE "episode" (
+                id INTEGER,
+                aid INTEGER NOT NULL,
+                type INTEGER NOT NULL,
+                number INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                length INTEGER NOT NULL,
+                user_watched INTEGER NOT NULL CHECK (user_watched IN (0, 1)),
+                PRIMARY KEY (id),
+                UNIQUE (aid, type, number),
+                FOREIGN KEY (aid) REFERENCES anime (aid)
+                    ON DELETE CASCADE ON UPDATE CASCADE,
+                FOREIGN KEY (type) REFERENCES episode_type (id)
+                    ON DELETE RESTRICT ON UPDATE CASCADE
+            )""")
+            cur.execute("""
+            CREATE TABLE episode_type (
+                id INTEGER,
+                name TEXT NOT NULL UNIQUE,
+                prefix TEXT NOT NULL UNIQUE,
+                PRIMARY KEY(id)
+            )""")
+            cur.execute("""
+            INSERT INTO episode_type
+            (id, name, prefix)
+            VALUES
+            (1, 'regular', ''),
+            (2, 'special', 'S'),
+            (3, 'credit', 'C'),
+            (4, 'trailer', 'T'),
+            (5, 'parody', 'P'),
+            (6, 'other', 'O')
+            """)
+            cur.execute("""
+            CREATE TABLE watching (
+                aid INTEGER,
+                regexp TEXT NOT NULL,
+                PRIMARY KEY (aid),
+                FOREIGN KEY (aid) REFERENCES anime (aid)
+                    ON DELETE CASCADE ON UPDATE CASCADE
+            )""")
