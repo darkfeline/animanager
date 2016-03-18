@@ -39,7 +39,3 @@ Episode = namedtuple(
 AnimeStatus = namedtuple(
     'AnimeStatus',
     ['aid', 'complete', 'watched_episodes'])
-
-WatchingRule = namedtuple(
-    'WatchingRule',
-    ['aid', 'regexp'])
