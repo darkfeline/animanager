@@ -17,25 +17,22 @@
 
 import logging
 import re
-import sqlite3
 
 from animanager import db
 
-from .cache import AnimeCacheMixin
 from . import migrations
+from .cache import AnimeCacheMixin
 from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
 from .collections import Episode
 from .collections import AnimeStatus
-from .collections import WatchingRule
 
 logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
         AnimeCacheMixin,
-        db.UserTypesMixin,
         db.UserVersionMixin, db.BaseMigrationMixin,
         db.ForeignKeyMixin,
 ): # pylint: disable=too-many-ancestors
@@ -64,7 +61,8 @@ class AnimeDB(
         """
         if self._episode_types is None:
             ep_types = dict()
-            cur = self.cnx.execute('SELECT id, name, prefix FROM episode_type')
+            cur = self.cnx.cursor()
+            cur.execute('SELECT id, name, prefix FROM episode_type')
             for type_id, name, prefix in cur:
                 ep_types[name] = EpisodeType(type_id, prefix)
             self._episode_types = ep_types
@@ -80,7 +78,8 @@ class AnimeDB(
         """
         if self._episode_types_by_id is None:
             ep_types = dict()
-            cur = self.cnx.execute('SELECT id, prefix FROM episode_type')
+            cur = self.cnx.cursor()
+            cur.execute('SELECT id, prefix FROM episode_type')
             for type_id, prefix in cur:
                 ep_types[type_id] = EpisodeType(type_id, prefix)
             self._episode_types_by_id = ep_types
@@ -102,33 +101,33 @@ class AnimeDB(
         anime is an AnimeTree instance.
 
         """
-        self.cnx.execute(
-            """INSERT OR REPLACE INTO anime
-            (aid, title, type, episodes, startdate, enddate)
-            VALUES (?, ?, ?, ?, ?, ?)""",
-            (anime.aid, anime.title, anime.type, anime.episodecount,
-             anime.startdate, anime.enddate))
-        for episode in anime.episodes:
-            cur = self.cnx.execute(
-                """UPDATE episode
-                SET title=:title, length=:length
-                WHERE aid=:aid AND type=:type AND number=:number""",
-                {
-                    'aid': anime.aid,
-                    'type': episode.type,
-                    'number': episode.number,
-                    'title': episode.title,
-                    'length': episode.length,
-                })
-            if cur.rowcount > 0:
-                continue
-            self.cnx.execute(
-                """INSERT OR IGNORE INTO episode
-                (aid, type, number, title, length, user_watched)
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                """INSERT OR REPLACE INTO anime
+                (aid, title, type, episodes, startdate, enddate)
                 VALUES (?, ?, ?, ?, ?, ?)""",
-                (anime.aid, episode.type, episode.number, episode.title,
-                 episode.length, 0))
-        self.cnx.commit()
+                (anime.aid, anime.title, anime.type, anime.episodecount,
+                 anime.startdate, anime.enddate))
+            for episode in anime.episodes:
+                cur.execute(
+                    """UPDATE episode
+                    SET title=:title, length=:length
+                    WHERE aid=:aid AND type=:type AND number=:number""",
+                    {
+                        'aid': anime.aid,
+                        'type': episode.type,
+                        'number': episode.number,
+                        'title': episode.title,
+                        'length': episode.length,
+                    })
+                if self.cnx.changes() == 0:
+                    cur.execute(
+                        """INSERT INTO episode
+                        (aid, type, number, title, length, user_watched)
+                        VALUES (?, ?, ?, ?, ?, ?)""",
+                        (anime.aid, episode.type, episode.number,
+                         episode.title, episode.length, 0))
 
     def search(self, query):
         """Perform a LIKE title search on the anime table.
@@ -136,12 +135,13 @@ class AnimeDB(
         Returns an Anime instance generator.  Caches anime status lazily.
 
         """
-        cur = self.cnx.execute('SELECT aid FROM anime WHERE title LIKE ?',
-                               (query,))
-        aids = [row[0] for row in cur]
+        aids = self.cnx.cursor()
+        aids.execute('SELECT aid FROM anime WHERE title LIKE ?', (query,))
         for aid in aids:
+            aid = aid[0]
             self.cache_status(aid)
-            cur = self.cnx.execute("""
+            cur = self.cnx.cursor()
+            cur.execute("""
                 SELECT anime.aid, title, type, episodes,
                     watched_episodes, complete, regexp
                 FROM anime JOIN cache_anime USING (aid)
@@ -151,7 +151,8 @@ class AnimeDB(
 
     def lookup_title(self, aid):
         """Look up anime title."""
-        cur = self.cnx.execute('SELECT title FROM anime WHERE aid=?', (aid,))
+        cur = self.cnx.cursor()
+        cur.execute('SELECT title FROM anime WHERE aid=?', (aid,))
         anime = cur.fetchone()
         if anime is None:
             raise ValueError('Invalid aid')
@@ -168,27 +169,29 @@ class AnimeDB(
 
         """
         self.cache_status(aid, force=True)
-        cur = self.cnx.execute("""
-            SELECT anime.aid, title, type, episodes, startdate, enddate,
-                watched_episodes, complete, regexp
-            FROM anime JOIN cache_anime USING (aid)
-            LEFT JOIN watching USING (aid)
-            WHERE anime.aid=?""", (aid,))
-        anime = cur.fetchone()
-        if anime is None:
-            raise ValueError('Invalid aid')
-        if episodes:
-            cur = self.cnx.execute("""
-                SELECT aid, type, number, title, length, user_watched
-                FROM episode WHERE aid=?""", (aid,))
-            episodes = [Episode(*row)for row in cur]
-            return AnimeFull(*anime, episodes)
-        else:
-            return AnimeFull(*anime, None)
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute("""
+                SELECT anime.aid, title, type, episodes, startdate, enddate,
+                    watched_episodes, complete, regexp
+                FROM anime JOIN cache_anime USING (aid)
+                LEFT JOIN watching USING (aid)
+                WHERE anime.aid=?""", (aid,))
+            anime = cur.fetchone()
+            if anime is None:
+                raise ValueError('Invalid aid')
+            if episodes:
+                cur.execute("""
+                    SELECT aid, type, number, title, length, user_watched
+                    FROM episode WHERE aid=?""", (aid,))
+                episodes = [Episode(*row) for row in cur]
+                return AnimeFull(*anime, episodes)
+            else:
+                return AnimeFull(*anime, None)
 
     def set_watched(self, aid, ep_type, number):
         """Set episode as watched."""
-        self.cnx.execute(
+        self.cnx.cursor().execute(
             """UPDATE episode SET user_watched=:watched
             WHERE aid=:aid AND type=:type AND number=:number""",
             {
@@ -197,7 +200,6 @@ class AnimeDB(
                 'number': number,
                 'watched': 1,
             })
-        self.cnx.commit()
 
     def bump(self, aid):
         """Bump anime regular episode count."""
@@ -215,70 +217,69 @@ class AnimeDB(
         Don't do anything if status already exists and force is False.
 
         """
-        if not force:
-            # We don't do anything if we already have this aid in our cache.
-            cur = self.cnx.execute(
-                'SELECT 1 FROM cache_anime WHERE aid=?',
-                (aid,))
-            if cur.fetchone() is not None:
-                return
+        with self.cnx:
+            cur = self.cnx.cursor()
+            if not force:
+                # We don't do anything if we already have this aid in our
+                # cache.
+                cur.execute(
+                    'SELECT 1 FROM cache_anime WHERE aid=?',
+                    (aid,))
+                if cur.fetchone() is not None:
+                    return
 
-        # Retrieve number of episodes for this anime.
-        cur = self.cnx.execute("""
-            SELECT episodes FROM anime WHERE aid=?
-            """, (aid,))
-        row = cur.fetchone()
-        if row is None:
-            raise ValueError('aid provided does not exist')
-        episodes = row[0]
+            # Retrieve number of episodes for this anime.
+            cur.execute("""
+                SELECT episodes FROM anime WHERE aid=?
+                """, (aid,))
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError('aid provided does not exist')
+            episodes = row[0]
 
-        # Select all regular episodes in ascending order.
-        cur = self.cnx.execute("""
-            SELECT number, user_watched FROM episode
-            WHERE aid=? AND type=?
-            ORDER BY number ASC
-            """, (aid, self.episode_types['regular'].id))
-        rows = cur.fetchall()
-        if not rows:
-            raise db.DatabaseError('anime is missing episodes')
+            # Select all regular episodes in ascending order.
+            cur.execute("""
+                SELECT number, user_watched FROM episode
+                WHERE aid=? AND type=?
+                ORDER BY number ASC
+                """, (aid, self.episode_types['regular'].id))
 
-        # We find the last consecutive episode that is user_watched.
-        number = 0
-        for number, watched in rows:
-            # Once we find the first unwatched episode, we set the last
-            # consecutive watched episode to the previous episode (or 0).
-            if watched == 0:
-                number -= 1
-                break
-        # We store this in the cache.
-        anime_status = AnimeStatus(aid, episodes <= number, number)
-        self.anime_cache.set_status(anime_status)
+            # We find the last consecutive episode that is user_watched.
+            number = 0
+            for number, watched in cur:
+                # Once we find the first unwatched episode, we set the last
+                # consecutive watched episode to the previous episode (or 0).
+                if watched == 0:
+                    number -= 1
+                    break
+            # We store this in the cache.
+            anime_status = AnimeStatus(aid, episodes <= number, number)
+            self.anime_cache.set_status(anime_status)
 
     def cache_files(self, aid, anime_files):
-        self.cnx.execute('SAVEPOINT cache_files')
-        self.cache_status(aid)
-        self.cnx.execute(
-            """UPDATE cache_anime
-            SET anime_files=?
-            WHERE aid=?""",
-            (aid, anime_files))
-        self.cnx.execute('RELEASE cache_files')
+        with self.cnx:
+            self.cache_status(aid)
+            self.cnx.cursor().execute(
+                """UPDATE cache_anime
+                SET anime_files=?
+                WHERE aid=?""",
+                (aid, anime_files))
 
     def set_regexp(self, aid, regexp):
         """Set watching regexp for anime."""
-        cur = self.cnx.execute(
-            'UPDATE watching SET regexp=? WHERE aid=?',
-            (regexp, aid))
-        if cur.rowcount == 0:
-            raise ValueError('Invalid aid')
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                'UPDATE watching SET regexp=? WHERE aid=?',
+                (regexp, aid),
+            )
+            if self.cnx.changes() == 0:
+                cur.execute(
+                    """INSERT INTO watching (aid, regexp)
+                    VALUES (?, ?)""", (aid, regexp))
 
-    # XXX Remove if unused
-    def get_watching(self, aid):
-        """Return watching rule for given aid."""
-        cur = self.cnx.execute(
-            """SELECT aid, regexp
-            FROM watching WHERE aid=?""", (aid,))
-        row = cur.fetchone()
-        if row is None:
-            raise ValueError('No watching rule for given aid')
-        return WatchingRule(*row)
+    def delete_regexp(self, aid):
+        """Delete watching regexp for anime."""
+        self.cnx.cursor().execute(
+            """DELETE FROM watching WHERE aid=?""",
+            (aid,))
