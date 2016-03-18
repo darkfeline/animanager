@@ -24,7 +24,7 @@ from .collections import AnimeStatus
 class AnimeCacheMixin(BaseCacheTableMixin):
 
     def setup_cache_tables(self):
-        self.cnx.execute("""
+        self.cnx.cursor().execute("""
         CREATE TABLE IF NOT EXISTS cache_anime (
             aid INTEGER,
             complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
@@ -37,7 +37,7 @@ class AnimeCacheMixin(BaseCacheTableMixin):
         super().setup_cache_tables()
 
     def cleanup_cache_tables(self):
-        self.cnx.execute('DROP TABLE IF EXISTS cache_anime')
+        self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
         super().cleanup_cache_tables()
 
     @property
@@ -53,17 +53,18 @@ class AnimeCacheDispatcher(BaseDispatcher):
         """Set anime status."""
         if not isinstance(anime_status, AnimeStatus):
             raise TypeError('anime_status must be an instance of AnimeStatus')
-        cur = self.cnx.execute(
-            """UPDATE cache_anime
-            SET complete=?, watched_episodes=?
-            WHERE aid=?""",
-            (anime_status.complete,
-             anime_status.watched_episodes,
-             anime_status.aid))
-        if cur.rowcount == 0:
-            self.cnx.execute(
-                """INSERT OR IGNORE INTO cache_anime
-                (aid, complete, watched_episodes)
-                VALUES (?, ?, ?)""",
-                anime_status)
-        self.cnx.commit()
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                """UPDATE cache_anime
+                SET complete=?, watched_episodes=?
+                WHERE aid=?""",
+                (anime_status.complete,
+                 anime_status.watched_episodes,
+                 anime_status.aid))
+            if self.cnx.changes() == 0:
+                cur.execute(
+                    """INSERT OR IGNORE INTO cache_anime
+                    (aid, complete, watched_episodes)
+                    VALUES (?, ?, ?)""",
+                    anime_status)
