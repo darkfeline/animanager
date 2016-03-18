@@ -141,9 +141,7 @@ def get_user_version(cnx):
 def set_user_version(cnx, version):
     # Parameterization doesn't work with PRAGMA.  This should still be safe
     # from injections and such.
-    # XXX
-    # return cnx.execute('PRAGMA user_version={:d}'.format(version))
-    return cnx.cursor().execute('PRAGMA user_version=?', (version,))
+    return cnx.cursor().execute('PRAGMA user_version={:d}'.format(version))
 
 
 class MigrationManager:
