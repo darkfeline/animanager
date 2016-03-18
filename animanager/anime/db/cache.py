@@ -64,7 +64,7 @@ class AnimeCacheDispatcher(BaseDispatcher):
                  anime_status.aid))
             if self.cnx.changes() == 0:
                 cur.execute(
-                    """INSERT OR IGNORE INTO cache_anime
+                    """INSERT INTO cache_anime
                     (aid, complete, watched_episodes)
                     VALUES (?, ?, ?)""",
                     anime_status)
