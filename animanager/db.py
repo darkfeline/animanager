@@ -16,10 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABC, abstractmethod
-import pickle
-import sqlite3
 
-sqlite3.register_converter('PICKLE', pickle.loads)
+import apsw
 
 
 class BaseDB(ABC):
@@ -55,7 +53,7 @@ class SQLiteDB(BaseDB):
         self.connect(*args, **kwargs)
 
     def connect(self, *args, **kwargs):
-        self.cnx = sqlite3.connect(*args, **kwargs)
+        self.cnx = apsw.Connection(*args, **kwargs)
 
     def close(self):
         self.cnx.close()
@@ -67,8 +65,9 @@ class ForeignKeyMixin(SQLiteDB):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cnx.execute('PRAGMA foreign_keys = ON')
-        cur = self.cnx.execute('PRAGMA foreign_keys')
+        cur = self.cnx.cursor()
+        cur.execute('PRAGMA foreign_keys = ON')
+        cur.execute('PRAGMA foreign_keys')
         if cur.fetchone()[0] != 1:
             raise DatabaseError('Foreign keys are not supported.')
 
@@ -108,15 +107,6 @@ class UserVersionMixin(SQLiteDB):
         return 0
 
 
-class UserTypesMixin(SQLiteDB):
-
-    """Enables user type converters."""
-
-    def connect(self, *args, **kwargs):
-        kwargs.pop('detect_types', None)
-        super().connect(*args, detect_types=sqlite3.PARSE_DECLTYPES, **kwargs)
-
-
 class BaseCacheTableMixin(BaseDB):
 
     """Interface for cache table mixins."""
@@ -145,13 +135,15 @@ class BaseDispatcher:
 
 
 def get_user_version(cnx):
-    return cnx.execute('PRAGMA user_version').fetchone()[0]
+    return cnx.cursor().execute('PRAGMA user_version').fetchone()[0]
 
 
 def set_user_version(cnx, version):
     # Parameterization doesn't work with PRAGMA.  This should still be safe
     # from injections and such.
-    return cnx.execute('PRAGMA user_version={:d}'.format(version))
+    # XXX
+    # return cnx.execute('PRAGMA user_version={:d}'.format(version))
+    return cnx.cursor().execute('PRAGMA user_version=?', (version,))
 
 
 class MigrationManager:
@@ -184,21 +176,21 @@ class MigrationManager:
     def migrate(self, cnx):
         """Migrate a database as needed.
 
-        cnx is a DB-API connection object.  This is safe to call on an up to
-        date database, on an old database, or an uninitialized database
-        (version 0).
+        This is safe to call on an up to date database, on an old database, or
+        an uninitialized database (version 0).
 
         """
-        version = get_user_version(cnx)
-        while version < self.current_version:
-            try:
-                migration = self.migrations[version]
-            except KeyError:
-                raise DatabaseMigrationError(
-                    'no registered migration for database version')
-            migration.migrate(cnx)
-            version = migration.to_version
-            set_user_version(cnx, version)  # This commits implicitly.
+        with cnx:
+            version = get_user_version(cnx)
+            while version < self.current_version:
+                try:
+                    migration = self.migrations[version]
+                except KeyError:
+                    raise DatabaseMigrationError(
+                        'no registered migration for database version')
+                migration.migrate(cnx)
+                version = migration.to_version
+                set_user_version(cnx, version)
 
 
 class BaseMigration(ABC):
