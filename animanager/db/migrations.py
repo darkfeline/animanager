@@ -16,11 +16,14 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABC, abstractmethod
+import logging
 
 from .base import DatabaseError
 from .sqlite import SQLiteDB
 from .versions import get_user_version
 from .versions import set_user_version
+
+logger = logging.getLogger(__name__)
 
 
 class MigrationMixin(SQLiteDB):
@@ -87,6 +90,8 @@ class MigrationManager:
             except KeyError:
                 raise DatabaseMigrationError(
                     'no registered migration for database version')
+            logger.info('Migrating database from %d to %d',
+                        migration.from_version, migration.to_version)
             migration.migrate(cnx)
             version = migration.to_version
             set_user_version(cnx, version)
