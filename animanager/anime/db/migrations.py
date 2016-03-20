@@ -22,6 +22,7 @@ Has one function, migrate(), for migrating AnimeDB databases.
 """
 
 from animanager.date import parse_date
+from animanager.date import timestamp
 from animanager.db.migrations import BaseMigration
 
 migrations_list = list()
@@ -119,9 +120,17 @@ class Migration2(BaseMigration):
             SELECT aid, title, type, episodes
             FROM anime
             """)
-            # XXX migrate dates
-            row = cnx.cursor().execute('SELECT startdate, enddate FROM anime')
-            for startdate, enddate in row:
-                pass
+            # This is done in Python instead of SQL because fuck timezones.
+            row = cnx.cursor().execute('SELECT aid, startdate, enddate FROM anime')
+            cur.executemany(
+                """UPDATE anime
+                SET startdate=?, enddate=?
+                WHERE aid=?""",
+                ([
+                    timestamp(parse_date(startdate)) if startdate else None,
+                    timestamp(parse_date(enddate)) if enddate else None,
+                    aid]
+                 for aid, startdate, enddate in row),
+            )
             cur.execute('DROP TABLE anime')
             cur.execute('ALTER TABLE anime_new RENAME TO anime')
