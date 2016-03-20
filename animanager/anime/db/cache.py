@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.db import BaseCacheTableMixin
-from animanager.db import BaseDispatcher
+from animanager.db.cache import BaseCacheTableMixin
+from animanager.db.cache import BaseDispatcher
 
 from .collections import AnimeStatus
 
@@ -24,6 +24,7 @@ from .collections import AnimeStatus
 class AnimeCacheMixin(BaseCacheTableMixin):
 
     def setup_cache_tables(self):
+        super().setup_cache_tables()
         self.cnx.cursor().execute("""
         CREATE TABLE IF NOT EXISTS cache_anime (
             aid INTEGER,
@@ -34,11 +35,10 @@ class AnimeCacheMixin(BaseCacheTableMixin):
             FOREIGN KEY (aid) REFERENCES anime(aid)
                 ON DELETE CASCADE ON UPDATE CASCADE
         )""")
-        super().setup_cache_tables()
 
     def cleanup_cache_tables(self):
-        self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
         super().cleanup_cache_tables()
+        self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
 
     @property
     def anime_cache(self):
