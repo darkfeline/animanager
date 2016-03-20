@@ -86,27 +86,3 @@ class Config:
         def player(self):
             """Video player to use."""
             return self.config['player']
-
-    ###########################################################################
-    # XXX Move
-    def register(self, db, id):
-        results = db.select(
-            table='anime',
-            fields=['name'],
-            where_filter='id=?',
-            where_args=(id,)
-        )
-        name = next(results)[0]
-        # Replace non-word, non-whitespace with whitespace.
-        pattern = re.sub(r'[^\w\s]', ' ', name)
-        # Split on whitespace and join with wildcard regexp.
-        pattern = '.*'.join(re.escape(x) for x in pattern.split())
-        # Append episode matching pattern.
-        pattern = '.*?'.join((
-            pattern,
-            r'\b(?P<ep>[0-9]+)(v[0-9]+)?',
-        ))
-        self['series'][str(id)] = pattern
-
-    def unregister(self, id):
-        del self['series'][str(id)]
