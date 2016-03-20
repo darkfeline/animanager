@@ -15,39 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-import argparse
+from .cmd import AnimeCmd
 
-from .anime import main as anime
-
-
-def _make_parser():
-    # Set up main parser.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config',
-                        default=None,
-                        help='Alternate configuration file to use.')
-
-    # Set up subparsers.
-    subparsers = parser.add_subparsers(title='Managers')
-    anime.setup_parser(subparsers)
-
-    return parser
+from animanager.config import Config
 
 
-def main():
-    logging.basicConfig(level='INFO')
+def setup_parser(subparsers):
 
-    parser = _make_parser()
-    args = parser.parse_args()
+    """Setup parsers."""
 
-    # Run command.
-    try:
-        func = args.func
-    except AttributeError:
-        parser.print_help()
+    # Set up anime command parser.
+    parser = subparsers.add_parser(
+        'anime',
+        description='Anime manager.',
+        help='Start anime manager.',
+    )
+    parser.add_argument('script', nargs='?')
+    parser.set_defaults(func=main)
+
+
+def main(args):
+    config = Config(args.config)
+    if args.script:
+        AnimeCmd.run_with_file(config, args.script)
     else:
-        func(args)
-
-if __name__ == '__main__':
-    main()
+        cmd = AnimeCmd(config)
+        cmd.cmdloop()
