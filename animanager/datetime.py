@@ -15,7 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
 import datetime
+
+
+def unix_timestamp(dt):
+    """Turn datetime-like object into UNIX timestamp.
+
+    >>> unix_timestamp(datetime.datetime(2001, 1, 2, 10, 11, 12))
+    978459072.0
+
+    >>> unix_timestamp(datetime.date(2001, 1, 2))
+    978422400.0
+
+    """
+    return time.mktime(dt.timetuple())
 
 
 def parse_date(string):
