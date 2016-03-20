@@ -21,6 +21,7 @@ import shlex
 
 from tabulate import tabulate
 
+from . import argparse
 from .registry import Registry
 
 
@@ -29,13 +30,10 @@ registry = Registry()
 
 @registry.register('do_asearch')
 @registry.register('do_as')
-def do_asearch(self, arg):
+@argparse.query_parser.parsing
+def do_asearch(self, args):
     """Search AniDB."""
-    if not arg:
-        print('Missing query.')
-        return
-    query = re.compile('.*'.join(shlex.split(arg)), re.I)
-    results = self.searchdb.search(query)
+    results = self.searchdb.search(args.query)
     results = [(anime.aid, anime.main_title) for anime in results]
     self.results['anidb'].set(results)
     self.results['anidb'].print()
@@ -56,14 +54,10 @@ _ASHOW_MSG = dedent("""\
 
 @registry.register('do_ashow')
 @registry.register('do_ash')
-def do_ashow(self, arg):
+@argparse.aid_parser.parsing
+def do_ashow(self, args):
     """Show information about anime in AniDB."""
-    args = shlex.split(arg)
-    if not args:
-        print('Missing AID.')
-        return
-    aid = args.pop(0)
-    aid = self.get_aid(aid, default_key='anidb')
+    aid = self.get_aid(args.aid, default_key='anidb')
     anime = self.anidb.lookup(aid)
     print(_ASHOW_MSG.format(
         anime.aid,
@@ -90,14 +84,10 @@ def help_ash(self):
 
 @registry.register('do_add')
 @registry.register('do_a')
-def do_add(self, arg):
+@argparse.aid_parser.parsing
+def do_add(self, args):
     """Add an anime or update an existing anime."""
-    args = shlex.split(arg)
-    if not args:
-        print('Missing AID.')
-        return
-    aid = args.pop(0)
-    aid = self.get_aid(aid, default_key='anidb')
+    aid = self.get_aid(args.aid, default_key='anidb')
     anime = self.anidb.lookup(aid)
     self.animedb.add(anime)
 
