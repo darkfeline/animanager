@@ -19,6 +19,7 @@ import logging
 import re
 import shutil
 
+from animanager.datetime import timestamp
 import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
@@ -125,30 +126,69 @@ class AnimeDB(
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(
-                """INSERT OR REPLACE INTO anime
-                (aid, title, type, episodes, startdate, enddate)
-                VALUES (?, ?, ?, ?, ?, ?)""",
-                (anime.aid, anime.title, anime.type, anime.episodecount,
-                 anime.startdate, anime.enddate))
+                """INSERT OR REPLACE INTO anime (
+                    aid,
+                    title,
+                    type,
+                    episodecount,
+                    startdate,
+                    enddate)
+                VALUES (
+                    :aid,
+                    :title,
+                    :type,
+                    :episodecount,
+                    :startdate,
+                    :enddate)""",
+                {
+                    'aid': anime.aid,
+                    'title': anime.title,
+                    'type': anime.type,
+                    'episodecount': anime.episodecount,
+                    'startdate': timestamp(anime.startdate),
+                    'enddate': timestamp(anime.enddate),
+                })
             for episode in anime.episodes:
+                self.add_episode(anime.aid, episode)
+
+    def add_episode(self, aid, episode):
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                """UPDATE episode
+                SET title=:title, length=:length
+                WHERE aid=:aid AND type=:type AND number=:number""",
+                {
+                    'aid': aid,
+                    'type': episode.type,
+                    'number': episode.number,
+                    'title': episode.title,
+                    'length': episode.length,
+                })
+            if self.cnx.changes() == 0:
                 cur.execute(
-                    """UPDATE episode
-                    SET title=:title, length=:length
-                    WHERE aid=:aid AND type=:type AND number=:number""",
+                    """INSERT INTO episode (
+                        aid,
+                        type,
+                        number,
+                        title,
+                        length,
+                        user_watched)
+                    VALUES (
+                        :aid,
+                        :type,
+                        :number,
+                        :title,
+                        :length,
+                        :user_watched)""",
                     {
-                        'aid': anime.aid,
+                        'aid': aid,
                         'type': episode.type,
                         'number': episode.number,
                         'title': episode.title,
                         'length': episode.length,
+                        'user-watched': 0,
                     })
-                if self.cnx.changes() == 0:
-                    cur.execute(
-                        """INSERT INTO episode
-                        (aid, type, number, title, length, user_watched)
-                        VALUES (?, ?, ?, ?, ?, ?)""",
-                        (anime.aid, episode.type, episode.number,
-                         episode.title, episode.length, 0))
 
     def search(self, query):
         """Perform a LIKE title search on the anime table.
@@ -163,7 +203,7 @@ class AnimeDB(
             self.cache_status(aid)
             cur = self.cnx.cursor()
             cur.execute("""
-                SELECT anime.aid, title, type, episodes,
+                SELECT anime.aid, title, type, episodecount,
                     watched_episodes, complete, regexp
                 FROM anime JOIN cache_anime USING (aid)
                 LEFT JOIN watching USING (aid)
@@ -193,10 +233,13 @@ class AnimeDB(
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute("""
-                SELECT anime.aid, title, type, episodes, startdate, enddate,
-                    watched_episodes, complete, regexp
-                FROM anime JOIN cache_anime USING (aid)
-                LEFT JOIN watching USING (aid)
+                SELECT anime.aid, title, type, episodecount,
+                    startdate, enddate,
+                    watched_episodes, complete,
+                    regexp
+                FROM anime
+                    JOIN cache_anime USING (aid)
+                    LEFT JOIN watching USING (aid)
                 WHERE anime.aid=?""", (aid,))
             anime = cur.fetchone()
             if anime is None:
@@ -251,12 +294,12 @@ class AnimeDB(
 
             # Retrieve number of episodes for this anime.
             cur.execute("""
-                SELECT episodes FROM anime WHERE aid=?
+                SELECT episodecount FROM anime WHERE aid=?
                 """, (aid,))
             row = cur.fetchone()
             if row is None:
                 raise ValueError('aid provided does not exist')
-            episodes = row[0]
+            episodecount = row[0]
 
             # Select all regular episodes in ascending order.
             cur.execute("""
@@ -274,7 +317,7 @@ class AnimeDB(
                     number -= 1
                     break
             # We store this in the cache.
-            anime_status = AnimeStatus(aid, episodes <= number, number)
+            anime_status = AnimeStatus(aid, episodecount <= number, number)
             self.anime_cache.set_status(anime_status)
 
     def cache_files(self, aid, anime_files):

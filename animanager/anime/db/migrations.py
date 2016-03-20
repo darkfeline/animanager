@@ -101,20 +101,23 @@ class Migration2(BaseMigration):
     _to_version = 2
 
     def migrate(self, cnx):
-        cur = cnx.cursor()
-        cur.execute('PRAGMA foreign_keys = 0')
         with cnx:
+            cur = cnx.cursor()
             cur.execute("""
-
-            """)
-            cur.execute("""
-            CREATE TABLE anime (
+            CREATE TABLE anime_new (
                 aid INTEGER,
                 title TEXT NOT NULL UNIQUE,
                 type TEXT NOT NULL,
-                episodes INTEGER,
-                startdate DATE,
-                enddate DATE,
+                episodecount INTEGER,
+                startdate INTEGER,
+                enddate INTEGER,
                 PRIMARY KEY (aid)
             )""")
-        cur.execute('PRAGMA foreign_keys = 1')
+            # XXX migrate dates
+            cur.execute("""
+            INSERT INTO anime_new
+            SELECT aid, title, type, episodes, startdate, enddate
+            FROM anime
+            """)
+            cur.execute('DROP TABLE anime')
+            cur.execute('ALTER TABLE anime_new RENAME TO anime')
