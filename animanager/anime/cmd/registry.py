@@ -21,19 +21,40 @@ class Registry:
     """Command registry for registering commands."""
 
     def __init__(self):
-        self.commands = dict()
+        self.do_funcs = dict()
+        self.do_funcs_reverse = dict()
+        self.help_funcs = dict()
 
-    def __setitem__(self, attribute, value):
-        self.commands[attribute] = value
-
-    def register(self, name):
+    def register_do(self, name):
         """Decorator for registering commands."""
         def decorate(func):
-            self[name] = func
+            self.do_funcs[name] = func
+            self.do_funcs_reverse[func] = name
+            return func
+        return decorate
+
+    def register_help(self, name):
+        """Decorator for registering command help."""
+        def decorate(func):
+            self.help_funcs[name] = func
+            return func
+        return decorate
+
+    def register_alias(self, alias):
+        """Decorator for registering command alias."""
+        def decorate(func):
+            original = self.do_funcs_reverse[func]
+            self.do_funcs[alias] = self.do_funcs[original]
+            help_string = 'Alias for {}'.format(original)
+            def help_func(self):
+                print(help_string)
+            self.help_funcs[alias] = help_func
             return func
         return decorate
 
     def add_commands(self, cmd):
         """Add registered commands to Cmd instance."""
-        for name, func in self.commands.items():
-            setattr(cmd, name, func)
+        for name, func in self.do_funcs.items():
+            setattr(cmd, 'do_' + name, func)
+        for name, func in self.help_funcs.items():
+            setattr(cmd, 'help_' + name, func)

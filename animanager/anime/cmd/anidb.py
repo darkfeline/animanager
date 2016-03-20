@@ -26,8 +26,8 @@ from .registry import Registry
 registry = Registry()
 
 
-@registry.register('do_asearch')
-@registry.register('do_as')
+@registry.register_alias('as')
+@registry.register_do('asearch')
 @argparse.re_query_parser.parsing
 def do_asearch(self, args):
     """Search AniDB."""
@@ -35,11 +35,6 @@ def do_asearch(self, args):
     results = [(anime.aid, anime.main_title) for anime in results]
     self.results['anidb'].set(results)
     self.results['anidb'].print()
-
-
-@registry.register('help_as')
-def help_as(self):
-    print('Alias for asearch.')
 
 
 _ASHOW_MSG = dedent("""\
@@ -50,8 +45,8 @@ _ASHOW_MSG = dedent("""\
     Start date: {}
     End date: {}\n""")
 
-@registry.register('do_ashow')
-@registry.register('do_ash')
+@registry.register_alias('ash')
+@registry.register_do('ashow')
 @argparse.aid_parser.parsing
 def do_ashow(self, args):
     """Show information about anime in AniDB."""
@@ -75,21 +70,11 @@ def do_ashow(self, args):
     ))
 
 
-@registry.register('help_ash')
-def help_ash(self):
-    print('Alias for ashow.')
-
-
-@registry.register('do_add')
-@registry.register('do_a')
+@registry.register_alias('a')
+@registry.register_do('add')
 @argparse.aid_parser.parsing
 def do_add(self, args):
     """Add an anime or update an existing anime."""
     aid = self.get_aid(args.aid, default_key='anidb')
     anime = self.anidb.lookup(aid)
     self.animedb.add(anime)
-
-
-@registry.register('help_a')
-def help_a(self):
-    print('Alias for add.')

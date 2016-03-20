@@ -28,8 +28,8 @@ from .registry import Registry
 registry = Registry()
 
 
-@registry.register('do_search')
-@registry.register('do_s')
+@registry.register_alias('s')
+@registry.register_do('search')
 @argparse.sql_query_parser.parsing
 def do_search(self, args):
     """Search Animanager database."""
@@ -49,11 +49,6 @@ def do_search(self, args):
     self.results['db'].print()
 
 
-@registry.register('help_s')
-def help_s(self):
-    print('Alias for search.')
-
-
 _SHOW_MSG = dedent("""\
     AID: {}
     Title: {}
@@ -70,8 +65,8 @@ _show_parser.add_aid()
 _show_parser.add_argument('-e', '--show-episodes', action='store_true')
 
 
-@registry.register('do_show')
-@registry.register('do_sh')
+@registry.register_alias('sh')
+@registry.register_do('show')
 @_show_parser.parsing
 def do_show(self, args):
     """Show anime data."""
@@ -107,20 +102,10 @@ def do_show(self, args):
         ))
 
 
-@registry.register('help_sh')
-def help_sh(self):
-    print('Alias for show.')
-
-
-@registry.register('do_bump')
-@registry.register('do_b')
+@registry.register_alias('b')
+@registry.register_do('bump')
 @argparse.aid_parser.parsing
 def do_bump(self, args):
     """Bump anime."""
     aid = self.get_aid(args.aid, default_key='db')
     self.animedb.bump(aid)
-
-
-@registry.register('help_b')
-def help_b(self):
-    print('Alias for bump.')

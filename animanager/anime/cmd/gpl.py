@@ -77,7 +77,7 @@ See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
 registry = Registry()
 
 
-@registry.register('help_gpl')
+@registry.register_help('gpl')
 def help_gpl(self):
     print(dedent('''\
     Show GPL information.
@@ -86,7 +86,7 @@ def help_gpl(self):
     "gpl w" to show warranty information.'''))
 
 
-@registry.register('do_gpl')
+@registry.register_do('gpl')
 def do_gpl(self, arg):
     """Show GPL information."""
     if arg == 'c':

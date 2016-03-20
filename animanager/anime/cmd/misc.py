@@ -21,19 +21,14 @@ from .registry import Registry
 registry = Registry()
 
 
-@registry.register('do_quit')
-@registry.register('do_q')
+@registry.register_alias('q')
+@registry.register_do('quit')
 def do_quit(self, arg):
     """Quit."""
     return True
 
 
-@registry.register('help_q')
-def help_q(self):
-    print('Alias for "quit".')
-
-
-@registry.register('do_purgecache')
+@registry.register_do('purgecache')
 def do_purgecache(self, arg):
     """Purge cache tables."""
     self.animedb.cleanup_cache_tables()
