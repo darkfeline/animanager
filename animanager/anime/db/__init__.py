@@ -48,8 +48,9 @@ class AnimeDB(
     def version(self):
         return 1
 
-    def migrate(self, cnx):
-        migrations.migrate(cnx)
+    @property
+    def migration_manager(self):
+        return migrations.manager
 
     @property
     def episode_types(self):

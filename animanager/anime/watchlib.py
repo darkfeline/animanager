@@ -21,7 +21,6 @@ from collections import defaultdict
 import os
 import pickle
 import re
-import sqlite3
 
 
 def is_video(filename):
@@ -72,8 +71,6 @@ class FakeAnimeFiles(BaseAnimeFiles):
     def available_string(self):
         return ''
 
-sqlite3.register_adapter(FakeAnimeFiles, lambda x: None)
-
 
 class AnimeFiles(BaseAnimeFiles):
 
@@ -102,8 +99,6 @@ class AnimeFiles(BaseAnimeFiles):
     def available_string(self):
         """Return a string of available episodes."""
         return ','.join(sorted(self.by_episode.keys()))
-
-sqlite3.register_adapter(AnimeFiles, pickle.dumps)
 
 
 def animefiles(regexp):

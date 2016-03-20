@@ -24,16 +24,12 @@ Has one function, migrate(), for migrating AnimeDB databases.
 from animanager.db import MigrationManager
 from animanager.db import BaseMigration
 
-_manager = MigrationManager()
+manager = MigrationManager()
 
 
 def _register(migration_class):
-    _manager.register(migration_class())
+    manager.register(migration_class())
     return migration_class
-
-
-def migrate(cnx):
-    _manager.migrate(cnx)
 
 
 @_register

@@ -72,23 +72,25 @@ class ForeignKeyMixin(SQLiteDB):
             raise DatabaseError('Foreign keys are not supported.')
 
 
-class BaseMigrationMixin(SQLiteDB):
+class MigrationMixin(SQLiteDB):
 
     """Automated migration.
-
-    Implement the migrate() method in subclasses for handling the migration.
-    The method should be idempotent.
 
     Make sure to include this after UserVersionMixin.
 
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.migrate(self.cnx)
 
+    @property
     @abstractmethod
-    def migrate(self, cnx):
+    def migration_manager(self):
         pass
+
+    def migrate(self, cnx):
+        self.migration_manager.migrate(cnx)
 
 
 class UserVersionMixin(SQLiteDB):
