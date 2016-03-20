@@ -39,7 +39,7 @@ def do_search(self, args):
     for anime in self.animedb.search(query):
         anime_files = watchlib.animefiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
-        self.animedb.cache_files(anime.id, anime_files)
+        self.animedb.cache_files(anime.aid, anime_files)
         results.append((
             anime.aid, anime.title, anime.type,
             '{}/{}'.format(anime.watched_episodes, anime.episodecount),
