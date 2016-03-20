@@ -33,7 +33,7 @@ from animanager import __version__ as VERSION
 from . import anidb
 from . import watchlib
 from .db import AnimeDB
-from .results import AIDSearchResults
+from .results import AIDResults
 from .results import AIDResultsManager
 
 logger = logging.getLogger(__name__)
@@ -64,10 +64,10 @@ class AnimeCmd(Cmd):
         # First thing that came to mind was Madoka.  No deep meaning to it.
         self.lastaid = 8069
         self.results = AIDResultsManager()
-        self.results['db'] = AIDSearchResults([
+        self.results['db'] = AIDResults([
             'Title', 'Type', 'Episodes', 'Complete', 'Available',
         ])
-        self.results['anidb'] = AIDSearchResults(['Title'])
+        self.results['anidb'] = AIDResults(['Title'])
 
     @classmethod
     def run_with_file(cls, config, file):
