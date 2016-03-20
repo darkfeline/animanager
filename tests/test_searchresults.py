@@ -22,10 +22,8 @@ from animanager.anime.cmd import searchresults
 
 
 def load_tests(loader, tests, pattern):
-    suite = unittest.TestSuite()
-    suite.addTest(tests)
-    suite.addTests(doctest.DocTestSuite(searchresults))
-    return suite
+    tests.addTests(doctest.DocTestSuite(searchresults))
+    return tests
 
 
 class ParseAIDTestCase(unittest.TestCase):

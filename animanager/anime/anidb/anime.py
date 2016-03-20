@@ -15,13 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
 import re
 
-from . import base
+from animanager.api import XMLResponse
+from animanager.datetime import parse_date
+
+from . import api
 
 
-class AnimeRequest(base.HTTPAPIRequest):
+class AnimeRequest(api.HTTPAPIRequest):
 
     """Request for looking up anime by AID via AniDB's HTTP API."""
 
@@ -34,7 +36,7 @@ class AnimeRequest(base.HTTPAPIRequest):
         return AnimeResponse(response)
 
 
-class AnimeResponse(base.XMLResponse):
+class AnimeResponse(XMLResponse):
 
     """Response from AnimeRequest."""
 
@@ -43,12 +45,7 @@ class AnimeResponse(base.XMLResponse):
         return AnimeTree
 
 
-def _parse_date(string):
-    """Parse an ISO format date (YYYY-mm-dd)."""
-    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
-
-
-class AnimeTree(base.XMLTree):
+class AnimeTree(api.XMLTree):
 
     @property
     def aid(self):
@@ -66,7 +63,7 @@ class AnimeTree(base.XMLTree):
     def startdate(self):
         text = self.root.find('startdate').text
         try:
-            return _parse_date(text)
+            return parse_date(text)
         except ValueError:
             return None
 
@@ -74,7 +71,7 @@ class AnimeTree(base.XMLTree):
     def enddate(self):
         text = self.root.find('enddate').text
         try:
-            return _parse_date(text)
+            return parse_date(text)
         except ValueError:
             return None
 

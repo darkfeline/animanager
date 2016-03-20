@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""AniDB API bindings."""
-
 from abc import ABC, abstractmethod
 import gzip
 import logging
@@ -51,32 +49,10 @@ class HTTPRequest(Request):
         return urllib.request.urlopen(self.request_uri)
 
 
-class HTTPAPIRequest(HTTPRequest):
-
-    """AniDB HTTP API request abstract class."""
-
-    CLIENT = 'kfanimanager'
-    CLIENTVER = 1
-    PROTOVER = 1
-
-    def __init__(self, request):
-        self.params = {
-            'client': self.CLIENT,
-            'clientver': self.CLIENTVER,
-            'protover': self.PROTOVER,
-            'request': request,
-        }
-
-    @property
-    def request_uri(self):
-        return 'http://api.anidb.net:9001/httpapi?' + \
-            urllib.parse.urlencode(self.params)
-
-
 class Response(ABC):
 
     @abstractmethod
-    def response_content(self):
+    def content(self):
         return ''
 
 
@@ -87,7 +63,7 @@ class HTTPResponse(Response):
     def __init__(self, response):
         self.response = response
 
-    def response_content(self):
+    def content(self):
         content = self.response.read()
         if self.response.getheader('Content-encoding') == 'gzip':
             content = gzip.decompress(content)
@@ -96,9 +72,9 @@ class HTTPResponse(Response):
 
 class XMLResponse(HTTPResponse):
 
-    """Abstract class for returning XMLResponseTree.
+    """Abstract class for XML responses.
 
-    Define tree_class attribute in implementation subclasses.
+    Implement tree_class property in subclasses.
 
     """
 
@@ -114,7 +90,7 @@ class XMLResponse(HTTPResponse):
         non-existent AID.
 
         """
-        content = self.response_content()
+        content = self.content()
         tree = self.tree_class(ET.ElementTree(ET.fromstring(content)))
         if tree.error:
             raise APIError(tree)
@@ -125,7 +101,7 @@ class XMLTree:
 
     """Base class for handling API XML responses.
 
-    Check error() for any errors.
+    Check error property for any errors.
 
     parse() class method can be used to load the results from an existing XML
     file containing the data.
@@ -157,7 +133,7 @@ class XMLTree:
 
     @property
     def error(self):
-        return self.root.find('error')
+        return False
 
 
 class APIError(Exception):

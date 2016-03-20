@@ -1,4 +1,3 @@
-
 # Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
@@ -16,12 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-
-from . import searchresults
+import datetime
 
 
-def load_tests(loader, tests, pattern):
-    suite = unittest.TestSuite()
-    suite.addTests(loader.loadTestsFromModule(searchresults))
-    return suite
+def parse_date(string):
+    """Parse an ISO format date (YYYY-mm-dd).
+
+    >>> parse_date('1990-01-02')
+
+    """
+    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
