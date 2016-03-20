@@ -48,6 +48,7 @@ class AnimeDB(
 
     def __init__(self, database):
         self.database = database
+        self._migration_manager = None
         super().__init__(database)
         self._episode_types = None
         self._episode_types_by_id = None
@@ -58,14 +59,12 @@ class AnimeDB(
 
     @property
     def migration_manager(self):
-        try:
-            manager = self._migration_manager
-        except AttributeError:
+        if self._migration_manager is None:
             manager = animanager.db.fk.MigrationManager()
             for migration_class in migrations_list:
                 manager.register(migration_class())
             self._migration_manager = manager
-        return manager
+        return self._migration_manager
 
     def migrate(self):
         if self.needs_migration():
