@@ -225,9 +225,9 @@ class AnimeCmd(Cmd):
 
     def do_show(self, arg):
         """Show anime data."""
-        arg = shlex.split(arg)[0]
-        aid = self.get_aid(arg, default_key='db')
-        anime = self.animedb.lookup(aid, episodes=True)
+        aid, show_episodes = shlex.split(arg)
+        aid = self.get_aid(aid, default_key='db')
+        anime = self.animedb.lookup(aid, episodes=show_episodes)
 
         complete_string = 'yes' if anime.complete else 'no'
         if anime.regexp is not None:
@@ -245,16 +245,17 @@ class AnimeCmd(Cmd):
             complete_string,
             regexp_string,
         ))
-        print(tabulate(
-            (
-                (self.animedb.get_epno(episode), episode.title, episode.length,
-                 'yes' if episode.user_watched else '')
-                for episode in sorted(
-                     anime.episodes,
-                     key=lambda x: (x.type, x.number))
-            ),
-            headers=['Number', 'Title', 'min', 'Watched'],
-        ))
+        if anime.episodes:
+            print(tabulate(
+                (
+                    (self.animedb.get_epno(episode), episode.title, episode.length,
+                     'yes' if episode.user_watched else '')
+                    for episode in sorted(
+                        anime.episodes,
+                        key=lambda x: (x.type, x.number))
+                ),
+                headers=['Number', 'Title', 'min', 'Watched'],
+            ))
 
     do_sh = do_show
 
@@ -319,6 +320,8 @@ class AnimeCmd(Cmd):
     # watch
     def do_watch(self, arg):
         """Watch an anime."""
+        arg = shlex.split(arg)[0]
+        aid = self.get_aid(arg, default_key='db')
         raise NotImplementedError
         if not arg:
             self._watch_list_all()
