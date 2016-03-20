@@ -116,7 +116,7 @@ def migrate(cnx):
         # This is done in Python instead of SQL because fuck timezones.
         row = cnx.cursor().execute('SELECT aid, startdate, enddate FROM anime')
         cur.executemany(
-            """UPDATE anime
+            """UPDATE anime_new
             SET startdate=?, enddate=?
             WHERE aid=?""",
             ([

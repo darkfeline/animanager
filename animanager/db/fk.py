@@ -43,6 +43,7 @@ class MigrationManager(migrations.MigrationManager):
         cur = cnx.cursor()
         cur.execute('PRAGMA foreign_keys = 0')
         with cnx:
-            super().migrate_single(cnx, version)
+            version = super().migrate_single(cnx, version)
             cur.execute('PRAGMA foreign_key_check')
         cur.execute('PRAGMA foreign_keys = 1')
+        return version

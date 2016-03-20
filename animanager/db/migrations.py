@@ -64,6 +64,8 @@ class MigrationManager:
         cannot register 1 to 2 followed by 3 to 4.  ValueError will be raised.
 
         """
+        if not isinstance(migration, BaseMigration):
+            raise TypeError('migration must be a BaseMigration instance')
         if migration.from_version != self.current_version:
             raise ValueError('cannot register disjoint migration')
         if migration.to_version <= migration.from_version:
@@ -128,8 +130,9 @@ class BaseMigration(ABC):
     def to_version(self):
         return self._to_version
 
+    @staticmethod
     @abstractmethod
-    def migrate(self, cnx):
+    def migrate(cnx):
         """Migrate a database to the current version.
 
         cnx is a DB-API connection object.
@@ -152,7 +155,7 @@ def make_migration(from_version, to_version, migrate_func):
         {
             '_from_version': from_version,
             '_to_version': to_version,
-            'migrate': migrate_func,
+            'migrate': staticmethod(migrate_func),
         })
 
 
