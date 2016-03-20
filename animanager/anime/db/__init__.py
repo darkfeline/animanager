@@ -346,6 +346,16 @@ class AnimeDB(
                 WHERE aid=?""",
                 (pickle.dumps(anime_files), aid))
 
+    def get_files(self, aid):
+        with self.cnx:
+            cur = self.cnx.cursor().execute(
+                'SELECT anime_files FROM cache_anime WHERE aid=?',
+                (aid,))
+            row = cur.fetchone()
+            if row is None:
+                raise ValueError('No cached files')
+            return pickle.loads(row[0])
+
     def set_regexp(self, aid, regexp):
         """Set watching regexp for anime."""
         with self.cnx:
