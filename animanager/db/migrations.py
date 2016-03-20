@@ -36,9 +36,6 @@ class MigrationMixin(SQLiteDB):
     def migration_manager(self):
         pass
 
-    def needs_migration(self):
-        return self.migration_manager.needs_migration(self.cnx)
-
     def migrate(self):
         self.migration_manager.migrate(self.cnx)
 
@@ -74,6 +71,23 @@ class MigrationManager:
         """Check if database needs migration."""
         return get_user_version(cnx) < self.current_version
 
+    def migrate_single(self, cnx, version):
+        """Perform a single migration starting from given version.
+
+        Returns the version after migration.
+
+        """
+        with cnx:
+            try:
+                migration = self.migrations[version]
+            except KeyError:
+                raise DatabaseMigrationError(
+                    'no registered migration for database version')
+            migration.migrate(cnx)
+            version = migration.to_version
+            set_user_version(cnx, version)
+            return version
+
     def migrate(self, cnx):
         """Migrate a database as needed.
 
@@ -84,14 +98,7 @@ class MigrationManager:
         with cnx:
             version = get_user_version(cnx)
             while version < self.current_version:
-                try:
-                    migration = self.migrations[version]
-                except KeyError:
-                    raise DatabaseMigrationError(
-                        'no registered migration for database version')
-                migration.migrate(cnx)
-                version = migration.to_version
-                set_user_version(cnx, version)
+                version = self.migrate_single(cnx, version)
 
 
 class BaseMigration(ABC):

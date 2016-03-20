@@ -18,7 +18,6 @@
 import apsw
 
 from .base import BaseDatabase
-from .base import DatabaseError
 
 
 class SQLiteDB(BaseDatabase):
@@ -45,16 +44,3 @@ class SQLiteDB(BaseDatabase):
 
     def close(self):
         self.cnx.close()
-
-
-class ForeignKeyMixin(SQLiteDB):
-
-    """Enables SQLite foreign key support."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        cur = self.cnx.cursor()
-        cur.execute('PRAGMA foreign_keys = ON')
-        cur.execute('PRAGMA foreign_keys')
-        if cur.fetchone()[0] != 1:
-            raise DatabaseError('Foreign keys are not supported.')
