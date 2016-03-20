@@ -17,89 +17,10 @@
 
 import re
 
-from tabulate import tabulate
+import animanager.results
 
 
-class SearchResults:
-
-    """Class for managing search results for commands to access.
-
-    >>> SearchResults(['title'])
-    SearchResults(['title'], [])
-
-    You can pass initial results:
-
-    >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-    SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-
-    """
-
-    def __init__(self, headers, results=()):
-        self.table_width = len(headers)
-        self.headers = ['#'] + headers
-        self.set(results)
-
-    def __repr__(self):
-        return 'SearchResults({}, {})'.format(
-            self.headers[1:],
-            self.results
-        )
-
-    def append(self, row):
-        """Append a result row and check its length.
-
-        >>> x = SearchResults(['title', 'type'])
-        >>> x.append(('Konosuba', 'TV'))
-        >>> x
-        SearchResults(['title', 'type'], [('Konosuba', 'TV')])
-
-        >>> x.append(('Konosuba',))
-        Traceback (most recent call last):
-            ...
-        ValueError: Wrong result row length
-
-        """
-        row = tuple(row)
-        if len(row) != self.table_width:
-            raise ValueError('Wrong result row length')
-        self.results.append(row)
-
-    def set(self, results):
-        """Set results.
-
-        results is an iterable of tuples, where each tuple is a row of results.
-
-        >>> x = SearchResults(['title'])
-        >>> x.set([('Konosuba',), ('Oreimo',)])
-        >>> x
-        SearchResults(['title'], [('Konosuba',), ('Oreimo',)])
-
-        """
-        self.results = list()
-        for row in results:
-            self.append(row)
-
-    def get(self, number):
-        """Get a result row.
-
-        results are indexed from 1.
-
-        >>> SearchResults(['title'], [('Konosuba',), ('Oreimo',)]).get(1)
-        ('Konosuba',)
-
-        """
-        return self.results[number - 1]
-
-    def print(self):
-        """Print results table."""
-        width = self.table_width
-        print(tabulate(
-            ((i, *row) for i, row in enumerate(self.results, 1)),
-            headers=self.headers,
-        ))
-
-
-class AIDSearchResults(SearchResults):
+class AIDResults(animanager.results.Results):
 
     """SearchResults subclass that guarantees the presence of an aid column."""
 

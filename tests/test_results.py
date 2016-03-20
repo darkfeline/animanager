@@ -18,22 +18,24 @@
 import doctest
 import unittest
 
-from animanager.anime.cmd import searchresults
+import animanager.results
+from animanager.anime.results import AIDResults
+from animanager.anime.results import AIDResultsManager
 
 
 def load_tests(loader, tests, pattern):
-    tests.addTests(doctest.DocTestSuite(searchresults))
+    tests.addTests(doctest.DocTestSuite(animanager.results))
     return tests
 
 
 class ParseAIDTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.manager = searchresults.AIDResultsManager()
-        results = searchresults.AIDSearchResults(['Title'])
+        self.manager = AIDResultsManager()
+        results = AIDResults(['Title'])
         results.set([(1, 'Madoka'), (2, 'Madoka'), (3, 'Madoka')])
         self.manager['foo'] = results
-        results = searchresults.AIDSearchResults(['Title'])
+        results = AIDResults(['Title'])
         results.set([(4, 'Madoka'), (5, 'Madoka'), (6, 'Madoka')])
         self.manager['bar'] = results
 
