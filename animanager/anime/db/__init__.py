@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import pickle
 import re
 import shutil
 
@@ -223,7 +224,7 @@ class AnimeDB(
 
         If episodes is True, individual episodes will be looked up and included
         in the returned AnimeFull instance.  Otherwise, the episodes attribute
-        on the returned AnimeFull instance will be None.
+        on the returned AnimeFull instance will be an empty list.
 
         This forces status calculation.
 
@@ -250,7 +251,7 @@ class AnimeDB(
                 episodes = [Episode(*row) for row in cur]
                 return AnimeFull(*anime, episodes)
             else:
-                return AnimeFull(*anime, None)
+                return AnimeFull(*anime, [])
 
     def set_watched(self, aid, ep_type, number):
         """Set episode as watched."""
@@ -325,7 +326,7 @@ class AnimeDB(
                 """UPDATE cache_anime
                 SET anime_files=?
                 WHERE aid=?""",
-                (aid, anime_files))
+                (pickle.dumps(anime_files), aid))
 
     def set_regexp(self, aid, regexp):
         """Set watching regexp for anime."""
