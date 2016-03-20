@@ -22,7 +22,18 @@ from .base import BaseDatabase
 
 class BaseCacheTableMixin(BaseDatabase):
 
-    """Interface for cache table mixins."""
+    """Interface for cache table mixins.
+
+    Subclasses should implement setup_cache_tables() and cleanup_cache_tables()
+    to set up and clean up their cache tables, respectively.  These should call
+    super() before doing anything.  Thus, cache table mixins will be handled in
+    reverse MRO order.
+
+    Subclasses may define a dispatcher property, which returns a subclass of
+    BaseDispatcher.  Dispatchers may define methods for performing operations
+    solely on the cache tables of the parent cache table mixin.
+
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
