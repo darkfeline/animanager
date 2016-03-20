@@ -30,7 +30,6 @@ from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
 from .collections import Episode
-from .collections import AnimeStatus
 from .migrations import migrations_list
 
 logger = logging.getLogger(__name__)
@@ -273,7 +272,7 @@ class AnimeDB(
         episode = anime.watched_episodes + 1
         self.set_watched(aid, self.episode_types['regular'].id, episode)
         self.anime_cache.set_status(
-            AnimeStatus(aid, episode >= anime.episodecount, episode))
+            aid, episode >= anime.episodecount, episode)
 
     def cache_status(self, aid, force=False):
         """Calculate and cache status for given anime.
@@ -317,8 +316,7 @@ class AnimeDB(
                     number -= 1
                     break
             # We store this in the cache.
-            anime_status = AnimeStatus(aid, episodecount <= number, number)
-            self.anime_cache.set_status(anime_status)
+            self.anime_cache.set_status(aid, episodecount <= number, number)
 
     def cache_files(self, aid, anime_files):
         with self.cnx:

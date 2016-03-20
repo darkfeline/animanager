@@ -18,8 +18,6 @@
 from animanager.db.cache import BaseCacheTableMixin
 from animanager.db.cache import BaseDispatcher
 
-from .collections import AnimeStatus
-
 
 class AnimeCacheMixin(BaseCacheTableMixin):
 
@@ -30,7 +28,7 @@ class AnimeCacheMixin(BaseCacheTableMixin):
             aid INTEGER,
             complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
             watched_episodes INTEGER NOT NULL,
-            anime_files PICKLE,
+            anime_files BLOB,
             PRIMARY KEY (aid),
             FOREIGN KEY (aid) REFERENCES anime(aid)
                 ON DELETE CASCADE ON UPDATE CASCADE
@@ -49,22 +47,20 @@ class AnimeCacheDispatcher(BaseDispatcher):
 
     __slots__ = ()
 
-    def set_status(self, anime_status):
+    def set_status(self, aid, complete, watched_episodes):
         """Set anime status."""
-        if not isinstance(anime_status, AnimeStatus):
-            raise TypeError('anime_status must be an instance of AnimeStatus')
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(
                 """UPDATE cache_anime
                 SET complete=?, watched_episodes=?
                 WHERE aid=?""",
-                (anime_status.complete,
-                 anime_status.watched_episodes,
-                 anime_status.aid))
+                (complete,
+                 watched_episodes,
+                 aid))
             if self.cnx.changes() == 0:
                 cur.execute(
                     """INSERT INTO cache_anime
                     (aid, complete, watched_episodes)
                     VALUES (?, ?, ?)""",
-                    anime_status)
+                    (aid, complete, watched_episodes))
