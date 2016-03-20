@@ -145,8 +145,12 @@ class AnimeCmd(Cmd):
 
     def do_ashow(self, arg):
         """Show information about anime in AniDB."""
-        arg = shlex.split(arg)[0]
-        aid = self.get_aid(arg, default_key='anidb')
+        args = shlex.split(arg)
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
+        aid = self.get_aid(aid, default_key='anidb')
         anime = self.anidb.lookup(aid)
         print(self._ashow_msg.format(
             anime.aid,
@@ -173,8 +177,12 @@ class AnimeCmd(Cmd):
     # add
     def do_add(self, arg):
         """Add an anime or update an existing anime."""
-        arg = shlex.split(arg)[0]
-        aid = self.get_aid(arg, default_key='anidb')
+        args = shlex.split(arg)
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
+        aid = self.get_aid(aid, default_key='anidb')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
 
@@ -225,7 +233,15 @@ class AnimeCmd(Cmd):
 
     def do_show(self, arg):
         """Show anime data."""
-        aid, show_episodes = shlex.split(arg)
+        args = shlex.split(arg)
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
+        if not args:
+            show_episodes = False
+        else:
+            show_episodes = True
         aid = self.get_aid(aid, default_key='db')
         anime = self.animedb.lookup(aid, episodes=show_episodes)
 
@@ -266,7 +282,11 @@ class AnimeCmd(Cmd):
     # bump
     def do_bump(self, arg):
         """Bump anime."""
-        arg = shlex.split(arg)[0]
+        args = shlex.split(arg)
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
         aid = self.get_aid(arg, default_key='db')
         self.animedb.bump(aid)
 
@@ -280,7 +300,11 @@ class AnimeCmd(Cmd):
     def do_register(self, arg):
         """Register watching regexp for an anime."""
         args = shlex.split(arg)
-        aid = self.get_aid(args.pop(0), default_key='db')
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
+        aid = self.get_aid(aid, default_key='db')
         if args:
             # Use regexp provided by user.
             pattern = '.*'.join(args)
@@ -307,8 +331,12 @@ class AnimeCmd(Cmd):
     # unregister
     def do_unregister(self, arg):
         """Unregister watching regexp for an anime."""
-        arg = shlex.split(arg)[0]
-        aid = self.get_aid(arg, default_key='db')
+        args = shlex.split(arg)
+        if not args:
+            print('Missing AID.')
+            return
+        aid = args.pop(0)
+        aid = self.get_aid(aid, default_key='db')
         self.animedb.delete_regexp(aid)
 
     do_ur = do_unregister
@@ -320,8 +348,10 @@ class AnimeCmd(Cmd):
     # watch
     def do_watch(self, arg):
         """Watch an anime."""
-        arg = shlex.split(arg)[0]
+        args = shlex.split(arg)
+        aid = args.pop(0)
         aid = self.get_aid(arg, default_key='db')
+        anime_files = self.animdb.get_files(aid)
         raise NotImplementedError
         if not arg:
             self._watch_list_all()
