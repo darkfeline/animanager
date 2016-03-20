@@ -17,7 +17,6 @@
 
 import configparser
 import os
-import re
 import shlex
 
 
