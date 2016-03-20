@@ -16,8 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from textwrap import dedent
-import re
-import shlex
 
 from tabulate import tabulate
 
@@ -30,7 +28,7 @@ registry = Registry()
 
 @registry.register('do_asearch')
 @registry.register('do_as')
-@argparse.query_parser.parsing
+@argparse.re_query_parser.parsing
 def do_asearch(self, args):
     """Search AniDB."""
     results = self.searchdb.search(args.query)

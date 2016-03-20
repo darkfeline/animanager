@@ -38,6 +38,7 @@ from animanager.anime.results import AIDResultsManager
 
 from . import anidb
 from . import gpl
+from . import misc
 
 logger = logging.getLogger(__name__)
 
@@ -99,128 +100,6 @@ class AnimeCmd(Cmd):
             else:
                 self.lastaid = aid
                 return aid
-
-    ###########################################################################
-    # quit
-    def do_quit(self, arg):
-        """Quit."""
-        return True
-
-    do_q = do_quit
-
-    def help_q(self):
-        print('Alias for "quit".')
-
-    ###########################################################################
-    # administrative
-    def do_purgecache(self, arg):
-        """Purge cache tables."""
-        self.animedb.cleanup_cache_tables()
-        self.animedb.setup_cache_tables()
-
-    ###########################################################################
-    # search
-    def do_search(self, arg):
-        """Search Animanager database."""
-        if not arg:
-            print('Missing query.')
-            return
-        query = '%{}%'.format('%'.join(shlex.split(arg)))
-        all_files = watchlib.find_files(self.config.anime.watchdir)
-        results = list()
-        for anime in self.animedb.search(query):
-            anime_files = watchlib.animefiles(anime.regexp)
-            anime_files.maybe_add_iter(all_files)
-            self.animedb.cache_files(anime.id, anime_files)
-            results.append((
-                anime.aid, anime.title, anime.type,
-                '{}/{}'.format(anime.watched_episodes, anime.episodecount),
-                'yes' if anime.complete else '',
-                anime_files.available_string(),
-            ))
-        self.results['db'].set(results)
-        self.results['db'].print()
-
-    do_s = do_search
-
-    def help_s(self):
-        print('Alias for search.')
-
-    ###########################################################################
-    # show
-    _show_msg = dedent("""\
-        AID: {}
-        Title: {}
-        Type: {}
-        Episodes: {}/{}
-        Start date: {}
-        End date: {}
-        Complete: {}
-        {}""")
-
-    def do_show(self, arg):
-        """Show anime data."""
-        args = shlex.split(arg)
-        if not args:
-            print('Missing AID.')
-            return
-        aid = args.pop(0)
-        if not args:
-            show_episodes = False
-        else:
-            show_episodes = True
-        aid = self.get_aid(aid, default_key='db')
-        anime = self.animedb.lookup(aid, episodes=show_episodes)
-
-        complete_string = 'yes' if anime.complete else 'no'
-        if anime.regexp is not None:
-            regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
-        else:
-            regexp_string = ''
-        print(self._show_msg.format(
-            anime.aid,
-            anime.title,
-            anime.type,
-            anime.watched_episodes,
-            anime.episodecount,
-            anime.startdate,
-            anime.enddate,
-            complete_string,
-            regexp_string,
-        ))
-        if anime.episodes:
-            print(tabulate(
-                (
-                    (self.animedb.get_epno(episode), episode.title, episode.length,
-                     'yes' if episode.user_watched else '')
-                    for episode in sorted(
-                        anime.episodes,
-                        key=lambda x: (x.type, x.number))
-                ),
-                headers=['Number', 'Title', 'min', 'Watched'],
-            ))
-
-    do_sh = do_show
-
-    def help_sh(self):
-        print('Alias for show.')
-
-    ###########################################################################
-    # bump
-    def do_bump(self, arg):
-        """Bump anime."""
-        args = shlex.split(arg)
-        if not args:
-            print('Missing AID.')
-            return
-        aid = args.pop(0)
-        aid = self.get_aid(arg, default_key='db')
-        self.animedb.bump(aid)
-
-    do_b = do_bump
-
-    def help_b(self):
-        print('Alias for bump.')
 
     ###########################################################################
     # register
@@ -323,3 +202,4 @@ class AnimeCmd(Cmd):
 
 anidb.registry.add_commands(AnimeCmd)
 gpl.registry.add_commands(AnimeCmd)
+misc.registry.add_commands(AnimeCmd)
