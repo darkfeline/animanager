@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import time
 import datetime
 
 
@@ -29,7 +28,11 @@ def unix_timestamp(dt):
     978422400.0
 
     """
-    return time.mktime(dt.timetuple())
+    if isinstance(dt, datetime.date):
+        dt = datetime.datetime(dt.year, dt.month, dt.day)
+    if isinstance(dt, datetime.datetime):
+        return dt.timestamp()
+    raise TypeError('dt is not datetime-like')
 
 
 def parse_date(string):
