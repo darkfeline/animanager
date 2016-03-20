@@ -15,11 +15,50 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
+from datetime import timezone
 import doctest
+import unittest
+
+import hypothesis
+from hypothesis import strategies
 
 import animanager.datetime
+from animanager.datetime import daystamp
+from animanager.datetime import fromdaystamp
 
 
 def load_tests(loader, tests, pattern):
     tests.addTests(doctest.DocTestSuite(animanager.datetime))
     return tests
+
+
+MIN_DATETIME = datetime(1970, 1, 1, tzinfo=timezone.utc)
+MAX_DATETIME = datetime(2038, 12, 31, tzinfo=timezone.utc)
+MIN_TIMESTAMP = MIN_DATETIME.timestamp()
+MAX_TIMESTAMP = MAX_DATETIME.timestamp()
+
+
+@strategies.composite
+def datetimes(draw):
+    return datetime.fromtimestamp(
+        draw(strategies.floats(
+            MIN_TIMESTAMP,
+            MAX_TIMESTAMP,
+        )),
+        tz=timezone.utc,
+    )
+
+
+@strategies.composite
+def dates(draw):
+    return draw(datetimes()).date()
+
+
+class DateTimeTestCase(unittest.TestCase):
+
+    @hypothesis.given(dates())
+    def test_daystamp(self, date):
+        ds = animanager.datetime.daystamp(date)
+        new_date = animanager.datetime.fromdaystamp(ds)
+        self.assertEqual(date, new_date)

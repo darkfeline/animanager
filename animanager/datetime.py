@@ -15,26 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+
+EPOCH = datetime.fromtimestamp(0, timezone.utc).date()
 
 
-def timestamp(dt):
-    """Turn datetime-like object into UNIX timestamp.
+def daystamp(date):
+    """Return days relative to epoch.
 
-    >>> timestamp(datetime.datetime(2001, 1, 2, 10, 11, 12))
-    978459072.0
-
-    >>> timestamp(datetime.date(2001, 1, 2))
-    978393600.0
+    >>> from datetime import date
+    >>> daystamp(date(2001, 1, 2))
+    11324
 
     """
-    if not isinstance(dt, datetime.datetime):
-        try:
-            dt = datetime.datetime(dt.year, dt.month, dt.day,
-                                   tzinfo=datetime.timezone.utc)
-        except AttributeError as e:
-            raise TypeError('dt is not datetime-like') from e
-    return dt.timestamp()
+    return (date - EPOCH).days
+
+
+def fromdaystamp(ds):
+    """Convert daystamp into date.
+
+    >>> fromdaystamp(11324)
+    datetime.date(2001, 1, 2)
+
+    """
+    return EPOCH + timedelta(days=ds)
 
 
 def parse_date(string):
@@ -44,4 +50,4 @@ def parse_date(string):
     datetime.date(1990, 1, 2)
 
     """
-    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
+    return datetime.strptime(string, '%Y-%m-%d').date()

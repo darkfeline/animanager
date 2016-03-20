@@ -19,7 +19,7 @@ import logging
 import re
 import shutil
 
-from animanager.datetime import timestamp
+from animanager.datetime import daystamp
 import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
@@ -145,8 +145,8 @@ class AnimeDB(
                     'title': anime.title,
                     'type': anime.type,
                     'episodecount': anime.episodecount,
-                    'startdate': timestamp(anime.startdate),
-                    'enddate': timestamp(anime.enddate),
+                    'startdate': daystamp(anime.startdate),
+                    'enddate': daystamp(anime.enddate),
                 })
             for episode in anime.episodes:
                 self.add_episode(anime.aid, episode)
