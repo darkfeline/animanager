@@ -395,4 +395,4 @@ class AnimeCmd(Cmd):
         # Print
         pass  # XXX
 
-gpl.register_commands(AnimeCmd)
+gpl.registry.add_commands(AnimeCmd)

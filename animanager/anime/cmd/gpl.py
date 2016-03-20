@@ -17,6 +17,8 @@
 
 from textwrap import dedent
 
+from .registry import Registry
+
 GPL_COPYING = dedent('''\
 Animanager is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as
@@ -72,11 +74,10 @@ copy of the Program in return for a fee.
 See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
 
 
-def register_commands(cmd):
-    cmd.help_gpl = help_gpl
-    cmd.do_gpl = do_gpl
+registry = Registry()
 
 
+@registry.register('help_gpl')
 def help_gpl(self):
     print(dedent('''\
     Show GPL information.
@@ -85,6 +86,7 @@ def help_gpl(self):
     "gpl w" to show warranty information.'''))
 
 
+@registry.register('do_gpl')
 def do_gpl(self, arg):
     """Show GPL information."""
     if arg == 'c':
