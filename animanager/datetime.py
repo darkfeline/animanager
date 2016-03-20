@@ -25,12 +25,13 @@ def timestamp(dt):
     978459072.0
 
     >>> timestamp(datetime.date(2001, 1, 2))
-    978422400.0
+    978393600.0
 
     """
     if not isinstance(dt, datetime.datetime):
         try:
-            dt = datetime.datetime(dt.year, dt.month, dt.day)
+            dt = datetime.datetime(dt.year, dt.month, dt.day,
+                                   tzinfo=datetime.timezone.utc)
         except AttributeError as e:
             raise TypeError('dt is not datetime-like') from e
     return dt.timestamp()
