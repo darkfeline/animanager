@@ -52,9 +52,27 @@ class Registry:
             return func
         return decorate
 
+    @staticmethod
+    def setattr(obj, attr, value):
+        if hasattr(obj, attr):
+            raise DuplicateRegisterError(obj, attr)
+        setattr(obj, attr, value)
+
     def add_commands(self, cmd):
         """Add registered commands to Cmd instance."""
         for name, func in self.do_funcs.items():
-            setattr(cmd, 'do_' + name, func)
+            self.setattr(cmd, 'do_' + name, func)
         for name, func in self.help_funcs.items():
-            setattr(cmd, 'help_' + name, func)
+            self.setattr(cmd, 'help_' + name, func)
+
+
+class RegistryError(Exception):
+    pass
+
+
+class DuplicateRegisterError(ValueError, RegistryError):
+
+    def __init__(self, obj, attr):
+        self.obj = obj
+        self.attr = attr
+        super().__init__('{} already has attribute {}'.format(obj, attr))
