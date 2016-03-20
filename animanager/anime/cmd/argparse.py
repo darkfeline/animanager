@@ -28,13 +28,19 @@ class ArgumentParser(argparse.ArgumentParser):
         """Decorator to parse command arguments."""
         def decorate(func):
             def parse_args_around(self, arg):
-                try:
-                    args = self.parse_args(shlex.split(arg))
-                except SystemExit:
-                    return
+                args = self.parse_args(shlex.split(arg))
                 return func(self, args)
             return parse_args_around
         return decorate
+
+    def exit(self, status=0, message=None):
+        """Override SystemExit."""
+        if message:
+            print(message)
+
+    def error(self, message):
+        """Override printing to stderr."""
+        print(message)
 
     def add_query(self):
         self.add_argument(
