@@ -28,9 +28,9 @@ class ArgumentParser(argparse.ArgumentParser):
     def parsing(self):
         """Decorator to parse command arguments."""
         def decorate(func):
-            def parse_args_around(self, arg):
+            def parse_args_around(self2, arg):
                 args = self.parse_args(shlex.split(arg))
-                return func(self, args)
+                return func(self2, args)
             return parse_args_around
         return decorate
 
