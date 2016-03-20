@@ -59,9 +59,6 @@ class MigrationManager:
     def register(self, migration):
         """Register a migration for version.
 
-        migration is a function taking a DB-API connection object that migrates
-        the database from the previous version to the supplied version.
-
         You can only register migrations in order.  For example, you can
         register migrations from version 1 to 2, then 2 to 3, then 3 to 4.  You
         cannot register 1 to 2 followed by 3 to 4.  ValueError will be raised.

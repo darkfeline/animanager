@@ -62,8 +62,8 @@ class AnimeDB(
             manager = self._migration_manager
         except AttributeError:
             manager = animanager.db.fk.MigrationManager()
-            for migration in migrations_list:
-                manager.register(migration)
+            for migration_class in migrations_list:
+                manager.register(migration_class())
             self._migration_manager = manager
         return manager
 
