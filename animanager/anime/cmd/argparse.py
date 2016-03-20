@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import argparse
 import shlex
 import re
+
+REMAINDER = argparse.REMAINDER
 
 
 class ArgumentParser(argparse.ArgumentParser):
