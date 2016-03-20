@@ -43,38 +43,21 @@ class ArgumentParser(argparse.ArgumentParser):
         """Override printing to stderr."""
         print(message)
 
-    def add_re_query(self):
-        self.add_argument(
-            'query',
-            nargs=REMAINDER,
-            type=self._compile_re_query,
-        )
-
-    @staticmethod
-    def _compile_re_query(args):
-        return re.compile('.*'.join(args), re.I)
-
-    def add_sql_query(self):
-        self.add_argument(
-            'query',
-            nargs=REMAINDER,
-            type=self._compile_sql_query,
-        )
-
-    @staticmethod
-    def _compile_sql_query(args):
-        return '%{}%'.format('%'.join(args))
+    def add_query(self):
+        self.add_argument('query', nargs=REMAINDER)
 
     def add_aid(self):
         self.add_argument('aid')
 
+def compile_re_query(args):
+    return re.compile('.*'.join(args), re.I)
 
-re_query_parser = ArgumentParser()
-re_query_parser.add_re_query()
+def compile_sql_query(args):
+    return '%{}%'.format('%'.join(args))
 
 
-sql_query_parser = ArgumentParser()
-sql_query_parser.add_sql_query()
+query_parser = ArgumentParser()
+query_parser.add_query()
 
 aid_parser = ArgumentParser()
 aid_parser.add_aid()

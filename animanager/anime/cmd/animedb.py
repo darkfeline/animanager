@@ -30,12 +30,13 @@ registry = Registry()
 
 @registry.register_alias('s')
 @registry.register_do('search')
-@argparse.sql_query_parser.parsing
+@argparse.query_parser.parsing
 def do_search(self, args):
     """Search Animanager database."""
+    query = argparse.compile_sql_query(args.query)
     all_files = watchlib.find_files(self.config.anime.watchdir)
     results = list()
-    for anime in self.animedb.search(args.query):
+    for anime in self.animedb.search(query):
         anime_files = watchlib.animefiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
         self.animedb.cache_files(anime.id, anime_files)

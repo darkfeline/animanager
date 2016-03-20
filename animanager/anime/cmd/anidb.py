@@ -28,10 +28,11 @@ registry = Registry()
 
 @registry.register_alias('as')
 @registry.register_do('asearch')
-@argparse.re_query_parser.parsing
+@argparse.query_parser.parsing
 def do_asearch(self, args):
     """Search AniDB."""
-    results = self.searchdb.search(args.query)
+    query = argparse.compile_re_query(args.query)
+    results = self.searchdb.search(query)
     results = [(anime.aid, anime.main_title) for anime in results]
     self.results['anidb'].set(results)
     self.results['anidb'].print()
