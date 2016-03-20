@@ -272,7 +272,7 @@ class AnimeDB(
             return
         episode = anime.watched_episodes + 1
         self.set_watched(aid, self.episode_types['regular'].id, episode)
-        self.anime_cache.set_status(
+        self.set_status(
             aid, episode >= anime.episodecount, episode)
 
     def cache_status(self, aid, force=False):
@@ -317,7 +317,25 @@ class AnimeDB(
                     number -= 1
                     break
             # We store this in the cache.
-            self.anime_cache.set_status(aid, episodecount <= number, number)
+            self.set_status(aid, episodecount <= number, number)
+
+    def set_status(self, aid, complete, watched_episodes):
+        """Set anime status."""
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                """UPDATE cache_anime
+                SET complete=?, watched_episodes=?
+                WHERE aid=?""",
+                (complete,
+                 watched_episodes,
+                 aid))
+            if self.cnx.changes() == 0:
+                cur.execute(
+                    """INSERT INTO cache_anime
+                    (aid, complete, watched_episodes)
+                    VALUES (?, ?, ?)""",
+                    (aid, complete, watched_episodes))
 
     def cache_files(self, aid, anime_files):
         with self.cnx:

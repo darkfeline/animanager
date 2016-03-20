@@ -29,10 +29,6 @@ class BaseCacheTableMixin(BaseDatabase):
     super() before doing anything.  Thus, cache table mixins will be handled in
     reverse MRO order.
 
-    Subclasses may define a dispatcher property, which returns a subclass of
-    BaseDispatcher.  Dispatchers may define methods for performing operations
-    solely on the cache tables of the parent cache table mixin.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -46,13 +42,3 @@ class BaseCacheTableMixin(BaseDatabase):
     @abstractmethod
     def cleanup_cache_tables(self):
         pass
-
-
-class BaseDispatcher:
-
-    """Base class for dispatchers for BaseCacheTableMixin subclasses."""
-
-    __slots__ = ('cnx',)
-
-    def __init__(self, parent):
-        self.cnx = parent.cnx

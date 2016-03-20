@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from animanager.db.cache import BaseCacheTableMixin
-from animanager.db.cache import BaseDispatcher
 
 
 class AnimeCacheMixin(BaseCacheTableMixin):
@@ -37,30 +36,3 @@ class AnimeCacheMixin(BaseCacheTableMixin):
     def cleanup_cache_tables(self):
         super().cleanup_cache_tables()
         self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
-
-    @property
-    def anime_cache(self):
-        return AnimeCacheDispatcher(self)
-
-
-class AnimeCacheDispatcher(BaseDispatcher):
-
-    __slots__ = ()
-
-    def set_status(self, aid, complete, watched_episodes):
-        """Set anime status."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute(
-                """UPDATE cache_anime
-                SET complete=?, watched_episodes=?
-                WHERE aid=?""",
-                (complete,
-                 watched_episodes,
-                 aid))
-            if self.cnx.changes() == 0:
-                cur.execute(
-                    """INSERT INTO cache_anime
-                    (aid, complete, watched_episodes)
-                    VALUES (?, ?, ?)""",
-                    (aid, complete, watched_episodes))
