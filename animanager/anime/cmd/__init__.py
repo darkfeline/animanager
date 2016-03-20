@@ -29,12 +29,14 @@ import traceback
 from tabulate import tabulate
 
 from animanager import __version__ as VERSION
-from animanager.anime import anidb
+from animanager.anime.anidb import AniDB
+from animanager.anime.anidb import SearchDB
 from animanager.anime import watchlib
 from animanager.anime.db import AnimeDB
 from animanager.anime.results import AIDResults
 from animanager.anime.results import AIDResultsManager
 
+from . import anidb
 from . import gpl
 
 logger = logging.getLogger(__name__)
@@ -57,8 +59,8 @@ class AnimeCmd(Cmd):
         super().__init__(*args, **kwargs)
         self.config = config
 
-        self.anidb = anidb.AniDB(config.anime.anidb_cache)
-        self.searchdb = anidb.SearchDB(config.anime.anidb_cache)
+        self.anidb = AniDB(config.anime.anidb_cache)
+        self.searchdb = SearchDB(config.anime.anidb_cache)
         self.animedb = AnimeDB(config.anime.database)
 
         # Set lastaid, so I don't have to handle None/uninitialized case.
@@ -115,82 +117,6 @@ class AnimeCmd(Cmd):
         """Purge cache tables."""
         self.animedb.cleanup_cache_tables()
         self.animedb.setup_cache_tables()
-
-    ###########################################################################
-    # asearch
-    def do_asearch(self, arg):
-        """Search AniDB."""
-        if not arg:
-            print('Missing query.')
-            return
-        query = re.compile('.*'.join(shlex.split(arg)), re.I)
-        results = self.searchdb.search(query)
-        results = [(anime.aid, anime.main_title) for anime in results]
-        self.results['anidb'].set(results)
-        self.results['anidb'].print()
-
-    do_as = do_asearch
-
-    def help_as(self):
-        print('Alias for asearch.')
-
-    ###########################################################################
-    # ashow
-    _ashow_msg = dedent("""\
-        AID: {}
-        Title: {}
-        Type: {}
-        Episodes: {}
-        Start date: {}
-        End date: {}\n""")
-
-    def do_ashow(self, arg):
-        """Show information about anime in AniDB."""
-        args = shlex.split(arg)
-        if not args:
-            print('Missing AID.')
-            return
-        aid = args.pop(0)
-        aid = self.get_aid(aid, default_key='anidb')
-        anime = self.anidb.lookup(aid)
-        print(self._ashow_msg.format(
-            anime.aid,
-            anime.title,
-            anime.type,
-            anime.episodecount,
-            anime.startdate,
-            anime.enddate,
-        ))
-        print(tabulate(
-                ((episode.epno, episode.title, episode.length)
-                 for episode in sorted(
-                         anime.episodes,
-                         key=lambda x: (x.type, x.number))),
-                headers=['Number', 'Title', 'min'],
-        ))
-
-    do_ash = do_ashow
-
-    def help_ash(self):
-        print('Alias for ashow.')
-
-    ###########################################################################
-    # add
-    def do_add(self, arg):
-        """Add an anime or update an existing anime."""
-        args = shlex.split(arg)
-        if not args:
-            print('Missing AID.')
-            return
-        aid = args.pop(0)
-        aid = self.get_aid(aid, default_key='anidb')
-        anime = self.anidb.lookup(aid)
-        self.animedb.add(anime)
-
-    do_a = do_add
-
-    def help_a(self):
-        print('Alias for add.')
 
     ###########################################################################
     # search
@@ -395,4 +321,5 @@ class AnimeCmd(Cmd):
         # Print
         pass  # XXX
 
+anidb.registry.add_commands(AnimeCmd)
 gpl.registry.add_commands(AnimeCmd)
