@@ -24,12 +24,13 @@ Has one function, migrate(), for migrating AnimeDB databases.
 from animanager.date import parse_date
 from animanager.date import timestamp
 from animanager.db.migrations import migration
+from animanager.db.fk import MigrationManager
 
-migrations_list = list()
+manager = MigrationManager()
 
 
 def _register(migration_class):
-    migrations_list.append(migration_class)
+    manager.register(migration_class())
     # We don't return the registered migration.
 
 
