@@ -140,5 +140,19 @@ class BaseMigration(ABC):
         """
 
 
+def migration(from_version, to_version):
+    """Migration decorator."""
+    def decorate(func):
+        return type(
+            'M{}'.format(to_version),
+            (BaseMigration,),
+            {
+                'from_version': from_version,
+                'to_version': to_version,
+                'migrate': func
+            })
+    return decorate
+
+
 class DatabaseMigrationError(DatabaseError):
     """Database migration error."""
