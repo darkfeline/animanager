@@ -28,11 +28,12 @@ def timestamp(dt):
     978422400.0
 
     """
-    if isinstance(dt, datetime.date):
-        dt = datetime.datetime(dt.year, dt.month, dt.day)
-    if isinstance(dt, datetime.datetime):
-        return dt.timestamp()
-    raise TypeError('dt is not datetime-like')
+    if not isinstance(dt, datetime.datetime):
+        try:
+            dt = datetime.datetime(dt.year, dt.month, dt.day)
+        except AttributeError as e:
+            raise TypeError('dt is not datetime-like') from e
+    return dt.timestamp()
 
 
 def parse_date(string):
