@@ -181,7 +181,7 @@ class AnimeDB(
                         'number': episode.number,
                         'title': episode.title,
                         'length': episode.length,
-                        'user-watched': 0,
+                        'user_watched': 0,
                     })
 
     def search(self, query):
