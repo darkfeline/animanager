@@ -28,7 +28,7 @@ import traceback
 
 from tabulate import tabulate
 
-from animanager.constants import VERSION
+from animanager import __version__ as VERSION
 from animanager.anime import anidb
 from animanager.anime import watchlib
 from animanager.anime.db import AnimeDB
