@@ -37,6 +37,7 @@ from animanager.anime.results import AIDResults
 from animanager.anime.results import AIDResultsManager
 
 from . import anidb
+from . import animedb
 from . import gpl
 from . import misc
 
@@ -201,5 +202,6 @@ class AnimeCmd(Cmd):
         pass  # XXX
 
 anidb.registry.add_commands(AnimeCmd)
+animedb.registry.add_commands(AnimeCmd)
 gpl.registry.add_commands(AnimeCmd)
 misc.registry.add_commands(AnimeCmd)

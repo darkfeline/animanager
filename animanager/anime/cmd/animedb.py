@@ -1,0 +1,126 @@
+# Copyright (C) 2016  Allen Li
+#
+# This file is part of Animanager.
+#
+# Animanager is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Animanager is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
+
+from textwrap import dedent
+
+from tabulate import tabulate
+
+from animanager.anime import watchlib
+
+from . import argparse
+from .registry import Registry
+
+
+registry = Registry()
+
+
+@registry.register('do_search')
+@registry.register('do_s')
+@argparse.sql_query_parser.parsing
+def do_search(self, args):
+    """Search Animanager database."""
+    all_files = watchlib.find_files(self.config.anime.watchdir)
+    results = list()
+    for anime in self.animedb.search(args.query):
+        anime_files = watchlib.animefiles(anime.regexp)
+        anime_files.maybe_add_iter(all_files)
+        self.animedb.cache_files(anime.id, anime_files)
+        results.append((
+            anime.aid, anime.title, anime.type,
+            '{}/{}'.format(anime.watched_episodes, anime.episodecount),
+            'yes' if anime.complete else '',
+            anime_files.available_string(),
+        ))
+    self.results['db'].set(results)
+    self.results['db'].print()
+
+
+@registry.register('help_s')
+def help_s(self):
+    print('Alias for search.')
+
+
+_SHOW_MSG = dedent("""\
+    AID: {}
+    Title: {}
+    Type: {}
+    Episodes: {}/{}
+    Start date: {}
+    End date: {}
+    Complete: {}
+    {}""")
+
+
+_show_parser = argparse.ArgumentParser()
+_show_parser.add_aid()
+_show_parser.add_argument('-e', '--show-episodes', action='store_true')
+
+
+@registry.register('do_show')
+@registry.register('do_sh')
+@_show_parser.parsing
+def do_show(self, args):
+    """Show anime data."""
+    aid = self.get_aid(args.aid, default_key='db')
+    anime = self.animedb.lookup(aid, episodes=args.show_episodes)
+
+    complete_string = 'yes' if anime.complete else 'no'
+    if anime.regexp is not None:
+        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
+    else:
+        regexp_string = ''
+    print(_SHOW_MSG.format(
+        anime.aid,
+        anime.title,
+        anime.type,
+        anime.watched_episodes,
+        anime.episodecount,
+        anime.startdate,
+        anime.enddate,
+        complete_string,
+        regexp_string,
+    ))
+    if anime.episodes:
+        print(tabulate(
+            (
+                (self.animedb.get_epno(episode), episode.title, episode.length,
+                    'yes' if episode.user_watched else '')
+                for episode in sorted(
+                    anime.episodes,
+                    key=lambda x: (x.type, x.number))
+            ),
+            headers=['Number', 'Title', 'min', 'Watched'],
+        ))
+
+
+@registry.register('help_sh')
+def help_sh(self):
+    print('Alias for show.')
+
+
+@registry.register('do_bump')
+@registry.register('do_b')
+@argparse.aid_parser.parsing
+def do_bump(self, args):
+    """Bump anime."""
+    aid = self.get_aid(args.aid, default_key='db')
+    self.animedb.bump(aid)
+
+
+@registry.register('help_b')
+def help_b(self):
+    print('Alias for bump.')
