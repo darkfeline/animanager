@@ -19,10 +19,10 @@ import logging
 import re
 import shutil
 
-from animanager.db import sqlite
-from animanager.db.migrations import MigrationManager
-from animanager.db.migrations import MigrationMixin
-from animanager.db.versions import UserVersionMixin
+import animanager.db.sqlite
+import animanager.db.fk
+import animanager.db.migrations
+import animanager.db.versions
 
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
@@ -37,15 +37,17 @@ logger = logging.getLogger(__name__)
 
 class AnimeDB(
         AnimeCacheMixin,
-        UserVersionMixin, MigrationMixin,
-        sqlite.ForeignKeyMixin, sqlite.SQLiteDB,
+        animanager.db.versions.UserVersionMixin,
+        animanager.db.migrations.MigrationMixin,
+        animanager.db.fk.ForeignKeyMixin,
+        animanager.db.sqlite.SQLiteDB,
 ): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
 
     def __init__(self, database):
-        self.database = database
         super().__init__(database)
+        self.database = database
         self._migration_manager = None
         self._episode_types = None
         self._episode_types_by_id = None
@@ -57,7 +59,7 @@ class AnimeDB(
     @property
     def migration_manager(self):
         if self._migration_manager is None:
-            manager = MigrationManager()
+            manager = animanager.db.fk.MigrationManager()
             for migration in migrations_list:
                 manager.register(migration)
             self._migration_manager = manager

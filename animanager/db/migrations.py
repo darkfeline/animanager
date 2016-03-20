@@ -36,6 +36,10 @@ class MigrationMixin(SQLiteDB):
     def migration_manager(self):
         pass
 
+    def needs_migration(self):
+        """Check if database needs migration."""
+        return self.migration_manager.needs_migration(self.cnx)
+
     def migrate(self):
         self.migration_manager.migrate(self.cnx)
 
