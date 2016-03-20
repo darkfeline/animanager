@@ -157,13 +157,11 @@ class AnimeCmd(Cmd):
             anime.enddate,
         ))
         print(tabulate(
-            (
-                (episode.epno, episode.title, episode.length)
-                for episode in sorted(
-                     anime.episodes,
-                     key=lambda x: (x.type, x.number))
-            ),
-            headers=['Number', 'Title', 'min'],
+                ((episode.epno, episode.title, episode.length)
+                 for episode in sorted(
+                         anime.episodes,
+                         key=lambda x: (x.type, x.number))),
+                headers=['Number', 'Title', 'min'],
         ))
 
     do_ash = do_ashow

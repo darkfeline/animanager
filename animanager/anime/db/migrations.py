@@ -119,11 +119,10 @@ def migrate(cnx):
             """UPDATE anime_new
             SET startdate=?, enddate=?
             WHERE aid=?""",
-            ([
-                timestamp(parse_date(startdate)) if startdate else None,
-                timestamp(parse_date(enddate)) if enddate else None,
-                aid]
-                for aid, startdate, enddate in row),
+            ([timestamp(parse_date(startdate)) if startdate else None,
+              timestamp(parse_date(enddate)) if enddate else None,
+              aid]
+             for aid, startdate, enddate in row),
         )
         cur.execute('DROP TABLE anime')
         cur.execute('ALTER TABLE anime_new RENAME TO anime')
