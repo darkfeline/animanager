@@ -16,31 +16,30 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from datetime import timedelta
 from datetime import timezone
 
-EPOCH = datetime.fromtimestamp(0, timezone.utc).date()
 
-
-def daystamp(date):
+def timestamp(date):
     """Return days relative to epoch.
 
     >>> from datetime import date
-    >>> daystamp(date(2001, 1, 2))
-    11324
+    >>> timestamp(date(2001, 1, 2))
+    978393600.0
 
     """
-    return (date - EPOCH).days
+    return datetime(
+        date.year, date.month, date.day,
+        tzinfo=timezone.utc).timestamp()
 
 
-def fromdaystamp(ds):
+def fromtimestamp(ts):
     """Convert daystamp into date.
 
-    >>> fromdaystamp(11324)
+    >>> fromtimestamp(978393600.0)
     datetime.date(2001, 1, 2)
 
     """
-    return EPOCH + timedelta(days=ds)
+    return datetime.fromtimestamp(ts, tz=timezone.utc).date()
 
 
 def parse_date(string):

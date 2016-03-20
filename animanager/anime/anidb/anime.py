@@ -18,7 +18,7 @@
 import re
 
 from animanager.api import XMLResponse
-from animanager.datetime import parse_date
+from animanager.date import parse_date
 
 from . import api
 

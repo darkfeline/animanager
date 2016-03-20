@@ -21,6 +21,7 @@ Has one function, migrate(), for migrating AnimeDB databases.
 
 """
 
+from animanager.date import parse_date
 from animanager.db.migrations import BaseMigration
 
 migrations_list = list()
@@ -113,11 +114,14 @@ class Migration2(BaseMigration):
                 enddate INTEGER,
                 PRIMARY KEY (aid)
             )""")
-            # XXX migrate dates
             cur.execute("""
-            INSERT INTO anime_new
-            SELECT aid, title, type, episodes, startdate, enddate
+            INSERT INTO anime_new (aid, title, type, episodecount)
+            SELECT aid, title, type, episodes
             FROM anime
             """)
+            # XXX migrate dates
+            row = cnx.cursor().execute('SELECT startdate, enddate FROM anime')
+            for startdate, enddate in row:
+                pass
             cur.execute('DROP TABLE anime')
             cur.execute('ALTER TABLE anime_new RENAME TO anime')

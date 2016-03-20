@@ -23,13 +23,11 @@ import unittest
 import hypothesis
 from hypothesis import strategies
 
-import animanager.datetime
-from animanager.datetime import daystamp
-from animanager.datetime import fromdaystamp
+import animanager.date
 
 
 def load_tests(loader, tests, pattern):
-    tests.addTests(doctest.DocTestSuite(animanager.datetime))
+    tests.addTests(doctest.DocTestSuite(animanager.date))
     return tests
 
 
@@ -58,7 +56,7 @@ def dates(draw):
 class DateTimeTestCase(unittest.TestCase):
 
     @hypothesis.given(dates())
-    def test_daystamp(self, date):
-        ds = animanager.datetime.daystamp(date)
-        new_date = animanager.datetime.fromdaystamp(ds)
+    def test_timestamp(self, date):
+        ts = animanager.date.timestamp(date)
+        new_date = animanager.date.fromtimestamp(ts)
         self.assertEqual(date, new_date)
