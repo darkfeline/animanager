@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 from setuptools import setup
+from setuptools import find_packages
 
 setup(
     name='animanager',
     version='0.9.0',
-    packages=['animanager'],
-    install_requires=['tabulate', 'apsw'],
+    packages=find_packages(exclude=['tests', 'tests.*']),
+    install_requires=['apsw', 'tabulate'],
     entry_points={
         'console_scripts': [
             'animanager = animanager.main:main',
