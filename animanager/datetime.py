@@ -18,13 +18,13 @@
 import datetime
 
 
-def unix_timestamp(dt):
+def timestamp(dt):
     """Turn datetime-like object into UNIX timestamp.
 
-    >>> unix_timestamp(datetime.datetime(2001, 1, 2, 10, 11, 12))
+    >>> timestamp(datetime.datetime(2001, 1, 2, 10, 11, 12))
     978459072.0
 
-    >>> unix_timestamp(datetime.date(2001, 1, 2))
+    >>> timestamp(datetime.date(2001, 1, 2))
     978422400.0
 
     """
