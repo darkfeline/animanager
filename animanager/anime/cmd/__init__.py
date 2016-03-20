@@ -77,6 +77,7 @@ class AnimeCmd(Cmd):
         animecmd.cmdloop('')
 
     def onecmd(self, str):
+        # pylint: disable=redefined-builtin,broad-except
         try:
             return super().onecmd(str)
         except Exception:
