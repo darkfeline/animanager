@@ -30,7 +30,7 @@ migrations_list = list()
 
 def _register(migration_class):
     migrations_list.append(migration_class)
-    return migration_class
+    # We don't return the registered migration.
 
 
 # pylint: disable=function-redefined

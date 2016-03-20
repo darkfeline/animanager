@@ -143,15 +143,20 @@ class BaseMigration(ABC):
 def migration(from_version, to_version):
     """Migration decorator."""
     def decorate(func):
-        return type(
-            'M{}'.format(to_version),
-            (BaseMigration,),
-            {
-                'from_version': from_version,
-                'to_version': to_version,
-                'migrate': func
-            })
+        return make_migration(from_version, to_version, func)
     return decorate
+
+
+def make_migration(from_version, to_version, migrate_func):
+    """Make BaseMigration subclass dynamically."""
+    return type(
+        'M{}'.format(to_version),
+        (BaseMigration,),
+        {
+            '_from_version': from_version,
+            '_to_version': to_version,
+            'migrate': migrate_func,
+        })
 
 
 class DatabaseMigrationError(DatabaseError):
