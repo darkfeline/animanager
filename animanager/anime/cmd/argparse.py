@@ -46,7 +46,7 @@ class ArgumentParser(argparse.ArgumentParser):
     def add_re_query(self):
         self.add_argument(
             'query',
-            nargs=argparse.REMAINDER,
+            nargs=REMAINDER,
             type=self._compile_re_query,
         )
 
@@ -57,7 +57,7 @@ class ArgumentParser(argparse.ArgumentParser):
     def add_sql_query(self):
         self.add_argument(
             'query',
-            nargs=argparse.REMAINDER,
+            nargs=REMAINDER,
             type=self._compile_sql_query,
         )
 
