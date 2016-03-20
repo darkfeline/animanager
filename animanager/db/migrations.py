@@ -29,15 +29,18 @@ class MigrationMixin(SQLiteDB):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.migrate(self.cnx)
+        self.migrate()
 
     @property
     @abstractmethod
     def migration_manager(self):
         pass
 
-    def migrate(self, cnx):
-        self.migration_manager.migrate(cnx)
+    def needs_migration(self):
+        return self.migration_manager.needs_migration(self.cnx)
+
+    def migrate(self):
+        self.migration_manager.migrate(self.cnx)
 
 
 class MigrationManager:
@@ -66,6 +69,10 @@ class MigrationManager:
             raise ValueError('migration must upgrade version')
         self.migrations[migration.from_version] = migration
         self.current_version = migration.to_version
+
+    def needs_migration(self, cnx):
+        """Check if database needs migration."""
+        return get_user_version(cnx) < self.current_version
 
     def migrate(self, cnx):
         """Migrate a database as needed.
@@ -97,13 +104,8 @@ class BaseMigration(ABC):
 
     """
 
-    _app_version = ''
     _from_version = 0
     _to_version = 0
-
-    @property
-    def app_version(self):
-        return self._app_version
 
     @property
     def from_version(self):

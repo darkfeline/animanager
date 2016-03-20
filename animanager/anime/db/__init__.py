@@ -17,40 +17,58 @@
 
 import logging
 import re
+import shutil
 
-from animanager import db
+from animanager.db import sqlite
+from animanager.db.migrations import MigrationManager
+from animanager.db.migrations import MigrationMixin
+from animanager.db.versions import UserVersionMixin
 
-from . import migrations
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
 from .collections import Episode
 from .collections import AnimeStatus
+from .migrations import migrations_list
 
 logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
         AnimeCacheMixin,
-        db.UserVersionMixin, db.BaseMigrationMixin,
-        db.ForeignKeyMixin,
+        UserVersionMixin, MigrationMixin,
+        sqlite.ForeignKeyMixin, sqlite.SQLiteDB,
 ): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
 
     def __init__(self, database):
+        self.database = database
         super().__init__(database)
+        self._migration_manager = None
         self._episode_types = None
         self._episode_types_by_id = None
 
     @property
     def version(self):
-        return 1
+        return self.migration_manager.current_version
 
     @property
     def migration_manager(self):
-        return migrations.manager
+        if self._migration_manager is None:
+            manager = MigrationManager()
+            for migration in migrations_list:
+                manager.register(migration)
+            self._migration_manager = manager
+        return self._migration_manager
+
+    def migrate(self):
+        if self.needs_migration():
+            logger.info('Migration needed, backing up database')
+            shutil.copyfile(self.database, self.database + '~')
+            logger.info('Migrating database')
+            super().migrate()
 
     @property
     def episode_types(self):
