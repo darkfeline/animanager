@@ -28,8 +28,15 @@ class Registry:
     def register_do(self, name):
         """Decorator for registering commands."""
         def decorate(func):
+            # Register do_*.
             self.do_funcs[name] = func
             self.do_funcs_reverse[func] = name
+
+            # Register help_* if we don't have one yet.
+            if name not in self.help_funcs:
+                def help_func(self):
+                    print(func.__doc__)
+                self.help_funcs[name] = help_func
             return func
         return decorate
 
