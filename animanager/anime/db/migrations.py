@@ -39,6 +39,7 @@ def migrate(cnx):
 @_register
 class Migration1(BaseMigration):
 
+    _app_version = '0.9.0'
     _from_version = 0
     _to_version = 1
 

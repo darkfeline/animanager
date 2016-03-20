@@ -205,6 +205,10 @@ class BaseMigration(ABC):
     _to_version = 0
 
     @property
+    def app_version(self):
+        return self._app_version
+
+    @property
     def from_version(self):
         return self._from_version
 
