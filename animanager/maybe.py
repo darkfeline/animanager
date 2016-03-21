@@ -19,13 +19,6 @@ from abc import ABC
 from abc import abstractmethod
 
 
-def maybe(thing):
-    if thing is None:
-        return Nothing
-    else:
-        return Just(thing)
-
-
 class Maybe(ABC):
 
     __slots__ = ()

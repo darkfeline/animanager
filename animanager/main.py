@@ -18,8 +18,6 @@
 import logging
 import argparse
 
-from animanager.maybe import maybe
-
 from .anime import main as anime
 
 
@@ -27,8 +25,7 @@ def _make_parser():
     # Set up main parser.
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
-                        default=maybe(None),
-                        type=maybe,
+                        default='',
                         help='Alternate configuration file to use.')
 
     # Set up subparsers.

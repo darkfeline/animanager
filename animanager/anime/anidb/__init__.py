@@ -18,7 +18,7 @@
 import logging
 import os
 
-from animanager.maybe import maybe
+from animanager.maybe import Just, Nothing
 
 from . import anime
 from . import titles
@@ -57,7 +57,7 @@ class SearchDB:
 
     def __init__(self, cachedir):
         self.cachedir = cachedir
-        self._titles = maybe(None)
+        self._titles = Nothing()
 
     @property
     def titles(self):
@@ -65,7 +65,7 @@ class SearchDB:
             return self._titles.get()
         else:
             titles_tree = self.load_tree()
-            self._titles = maybe(titles_tree)
+            self._titles = Just(titles_tree)
             return titles_tree
 
     def load_tree(self):
