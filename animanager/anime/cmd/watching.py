@@ -15,18 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from argparse import REMAINDER
 import re
 
-from . import argparse
-from animanager.registry import Registry
+from .argparse import aid_parser
+from .argparse import ArgumentParser
+from animanager.registry import CmdRegistry
 
 
-registry = Registry()
+registry = CmdRegistry()
 
 
-_register_parser = argparse.ArgumentParser()
+_register_parser = ArgumentParser()
 _register_parser.add_aid()
-_register_parser.add_argument('query', nargs=argparse.REMAINDER)
+_register_parser.add_argument('query', nargs=REMAINDER)
 
 @registry.register_alias('r')
 @registry.register_do('register')
@@ -54,7 +56,7 @@ def do_register(self, args):
 
 @registry.register_alias('ur')
 @registry.register_do('unregister')
-@argparse.aid_parser.parsing
+@aid_parser.parsing
 def do_unregister(self, args):
     """Unregister watching regexp for an anime."""
     aid = self.get_aid(args.aid, default_key='db')

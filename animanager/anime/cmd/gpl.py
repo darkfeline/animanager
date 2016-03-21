@@ -17,7 +17,9 @@
 
 from textwrap import dedent
 
-from animanager.registry import Registry
+from animanager.registry import CmdRegistry
+
+registry = CmdRegistry()
 
 GPL_COPYING = dedent('''\
 Animanager is free software: you can redistribute it and/or modify
@@ -72,9 +74,6 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
 See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
-
-
-registry = Registry()
 
 
 @registry.register_help('gpl')

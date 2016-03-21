@@ -25,10 +25,10 @@ from animanager.argparse import compile_sql_query
 from animanager.date import fromtimestamp
 
 from . import argparse
-from animanager.registry import Registry
+from animanager.registry import CmdRegistry
 
 
-registry = Registry()
+registry = CmdRegistry()
 
 
 @registry.register_alias('s')
