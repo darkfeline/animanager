@@ -103,10 +103,9 @@ class MigrationManager:
         an uninitialized database (version 0).
 
         """
-        with cnx:
-            version = get_user_version(cnx)
-            while version < self.current_version:
-                version = self.migrate_single(cnx, version)
+        version = get_user_version(cnx)
+        while version < self.current_version:
+            version = self.migrate_single(cnx, version)
 
 
 class BaseMigration(ABC):
