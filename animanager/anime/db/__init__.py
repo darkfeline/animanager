@@ -25,7 +25,7 @@ import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
 import animanager.db.versions
-from animanager.maybe import maybe
+from animanager.maybe import Just, Nothing
 
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
@@ -50,8 +50,8 @@ class AnimeDB(
     def __init__(self, database):
         self.database = database
         super().__init__(database)
-        self._episode_types = None
-        self._episode_types_by_id = None
+        self._episode_types = Nothing()
+        self._episode_types_by_id = Nothing()
 
     @property
     def version(self):
@@ -76,14 +76,16 @@ class AnimeDB(
         instances.
 
         """
-        if self._episode_types is None:
+        if self._episode_types.has():
+            return self._episode_types.get()
+        else:
             ep_types = dict()
             cur = self.cnx.cursor()
             cur.execute('SELECT id, name, prefix FROM episode_type')
             for type_id, name, prefix in cur:
                 ep_types[name] = EpisodeType(type_id, prefix)
-            self._episode_types = ep_types
-        return self._episode_types
+            self._episode_types = Just(ep_types)
+            return ep_types
 
     @property
     def episode_types_by_id(self):
@@ -93,14 +95,16 @@ class AnimeDB(
         instances.
 
         """
-        if self._episode_types_by_id is None:
+        if self._episode_types_by_id.has():
+            return self._episode_types_by_id.get()
+        else:
             ep_types = dict()
             cur = self.cnx.cursor()
             cur.execute('SELECT id, prefix FROM episode_type')
             for type_id, prefix in cur:
                 ep_types[type_id] = EpisodeType(type_id, prefix)
-            self._episode_types_by_id = ep_types
-        return self._episode_types_by_id
+            self._episode_types_by_id = Just(ep_types)
+            return ep_types
 
     def get_epno(self, episode):
         """Return epno for Episode instance.
@@ -211,7 +215,9 @@ class AnimeDB(
                 WHERE anime.aid=?""", (aid,))
             row = cur.fetchone()
             if row is not None:
-                yield Anime(*row[:-1], maybe(row[:-1]))
+                regexp = row.pop()
+                regexp = Just(regexp) if regexp is not None else Nothing()
+                yield Anime(*row, regexp)
 
     def lookup_title(self, aid):
         """Look up anime title."""
