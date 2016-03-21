@@ -18,7 +18,7 @@
 import re
 
 from . import argparse
-from .registry import Registry
+from animanager.registry import Registry
 
 
 registry = Registry()

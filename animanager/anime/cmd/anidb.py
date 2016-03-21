@@ -22,7 +22,7 @@ from tabulate import tabulate
 from animanager.date import fromtimestamp
 
 from . import argparse
-from .registry import Registry
+from animanager.registry import Registry
 
 
 registry = Registry()

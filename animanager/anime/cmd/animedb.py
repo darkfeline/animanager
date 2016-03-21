@@ -23,7 +23,7 @@ from animanager.date import fromtimestamp
 from animanager.anime import watchlib
 
 from . import argparse
-from .registry import Registry
+from animanager.registry import Registry
 
 
 registry = Registry()

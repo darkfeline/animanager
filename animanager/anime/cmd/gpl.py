@@ -17,7 +17,7 @@
 
 from textwrap import dedent
 
-from .registry import Registry
+from animanager.registry import Registry
 
 GPL_COPYING = dedent('''\
 Animanager is free software: you can redistribute it and/or modify
