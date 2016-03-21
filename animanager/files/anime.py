@@ -60,7 +60,7 @@ class AnimeFiles(BaseAnimeFiles):
         if regexp is None:
             return FakeAnimeFiles()
         else:
-            return super().__new__(regexp)
+            return super().__new__(cls, regexp)
 
     def __init__(self, regexp):
         self.regexp = re.compile(regexp)
