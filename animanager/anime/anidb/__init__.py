@@ -18,7 +18,7 @@
 import logging
 import os
 
-from animanager.maybe import Just, Nothing
+from animanager.maybe import Just, Nothing, NoValue
 
 from . import anime
 from . import titles
@@ -61,9 +61,9 @@ class SearchDB:
 
     @property
     def titles(self):
-        if self._titles.has():
+        try:
             return self._titles.get()
-        else:
+        except NoValue:
             titles_tree = self.load_tree()
             self._titles = Just(titles_tree)
             return titles_tree

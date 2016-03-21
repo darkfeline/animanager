@@ -25,7 +25,7 @@ import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
 import animanager.db.versions
-from animanager.maybe import Just, Nothing
+from animanager.maybe import Just, Nothing, NoValue
 
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
@@ -76,9 +76,9 @@ class AnimeDB(
         instances.
 
         """
-        if self._episode_types.has():
+        try:
             return self._episode_types.get()
-        else:
+        except NoValue:
             ep_types = dict()
             cur = self.cnx.cursor()
             cur.execute('SELECT id, name, prefix FROM episode_type')
@@ -95,9 +95,9 @@ class AnimeDB(
         instances.
 
         """
-        if self._episode_types_by_id.has():
+        try:
             return self._episode_types_by_id.get()
-        else:
+        except NoValue:
             ep_types = dict()
             cur = self.cnx.cursor()
             cur.execute('SELECT id, prefix FROM episode_type')
@@ -127,15 +127,17 @@ class AnimeDB(
             'title': anime.title,
             'type': anime.type,
             'episodecount': anime.episodecount,
+            'startdate': None,
+            'enddate': None,
         }
-        if anime.startdate.has():
+        try:
             values['startdate'] = anime.startdate.get()
-        else:
-            values['startdate'] = None
-        if anime.enddate.has():
+        except NoValue:
+            pass
+        try:
             values['enddate'] = anime.enddate.get()
-        else:
-            values['enddate'] = None
+        except NoValue:
+            pass
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(

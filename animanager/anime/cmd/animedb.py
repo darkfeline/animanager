@@ -19,12 +19,13 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.files import find_files
-from animanager.files.anime import is_video
-from animanager.files.anime import AnimeFiles
 from animanager.argparse import query_parser
 from animanager.argparse import compile_sql_query
 from animanager.date import fromtimestamp
+from animanager.files import find_files
+from animanager.files.anime import is_video
+from animanager.files.anime import AnimeFiles
+from animanager.maybe import NoValue
 
 from . import argparse
 from animanager.registry import CmdRegistry
@@ -80,9 +81,9 @@ def do_show(self, args):
     anime = self.animedb.lookup(aid, episodes=args.show_episodes)
 
     complete_string = 'yes' if anime.complete else 'no'
-    if anime.regexp.has():
+    try:
         regexp_string = 'Watching regexp: {}\n'.format(anime.regexp.get())
-    else:
+    except NoValue:
         regexp_string = ''
     print(_SHOW_MSG.format(
         anime.aid,
