@@ -140,4 +140,4 @@ class Config(BaseConfig):
 
             def player(self):
                 """Video player to use."""
-                return self.config['player']
+                return self.config.get('player')
