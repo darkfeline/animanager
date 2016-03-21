@@ -97,7 +97,7 @@ class AnimeFiles(BaseAnimeFiles):
 
     def available_string(self):
         """Return a string of available episodes."""
-        return ','.join(sorted(self.by_episode.keys()))
+        return ','.join(str(ep) for ep in sorted(self.by_episode.keys()))
 
 
 def animefiles(regexp):
