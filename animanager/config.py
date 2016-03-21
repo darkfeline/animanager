@@ -24,6 +24,9 @@ class Config:
 
     DEF_PATH = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
     DEF_VALUES = {
+        'general': {
+            'backup_before_migration': 'true',
+        },
         'anime': {
             'database': '~/.animanager/database.db',
             'anidb_cache': '~/.animanager/anidb',
@@ -51,15 +54,31 @@ class Config:
             self.config.write(file)
 
     @property
+    def general(self):
+        return self.General(self.config)
+
+    class General:
+
+        __slots__ = ('config',)
+
+        def __init__(self, config):
+            self.config = config['general']
+
+        @property
+        def backup_before_migration(self):
+            """Video player to use."""
+            return self.config.getboolean('backup_before_migration')
+
+    @property
     def anime(self):
-        return self.Anime(self.config['anime'])
+        return self.Anime(self.config)
 
     class Anime:
 
-        __slots__ = ['config']
+        __slots__ = ('config',)
 
         def __init__(self, config):
-            self.config = config
+            self.config = config['anime']
 
         @property
         def database(self):
