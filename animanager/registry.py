@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=unsubscriptable-object
-
 
 class Registry:
 
@@ -26,10 +24,10 @@ class Registry:
         self.prefix = prefix
         self.methods = dict()
 
-    def __getattr__(self, name):
+    def __getitem__(self, name):
         return self.methods[name]
 
-    def __setattr__(self, name, func):
+    def __setitem__(self, name, func):
         self.methods[name] = func
 
     def __contains__(self, name):
