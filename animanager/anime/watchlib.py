@@ -87,7 +87,7 @@ class AnimeFiles(BaseAnimeFiles):
         basename = os.path.basename(filename)
         match = self.regexp.search(basename)
         if match:
-            self.by_episode[int(match.ep)].append(filename)
+            self.by_episode[int(match.group('ep'))].append(filename)
             return True
         return False
 
