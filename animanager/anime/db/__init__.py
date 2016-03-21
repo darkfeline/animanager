@@ -267,7 +267,7 @@ class AnimeDB(
         episode = anime.watched_episodes + 1
         self.set_watched(aid, self.episode_types['regular'].id, episode)
         self.set_status(
-            aid, episode >= anime.episodecount, episode)
+            aid, anime.enddate and episode >= anime.episodecount, episode)
 
     def cache_status(self, aid, force=False):
         """Calculate and cache status for given anime.
@@ -286,14 +286,14 @@ class AnimeDB(
                 if cur.fetchone() is not None:
                     return
 
-            # Retrieve number of episodes for this anime.
+            # Retrieve information for determining complete.
             cur.execute("""
-                SELECT episodecount FROM anime WHERE aid=?
+                SELECT episodecount, enddate FROM anime WHERE aid=?
                 """, (aid,))
             row = cur.fetchone()
             if row is None:
                 raise ValueError('aid provided does not exist')
-            episodecount = row[0]
+            episodecount, enddate = row
 
             # Select all regular episodes in ascending order.
             cur.execute("""
@@ -311,7 +311,7 @@ class AnimeDB(
                     number -= 1
                     break
             # We store this in the cache.
-            self.set_status(aid, episodecount <= number, number)
+            self.set_status(aid, enddate and episodecount <= number, number)
 
     def set_status(self, aid, complete, watched_episodes):
         """Set anime status."""
