@@ -15,42 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC
 from abc import abstractmethod
 from collections import defaultdict
 import os
 import re
 
+from animanager.files import BaseFiles
 
-def is_video(filename):
+
+def is_video(filepath):
     """Check filename extension to see if it's a video file."""
-    extension = os.path.splitext(filename)[1]
+    extension = os.path.splitext(filepath)[1]
     return extension in ('.mkv', '.mp4', '.avi')
 
 
-def find_files(dirpath):
-    """Find all video files.
-
-    Returns a generator that yields paths in no particular order.
-
-    """
-    for dirpath, _, filenames in os.walk(dirpath):
-        for filename in filenames:
-            if is_video(filename):
-                yield os.path.join(dirpath, filename)
-
-
-class BaseAnimeFiles(ABC):
+class BaseAnimeFiles(BaseFiles):
 
     """Interface for AnimeFiles."""
-
-    @abstractmethod
-    def maybe_add(self, filename):
-        pass
-
-    @abstractmethod
-    def maybe_add_iter(self, filenames):
-        pass
 
     @abstractmethod
     def available_string(self):
