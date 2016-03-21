@@ -84,7 +84,7 @@ class AnimeCmd(Cmd):
 
     ###########################################################################
     # Parsing
-    def get_aid(self, arg, default_key=None):
+    def get_aid(self, arg, default_key):
         """Get aid from argument string."""
         if arg == '.':
             return self.lastaid

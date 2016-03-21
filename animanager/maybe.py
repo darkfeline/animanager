@@ -18,8 +18,6 @@
 from abc import ABC
 from abc import abstractmethod
 
-# pylint: disable=too-few-public-methods
-
 
 def maybe(thing):
     if thing is None:
@@ -33,7 +31,7 @@ class Maybe(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def __bool__(self):
+    def has(self):
         pass
 
     @abstractmethod
@@ -48,7 +46,7 @@ class Just(Maybe):
     def __init__(self, thing):
         self.thing = thing
 
-    def __bool__(self):
+    def has(self):
         return True
 
     def get(self):
@@ -59,7 +57,7 @@ class Nothing(Maybe):
 
     __slots__ = ()
 
-    def __bool__(self):
+    def has(self):
         return False
 
     def get(self):

@@ -108,7 +108,7 @@ class Config(BaseConfig):
     }
 
     def __init__(self, path=maybe(None)):
-        if path:
+        if path.has():
             path = path.get()
         else:
             path = self.DEF_PATH

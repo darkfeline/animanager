@@ -80,8 +80,8 @@ def do_show(self, args):
     anime = self.animedb.lookup(aid, episodes=args.show_episodes)
 
     complete_string = 'yes' if anime.complete else 'no'
-    if anime.regexp is not None:
-        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
+    if anime.regexp.has():
+        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp.get())
     else:
         regexp_string = ''
     print(_SHOW_MSG.format(

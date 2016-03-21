@@ -55,7 +55,7 @@ class AIDResultsManager:
 
     _key_pattern = re.compile(r'#(\w+):(\d+)')
 
-    def parse_aid(self, text, default_key=None):
+    def parse_aid(self, text, default_key):
         """Parse argument text for aid.
 
         May retrieve the aid from search result tables as necessary.  aresults

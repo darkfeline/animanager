@@ -40,22 +40,22 @@ class ParseAIDTestCase(unittest.TestCase):
         self.manager['bar'] = results
 
     def test_explicit_aid(self):
-        self.assertEqual(self.manager.parse_aid('aid:12345'), 12345)
+        self.assertEqual(self.manager.parse_aid('aid:12345', 'foo'), 12345)
 
     def test_explicit_key(self):
-        self.assertEqual(self.manager.parse_aid('#foo:2'), 2)
+        self.assertEqual(self.manager.parse_aid('#foo:2', 'foo'), 2)
 
     def test_implicit_key(self):
-        self.assertEqual(self.manager.parse_aid('3', default_key='bar'), 6)
+        self.assertEqual(self.manager.parse_aid('3', 'bar'), 6)
 
     def test_invalid_key_syntax(self):
         with self.assertRaises(ValueError):
-            self.manager.parse_aid('#:3')
+            self.manager.parse_aid('#:3', 'foo')
 
     def test_invalid_key(self):
         with self.assertRaises(KeyError):
-            self.manager.parse_aid('#spam:3')
+            self.manager.parse_aid('#spam:3', 'foo')
 
     def test_invalid_number(self):
         with self.assertRaises(IndexError):
-            self.manager.parse_aid('#foo:5')
+            self.manager.parse_aid('#foo:5', 'foo')
