@@ -19,6 +19,8 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
+from animanager.date import fromtimestamp
+
 from . import argparse
 from .registry import Registry
 
@@ -58,8 +60,8 @@ def do_ashow(self, args):
         anime.title,
         anime.type,
         anime.episodecount,
-        anime.startdate,
-        anime.enddate,
+        fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
+        fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
     ))
     print(tabulate(
         (
