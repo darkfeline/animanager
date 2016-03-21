@@ -19,6 +19,8 @@ import configparser
 import os
 import shlex
 
+# pylint: disable=too-few-public-methods
+
 
 def _make_section(dct, section_name, section_dct):
     """Make session dispatcher."""
@@ -63,7 +65,27 @@ class ConfigMeta(type):
         return super().__new__(mcs, name, parents, dct)
 
 
-class Config(metaclass=ConfigMeta):
+class BaseConfig(metaclass=ConfigMeta):
+
+    DEF_VALUES = {}
+    CONVERTERS = {}
+
+    def __init__(self, path):
+        self.path = path
+        self.config = configparser.ConfigParser(
+            converters=self.CONVERTERS)
+        self.config.read_dict(self.DEF_VALUES)
+        self.config.read(self.path)
+
+    def save(self):
+        with open(self.path, 'w') as file:
+            self.config.write(file)
+
+    class Sections:
+        pass
+
+
+class Config(BaseConfig):
 
     DEF_PATH = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
     DEF_VALUES = {
@@ -86,15 +108,7 @@ class Config(metaclass=ConfigMeta):
     def __init__(self, path=None):
         if path is None:
             path = self.DEF_PATH
-        self.path = path
-        self.config = configparser.ConfigParser(
-            converters=self.CONVERTERS)
-        self.config.read_dict(self.DEF_VALUES)
-        self.config.read(self.path)
-
-    def save(self):
-        with open(self.path, 'w') as file:
-            self.config.write(file)
+        super().__init__(path)
 
     class Sections:
 
