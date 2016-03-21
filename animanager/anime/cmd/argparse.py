@@ -24,6 +24,15 @@ REMAINDER = argparse.REMAINDER
 
 class ArgumentParser(argparse.ArgumentParser):
 
+    def exit(self, status=0, message=None):
+        """Override SystemExit."""
+        if message:
+            print(message)
+
+    def error(self, message):
+        """Override printing to stderr."""
+        print(message)
+
     @property
     def parsing(self):
         """Decorator to parse command arguments."""
@@ -34,23 +43,16 @@ class ArgumentParser(argparse.ArgumentParser):
             return parse_args_around
         return decorate
 
-    def exit(self, status=0, message=None):
-        """Override SystemExit."""
-        if message:
-            print(message)
-
-    def error(self, message):
-        """Override printing to stderr."""
-        print(message)
-
     def add_query(self):
         self.add_argument('query', nargs=REMAINDER)
 
     def add_aid(self):
         self.add_argument('aid')
 
+
 def compile_re_query(args):
     return re.compile('.*'.join(args), re.I)
+
 
 def compile_sql_query(args):
     return '%{}%'.format('%'.join(args))
