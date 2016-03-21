@@ -19,6 +19,8 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
+from animanager.argparse import query_parser
+from animanager.argparse import compile_re_query
 from animanager.date import fromtimestamp
 
 from . import argparse
@@ -30,10 +32,10 @@ registry = Registry()
 
 @registry.register_alias('as')
 @registry.register_do('asearch')
-@argparse.query_parser.parsing
+@query_parser.parsing
 def do_asearch(self, args):
     """Search AniDB."""
-    query = argparse.compile_re_query(args.query)
+    query = compile_re_query(args.query)
     results = self.searchdb.search(query)
     results = [(anime.aid, anime.main_title) for anime in results]
     self.results['anidb'].set(results)

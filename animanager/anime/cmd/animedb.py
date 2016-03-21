@@ -19,8 +19,10 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.date import fromtimestamp
 from animanager.anime import watchlib
+from animanager.argparse import query_parser
+from animanager.argparse import compile_sql_query
+from animanager.date import fromtimestamp
 
 from . import argparse
 from animanager.registry import Registry
@@ -31,10 +33,10 @@ registry = Registry()
 
 @registry.register_alias('s')
 @registry.register_do('search')
-@argparse.query_parser.parsing
+@query_parser.parsing
 def do_search(self, args):
     """Search Animanager database."""
-    query = argparse.compile_sql_query(args.query)
+    query = compile_sql_query(args.query)
     all_files = watchlib.find_files(self.config.anime.watchdir)
     results = list()
     for anime in self.animedb.search(query):
@@ -94,7 +96,8 @@ def do_show(self, args):
     if anime.episodes:
         print(tabulate(
             (
-                (self.animedb.get_epno(episode), episode.title, episode.length,
+                (
+                    self.animedb.get_epno(episode), episode.title, episode.length,
                     'yes' if episode.user_watched else '')
                 for episode in sorted(
                     anime.episodes,
