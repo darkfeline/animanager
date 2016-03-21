@@ -59,7 +59,7 @@ class Nothing(Maybe):
 
 class NullObject:
 
-    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-few-public-methods,no-self-use,unused-argument
 
     def __getattribute__(self, attr):
         return NullObject()
