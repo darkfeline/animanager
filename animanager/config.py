@@ -20,7 +20,45 @@ import os
 import shlex
 
 
-class Config:
+def _make_section(dct, section_name, section_dct):
+    section_dct['__slots__'] = ('config',)
+    def __init__(self, config):
+        self.config = config[section_name]
+    section_dct['__init__'] = __init__
+    section_class = type(section_name, (), section_dct)
+    dct[section_name] = property(lambda self: section_class(self.config))
+
+
+class ConfigMeta(type):
+
+    """Metaclass for defining config classes.
+
+    Config classes should define a nested class Sections, which should define
+    nested classes (section classes) for INI section access.  Each section
+    class should define methods for accessing INI configuration options in that
+    section.
+
+    A property will be created for each section class, which will return an
+    object that will further have properties corresponding to that section
+    class's methods.
+
+    You should probably just look at how it's being used.
+
+    """
+
+    def __new__(mcs, name, parents, dct):
+        sections = dct['Sections']
+        for section_name, section in sections.__dict__.items():
+            if section_name.startswith('_'):
+                continue
+            section_dct = dict()
+            for config_name, config_getter in section.__dict__.items():
+                section_dct[config_name] = property(config_getter)
+            _make_section(dct, section_name, section_dct)
+        return super().__new__(mcs, name, parents, dct)
+
+
+class Config(metaclass=ConfigMeta):
 
     DEF_PATH = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
     DEF_VALUES = {
@@ -35,7 +73,7 @@ class Config:
             'player': 'mpv',
         },
     }
-    _CONVERTERS = {
+    CONVERTERS = {
         'path': os.path.expanduser,
         'args': shlex.split,
     }
@@ -45,7 +83,7 @@ class Config:
             path = self.DEF_PATH
         self.path = path
         self.config = configparser.ConfigParser(
-            converters=self._CONVERTERS)
+            converters=self.CONVERTERS)
         self.config.read_dict(self.DEF_VALUES)
         self.config.read(self.path)
 
@@ -53,54 +91,34 @@ class Config:
         with open(self.path, 'w') as file:
             self.config.write(file)
 
-    @property
-    def general(self):
-        return self.General(self.config)
+    class Sections:
 
-    class General:
+        # pylint: disable=no-member
 
-        __slots__ = ('config',)
+        class general:
 
-        def __init__(self, config):
-            self.config = config['general']
+            def backup_before_migration(self):
+                """Video player to use."""
+                return self.config.getboolean('backup_before_migration')
 
-        @property
-        def backup_before_migration(self):
-            """Video player to use."""
-            return self.config.getboolean('backup_before_migration')
+        class anime:
 
-    @property
-    def anime(self):
-        return self.Anime(self.config)
+            def database(self):
+                """Anime database file."""
+                return self.config.getpath('database')
 
-    class Anime:
+            def anidb_cache(self):
+                """AniDB cache directory."""
+                return self.config.getpath('anidb_cache')
 
-        __slots__ = ('config',)
+            def watchdir(self):
+                """Directory to look for watching anime files."""
+                return self.config.getpath('watchdir')
 
-        def __init__(self, config):
-            self.config = config['anime']
+            def trashdir(self):
+                """Directory to trash anime files."""
+                return self.config.getpath('trashdir')
 
-        @property
-        def database(self):
-            """Anime database file."""
-            return self.config.getpath('database')
-
-        @property
-        def anidb_cache(self):
-            """AniDB cache directory."""
-            return self.config.getpath('anidb_cache')
-
-        @property
-        def watchdir(self):
-            """Directory to look for watching anime files."""
-            return self.config.getpath('watchdir')
-
-        @property
-        def trashdir(self):
-            """Directory to trash anime files."""
-            return self.config.getpath('trashdir')
-
-        @property
-        def player(self):
-            """Video player to use."""
-            return self.config['player']
+            def player(self):
+                """Video player to use."""
+                return self.config['player']
