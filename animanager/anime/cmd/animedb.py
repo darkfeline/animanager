@@ -40,7 +40,7 @@ def do_search(self, args):
     all_files = animanager.files.find_files(self.config.anime.watchdir)
     results = list()
     for anime in self.animedb.search(query):
-        anime_files = animanager.files.animefiles(anime.regexp)
+        anime_files = animanager.files.AnimeFiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
         self.animedb.cache_files(anime.aid, anime_files)
         results.append((

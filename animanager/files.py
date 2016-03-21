@@ -73,11 +73,13 @@ class FakeAnimeFiles(BaseAnimeFiles):
 
 class AnimeFiles(BaseAnimeFiles):
 
-    """Used for matching and grouping files for an anime.
+    """Used for matching and grouping files for an anime."""
 
-    Use the animefiles() module function instead of instantiating directly.
-
-    """
+    def __new__(cls, regexp):
+        if regexp is None:
+            return FakeAnimeFiles()
+        else:
+            return super().__new__(regexp)
 
     def __init__(self, regexp):
         self.regexp = re.compile(regexp)
@@ -98,10 +100,3 @@ class AnimeFiles(BaseAnimeFiles):
     def available_string(self):
         """Return a string of available episodes."""
         return ','.join(str(ep) for ep in sorted(self.by_episode.keys()))
-
-
-def animefiles(regexp):
-    if regexp is None:
-        return FakeAnimeFiles()
-    else:
-        return AnimeFiles(regexp)
