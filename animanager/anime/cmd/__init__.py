@@ -25,7 +25,6 @@ import traceback
 from animanager import __version__ as VERSION
 from animanager.anime.anidb import AniDB
 from animanager.anime.anidb import SearchDB
-from animanager.anime import watchlib
 from animanager.anime.db import AnimeDB
 from animanager.anime.results import AIDResults
 from animanager.anime.results import AIDResultsManager

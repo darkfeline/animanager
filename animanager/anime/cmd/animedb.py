@@ -19,7 +19,7 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.anime import watchlib
+import animanager.files
 from animanager.argparse import query_parser
 from animanager.argparse import compile_sql_query
 from animanager.date import fromtimestamp
@@ -37,10 +37,10 @@ registry = CmdRegistry()
 def do_search(self, args):
     """Search Animanager database."""
     query = compile_sql_query(args.query)
-    all_files = watchlib.find_files(self.config.anime.watchdir)
+    all_files = animanager.files.find_files(self.config.anime.watchdir)
     results = list()
     for anime in self.animedb.search(query):
-        anime_files = watchlib.animefiles(anime.regexp)
+        anime_files = animanager.files.animefiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
         self.animedb.cache_files(anime.aid, anime_files)
         results.append((
