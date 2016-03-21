@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import abstractmethod
 from collections import defaultdict
 import os
 import re
@@ -29,38 +28,9 @@ def is_video(filepath):
     return extension in ('.mkv', '.mp4', '.avi')
 
 
-class BaseAnimeFiles(BaseFiles):
-
-    """Interface for AnimeFiles."""
-
-    @abstractmethod
-    def available_string(self):
-        return ''
-
-
-class FakeAnimeFiles(BaseAnimeFiles):
-
-    """Fake AnimeFiles to return to avoid the OOP NULL."""
-
-    def maybe_add(self, filename):
-        pass
-
-    def maybe_add_iter(self, filenames):
-        pass
-
-    def available_string(self):
-        return ''
-
-
-class AnimeFiles(BaseAnimeFiles):
+class AnimeFiles(BaseFiles):
 
     """Used for matching and grouping files for an anime."""
-
-    def __new__(cls, regexp):
-        if regexp is None:
-            return FakeAnimeFiles()
-        else:
-            return super().__new__(cls, regexp)
 
     def __init__(self, regexp):
         self.regexp = re.compile(regexp)

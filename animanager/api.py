@@ -82,7 +82,7 @@ class XMLResponse(HTTPResponse):
     @property
     @abstractmethod
     def tree_class(self):
-        return None
+        pass
 
     def xml(self):
         """Return the lookup data as an XMLResponseTree subclass.

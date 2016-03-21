@@ -24,7 +24,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
     def exit(self, status=0, message=None):
         """Override SystemExit."""
-        if message:
+        if message is not None:
             print(message)
 
     def error(self, message):

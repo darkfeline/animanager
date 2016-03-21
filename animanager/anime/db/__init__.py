@@ -25,6 +25,7 @@ import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
 import animanager.db.versions
+from animanager.maybe import maybe
 
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
@@ -202,7 +203,9 @@ class AnimeDB(
                 FROM anime JOIN cache_anime USING (aid)
                 LEFT JOIN watching USING (aid)
                 WHERE anime.aid=?""", (aid,))
-            yield Anime(*cur.fetchone())
+            row = cur.fetchone()
+            if row is not None:
+                yield Anime(*row[:-1], maybe(row[:-1]))
 
     def lookup_title(self, aid):
         """Look up anime title."""

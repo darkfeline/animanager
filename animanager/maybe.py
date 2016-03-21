@@ -21,6 +21,13 @@ from abc import abstractmethod
 # pylint: disable=too-few-public-methods
 
 
+def maybe(thing):
+    if thing is None:
+        return Nothing
+    else:
+        return Just(thing)
+
+
 class Maybe(ABC):
 
     __slots__ = ()
