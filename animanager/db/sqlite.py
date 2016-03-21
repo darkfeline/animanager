@@ -17,7 +17,7 @@
 
 import apsw
 
-from .base import BaseDatabase
+from animanager.db import BaseDatabase
 
 
 class SQLiteDB(BaseDatabase):
@@ -40,6 +40,7 @@ class SQLiteDB(BaseDatabase):
         self.connect(*args, **kwargs)
 
     def connect(self, *args, **kwargs):
+        # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
 
     def close(self):

@@ -17,7 +17,7 @@
 
 from abc import abstractmethod
 
-from .base import BaseDatabase
+from animanager.db import BaseDatabase
 
 
 class BaseCacheTableMixin(BaseDatabase):

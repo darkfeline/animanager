@@ -18,7 +18,8 @@
 from abc import ABC, abstractmethod
 import logging
 
-from .base import DatabaseError
+from animanager.db import DatabaseError
+
 from .sqlite import SQLiteDB
 from .versions import get_user_version
 from .versions import set_user_version

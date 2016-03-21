@@ -17,7 +17,8 @@
 
 from abc import abstractmethod
 
-from .base import DatabaseError
+from animanager.db import DatabaseError
+
 from .sqlite import SQLiteDB
 
 
