@@ -104,7 +104,7 @@ def migrate(cnx):
             aid INTEGER,
             title TEXT NOT NULL UNIQUE,
             type TEXT NOT NULL,
-            episodecount INTEGER,
+            episodecount INTEGER NOT NULL,
             startdate INTEGER,
             enddate INTEGER,
             PRIMARY KEY (aid)

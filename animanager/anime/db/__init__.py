@@ -118,6 +118,20 @@ class AnimeDB(
         anime is an AnimeTree instance.
 
         """
+        values = {
+            'aid': anime.aid,
+            'title': anime.title,
+            'type': anime.type,
+            'episodecount': anime.episodecount,
+        }
+        if anime.startdate.has():
+            values['startdate'] = anime.startdate.get()
+        else:
+            values['startdate'] = None
+        if anime.enddate.has():
+            values['enddate'] = anime.enddate.get()
+        else:
+            values['enddate'] = None
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(
@@ -134,15 +148,7 @@ class AnimeDB(
                     :type,
                     :episodecount,
                     :startdate,
-                    :enddate)""",
-                {
-                    'aid': anime.aid,
-                    'title': anime.title,
-                    'type': anime.type,
-                    'episodecount': anime.episodecount,
-                    'startdate': timestamp(anime.startdate),
-                    'enddate': timestamp(anime.enddate),
-                })
+                    :enddate)""", values)
             for episode in anime.episodes:
                 self.add_episode(anime.aid, episode)
 

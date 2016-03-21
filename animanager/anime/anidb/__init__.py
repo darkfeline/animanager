@@ -18,6 +18,8 @@
 import logging
 import os
 
+from animanager.maybe import maybe
+
 from . import anime
 from . import titles
 
@@ -55,13 +57,16 @@ class SearchDB:
 
     def __init__(self, cachedir):
         self.cachedir = cachedir
-        self._titles = None
+        self._titles = maybe(None)
 
     @property
     def titles(self):
-        if self._titles is None:
-            self.load_tree()
-        return self._titles
+        if self._titles.has():
+            return self._titles.get()
+        else:
+            titles_tree = self.load_tree()
+            self._titles = maybe(titles_tree)
+            return titles_tree
 
     def load_tree(self):
         pickle_file = os.path.join(self.cachedir, 'anime-titles.pickle')
@@ -77,11 +82,12 @@ class SearchDB:
         if not os.path.exists(titles_file):
             request = titles.TitlesRequest()
             response = request.open()
-            self._titles = response.xml()
+            titles_tree = response.xml()
         else:
-            self._titles = titles.TitlesTree.parse(titles_file)
+            titles_tree = titles.TitlesTree.parse(titles_file)
         # Dump a pickled file for next time.
-        self.titles.dump(pickle_file)
+        titles_tree.dump(pickle_file)
+        return titles_tree
 
     def search(self, query):
         """Search titles using a compiled RE query."""

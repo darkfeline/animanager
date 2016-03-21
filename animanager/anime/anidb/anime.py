@@ -19,6 +19,7 @@ import re
 
 from animanager.api import XMLResponse
 from animanager.date import parse_date
+from animanager.maybe import maybe
 
 from . import api
 
@@ -63,17 +64,17 @@ class AnimeTree(api.XMLTree):
     def startdate(self):
         text = self.root.find('startdate').text
         try:
-            return parse_date(text)
+            return maybe(parse_date(text))
         except ValueError:
-            return None
+            return maybe(None)
 
     @property
     def enddate(self):
         text = self.root.find('enddate').text
         try:
-            return parse_date(text)
+            return maybe(parse_date(text))
         except ValueError:
-            return None
+            return maybe(None)
 
     @property
     def title(self):
