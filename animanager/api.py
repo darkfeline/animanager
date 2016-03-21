@@ -22,6 +22,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
+# pylint: disable=too-few-public-methods
 logger = logging.getLogger(__name__)
 
 
@@ -91,6 +92,7 @@ class XMLResponse(HTTPResponse):
 
         """
         content = self.content()
+        # pylint: disable=not-callable
         tree = self.tree_class(ET.ElementTree(ET.fromstring(content)))
         if tree.error:
             raise APIError(tree)
