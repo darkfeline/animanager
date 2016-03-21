@@ -21,11 +21,16 @@ import shlex
 
 
 def _make_section(dct, section_name, section_dct):
+    """Make session dispatcher."""
+    # __slots__
     section_dct['__slots__'] = ('config',)
+    # __init__
     def __init__(self, config):
         self.config = config[section_name]
     section_dct['__init__'] = __init__
+    # Making the class.
     section_class = type(section_name, (), section_dct)
+    # Making the property.
     dct[section_name] = property(lambda self: section_class(self.config))
 
 
