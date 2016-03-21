@@ -19,6 +19,8 @@ import configparser
 import os
 import shlex
 
+from animanager.maybe import maybe
+
 # pylint: disable=too-few-public-methods
 
 
@@ -105,8 +107,10 @@ class Config(BaseConfig):
         'args': shlex.split,
     }
 
-    def __init__(self, path=None):
-        if path is None:
+    def __init__(self, path=maybe(None)):
+        if path:
+            path = path.get()
+        else:
             path = self.DEF_PATH
         super().__init__(path)
 
