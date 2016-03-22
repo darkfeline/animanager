@@ -16,6 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+import shlex
+import subprocess
 from argparse import REMAINDER
 
 from animanager.registry import CmdRegistry
@@ -76,10 +78,11 @@ def do_watch(self, args):
     anime = self.animdb.lookup(aid)
     anime_files = self.animedb.get_files(aid)
     if args.episode is None:
-        episode = anime.watched_episodes + 1
+        episode = anime.watched_episodes + 1  # type: int
     else:
-        episode = args.episode
+        episode = args.episode  # type: int
     player = self.config.anime.player
+    subprocess.call(shlex.split(player) + [])
     raise NotImplementedError
     # XXX get watching shows
     # XXX find files
