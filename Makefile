@@ -13,7 +13,8 @@ publish:
 test:
 	python3 -m unittest discover
 
-lint:
+check:
 	pylint animanager tests || true
+	MYPYPATH=stubs mypy animanager tests || true
 
 .PHONY: all publish test lint
