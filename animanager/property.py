@@ -22,6 +22,11 @@ T = TypeVar('T')
 
 
 def cached_property(func: Callable[[Any], T]) -> T:
+    """Decorator implementing a cached property.
+
+    Property can be cleared via descriptor protocol __delete__.
+
+    """
     is_set = False
     cache = None  # type: Optional[T]
     @functools.wraps(func)
