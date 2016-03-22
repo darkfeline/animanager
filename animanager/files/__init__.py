@@ -18,10 +18,10 @@
 from abc import ABC
 from abc import abstractmethod
 import os
-from typing import Callable, Any, Generator, Iterable
+from typing import Callable, Any, Iterable
 
 
-def find_files(dirpath: str, test: Callable[[str], Any]) -> Generator[str]:
+def find_files(dirpath: str, test: Callable[[str], Any]) -> Iterable[str]:
     """Find all files, filtered by test function.
 
     Returns a generator that yields paths in no particular order.

@@ -84,6 +84,14 @@ def do_watch(self, args):
         episode = args.episode  # type: int
     files = anime_files.get_episode(episode)
 
+    for i, filename in enumerate(files):
+        print('{} - {}'.format(i, filename))
+    choice = input('Pick: ')  # type: str
+    if choice:
+        choice = int(choice)  # type: int
+    else:
+        choice = 0  # type: int
+
     player = self.config.anime.player
     subprocess.call(shlex.split(player) + [])
     raise NotImplementedError

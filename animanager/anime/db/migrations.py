@@ -98,6 +98,8 @@ def migrate(cnx):
 def migrate(cnx):
     with cnx:
         cur = cnx.cursor()
+
+        # Alter anime.
         cur.execute("""
         CREATE TABLE anime_new (
             aid INTEGER,
@@ -126,3 +128,11 @@ def migrate(cnx):
         )
         cur.execute('DROP TABLE anime')
         cur.execute('ALTER TABLE anime_new RENAME TO anime')
+
+        # Add file_priority.
+        cur.execute("""
+        CREATE TABLE file_priority (
+            id INTEGER PRIMARY KEY,
+            regexp TEXT NOT NULL,
+            priority INTEGER NOT NULL
+        )""")
