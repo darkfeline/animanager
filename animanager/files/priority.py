@@ -49,4 +49,9 @@ class FilePriority:
 
     def pick(self, filenames: Sequence[str]) -> str:
         for priority in sorted(self.rules.keys(), reverse=True):
-            matched_files = list()  # type: List[str]
+            patterns = self.rules[priority]
+            for pattern in patterns:
+                for filename in filenames:
+                    if pattern.search(filename):
+                        return filename
+        return filenames[0]
