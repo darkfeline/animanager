@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
-from numbers import Real
 
 
 def timestamp(date: datetime.date) -> float:
@@ -32,7 +31,7 @@ def timestamp(date: datetime.date) -> float:
         tzinfo=datetime.timezone.utc).timestamp()
 
 
-def fromtimestamp(ts: Real) -> datetime.date:
+def fromtimestamp(ts: float) -> datetime.date:
     """Convert timestamp into date.
 
     >>> fromtimestamp(978393600.0)

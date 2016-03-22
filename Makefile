@@ -21,7 +21,7 @@ check: isort pylint mypy
 
 .PHONY: isort
 isort:
-	isort -rc animanager tests
+	isort -rc animanager tests stubs
 
 .PHONY: pylint
 pylint:
@@ -29,4 +29,4 @@ pylint:
 
 .PHONY: mypy
 mypy:
-	MYPYPATH=stubs mypy animanager tests || true
+	MYPYPATH=stubs mypy animanager || true
