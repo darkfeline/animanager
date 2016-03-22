@@ -15,12 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 from animanager.db import BaseDatabase
 
 
-class BaseCacheTableMixin(BaseDatabase):
+class BaseCacheHolder(ABC):
+
+    @abstractmethod
+    def purge_cache(self):
+        pass
+
+
+class BaseCacheTableMixin(BaseDatabase, BaseCacheHolder):
 
     """Interface for cache table mixins.
 
@@ -42,3 +49,8 @@ class BaseCacheTableMixin(BaseDatabase):
     @abstractmethod
     def cleanup_cache_tables(self):
         pass
+
+    def purge_cache(self):
+        super().purge_cache()
+        self.cleanup_cache_tables()
+        self.setup_cache_tables()
