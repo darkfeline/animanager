@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .cmd import AnimeCmd
-
 from animanager.config import Config
+
+from .cmd import AnimeCmd
 
 
 def setup_parser(subparsers):

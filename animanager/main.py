@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
 import argparse
+import logging
 
 from .anime import main as anime
 

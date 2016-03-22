@@ -17,7 +17,6 @@
 
 from animanager.registry import CmdRegistry
 
-
 registry = CmdRegistry()
 
 

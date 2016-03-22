@@ -21,10 +21,9 @@ Has one function, migrate(), for migrating AnimeDB databases.
 
 """
 
-from animanager.date import parse_date
-from animanager.date import timestamp
-from animanager.db.migrations import migration
+from animanager.date import parse_date, timestamp
 from animanager.db.fk import MigrationManager
+from animanager.db.migrations import migration
 
 manager = MigrationManager()
 

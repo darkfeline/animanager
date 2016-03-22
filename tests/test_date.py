@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
-from datetime import timezone
 import doctest
 import unittest
+from datetime import datetime, timezone
 
 import hypothesis
 from hypothesis import strategies

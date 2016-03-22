@@ -16,10 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
-from typing import Any
-from typing import Callable
-from typing import Optional
-from typing import TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 T = TypeVar('T')
 

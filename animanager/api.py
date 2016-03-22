@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
 import gzip
 import logging
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from abc import ABC, abstractmethod
 
 # pylint: disable=too-few-public-methods
 logger = logging.getLogger(__name__)

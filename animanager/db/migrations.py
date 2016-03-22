@@ -15,14 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
 
 from animanager.db import DatabaseError
 
 from .sqlite import SQLiteDB
-from .versions import get_user_version
-from .versions import set_user_version
+from .versions import get_user_version, set_user_version
 
 logger = logging.getLogger(__name__)
 

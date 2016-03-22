@@ -17,8 +17,8 @@
 
 import argparse
 import functools
-import shlex
 import re
+import shlex
 
 
 class ArgumentParser(argparse.ArgumentParser):

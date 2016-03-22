@@ -19,16 +19,13 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.argparse import query_parser
-from animanager.argparse import compile_sql_query
+from animanager.argparse import compile_sql_query, query_parser
 from animanager.date import fromtimestamp
 from animanager.files import find_files
-from animanager.files.anime import is_video
-from animanager.files.anime import AnimeFiles
-
-from . import argparse
+from animanager.files.anime import AnimeFiles, is_video
 from animanager.registry import CmdRegistry
 
+from . import argparse
 
 registry = CmdRegistry()
 

@@ -19,8 +19,7 @@ import doctest
 import unittest
 
 import animanager.results
-from animanager.anime.results import AIDResults
-from animanager.anime.results import AIDResultsManager
+from animanager.anime.results import AIDResults, AIDResultsManager
 
 
 def load_tests(loader, tests, pattern):
