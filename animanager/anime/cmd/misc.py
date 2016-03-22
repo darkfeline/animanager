@@ -30,5 +30,4 @@ def do_quit(self, arg):
 @registry.register_do('purgecache')
 def do_purgecache(self, arg):
     """Purge cache tables."""
-    self.animedb.cleanup_cache_tables()
-    self.animedb.setup_cache_tables()
+    self.animedb.purge_cache()
