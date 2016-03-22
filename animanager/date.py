@@ -15,11 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
-from datetime import timezone
+import datetime
+from numbers import Real
 
 
-def timestamp(date):
+def timestamp(date: datetime.date) -> float:
     """Return days relative to epoch.
 
     >>> from datetime import date
@@ -27,26 +27,27 @@ def timestamp(date):
     978393600.0
 
     """
-    return datetime(
+    return datetime.datetime(
         date.year, date.month, date.day,
-        tzinfo=timezone.utc).timestamp()
+        tzinfo=datetime.timezone.utc).timestamp()
 
 
-def fromtimestamp(ts):
-    """Convert daystamp into date.
+def fromtimestamp(ts: Real) -> datetime.date:
+    """Convert timestamp into date.
 
     >>> fromtimestamp(978393600.0)
     datetime.date(2001, 1, 2)
 
     """
-    return datetime.fromtimestamp(ts, tz=timezone.utc).date()
+    return datetime.datetime.fromtimestamp(
+        ts, tz=datetime.timezone.utc).date()
 
 
-def parse_date(string):
+def parse_date(string: str) -> datetime.date:
     """Parse an ISO format date (YYYY-mm-dd).
 
     >>> parse_date('1990-01-02')
     datetime.date(1990, 1, 2)
 
     """
-    return datetime.strptime(string, '%Y-%m-%d').date()
+    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
