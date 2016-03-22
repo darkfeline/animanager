@@ -19,6 +19,7 @@ import os
 import re
 from abc import abstractmethod
 from collections import defaultdict
+from typing import Dict, List, Sequence
 
 from animanager.files import BaseFiles
 
@@ -32,8 +33,12 @@ def is_video(filepath):
 class BaseAnimeFiles(BaseFiles):
 
     @abstractmethod
-    def available_string(self):
+    def available_string(self) -> str:
         return ''
+
+    @abstractmethod
+    def get_episode(self, episode: int) -> Sequence[str]:
+        return ()
 
 
 class FakeAnimeFiles(BaseAnimeFiles):
@@ -47,6 +52,9 @@ class FakeAnimeFiles(BaseAnimeFiles):
     def available_string(self):
         return ''
 
+    def get_episode(self, episode: int) -> Sequence[str]:
+        return ()
+
 
 class AnimeFiles(BaseAnimeFiles):
 
@@ -58,9 +66,9 @@ class AnimeFiles(BaseAnimeFiles):
         else:
             return FakeAnimeFiles()
 
-    def __init__(self, regexp):
+    def __init__(self, regexp: str) -> None:
         self.regexp = re.compile(regexp)
-        self.by_episode = defaultdict(list)
+        self.by_episode = defaultdict(list)  # type: Dict[int, List[str]]
 
     def maybe_add(self, filename):
         basename = os.path.basename(filename)
@@ -77,3 +85,6 @@ class AnimeFiles(BaseAnimeFiles):
     def available_string(self):
         """Return a string of available episodes."""
         return ','.join(str(ep) for ep in sorted(self.by_episode.keys()))
+
+    def get_episode(self, episode: int) -> List[str]:
+        return self.by_episode[episode]

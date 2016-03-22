@@ -18,7 +18,7 @@
 from abc import ABC
 from abc import abstractmethod
 import os
-from typing import Callable, Any, Generator
+from typing import Callable, Any, Generator, Iterable
 
 
 def find_files(dirpath: str, test: Callable[[str], Any]) -> Generator[str]:
@@ -39,9 +39,9 @@ class BaseFiles(ABC):
     """Interface for collections of files."""
 
     @abstractmethod
-    def maybe_add(self, filename):
+    def maybe_add(self, filename: str) -> None:
         pass
 
     @abstractmethod
-    def maybe_add_iter(self, filenames):
+    def maybe_add_iter(self, filenames: Iterable[str]) -> None:
         pass

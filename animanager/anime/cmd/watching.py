@@ -20,6 +20,7 @@ import shlex
 import subprocess
 from argparse import REMAINDER
 
+from animanager.files.anime import BaseAnimeFiles
 from animanager.registry import CmdRegistry
 
 from .argparse import ArgumentParser, aid_parser
@@ -76,11 +77,12 @@ def do_watch(self, args):
     """Watch an anime."""
     aid = self.get_aid(args.aid, default_key='db')
     anime = self.animdb.lookup(aid)
-    anime_files = self.animedb.get_files(aid)
+    anime_files = self.animedb.get_files(aid)  # type: BaseAnimeFiles
     if args.episode is None:
         episode = anime.watched_episodes + 1  # type: int
     else:
         episode = args.episode  # type: int
+    files = anime_files.get_episode(episode)
 
     player = self.config.anime.player
     subprocess.call(shlex.split(player) + [])
