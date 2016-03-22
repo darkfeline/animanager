@@ -17,8 +17,9 @@
 
 import logging
 import os
+from typing import Optional
 
-from animanager.maybe import Just, Nothing, NoValue
+from animanager.property import cached_property
 
 from . import anime
 from . import titles
@@ -57,26 +58,20 @@ class SearchDB:
 
     def __init__(self, cachedir):
         self.cachedir = cachedir
-        self._titles = Nothing()
 
-    @property
-    def titles(self):
-        try:
-            return self._titles.get()
-        except NoValue:
-            titles_tree = self.load_tree()
-            self._titles = Just(titles_tree)
-            return titles_tree
+    @cached_property
+    def titles_tree(self) -> titles.TitlesTree:
+        return self.load_tree()
 
-    def load_tree(self):
+    def load_tree(self) -> titles.TitlesTree:
         pickle_file = os.path.join(self.cachedir, 'anime-titles.pickle')
         # Try to load from pickled file courageously.
         try:
-            self._titles = titles.TitlesTree.load(pickle_file)
+            titles_tree = titles.TitlesTree.load(pickle_file)
         except Exception as e:
             logger.warning('Error loading pickled search cache: %s', e)
         else:
-            return
+            return titles_tree
         titles_file = os.path.join(self.cachedir, 'anime-titles.xml')
         # Download titles data if we don't have it.
         if not os.path.exists(titles_file):
@@ -91,7 +86,7 @@ class SearchDB:
 
     def search(self, query):
         """Search titles using a compiled RE query."""
-        return self.titles.search(query)
+        return self.titles_tree.search(query)
 
 
 class AnimeCache:

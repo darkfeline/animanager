@@ -63,23 +63,25 @@ def do_unregister(self, args):
     self.animedb.delete_regexp(aid)
 
 
-def do_watch(self, arg):
+_watch_parser = ArgumentParser()
+_watch_parser.add_aid()
+_watch_parser.add_argument('episode', default=None, type=int)
+
+
+@registry.register_alias('w')
+@registry.register_do('watch')
+@_watch_parser.parsing
+def do_watch(self, args):
     """Watch an anime."""
-    args = shlex.split(arg)
-    aid = args.pop(0)
-    aid = self.get_aid(arg, default_key='db')
-    anime_files = self.animdb.get_files(aid)
-    raise NotImplementedError
-    if not arg:
-        self._watch_list_all()
-    elif arg.isdigit():
-        # Handle count.
-        pass  # XXX
-    elif arg[0] == '#' and arg[1:].isdigit():
-        # Handle aid.
-        pass  # XXX
+    aid = self.get_aid(args.aid, default_key='db')
+    anime = self.animdb.lookup(aid)
+    anime_files = self.animedb.get_files(aid)
+    if args.episode is None:
+        episode = anime.watched_episodes + 1
     else:
-        pass  # XXX
+        episode = args.episode
+    player = self.config.anime.player
+    raise NotImplementedError
     # XXX get watching shows
     # XXX find files
     # XXX match rules

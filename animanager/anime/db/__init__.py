@@ -19,13 +19,14 @@ import logging
 import pickle
 import re
 import shutil
+from typing import Dict
 
 from animanager.date import timestamp
+from animanager.property import cached_property
 import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
 import animanager.db.versions
-from animanager.maybe import Just, Nothing, NoValue
 
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
@@ -50,8 +51,6 @@ class AnimeDB(
     def __init__(self, database):
         self.database = database
         super().__init__(database)
-        self._episode_types = Nothing()
-        self._episode_types_by_id = Nothing()
 
     @property
     def version(self):
@@ -68,43 +67,35 @@ class AnimeDB(
             logger.info('Migrating database')
             super().migrate()
 
-    @property
-    def episode_types(self):
+    @cached_property
+    def episode_types(self) -> Dict[int, EpisodeType]:
         """Episode types.
 
         Returns a dictionary mapping episode type name strings to EpisodeType
         instances.
 
         """
-        try:
-            return self._episode_types.get()
-        except NoValue:
-            ep_types = dict()
-            cur = self.cnx.cursor()
-            cur.execute('SELECT id, name, prefix FROM episode_type')
-            for type_id, name, prefix in cur:
-                ep_types[name] = EpisodeType(type_id, prefix)
-            self._episode_types = Just(ep_types)
-            return ep_types
+        ep_types = dict()
+        cur = self.cnx.cursor()
+        cur.execute('SELECT id, name, prefix FROM episode_type')
+        for type_id, name, prefix in cur:
+            ep_types[name] = EpisodeType(type_id, prefix)
+        return ep_types
 
     @property
-    def episode_types_by_id(self):
+    def episode_types_by_id(self) -> Dict[str, EpisodeType]:
         """Episode types by id.
 
         Returns a dictionary mapping episode type ids to EpisodeType
         instances.
 
         """
-        try:
-            return self._episode_types_by_id.get()
-        except NoValue:
-            ep_types = dict()
-            cur = self.cnx.cursor()
-            cur.execute('SELECT id, prefix FROM episode_type')
-            for type_id, prefix in cur:
-                ep_types[type_id] = EpisodeType(type_id, prefix)
-            self._episode_types_by_id = Just(ep_types)
-            return ep_types
+        ep_types = dict()
+        cur = self.cnx.cursor()
+        cur.execute('SELECT id, prefix FROM episode_type')
+        for type_id, prefix in cur:
+            ep_types[type_id] = EpisodeType(type_id, prefix)
+        return ep_types
 
     def get_epno(self, episode):
         """Return epno for Episode instance.
@@ -127,17 +118,13 @@ class AnimeDB(
             'title': anime.title,
             'type': anime.type,
             'episodecount': anime.episodecount,
-            'startdate': None,
-            'enddate': None,
+            'startdate': anime.startdate,
+            'enddate': anime.enddate,
         }
-        try:
-            values['startdate'] = anime.startdate.get()
-        except NoValue:
-            pass
-        try:
-            values['enddate'] = anime.enddate.get()
-        except NoValue:
-            pass
+        if anime.startdate is not None:
+            values['startdate'] = timestamp(anime.startdate)
+        if anime.enddate is not None:
+            values['enddate'] = timestamp(anime.enddate)
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(
@@ -217,9 +204,7 @@ class AnimeDB(
                 WHERE anime.aid=?""", (aid,))
             row = cur.fetchone()
             if row is not None:
-                regexp = row.pop()
-                regexp = Just(regexp) if regexp is not None else Nothing()
-                yield Anime(*row, regexp)
+                yield Anime(*row)
 
     def lookup_title(self, aid):
         """Look up anime title."""

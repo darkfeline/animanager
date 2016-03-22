@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import functools
 import shlex
 import re
 
@@ -35,6 +36,7 @@ class ArgumentParser(argparse.ArgumentParser):
     def parsing(self):
         """Decorator to parse command arguments."""
         def decorate(func):
+            @functools.wraps(func)
             def parse_args_around(self2, arg):
                 args = self.parse_args(shlex.split(arg))
                 return func(self2, args)

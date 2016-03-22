@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 import re
+from typing import Optional
 
 from animanager.api import XMLResponse
 from animanager.date import parse_date
-from animanager.maybe import Just, Nothing
 
 from . import api
 
@@ -61,20 +62,20 @@ class AnimeTree(api.XMLTree):
         return int(self.root.find('episodecount').text)
 
     @property
-    def startdate(self):
+    def startdate(self) -> Optional[datetime.date]:
         text = self.root.find('startdate').text
         try:
-            return Just(parse_date(text))
+            return parse_date(text)
         except ValueError:
-            return Nothing()
+            return None
 
     @property
-    def enddate(self):
+    def enddate(self) -> Optional[datetime.date]:
         text = self.root.find('enddate').text
         try:
-            return Just(parse_date(text))
+            return parse_date(text)
         except ValueError:
-            return Nothing()
+            return None
 
     @property
     def title(self):

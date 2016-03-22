@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,39 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC
-from abc import abstractmethod
+import functools
+from typing import Any
+from typing import Callable
+from typing import Optional
+from typing import TypeVar
+
+T = TypeVar('T')
 
 
-class Maybe(ABC):
-
-    __slots__ = ()
-
-    @abstractmethod
-    def get(self):
-        pass
-
-
-class Just(Maybe):
-
-    __slots__ = ('thing',)
-
-    def __init__(self, thing):
-        self.thing = thing
-
-    def get(self):
-        return self.thing
-
-
-class Nothing(Maybe):
-
-    __slots__ = ()
-
-    def get(self):
-        raise NoValue()
-
-
-class NoValue(Exception):
-
-    def __init__(self):
-        super().__init__('Nothing has no value')
+def cached_property(func: Callable[[Any], T]) -> T:
+    cache = None  # type: Optional[T]
+    @functools.wraps(func)
+    def cache_wrapper(self):
+        nonlocal cache
+        if cache is None:
+            cache = func(self)
+        return cache
+    return property(cache_wrapper)

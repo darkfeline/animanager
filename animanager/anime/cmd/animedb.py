@@ -25,7 +25,6 @@ from animanager.date import fromtimestamp
 from animanager.files import find_files
 from animanager.files.anime import is_video
 from animanager.files.anime import AnimeFiles
-from animanager.maybe import NoValue
 
 from . import argparse
 from animanager.registry import CmdRegistry
@@ -81,10 +80,10 @@ def do_show(self, args):
     anime = self.animedb.lookup(aid, episodes=args.show_episodes)
 
     complete_string = 'yes' if anime.complete else 'no'
-    try:
-        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp.get())
-    except NoValue:
+    if anime.regexp is None:
         regexp_string = ''
+    else:
+        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp.get())
     print(_SHOW_MSG.format(
         anime.aid,
         anime.title,
