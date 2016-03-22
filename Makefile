@@ -1,8 +1,10 @@
+.PHONY: all
 all:
 	@echo "make publish - Publish to PyPi"
 	@echo "make test - Run tests"
 	@echo "make lint - Lint code"
 
+.PHONY: publish
 publish:
 	rm dist/*
 	python3 setup.py sdist
@@ -10,12 +12,21 @@ publish:
 	python3 setup.py register
 	twine upload dist/*
 
+.PHONY: test
 test:
 	python3 -m unittest discover
 
-check:
-	isort -rc animanager tests
-	pylint animanager tests || true
-	MYPYPATH=stubs mypy animanager tests || true
+.PHONY: check
+check: isort pylint mypy
 
-.PHONY: all publish test lint
+.PHONY: isort
+isort:
+	isort -rc animanager tests
+
+.PHONY: pylint
+pylint:
+	pylint animanager tests || true
+
+.PHONY: mypy
+mypy:
+	MYPYPATH=stubs mypy animanager tests || true
