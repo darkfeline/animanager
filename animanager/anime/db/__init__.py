@@ -23,7 +23,7 @@ from typing import Dict
 
 from animanager.date import timestamp
 from animanager.property import cached_property
-from animanager.files import BaseAnimeFiles
+from animanager.files.anime import BaseAnimeFiles
 import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
