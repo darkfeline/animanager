@@ -146,41 +146,27 @@ class AnimeDB(
     def add_episode(self, aid, episode):
         with self.cnx:
             cur = self.cnx.cursor()
+            values = {
+                'aid': aid,
+                'type': episode.type,
+                'number': episode.number,
+                'title': episode.title,
+                'length': episode.length,
+            }
             cur.execute(
                 """UPDATE episode
                 SET title=:title, length=:length
                 WHERE aid=:aid AND type=:type AND number=:number""",
-                {
-                    'aid': aid,
-                    'type': episode.type,
-                    'number': episode.number,
-                    'title': episode.title,
-                    'length': episode.length,
-                })
+                values)
             if self.cnx.changes() == 0:
+                values['user_watch'] = 0
                 cur.execute(
                     """INSERT INTO episode (
-                        aid,
-                        type,
-                        number,
-                        title,
-                        length,
-                        user_watched)
+                        aid, type, number, title,
+                        length, user_watched)
                     VALUES (
-                        :aid,
-                        :type,
-                        :number,
-                        :title,
-                        :length,
-                        :user_watched)""",
-                    {
-                        'aid': aid,
-                        'type': episode.type,
-                        'number': episode.number,
-                        'title': episode.title,
-                        'length': episode.length,
-                        'user_watched': 0,
-                    })
+                        :aid, :type, :number, :title,
+                        :length, :user_watched)""", values)
 
     def search(self, query):
         """Perform a LIKE title search on the anime table.
