@@ -128,20 +128,18 @@ class AnimeDB(
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute(
-                """INSERT OR REPLACE INTO anime (
-                    aid,
-                    title,
-                    type,
-                    episodecount,
-                    startdate,
-                    enddate)
-                VALUES (
-                    :aid,
-                    :title,
-                    :type,
-                    :episodecount,
-                    :startdate,
-                    :enddate)""", values)
+                """UPDATE anime
+                SET title=:title, type=:type, episodecount=:episodecount,
+                    startdate=:startdate, enddate=:enddate
+                WHERE aid=:aid""", values)
+            if self.cnx.changes() == 0:
+                cur.execute(
+                    """INSERT INTO anime (
+                        aid, title, type, episodecount,
+                        startdate, enddate)
+                    VALUES (
+                        :aid, :title, :type, :episodecount,
+                        :startdate, :enddate)""", values)
             for episode in anime.episodes:
                 self.add_episode(anime.aid, episode)
 
