@@ -15,16 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import doctest
 import unittest
 
-import animanager.results
 from animanager.anime.results import AIDResults, AIDResultsManager
-
-
-def load_tests(loader, tests, pattern):
-    tests.addTests(doctest.DocTestSuite(animanager.results))
-    return tests
 
 
 class ParseAIDTestCase(unittest.TestCase):

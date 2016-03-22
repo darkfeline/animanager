@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import doctest
 import unittest
 from datetime import datetime, timezone
 
@@ -23,12 +22,6 @@ import hypothesis
 from hypothesis import strategies
 
 import animanager.date
-
-
-def load_tests(loader, tests, pattern):
-    tests.addTests(doctest.DocTestSuite(animanager.date))
-    return tests
-
 
 MIN_DATETIME = datetime(1970, 1, 1, tzinfo=timezone.utc)
 MAX_DATETIME = datetime(2038, 12, 31, tzinfo=timezone.utc)

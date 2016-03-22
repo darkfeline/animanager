@@ -14,7 +14,7 @@ publish:
 
 .PHONY: test
 test:
-	python3 -m unittest discover
+	nosetests --with-doctest
 
 .PHONY: check
 check: isort pylint mypy
