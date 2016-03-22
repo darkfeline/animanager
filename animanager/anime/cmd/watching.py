@@ -81,6 +81,7 @@ def do_watch(self, args):
         episode = anime.watched_episodes + 1  # type: int
     else:
         episode = args.episode  # type: int
+
     player = self.config.anime.player
     subprocess.call(shlex.split(player) + [])
     raise NotImplementedError

@@ -23,6 +23,7 @@ from typing import Dict
 
 from animanager.date import timestamp
 from animanager.property import cached_property
+from animanager.files import BaseAnimeFiles
 import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
@@ -317,7 +318,7 @@ class AnimeDB(
                     VALUES (?, ?, ?)""",
                     (aid, complete, watched_episodes))
 
-    def cache_files(self, aid, anime_files):
+    def cache_files(self, aid: int, anime_files: BaseAnimeFiles) -> None:
         with self.cnx:
             self.cache_status(aid)
             self.cnx.cursor().execute(
@@ -326,7 +327,7 @@ class AnimeDB(
                 WHERE aid=?""",
                 (pickle.dumps(anime_files), aid))
 
-    def get_files(self, aid):
+    def get_files(self, aid: int) -> BaseAnimeFiles:
         with self.cnx:
             cur = self.cnx.cursor().execute(
                 'SELECT anime_files FROM cache_anime WHERE aid=?',
