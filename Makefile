@@ -14,6 +14,7 @@ test:
 	python3 -m unittest discover
 
 check:
+	isort -rc animanager tests
 	pylint animanager tests || true
 	MYPYPATH=stubs mypy animanager tests || true
 
