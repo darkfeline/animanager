@@ -83,7 +83,7 @@ class AnimeDB(
             ep_types[name] = EpisodeType(type_id, prefix)
         return ep_types
 
-    @property
+    @cached_property
     def episode_types_by_id(self) -> Dict[str, EpisodeType]:
         """Episode types by id.
 
