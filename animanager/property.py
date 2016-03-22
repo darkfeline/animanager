@@ -22,11 +22,16 @@ T = TypeVar('T')
 
 
 def cached_property(func: Callable[[Any], T]) -> T:
+    is_set = False
     cache = None  # type: Optional[T]
     @functools.wraps(func)
     def cache_wrapper(self):
-        nonlocal cache
-        if cache is None:
+        nonlocal cache, is_set
+        if not is_set:
             cache = func(self)
+            is_set = True
         return cache
-    return property(cache_wrapper)
+    def clear_cache(self):
+        nonlocal is_set
+        is_set = False
+    return property(cache_wrapper, None, clear_cache)
