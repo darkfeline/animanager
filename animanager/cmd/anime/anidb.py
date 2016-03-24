@@ -21,7 +21,7 @@ from tabulate import tabulate
 
 from animanager.argparse import compile_re_query, query_parser
 from animanager.date import fromtimestamp
-from animanager.registry import CmdRegistry
+from animanager.registry.cmd import CmdRegistry
 
 from . import argparse
 

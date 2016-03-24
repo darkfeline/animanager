@@ -21,7 +21,7 @@ import subprocess
 from argparse import REMAINDER
 
 from animanager.files.anime import BaseAnimeFiles
-from animanager.registry import CmdRegistry
+from animanager.registry.cmd import CmdRegistry
 
 from .argparse import ArgumentParser, aid_parser
 

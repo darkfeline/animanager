@@ -17,7 +17,7 @@
 
 from textwrap import dedent
 
-from animanager.registry import CmdRegistry
+from animanager.registry.cmd import CmdRegistry
 
 registry = CmdRegistry()
 

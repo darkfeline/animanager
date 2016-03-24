@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.registry import CmdRegistry
+from animanager.registry.cmd import CmdRegistry
 
 registry = CmdRegistry()
 
