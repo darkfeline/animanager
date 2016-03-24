@@ -2,7 +2,7 @@
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
 Binding = Union[Sequence[Any], Dict[str, Any]]
-Row = Tuple[Any]
+Row = Tuple[Any, ...]
 
 
 class Cursor:
