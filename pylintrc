@@ -1,2 +1,10 @@
-[DEFAULT]
-disable=missing-docstring,abstract-method,invalid-name
+; -*- conf-windows -*-
+
+[MESSAGES CONTROL]
+disable=invalid-name,
+  ; pylint sucks at detecting this
+  abstract-method,
+  ; XXX Should fix this
+  missing-docstring,
+  ; pylint doesn't know generics for type hints
+  unsubscriptable-object
