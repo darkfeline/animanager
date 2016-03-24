@@ -22,10 +22,10 @@ from typing import Optional
 from animanager.api import XMLResponse
 from animanager.date import parse_date
 
-from animanager.anidb import api
+import animanager.api.anidb
 
 
-class AnimeRequest(api.HTTPAPIRequest):
+class AnimeRequest(animanager.api.anidb.HTTPAPIRequest):
 
     """Request for looking up anime by AID via AniDB's HTTP API."""
 
@@ -47,7 +47,7 @@ class AnimeResponse(XMLResponse):
         return AnimeTree
 
 
-class AnimeTree(api.XMLTree):
+class AnimeTree(animanager.api.anidb.XMLTree):
 
     @property
     def aid(self):

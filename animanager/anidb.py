@@ -21,8 +21,8 @@ from typing import Optional
 
 from animanager.property import cached_property
 
-from .api import anime
-from .api import titles
+from animanager.api.anidb import anime
+from animanager.api.anidb import titles
 
 logger = logging.getLogger(__name__)
 
