@@ -15,41 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-
-class Registry:
-
-    """Class for registering methods for a class."""
-
-    def __init__(self, prefix=''):
-        self.prefix = prefix
-        self.methods = dict()
-
-    def __getitem__(self, name):
-        return self.methods[name]
-
-    def __setitem__(self, name, func):
-        self.methods[name] = func
-
-    def __contains__(self, name):
-        return name in self.methods
-
-    def register(self, name):
-        """Decorator for registering commands."""
-        def decorate(func):
-            self[name] = func
-            return func
-        return decorate
-
-    @staticmethod
-    def add_method(obj, attr, value):
-        if hasattr(obj, attr):
-            raise DuplicateAttributeError(obj, attr)
-        setattr(obj, attr, value)
-
-    def add_methods(self, cls):
-        """Add registered commands to Cmd instance."""
-        for name, func in self.methods.items():
-            self.add_method(cls, self.prefix + name, func)
+import animanager.registry
 
 
 class CmdRegistry:
@@ -57,9 +23,9 @@ class CmdRegistry:
     """Command registry for registering commands."""
 
     def __init__(self):
-        self.do_reg = Registry('do_')
+        self.do_reg = animanager.registry.Registry('do_')
         self.do_reverse = dict()
-        self.help_reg = Registry('help_')
+        self.help_reg = animanager.registry.Registry('help_')
 
     def register_do(self, name):
         """Decorator for registering commands."""
@@ -95,15 +61,3 @@ class CmdRegistry:
         """Add registered commands to Cmd instance."""
         self.do_reg.add_methods(cmd)
         self.help_reg.add_methods(cmd)
-
-
-class RegistryError(Exception):
-    pass
-
-
-class DuplicateAttributeError(RegistryError):
-
-    def __init__(self, obj, attr):
-        self.obj = obj
-        self.attr = attr
-        super().__init__('{} already has attribute {}'.format(obj, attr))

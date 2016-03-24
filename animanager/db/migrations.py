@@ -56,8 +56,8 @@ class MigrationManager:
         self.initial_version = initial_version
         self.current_version = initial_version
 
-    def register(self, migration):
-        """Register a migration for version.
+    def register(self, migration: 'BaseMigration') -> None:
+        """Register a migration.
 
         You can only register migrations in order.  For example, you can
         register migrations from version 1 to 2, then 2 to 3, then 3 to 4.  You
@@ -77,7 +77,7 @@ class MigrationManager:
         """Check if database needs migration."""
         return get_user_version(cnx) < self.current_version
 
-    def migrate_single(self, cnx, version):
+    def migrate_single(self, cnx, version: int) -> int:
         """Perform a single migration starting from given version.
 
         Returns the version after migration.

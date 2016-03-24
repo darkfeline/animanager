@@ -72,7 +72,7 @@ class BaseConfig(metaclass=ConfigMeta):
     DEF_VALUES = {}  # type: Dict[str, Dict[str, Any]]
     CONVERTERS = {}  # type: Dict[str, Callable[[str], Any]]
 
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         self.path = path
         self.config = configparser.ConfigParser(
             converters=self.CONVERTERS)
@@ -107,7 +107,7 @@ class Config(BaseConfig):
         'args': shlex.split,
     }
 
-    def __init__(self, path=''):
+    def __init__(self, path: str = '') -> None:
         if not path:
             path = self.DEF_PATH
         super().__init__(path)

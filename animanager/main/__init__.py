@@ -18,7 +18,7 @@
 import argparse
 import logging
 
-from .anime import main as anime
+from animanager.main import anime
 
 
 def _make_parser():

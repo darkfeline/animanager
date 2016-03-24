@@ -17,7 +17,7 @@
 
 from animanager.db import DatabaseError
 
-from . import migrations
+from .migrations import MigrationManager as PlainMigrationManager
 from .sqlite import SQLiteDB
 
 
@@ -34,7 +34,7 @@ class ForeignKeyMixin(SQLiteDB):
             raise DatabaseError('Foreign keys are not supported.')
 
 
-class MigrationManager(migrations.MigrationManager):
+class MigrationManager(PlainMigrationManager):
 
     """Migration extended with foreign key handling."""
 

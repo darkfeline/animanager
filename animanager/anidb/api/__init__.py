@@ -19,10 +19,10 @@
 
 import urllib.parse
 
-from animanager import api
+import animanager.api
 
 
-class HTTPAPIRequest(api.HTTPRequest):
+class HTTPAPIRequest(animanager.api.HTTPRequest):
 
     """AniDB HTTP API request abstract class."""
 
@@ -44,7 +44,7 @@ class HTTPAPIRequest(api.HTTPRequest):
             urllib.parse.urlencode(self.params)
 
 
-class XMLTree(api.XMLTree):
+class XMLTree(animanager.api.XMLTree):
 
     @property
     def error(self):

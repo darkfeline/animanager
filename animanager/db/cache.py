@@ -22,6 +22,8 @@ from animanager.db import BaseDatabase
 
 class BaseCacheHolder(ABC):
 
+    """Interface for objects that hold a cache."""
+
     @abstractmethod
     def purge_cache(self):
         pass

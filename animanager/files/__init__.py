@@ -20,6 +20,11 @@ from abc import abstractmethod
 import os
 from typing import Callable, Any, Iterable
 
+import re
+from collections import defaultdict
+from typing import Dict, Iterable, List, Sequence
+from typing.re import Pattern
+
 
 def find_files(dirpath: str, test: Callable[[str], Any]) -> Iterable[str]:
     """Find all files, filtered by test function.
@@ -45,3 +50,40 @@ class BaseFiles(ABC):
     @abstractmethod
     def maybe_add_iter(self, filenames: Iterable[str]) -> None:
         pass
+
+
+class PriorityRule(tuple):
+
+    __slots__ = ()
+
+    def __new__(cls, regexp: str, priority: int) -> 'PriorityRule':
+        compiled_regexp = re.compile(regexp, re.I)
+        return super().__new__(cls, (compiled_regexp, priority))
+
+    @property
+    def regexp(self) -> Pattern:
+        return self[0]
+
+    @property
+    def priority(self) -> int:
+        return self[1]
+
+
+class FilePicker:
+
+    """Class for picking one file out of many based on priority rules."""
+
+    def __init__(self, rules: Iterable[PriorityRule]) -> None:
+        self.rules = defaultdict(list)  # type: Dict[int, List[Pattern]]
+        for rule in rules:
+            self.rules[rule.priority].append(rule.regexp)
+
+    def pick(self, filenames: Sequence[str]) -> str:
+        """Pick one filename based on priority rules."""
+        for priority in sorted(self.rules.keys(), reverse=True):
+            patterns = self.rules[priority]
+            for pattern in patterns:
+                for filename in filenames:
+                    if pattern.search(filename):
+                        return filename
+        return filenames[0]

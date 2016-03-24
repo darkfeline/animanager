@@ -23,11 +23,11 @@ from textwrap import dedent
 import traceback
 
 from animanager import __version__ as VERSION
-from animanager.anime.anidb import AniDB
-from animanager.anime.anidb import SearchDB
-from animanager.anime.db import AnimeDB
-from animanager.anime.results import AIDResults
-from animanager.anime.results import AIDResultsManager
+from animanager.anidb import AniDB
+from animanager.anidb import SearchDB
+from animanager.animedb import AnimeDB
+from animanager.results.aid import AIDResults
+from animanager.results.aid import AIDResultsManager
 
 from . import anidb
 from . import animedb

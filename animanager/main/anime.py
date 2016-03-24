@@ -1,4 +1,4 @@
-# Copyright (C) 2015  Allen Li
+# Copyright (C) 2015-2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,28 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from animanager.config import Config
+
+from animanager.cmd.anime import AnimeCmd
+
 
 def setup_parser(subparsers):
+
+    """Setup parsers."""
+
+    # Set up anime command parser.
     parser = subparsers.add_parser(
-        'stats',
-        description='Display statistics for shows.',
-        help='Display statistics for shows.',
+        'anime',
+        description='Anime manager.',
+        help='Start anime manager.',
     )
+    parser.add_argument('script', nargs='?')
     parser.set_defaults(func=main)
 
 
 def main(args):
-    """Stats command."""
-    cur = args.db.cursor()
-    print('By status:')
-    cur.execute('SELECT status from anime_statuses')
-    statuses = cur.fetchall()
-    for status in statuses:
-        cur.execute('SELECT count(*) FROM anime WHERE status=?', status)
-        print('- {}: {}'.format(status[0], cur.fetchone()[0]))
-
-    cur.execute('SELECT count(*) FROM anime')
-    print('Total: {}'.format(cur.fetchone()[0]))
-
-    cur.execute('SELECT SUM(ep_watched) FROM anime')
-    print('Episodes watched: {}'.format(cur.fetchone()[0]))
+    config = Config(args.config)
+    if args.script:
+        AnimeCmd.run_with_file(config, args.script)
+    else:
+        cmd = AnimeCmd(config)
+        cmd.cmdloop()

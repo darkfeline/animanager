@@ -19,7 +19,7 @@ import datetime
 
 
 def timestamp(date: datetime.date) -> float:
-    """Return days relative to epoch.
+    """Return UNIX timestamp.
 
     >>> from datetime import date
     >>> timestamp(date(2001, 1, 2))

@@ -15,13 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Custom argument parsing."""
+
 import argparse
 import functools
 import re
 import shlex
+from typing import Iterable
+from typing.re import Pattern
 
 
 class ArgumentParser(argparse.ArgumentParser):
+
+    """ArgumentParser customized for Animanager's CLI."""
 
     def exit(self, status=0, message=None):
         """Override SystemExit."""
@@ -34,7 +40,13 @@ class ArgumentParser(argparse.ArgumentParser):
 
     @property
     def parsing(self):
-        """Decorator to parse command arguments."""
+        """Decorator to parse command arguments.
+
+        This decorates a cmd.Cmd command method do_foo(self, arg) by splitting
+        its single argument string into tokens, parsing it via ArgumentParser,
+        then calling the original function with the parsed args.
+
+        """
         def decorate(func):
             @functools.wraps(func)
             def parse_args_around(self2, arg):
@@ -47,13 +59,13 @@ class ArgumentParser(argparse.ArgumentParser):
         self.add_argument('query', nargs=argparse.REMAINDER)
 
 
-def compile_re_query(args):
+query_parser = ArgumentParser()
+query_parser.add_query()
+
+
+def compile_re_query(args: Iterable[str]) -> Pattern:
     return re.compile('.*'.join(args), re.I)
 
 
-def compile_sql_query(args):
+def compile_sql_query(args: Iterable[str]) -> str:
     return '%{}%'.format('%'.join(args))
-
-
-query_parser = ArgumentParser()
-query_parser.add_query()

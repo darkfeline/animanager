@@ -22,7 +22,7 @@ from typing import Optional
 from animanager.api import XMLResponse
 from animanager.date import parse_date
 
-from . import api
+from animanager.anidb import api
 
 
 class AnimeRequest(api.HTTPAPIRequest):

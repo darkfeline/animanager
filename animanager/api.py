@@ -117,7 +117,7 @@ class XMLTree:
         """Create instance from an XML data file."""
         return cls(ET.parse(file))
 
-    def __init__(self, tree):
+    def __init__(self, tree: ET.ElementTree) -> None:
         """Initialize instance.
 
         Be careful, tree should be an ElementTree, specifically a
