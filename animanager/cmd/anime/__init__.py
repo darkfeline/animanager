@@ -15,25 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from cmd import Cmd
 import logging
 # readline is needed for command editing.
 import readline  # pylint: disable=unused-import
-from textwrap import dedent
 import traceback
+from cmd import Cmd
+from textwrap import dedent
 
 from animanager import __version__ as VERSION
-from animanager.anidb import AniDB
-from animanager.anidb import SearchDB
+from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
-from animanager.results.aid import AIDResults
-from animanager.results.aid import AIDResultsManager
+from animanager.results.aid import AIDResults, AIDResultsManager
 
-from . import anidb
-from . import animedb
-from . import gpl
-from . import misc
-from . import watching
+from . import anidb, animedb, gpl, misc, watching
 
 logger = logging.getLogger(__name__)
 

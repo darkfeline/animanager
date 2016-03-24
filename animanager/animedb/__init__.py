@@ -19,24 +19,20 @@ import logging
 import pickle
 import re
 import shutil
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional
 
-from animanager.date import timestamp
-from animanager.property import cached_property
-from animanager.files.anime import BaseAnimeFiles
-import animanager.db.sqlite
 import animanager.db.fk
 import animanager.db.migrations
+import animanager.db.sqlite
 import animanager.db.versions
+from animanager.date import timestamp
+from animanager.files.anime import BaseAnimeFiles
+from animanager.property import cached_property
 
-from .cache import AnimeCacheMixin
-from .collections import EpisodeType
-from .collections import Anime
-from .collections import AnimeFull
-from .collections import Episode
-from .collections import PriorityRule
 from . import migrations
+from .cache import (
+    Anime, AnimeCacheMixin, AnimeFull, Episode, EpisodeType, PriorityRule,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -15,14 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC
-from abc import abstractmethod
 import os
-from typing import Callable, Any, Iterable
-
 import re
+from abc import ABC, abstractmethod
 from collections import defaultdict
-from typing import Dict, Iterable, List, Sequence
+from typing import Any, Callable, Dict, Iterable, List, Sequence
 from typing.re import Pattern
 
 
