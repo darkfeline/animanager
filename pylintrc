@@ -1,10 +1,10 @@
-; -*- conf-windows -*-
+# -*- conf-unix -*-
 
 [MESSAGES CONTROL]
 disable=invalid-name,
-  ; pylint sucks at detecting this
+  # pylint sucks at detecting this
   abstract-method,
-  ; XXX Should fix this
+  # XXX Should fix this
   missing-docstring,
-  ; pylint doesn't know generics for type hints
+  # pylint doesn't know generics for type hints
   unsubscriptable-object
