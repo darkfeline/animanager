@@ -20,6 +20,7 @@ import pickle
 import re
 import shutil
 from typing import Dict
+from typing import Optional
 
 from animanager.date import timestamp
 from animanager.property import cached_property
@@ -360,3 +361,19 @@ class AnimeDB(
         self.cnx.cursor().execute(
             """DELETE FROM watching WHERE aid=?""",
             (aid,))
+
+    def add_priority_rule(self, regexp: str,
+                          priority: Optional[int] = None) -> None:
+        """Add a file priority rule."""
+        with self.cnx:
+            cur = self.cnx.cursor()
+            if priority is None:
+                cur.execute('SELECT MAX(priority) FROM file_priority')
+                row = cur.fetchone()  # type: Optional[Tuple[int]]
+                if cur is None:
+                    priority = 1
+                else:
+                    priority = row[0] + 1
+            cur.execute(
+                """INSERT INTO file_priority (regexp, priority)
+                    VALUES (?, ?)""", (regexp, priority))
