@@ -80,7 +80,7 @@ def do_show(self, args):
     if anime.regexp is None:
         regexp_string = ''
     else:
-        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp.get())
+        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
     print(_SHOW_MSG.format(
         anime.aid,
         anime.title,
