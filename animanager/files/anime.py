@@ -62,7 +62,7 @@ class AnimeFiles(BaseAnimeFiles):
 
     def __new__(cls, regexp):
         if regexp:
-            return super().__new__(cls, regexp)
+            return super().__new__(cls)
         else:
             return FakeAnimeFiles()
 
