@@ -19,10 +19,9 @@ import datetime
 import re
 from typing import Optional
 
+import animanager.api.anidb
 from animanager.api import XMLResponse
 from animanager.date import parse_date
-
-import animanager.api.anidb
 
 
 class AnimeRequest(animanager.api.anidb.HTTPAPIRequest):
