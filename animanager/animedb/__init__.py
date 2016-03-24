@@ -35,6 +35,7 @@ from .collections import EpisodeType
 from .collections import Anime
 from .collections import AnimeFull
 from .collections import Episode
+from .collections import PriorityRule
 from . import migrations
 
 logger = logging.getLogger(__name__)
@@ -73,6 +74,7 @@ class AnimeDB(
         super().purge_cache()
         del self.episode_types
         del self.episode_types_by_id
+        del self.priority_rules
 
     @cached_property
     def episode_types(self) -> Dict[int, EpisodeType]:
@@ -362,8 +364,9 @@ class AnimeDB(
             """DELETE FROM watching WHERE aid=?""",
             (aid,))
 
-    def add_priority_rule(self, regexp: str,
-                          priority: Optional[int] = None) -> None:
+    def add_priority_rule(
+            self, regexp: str, priority: Optional[int] = None,
+    ) -> None:
         """Add a file priority rule."""
         with self.cnx:
             cur = self.cnx.cursor()
@@ -377,3 +380,14 @@ class AnimeDB(
             cur.execute(
                 """INSERT INTO file_priority (regexp, priority)
                     VALUES (?, ?)""", (regexp, priority))
+            del self.priority_rules
+
+    @cached_property
+    def priority_rules(self) -> None:
+        """Add a file priority rule."""
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute('SELECT id, regexp, priority FROM file_priority')
+            return [
+                PriorityRule(rule_id, regexp, priority)
+                for rule_id, regexp, priority in cur]

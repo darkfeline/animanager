@@ -35,3 +35,7 @@ AnimeFull = namedtuple(
 Episode = namedtuple(
     'Episode',
     ['aid', 'type', 'number', 'title', 'length', 'user_watched'])
+
+PriorityRule = namedtuple(
+    'PriorityRule',
+    ['id', 'regexp', 'priority'])
