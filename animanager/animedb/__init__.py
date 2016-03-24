@@ -206,7 +206,7 @@ class AnimeDB(
             raise ValueError('Invalid aid')
         return anime[0]
 
-    def lookup(self, aid, episodes=False):
+    def lookup(self, aid, include_episodes=False):
         """Look up full information for a single anime.
 
         If episodes is True, individual episodes will be looked up and included
@@ -231,14 +231,14 @@ class AnimeDB(
             anime = cur.fetchone()
             if anime is None:
                 raise ValueError('Invalid aid')
-            if episodes:
+            if include_episodes:
                 cur.execute("""
                     SELECT aid, type, number, title, length, user_watched
                     FROM episode WHERE aid=?""", (aid,))
                 episodes = [Episode(*row) for row in cur]
-                return AnimeFull(*anime, episodes)
             else:
-                return AnimeFull(*anime, [])
+                episodes = []
+            return AnimeFull(*anime, episodes)
 
     def set_watched(self, aid, ep_type, number):
         """Set episode as watched."""
