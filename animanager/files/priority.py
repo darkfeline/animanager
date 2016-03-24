@@ -48,6 +48,7 @@ class FilePriority:
             self.rules[rule.priority].append(rule.regexp)
 
     def pick(self, filenames: Sequence[str]) -> str:
+        """Pick one filename based on priority rules."""
         for priority in sorted(self.rules.keys(), reverse=True):
             patterns = self.rules[priority]
             for pattern in patterns:
