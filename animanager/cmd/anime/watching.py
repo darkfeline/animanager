@@ -20,6 +20,8 @@ import shlex
 import subprocess
 from argparse import REMAINDER
 
+from tabulate import tabulate
+
 from animanager.files.anime import BaseAnimeFiles
 from animanager.registry.cmd import CmdRegistry
 
@@ -76,6 +78,13 @@ def do_add_rule(self, args):
     """Add a priority rule for files."""
     row_id = self.animedb.add_priority_rule(args.regexp, args.priority)
     print('Added rule {}'.format(row_id))
+
+
+@registry.register_do('rules')
+def do_rules(self, args):
+    """List file priority rules."""
+    rules = self.animedb.priority_rules
+    print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
 
 
 _watch_parser = ArgumentParser()
