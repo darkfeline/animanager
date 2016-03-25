@@ -19,7 +19,7 @@ import logging
 import pickle
 import re
 import shutil
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import animanager.db.fk
 import animanager.db.migrations
@@ -379,8 +379,8 @@ class AnimeDB(
             del self.priority_rules
 
     @cached_property
-    def priority_rules(self) -> None:
-        """Add a file priority rule."""
+    def priority_rules(self) -> List[PriorityRule]:
+        """List file priority rules."""
         with self.cnx:
             cur = self.cnx.cursor()
             cur.execute('SELECT id, regexp, priority FROM file_priority')
