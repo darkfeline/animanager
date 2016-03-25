@@ -30,9 +30,8 @@ from animanager.files.anime import BaseAnimeFiles
 from animanager.property import cached_property
 
 from . import migrations
-from .cache import (
-    Anime, AnimeCacheMixin, AnimeFull, Episode, EpisodeType, PriorityRule,
-)
+from .cache import AnimeCacheMixin
+from .collections import Anime, AnimeFull, Episode, EpisodeType, PriorityRule
 
 logger = logging.getLogger(__name__)
 
