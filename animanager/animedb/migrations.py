@@ -129,6 +129,11 @@ def migrate(cnx):
         cur.execute('DROP TABLE anime')
         cur.execute('ALTER TABLE anime_new RENAME TO anime')
 
+        # Add title index.
+        cur.execute("""
+        CREATE INDEX anime_titles ON anime (title)
+        """)
+
         # Add file_priority.
         cur.execute("""
         CREATE TABLE file_priority (
