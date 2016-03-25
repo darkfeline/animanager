@@ -62,7 +62,7 @@ class BasePriorityRule(ABC):
     def priority(self) -> int:
         return 0
 
-    _needed = set('regexp', 'priority')
+    _needed = set(('regexp', 'priority'))
 
     @classmethod
     def __subclasshook__(cls, C):
