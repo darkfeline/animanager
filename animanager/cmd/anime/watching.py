@@ -65,6 +65,19 @@ def do_unregister(self, args):
     self.animedb.delete_regexp(aid)
 
 
+_rule_parser = ArgumentParser()
+_rule_parser.add_argument('regexp')
+_rule_parser.add_argument('priority', nargs='?', default=None, type=int)
+
+
+@registry.register_do('add_rule')
+@_rule_parser.parsing
+def do_add_rule(self, args):
+    """Add a priority rule for files."""
+    row_id = self.animedb.add_priority_rule(args.regexp, args.priority)
+    print('Added rule {}'.format(row_id))
+
+
 _watch_parser = ArgumentParser()
 _watch_parser.add_aid()
 _watch_parser.add_argument('episode', default=None, type=int)
