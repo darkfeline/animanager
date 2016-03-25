@@ -22,6 +22,3 @@ class ArgumentParser(animanager.argparse.ArgumentParser):
 
     def add_aid(self):
         self.add_argument('aid')
-
-aid_parser = ArgumentParser()
-aid_parser.add_aid()

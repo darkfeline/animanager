@@ -56,10 +56,6 @@ class ArgumentParser(argparse.ArgumentParser):
         self.add_argument('query', nargs=argparse.REMAINDER)
 
 
-query_parser = ArgumentParser()
-query_parser.add_query()
-
-
 def compile_re_query(args: Iterable[str]) -> Pattern:
     return re.compile('.*'.join(args), re.I)
 

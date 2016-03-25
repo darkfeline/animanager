@@ -19,20 +19,24 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.argparse import compile_sql_query, query_parser
+from animanager.argparse import compile_sql_query
 from animanager.date import fromtimestamp
 from animanager.files import find_files
 from animanager.files.anime import AnimeFiles, is_video
 from animanager.registry.cmd import CmdRegistry
 
-from . import argparse
+from .argparse import ArgumentParser
 
 registry = CmdRegistry()
 
 
+_search_parser = ArgumentParser(prog='search')
+_search_parser.add_query()
+
+
 @registry.register_alias('s')
 @registry.register_do('search')
-@query_parser.parsing
+@_search_parser.parsing
 def do_search(self, args):
     """Search Animanager database."""
     query = compile_sql_query(args.query)
@@ -61,9 +65,7 @@ _SHOW_MSG = dedent("""\
     End date: {}
     Complete: {}
     {}""")
-
-
-_show_parser = argparse.ArgumentParser()
+_show_parser = ArgumentParser(prog='show')
 _show_parser.add_aid()
 _show_parser.add_argument('-e', '--show-episodes', action='store_true')
 
@@ -106,9 +108,13 @@ def do_show(self, args):
         ))
 
 
+_bump_parser = ArgumentParser(prog='bump')
+_bump_parser.add_aid()
+
+
 @registry.register_alias('b')
 @registry.register_do('bump')
-@argparse.aid_parser.parsing
+@_bump_parser.parsing
 def do_bump(self, args):
     """Bump anime."""
     aid = self.get_aid(args.aid, default_key='db')

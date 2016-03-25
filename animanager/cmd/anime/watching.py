@@ -25,12 +25,12 @@ from tabulate import tabulate
 from animanager.files.anime import BaseAnimeFiles
 from animanager.registry.cmd import CmdRegistry
 
-from .argparse import ArgumentParser, aid_parser
+from .argparse import ArgumentParser
 
 registry = CmdRegistry()
 
 
-_register_parser = ArgumentParser()
+_register_parser = ArgumentParser(prog='register')
 _register_parser.add_aid()
 _register_parser.add_argument('query', nargs=REMAINDER)
 
@@ -58,22 +58,26 @@ def do_register(self, args):
     self.animedb.set_regexp(aid, pattern)
 
 
+_unregister_parser = ArgumentParser(prog='unregister')
+_unregister_parser.add_aid()
+
+
 @registry.register_alias('ur')
 @registry.register_do('unregister')
-@aid_parser.parsing
+@_unregister_parser.parsing
 def do_unregister(self, args):
     """Unregister watching regexp for an anime."""
     aid = self.get_aid(args.aid, default_key='db')
     self.animedb.delete_regexp(aid)
 
 
-_rule_parser = ArgumentParser()
-_rule_parser.add_argument('regexp')
-_rule_parser.add_argument('priority', nargs='?', default=None, type=int)
+_add_rule_parser = ArgumentParser(prog='add_rule')
+_add_rule_parser.add_argument('regexp')
+_add_rule_parser.add_argument('priority', nargs='?', default=None, type=int)
 
 
 @registry.register_do('add_rule')
-@_rule_parser.parsing
+@_add_rule_parser.parsing
 def do_add_rule(self, args):
     """Add a priority rule for files."""
     row_id = self.animedb.add_priority_rule(args.regexp, args.priority)
@@ -88,19 +92,19 @@ def do_rules(self, args):
     print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
 
 
-_id_parser = ArgumentParser()
-_id_parser.add_argument('id', type=int)
+_delete_rule_parser = ArgumentParser(prog='delete_rule')
+_delete_rule_parser.add_argument('id', type=int)
 
 
 @registry.register_do('delete_rule')
-@_id_parser.parsing
+@_delete_rule_parser.parsing
 def do_delete_rule(self, args):
     """List file priority rules."""
     self.animedb.delete_priority_rule(args.id)
     del self.file_picker
 
 
-_watch_parser = ArgumentParser()
+_watch_parser = ArgumentParser(prog='watch')
 _watch_parser.add_aid()
 _watch_parser.add_argument('episode', default=None, type=int)
 
@@ -119,16 +123,9 @@ def do_watch(self, args):
         episode = args.episode  # type: int
     files = anime_files.get_episode(episode)
 
-    for i, filename in enumerate(files):
-        print('{} - {}'.format(i, filename))
-    choice = input('Pick: ')  # type: str
-    if choice:
-        choice = int(choice)  # type: int
-    else:
-        choice = 0  # type: int
+    file = self.file_picker.pick(files)
 
-    player = self.config.anime.player
-    subprocess.call(shlex.split(player) + [])
+    subprocess.call(self.config.anime.player_args + [file])
     raise NotImplementedError
     # XXX get watching shows
     # XXX find files

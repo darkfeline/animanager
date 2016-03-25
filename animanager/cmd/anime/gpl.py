@@ -17,6 +17,7 @@
 
 from textwrap import dedent
 
+from animanager.argparse import ArgumentParser
 from animanager.registry.cmd import CmdRegistry
 
 registry = CmdRegistry()
@@ -85,12 +86,17 @@ def help_gpl(self):
     "gpl w" to show warranty information.'''))
 
 
+_gpl_parser = ArgumentParser(prog='gpl')
+_gpl_parser.add_argument('info', choices=['c', 'w'])
+
+
 @registry.register_do('gpl')
-def do_gpl(self, arg):
+@_gpl_parser.parsing
+def do_gpl(self, args):
     """Show GPL information."""
-    if arg == 'c':
+    if args.info == 'c':
         print(self.GPL_COPYING)
-    elif arg == 'w':
+    elif args.info == 'w':
         print(self.GPL_WARRANTY)
     else:
         self.do_help('gpl')

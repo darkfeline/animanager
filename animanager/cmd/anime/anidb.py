@@ -19,18 +19,22 @@ from textwrap import dedent
 
 from tabulate import tabulate
 
-from animanager.argparse import compile_re_query, query_parser
+from animanager.argparse import compile_re_query
 from animanager.date import fromtimestamp
 from animanager.registry.cmd import CmdRegistry
 
-from . import argparse
+from .argparse import ArgumentParser
 
 registry = CmdRegistry()
 
 
+_asearch_parser = ArgumentParser(prog='asearch')
+_asearch_parser.add_query()
+
+
 @registry.register_alias('as')
 @registry.register_do('asearch')
-@query_parser.parsing
+@_asearch_parser.parsing
 def do_asearch(self, args):
     """Search AniDB."""
     query = compile_re_query(args.query)
@@ -47,10 +51,12 @@ _ASHOW_MSG = dedent("""\
     Episodes: {}
     Start date: {}
     End date: {}\n""")
+_ashow_parser = ArgumentParser(prog='ashow')
+_ashow_parser.add_aid()
 
 @registry.register_alias('ash')
 @registry.register_do('ashow')
-@argparse.aid_parser.parsing
+@_ashow_parser.parsing
 def do_ashow(self, args):
     """Show information about anime in AniDB."""
     aid = self.get_aid(args.aid, default_key='anidb')
@@ -73,9 +79,13 @@ def do_ashow(self, args):
     ))
 
 
+_add_parser = ArgumentParser(prog='add')
+_add_parser.add_aid()
+
+
 @registry.register_alias('a')
 @registry.register_do('add')
-@argparse.aid_parser.parsing
+@_add_parser.parsing
 def do_add(self, args):
     """Add an anime or update an existing anime."""
     aid = self.get_aid(args.aid, default_key='anidb')
