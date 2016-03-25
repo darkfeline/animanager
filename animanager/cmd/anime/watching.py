@@ -77,6 +77,7 @@ _rule_parser.add_argument('priority', nargs='?', default=None, type=int)
 def do_add_rule(self, args):
     """Add a priority rule for files."""
     row_id = self.animedb.add_priority_rule(args.regexp, args.priority)
+    del self.file_picker
     print('Added rule {}'.format(row_id))
 
 
@@ -96,6 +97,7 @@ _id_parser.add_argument('id', type=int)
 def do_delete_rule(self, args):
     """List file priority rules."""
     self.animedb.delete_priority_rule(args.id)
+    del self.file_picker
 
 
 _watch_parser = ArgumentParser()
