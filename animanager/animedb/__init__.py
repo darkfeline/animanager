@@ -387,3 +387,10 @@ class AnimeDB(
             return [
                 PriorityRule(rule_id, regexp, priority)
                 for rule_id, regexp, priority in cur]
+
+    def delete_priority_rule(self, rule_id: int) -> None:
+        """Delete a file priority rule."""
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute('DELETE FROM file_priority WHERE id=?', (rule_id,))
+            del self.priority_rules
