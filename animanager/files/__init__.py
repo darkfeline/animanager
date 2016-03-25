@@ -49,6 +49,19 @@ class BaseFiles(ABC):
         pass
 
 
+class BasePriorityRule(ABC):
+
+    @property
+    @abstractmethod
+    def regexp(self) -> Pattern:
+        return re.compile('')
+
+    @property
+    @abstractmethod
+    def priority(self) -> int:
+        return 0
+
+
 class PriorityRule(tuple):
 
     __slots__ = ()
@@ -64,6 +77,8 @@ class PriorityRule(tuple):
     @property
     def priority(self) -> int:
         return self[1]
+
+BasePriorityRule.register(PriorityRule)
 
 
 class FilePicker:
