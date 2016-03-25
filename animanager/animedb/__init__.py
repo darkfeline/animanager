@@ -25,9 +25,9 @@ import animanager.db.fk
 import animanager.db.migrations
 import animanager.db.sqlite
 import animanager.db.versions
+from animanager.cache import cached_property
 from animanager.date import timestamp
 from animanager.files.anime import BaseAnimeFiles
-from animanager.property import cached_property
 
 from . import migrations
 from .cache import AnimeCacheMixin

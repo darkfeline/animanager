@@ -20,7 +20,7 @@ import os
 from typing import Optional
 
 from animanager.api.anidb import anime, titles
-from animanager.property import cached_property
+from animanager.cache import cached_property
 
 logger = logging.getLogger(__name__)
 

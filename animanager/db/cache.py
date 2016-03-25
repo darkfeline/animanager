@@ -15,18 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
+from animanager.cache import BaseCacheHolder
 from animanager.db import BaseDatabase
-
-
-class BaseCacheHolder(ABC):
-
-    """Interface for objects that hold a cache."""
-
-    @abstractmethod
-    def purge_cache(self):
-        pass
 
 
 class BaseCacheTableMixin(BaseDatabase, BaseCacheHolder):
