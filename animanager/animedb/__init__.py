@@ -362,7 +362,7 @@ class AnimeDB(
 
     def add_priority_rule(
             self, regexp: str, priority: Optional[int] = None,
-    ) -> None:
+    ) -> int:
         """Add a file priority rule."""
         with self.cnx:
             cur = self.cnx.cursor()
@@ -376,7 +376,9 @@ class AnimeDB(
             cur.execute(
                 """INSERT INTO file_priority (regexp, priority)
                     VALUES (?, ?)""", (regexp, priority))
+            row_id = cur.execute('SELECT last_insert_rowid()').fetchone()[0]
             del self.priority_rules
+        return row_id
 
     @cached_property
     def priority_rules(self) -> List[PriorityRule]:
