@@ -29,14 +29,11 @@ class ArgumentParser(argparse.ArgumentParser):
 
     """ArgumentParser customized for Animanager's CLI."""
 
-    def exit(self, status=0, message=None):
-        """Override SystemExit."""
-        if message is not None:
-            print(message)
-
     def error(self, message):
         """Override printing to stderr."""
         print(message)
+        self.print_help()
+        raise CommandError()
 
     @property
     def parsing(self):
@@ -69,3 +66,6 @@ def compile_re_query(args: Iterable[str]) -> Pattern:
 
 def compile_sql_query(args: Iterable[str]) -> str:
     return '%{}%'.format('%'.join(args))
+
+class CommandError(Exception):
+    """Error parsing command arguments."""

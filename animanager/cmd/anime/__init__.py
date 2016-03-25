@@ -25,6 +25,7 @@ from textwrap import dedent
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
+from animanager.argparse import CommandError
 from animanager.cache import BaseCacheHolder, cached_property
 from animanager.files import FilePicker
 from animanager.results.aid import AIDResults, AIDResultsManager
@@ -75,6 +76,8 @@ class AnimeCmd(Cmd, BaseCacheHolder):
         # pylint: disable=redefined-builtin,broad-except
         try:
             return super().onecmd(str)
+        except CommandError:
+            pass
         except Exception:
             traceback.print_exc()
 
