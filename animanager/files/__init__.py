@@ -85,7 +85,7 @@ class FilePicker:
 
     """Class for picking one file out of many based on priority rules."""
 
-    def __init__(self, rules: Iterable[PriorityRule]) -> None:
+    def __init__(self, rules: Iterable[BasePriorityRule]) -> None:
         self.rules = defaultdict(list)  # type: Dict[int, List[Pattern]]
         for rule in rules:
             self.rules[rule.priority].append(rule.regexp)
