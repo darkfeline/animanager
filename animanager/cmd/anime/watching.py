@@ -87,6 +87,17 @@ def do_rules(self, args):
     print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
 
 
+_id_parser = ArgumentParser()
+_id_parser.add_argument('id', type=int)
+
+
+@registry.register_do('delete_rule')
+@_id_parser.parsing
+def do_delete_rule(self, args):
+    """List file priority rules."""
+    self.animedb.delete_priority_rule(args.id)
+
+
 _watch_parser = ArgumentParser()
 _watch_parser.add_aid()
 _watch_parser.add_argument('episode', default=None, type=int)
