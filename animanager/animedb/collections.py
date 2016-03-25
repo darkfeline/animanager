@@ -17,6 +17,8 @@
 
 from collections import namedtuple
 
+from animanager.files import BasePriorityRule
+
 EpisodeType = namedtuple(
     'EpisodeType',
     ['id', 'prefix'])
@@ -39,3 +41,4 @@ Episode = namedtuple(
 PriorityRule = namedtuple(
     'PriorityRule',
     ['id', 'regexp', 'priority'])
+BasePriorityRule.register(PriorityRule)
