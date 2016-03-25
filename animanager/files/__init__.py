@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import os
 import re
 from abc import ABC, abstractmethod
@@ -61,6 +62,16 @@ class BasePriorityRule(ABC):
     def priority(self) -> int:
         return 0
 
+    _needed = set('regexp', 'priority')
+
+    @classmethod
+    def __subclasshook__(cls, C):
+        if cls._needed.issubset(set(
+                itertools.chain.from_iterable(B.__dict__ for B in C.__mro__)
+        )):
+            return True
+        return NotImplemented
+
 
 class PriorityRule(tuple):
 
@@ -77,8 +88,6 @@ class PriorityRule(tuple):
     @property
     def priority(self) -> int:
         return self[1]
-
-BasePriorityRule.register(PriorityRule)
 
 
 class FilePicker:
