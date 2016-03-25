@@ -140,6 +140,6 @@ class Config(BaseConfig):
                 """Directory to trash anime files."""
                 return self.config.getpath('trashdir')
 
-            def player(self):
+            def player_args(self):
                 """Video player to use."""
-                return self.config.get('player')
+                return self.config.getargs('player')
