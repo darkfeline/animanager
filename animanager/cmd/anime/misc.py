@@ -31,3 +31,4 @@ def do_quit(self, arg):
 def do_purgecache(self, arg):
     """Purge cache tables."""
     self.animedb.purge_cache()
+    self.purge_cache()

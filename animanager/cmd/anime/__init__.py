@@ -25,6 +25,8 @@ from textwrap import dedent
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
+from animanager.cache import BaseCacheHolder, cached_property
+from animanager.files import FilePicker
 from animanager.results.aid import AIDResults, AIDResultsManager
 
 from . import anidb, animedb, gpl, misc, watching
@@ -32,7 +34,7 @@ from . import anidb, animedb, gpl, misc, watching
 logger = logging.getLogger(__name__)
 
 
-class AnimeCmd(Cmd):
+class AnimeCmd(Cmd, BaseCacheHolder):
 
     # pylint: disable=no-self-use,unused-argument,too-many-instance-attributes
 
@@ -75,6 +77,15 @@ class AnimeCmd(Cmd):
             return super().onecmd(str)
         except Exception:
             traceback.print_exc()
+
+    ###########################################################################
+    # Caching
+    def purge_cache(self):
+        del self.file_picker
+
+    @cached_property
+    def file_picker(self) -> FilePicker:
+        return FilePicker(self.animedb.priority_rules)
 
     ###########################################################################
     # Parsing

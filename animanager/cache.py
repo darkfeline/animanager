@@ -25,7 +25,7 @@ class BaseCacheHolder(ABC):
     """Interface for objects that hold a cache."""
 
     @abstractmethod
-    def purge_cache(self):
+    def purge_cache(self) -> None:
         pass
 
 
