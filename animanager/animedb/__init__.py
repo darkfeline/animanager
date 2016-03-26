@@ -163,7 +163,7 @@ class AnimeDB(
                 WHERE aid=:aid AND type=:type AND number=:number""",
                 values)
             if self.cnx.changes() == 0:
-                values['user_watch'] = 0
+                values['user_watched'] = 0
                 cur.execute(
                     """INSERT INTO episode (
                         aid, type, number, title,
