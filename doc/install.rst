@@ -1,5 +1,5 @@
-Installation
-============
+Installation and configuration
+==============================
 
 For all methods, `Python 3`_ is required.
 
@@ -18,6 +18,10 @@ From PyPi
 ---------
 
 Animanager can be installed fairly easily using from PyPi using pip_::
+
+  $ pip3 install animanager
+
+You may want to or need to install Animanager for the current user only::
 
   $ pip3 install --user animanager
 
@@ -67,3 +71,12 @@ Incidentally, this will also install setuptools_, which is needed for installing
 Animanager from source.
 
 This requires pip_ for Python 3.
+
+Configuration
+-------------
+
+Animanager uses an INI configuration file.  An example ``config.ini`` is
+supplied with the source distribution.
+
+By default, Animanager looks for the configuration file at
+``~/.animanager/config.ini``.  This can be changed with the ``-config`` flag.

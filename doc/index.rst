@@ -9,6 +9,7 @@ Animanager_ is a command line program for advanced anime watching management.
    :maxdepth: 1
 
    install
+   quickstart
 
 Indices and tables
 ==================

@@ -1,151 +1,203 @@
-Quickstart
-==========
+Quickstart guide
+================
 
-This guide provides an example of basic Animanager usage.
+This guide will help you start using Animanager to watch and track your anime.
+However, as Animanager is geared toward advanced users, reading the rest of the
+documentation is highly recommended.
+
+Installation
+------------
+
+Install Animanager from PyPi::
+
+  $ pip3 install --user animanager
+
+Configuration
+-------------
+
+Copy ``config.ini`` to ``~/.animanager/config.ini`` and edit it as necessary.
+
+In particular, you will want to set ``watchdir`` to the directory where you keep
+your anime.
+
+Running Animanager
+------------------
+
+Start Animanager::
+
+  $ animanager anime
+  INFO:animanager.animedb:Migration needed, backing up database
+  INFO:animanager.animedb:Migrating database
+  INFO:animanager.db.migrations:Migrating database from 0 to 1
+  INFO:animanager.db.migrations:Migrating database from 1 to 2
+  Animanager 0.9.0
+  Copyright (C) 2015-2016  Allen Li
+
+  This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
+  This is free software, and you are welcome to redistribute it
+  under certain conditions; type "gpl c" for details.
+  A>
+
+As you don't have a database yet, Animanager will create one automatically.
+
+Getting help
+------------
+
+Animanager's command line provides basic help functionality::
+
+  A> help
+
+  Documented commands (type help <topic>):
+  ========================================
+  a         asearch  bump         gpl         quit      s       unregister
+  add       ash      delete_rule  help        r         search  ur
+  add_rule  ashow    f            purgecache  register  sh      w
+  as        b        fetch        q           rules     show    watch
+
+  A> help a
+  Alias for add
+  A> help add
+  usage: add [-h] aid
+
+  Add an anime or update an existing anime.
+
+  positional arguments:
+    aid
+
+  optional arguments:
+    -h, --help  show this help message and exit
 
 Adding a series
 ---------------
 
-First, add a series to track::
+Search AniDB for a series to add::
 
-  $ animanager anime add "hidamari sketch"
+  A> asearch madoka
+    #    AID  Title
+  ---  -----  -----------------------------------------
+    1   8069  Mahou Shoujo Madoka Magica
+    2   8778  Gekijouban Mahou Shoujo Madoka Magica
+    3  11793  Mahou Shoujo Madoka Magica: Concept Movie
+  A> add 1
 
-Animanager will search MAL for series::
+Checking anime status
+---------------------
 
-  0: (1852) Hidamari Sketch
-  1: (3165) Hidamari Sketch Specials
-  2: (3604) Hidamari Sketch x 365
-  3: (6984) Hidamari Sketch x 365 Specials
-  4: (7062) Hidamari Sketch x ☆☆☆
-  5: (9563) Hidamari Sketch x ☆☆☆ Specials
-  6: (11237) Hidamari Sketch x SP
-  7: (11239) Hidamari Sketch x Honeycomb
-  8: (17739) Hidamari Sketch: Sae Hiro Sotsugyou-hen
-  9: (20391) Hidamari Sketch: Chou Hidamatsuri Special
-  10: (28911) Hidamari Sketch Recap
-  11: (28913) Hidamari Sketch x 365 Recap
-  12: (28915) Hidamari Sketch x ☆☆☆ Recap
-  [-1]> 
+Check the status of an anime::
 
-This is Animanager's selection interface, which you will see a lot.  The
-``[-1]`` means the default choice is -1, or the last item (in this case, 12).
-Another common default is ``[0]``, which indicates the first item.  You can pick
-an item by typing its number and pressing Enter, or simply press Enter to pick
-the default choice.
+  A> search madoka
+    #    AID  Title                       Type       Episodes    Complete    Available
+  ---  -----  --------------------------  ---------  ----------  ----------  -----------
+    1   8069  Mahou Shoujo Madoka Magica  TV Series  0/12
+  A> show 1
+  AID: 8069
+  Title: Mahou Shoujo Madoka Magica
+  Type: TV Series
+  Episodes: 0/12
+  Start date: 2011-01-07
+  End date: 2011-04-22
+  Complete: no
 
-Next, choose the initial status::
+  A> show 1 -e
+  AID: 8069
+  Title: Mahou Shoujo Madoka Magica
+  Type: TV Series
+  Episodes: 0/12
+  Start date: 2011-01-07
+  End date: 2011-04-22
+  Complete: no
 
-  0: plan to watch
-  1: watching
-  2: complete
-  [0]>
+  Number    Title                            min  Watched
+  --------  -----------------------------  -----  ---------
+  1         夢の中で会った, ような.....       25
+  2         それはとっても嬉しいなって        25
+  3         もう何も恐くない                  25
+  4         奇跡も, 魔法も, あるんだよ        25
+  5         後悔なんて, あるわけない          25
+  6         こんなの絶対おかしいよ            25
+  7         本当の気持ちと向き合えますか?     25
+  8         あたしって, ほんとバカ            25
+  9         そんなの, あたしが許さない        25
+  10        もう誰にも頼らない                25
+  11        最後に残った道しるべ              25
+  12        わたしの, 最高の友達              25
+  C1        Opening                            2
+  C2        Ending 1                           2
+  C3        Ending 2                           2
+  C4        Ending 3                           2
+  T1        CM動画1                            1
+  T2        CM動画2                            1
+  T3        CM動画3                            1
+  T4        CM動画4                            1
+  T5        CM動画5                            1
+  T6        CM動画6                            1
+  T7        CM動画7                            1
+  T8        CM動画8                            1
+  T9        CM動画9                            1
+  T10       CM動画10                           1
+  T11       BD CM 1                            1
+  T12       BD CM 2                            1
 
-For this guide, here we pick ``watching``.
+Bumping watched episode code
+----------------------------
 
-Searching your database
------------------------
+You can bump the episode count manually::
 
-We can search our database to check our information::
+  A> bump 1
+  A> show 1
+  AID: 8069
+  Title: Mahou Shoujo Madoka Magica
+  Type: TV Series
+  Episodes: 1/12
+  Start date: 2011-01-07
+  End date: 2011-04-22
+  Complete: no
 
-  $ animanager anime search hidamari
-    id  name                      type       ep_watched    ep_total  status      date_started  date_finished      animedb_id
-  ----  ------------------------  -------  ------------  ----------  --------  --------------  ---------------  ------------
-     1  Hidamari Sketch x 365     TV                  0          13  watching                                           3604
+Automatic watching
+------------------
 
-This shows all of the information Animanager tracks.
+However, Animanager is designed for smarter watching than that!
 
-Watching shows
---------------
+You should have configured Animanager with the directory where you store your
+anime.
 
-Navigate to the directory where your files are::
+First, set up a pattern for Animanager to find files for an anime.  Animanager's
+default pattern works well::
 
-  $ cd anime
-  $ ls
-  [SpoonSubs] Hidamari Sketch x 365 - 01 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 02 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 03 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 04 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 05 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 06 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 06 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 07 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 08 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 09 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 09 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 10 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 11 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 12 (DVD).mkv
-  [SpoonSubs] Hidamari Sketch x 365 - 13 (DVD).mkv
+  A> register 1
+  A> show 1
+  AID: 8069
+  Title: Mahou Shoujo Madoka Magica
+  Type: TV Series
+  Episodes: 1/12
+  Start date: 2011-01-07
+  End date: 2011-04-22
+  Complete: no
+  Watching regexp: Mahou.*Shoujo.*Madoka.*Magica.*?\b(?P<ep>[0-9]+)(v[0-9]+)?
 
-Now we can use Animanager to automatically watch our series::
+Or you can specify manually::
 
-  $ animanager anime watch
-  0: (900) Hidamari Sketch x 365 (cur. 0, avail. 13)
-  [-1]> 
+  A> register 1 madoka.*(?P<ep>[0-9]+).mkv
+  A> show 1
+  AID: 8069
+  Title: Mahou Shoujo Madoka Magica
+  Type: TV Series
+  Episodes: 1/12
+  Start date: 2011-01-07
+  End date: 2011-04-22
+  Complete: no
+  Watching regexp: madoka.*(?P<ep>[0-9]+).mkv
 
-Animanager presents the choices for series to watch.  Right now we only have one
-series, but we can add multiple and they will appear here provided that episodes
-are available.
+Let's assume you have the next few episodes available in your anime directory
+(``Mahou Shoujo Madoka Magica 02.mkv``)::
 
-We see that we have currently watched no episodes and have 13 available to
-watch.
+  A> search madoka
+    #    AID  Title                       Type       Episodes    Complete    Available
+  ---  -----  --------------------------  ---------  ----------  ----------  -----------
+    1   8069  Mahou Shoujo Madoka Magica  TV Series  1/12                    2,3,4
+  A> watch 1
 
-Press Enter to select the default and only choice.  Your configured video player
-will start and you can watch the episode.
+Animanager will start your configured video player and you can start watching
+immediately.
 
-After the episode is over, the video player will close (provided that you are
-using an ``mpv``-like player)::
-
-  Bump? [Y/n]
-
-Animanager will prompt whether you want to bump your currently watched episode
-count.  The default is yes, so just hit Enter.  Alternatively, you can type
-``n`` to keep your currently watched episode at 0.  Animanager will
-automatically move the file to a "trash" directory to clean up the working
-directory.
-
-Now we're back at the menu::
-
-  0: (900) Hidamari Sketch x 365 (cur. 1, avail. 12)
-  [-1]> 
-
-You can keep watching, or quit using CTRL-C.  We quit to continue the tutorial.
-
-Let's check our database::
-
-  $ animanager anime search hidamari
-    id  name                      type       ep_watched    ep_total  status      date_started  date_finished      animedb_id
-  ----  ------------------------  -------  ------------  ----------  --------  --------------  ---------------  ------------
-     1  Hidamari Sketch x 365     TV                  1          13  watching  2015-09-29                               3604
-
-The episode count has been updated automatically, and the start date has been
-set as well.
-
-View stats
-----------
-
-Just for fun, Animanager also lets you view basic statistics::
-
-  $ animanager anime stats
-  By status:
-  - complete: 638
-  - on hold: 0
-  - dropped: 165
-  - watching: 22
-  - plan to watch: 61
-  Total: 886
-  Episodes watched: 8715
-
-Other features
---------------
-
-Here's an overview of some of Animanager's features:
-
-- Version detection.  Animanager will delete older versions of an episode and
-  watch the latest version.
-- Date tracking of when you started and finished a series.
-- Updating series data via MAL (for example, if the total number of episodes for
-  a series changes).
-
-I highly recommend you read through all of the documentation, which contains
-more information about Animanager's features.
+After the video player exits, you will be prompted to bump the episode count.
