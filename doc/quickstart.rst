@@ -30,7 +30,7 @@ Start Animanager::
   INFO:animanager.animedb:Migrating database
   INFO:animanager.db.migrations:Migrating database from 0 to 1
   INFO:animanager.db.migrations:Migrating database from 1 to 2
-  Animanager 0.9.0
+  Animanager 0.10.0
   Copyright (C) 2015-2016  Allen Li
 
   This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".

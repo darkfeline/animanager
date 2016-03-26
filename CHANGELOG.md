@@ -2,10 +2,18 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
-## master
+## 0.10.0 - 2016-03-26
+
+### Added
+
+- Added command line interface.
+- Added database migration and versioning.
+- Added AniDB support.
 
 ### Removed
 
+- Removed everything, as this is a rewrite.
+- Remove MyAnimeList support.
 - Removed migration-tools.  Use 0.9.0 for migrations.
 
 ## 0.9.0 - 2016-03-07
