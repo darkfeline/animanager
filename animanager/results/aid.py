@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""AID-specific results handling."""
+
 import re
 
 import animanager.results
@@ -28,18 +30,25 @@ class AIDResults(animanager.results.Results):
         super().__init__(['AID'] + headers, results)
 
     def __repr__(self):
-        return 'AIDSearchResults({}, {})'.format(
+        return 'AIDResults({}, {})'.format(
             self.headers[2:],
             self.results,
         )
 
     def get_aid(self, number):
+        """Get the AID of the given result row number."""
         return self.get(number)[0]
 
 
 class AIDResultsManager:
 
-    """Class for managing results and AID parsing."""
+    """Class for managing multiple AIDResults.
+
+    AIDResultsManager allows storing AIDResults from different commands or
+    domains and provides a universal parse_aid() method which may dynamically
+    draw AIDs from any of the AIDResults that it manages.
+
+    """
 
     def __init__(self):
         self.results = dict()

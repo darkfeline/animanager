@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Results handling.
+
+This package provides classes for storing and printing results output from
+interactive commands and accessing those results when running other interactive
+commands.
+
+"""
+
 from tabulate import tabulate
 
 
@@ -89,7 +97,15 @@ class Results:
         return self.results[number - 1]
 
     def print(self):
-        """Print results table."""
+        """Print results table.
+
+        >>> Results(['title'], [('Konosuba',), ('Oreimo',)]).print()
+          #  title
+        ---  --------
+          1  Konosuba
+          2  Oreimo
+
+        """
         print(tabulate(
             ((i, *row) for i, row in enumerate(self.results, 1)),
             headers=self.headers,
