@@ -7,6 +7,10 @@ INSTALL_FLAGS=
 install:
 	python3 setup.py install ${INSTALL_FLAGS}
 
+.PHONY: develop
+develop:
+	python3 setup.py develop ${INSTALL_FLAGS}
+
 .PHONY: requirements
 requirements:
 	pip3 install ${INSTALL_FLAGS} -r requirements.txt
