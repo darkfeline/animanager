@@ -32,18 +32,18 @@ class AniDB:
     def __init__(self, cachedir):
         self.cache = AnimeCache(cachedir)
 
-    def lookup(self, aid):
+    def lookup(self, aid, force=False):
         """Look up given AID.
 
         Uses cache if available.
 
         """
-        if self.cache.has(aid):
-            return self.cache.retrieve(aid)
-        else:
+        if force or not self.cache.has(aid):
             request = anime.AnimeRequest(aid)
             response = request.open()
             return response.xml()
+        else:
+            return self.cache.retrieve(aid)
 
 
 class SearchDB:
