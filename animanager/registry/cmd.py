@@ -37,7 +37,7 @@ class CmdRegistry:
 
     def register_command(
             self, name: str, parser: animanager.argparse.ArgumentParser,
-    ) -> Callable[ExtendedCommand, PlainCommand]:
+    ) -> Callable[[ExtendedCommand], PlainCommand]:
         """Decorator for registering commands."""
         def decorate(func: ExtendedCommand) -> PlainCommand:
             # Add argument parsing.
@@ -56,7 +56,7 @@ class CmdRegistry:
 
     def register_alias(
             self, alias: str,
-    ) -> Callable[PlainCommand, PlainCommand]:
+    ) -> Callable[[PlainCommand], PlainCommand]:
         """Decorator for registering command alias."""
         def decorate(func: PlainCommand) -> PlainCommand:
             self.do_reg[alias] = func
