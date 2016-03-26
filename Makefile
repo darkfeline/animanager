@@ -11,14 +11,12 @@ install: build
 
 .PHONY: package
 package:
-	git ls-files > MANIFEST
 	python3 setup.py sdist
 	python3 setup.py bdist_wheel
 
 .PHONY: clean
 clean:
 	python3 setup.py clean
-	rm MANIFEST
 	rm -rf dist
 
 # Publish to PyPi.
