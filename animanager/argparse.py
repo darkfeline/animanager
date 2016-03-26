@@ -70,4 +70,10 @@ def compile_sql_query(args: Iterable[str]) -> str:
     return '%{}%'.format('%'.join(args))
 
 class CommandError(Exception):
-    """Error parsing command arguments."""
+    """Error parsing command arguments.
+
+    This is raised in place of ArgumentParser's default action of
+    sys.exit()ing, so Animanager's command line processing can handle it
+    properly.
+
+    """
