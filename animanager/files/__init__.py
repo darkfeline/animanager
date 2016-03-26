@@ -59,29 +59,6 @@ class BaseFiles(ABC):
         return cls()
 
 
-class BasePriorityRule(ABC):
-
-    @property
-    @abstractmethod
-    def regexp(self) -> Pattern:
-        return re.compile('')
-
-    @property
-    @abstractmethod
-    def priority(self) -> int:
-        return 0
-
-    _needed = set(('regexp', 'priority'))
-
-    @classmethod
-    def __subclasshook__(cls, C):
-        if cls._needed.issubset(set(
-                itertools.chain.from_iterable(B.__dict__ for B in C.__mro__)
-        )):
-            return True
-        return NotImplemented
-
-
 class PriorityRule(tuple):
 
     __slots__ = ()
@@ -103,7 +80,7 @@ class FilePicker:
 
     """Class for picking one file out of many based on priority rules."""
 
-    def __init__(self, rules: Iterable[BasePriorityRule]) -> None:
+    def __init__(self, rules: Iterable[PriorityRule]) -> None:
         self.rules = defaultdict(list)  # type: Dict[int, List[Pattern]]
         for rule in rules:
             self.rules[rule.priority].append(rule.regexp)

@@ -27,7 +27,7 @@ from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
 from animanager.argparse import CommandError
 from animanager.cache import BaseCacheHolder, cached_property
-from animanager.files import FilePicker
+from animanager.files import FilePicker, PriorityRule
 from animanager.results.aid import AIDResults, AIDResultsManager
 
 from . import anidb, animedb, gpl, misc, watching
@@ -88,7 +88,8 @@ class AnimeCmd(Cmd, BaseCacheHolder):
 
     @cached_property
     def file_picker(self) -> FilePicker:
-        return FilePicker(self.animedb.priority_rules)
+        return FilePicker((PriorityRule(rule.regexp, rule.priority)
+                           for rule in self.animedb.priority_rules))
 
     ###########################################################################
     # Parsing
