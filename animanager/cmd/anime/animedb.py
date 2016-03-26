@@ -76,7 +76,7 @@ _show_parser.add_argument('-e', '--show-episodes', action='store_true')
 def do_show(self, args):
     """Show anime data."""
     aid = self.get_aid(args.aid, default_key='db')
-    anime = self.animedb.lookup(aid, episodes=args.show_episodes)
+    anime = self.animedb.lookup(aid, args.show_episodes)
 
     complete_string = 'yes' if anime.complete else 'no'
     if anime.regexp is None:
