@@ -42,7 +42,7 @@ isort:
 
 .PHONY: pylint
 pylint:
-	pylint animanager tests || true
+	pylint --output-format=colorized animanager tests || true
 
 .PHONY: mypy
 mypy:
