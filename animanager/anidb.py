@@ -17,7 +17,6 @@
 
 import logging
 import os
-from typing import Optional
 
 from animanager.api.anidb import anime, titles
 from animanager.cache import cached_property
@@ -29,23 +28,16 @@ class AniDB:
 
     """Provides access to AniDB data, via cache and API."""
 
-    def __init__(self, cachedir):
-        self.cache = AnimeCache(cachedir)
-
-    def lookup(self, aid, force=False):
+    def lookup(self, aid):
         """Look up given AID.
 
         Uses cache if available.
 
         """
-        if force or not self.cache.has(aid):
-            request = anime.AnimeRequest(aid)
-            response = request.open()
-            tree = response.xml()
-            self.cache.store(tree)
-            return tree
-        else:
-            return self.cache.retrieve(aid)
+        request = anime.AnimeRequest(aid)
+        response = request.open()
+        tree = response.xml()
+        return tree
 
 
 class SearchDB:
@@ -103,31 +95,3 @@ class SearchDB:
     def search(self, query):
         """Search titles using a compiled RE query."""
         return self.titles_tree.search(query)
-
-
-class AnimeCache:
-
-    """Provides access to local cache of AniDB data.
-
-    The AniDB cache is simply a directory containing XML files named <AID>.xml.
-
-    """
-
-    def __init__(self, cachedir):
-        self.cachedir = cachedir
-
-    def filepath(self, aid):
-        """Return the path to the respective cache file."""
-        return os.path.join(self.cachedir, '{}.xml'.format(aid))
-
-    def has(self, aid):
-        """Return whether entry is in the cache."""
-        return os.path.exists(self.filepath(aid))
-
-    def store(self, tree):
-        """Store an entry in the cache."""
-        tree.write(self.filepath(tree.aid))
-
-    def retrieve(self, aid):
-        """Retrieve an entry from the cache."""
-        return anime.AnimeTree.parse(self.filepath(aid))

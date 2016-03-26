@@ -4,8 +4,22 @@ This projects uses [semantic versioning](http://semver.org/).
 
 ## master
 
+### Changed
+
+- Instead of caching AniDB anime data as local XML files, Animanager's own
+  animedb now serves as a "cache".  The original workflow had a redundant step:
+
+        anidb titles search -> fetch anidb anime data ->
+            load anidb anime data into local animedb
+
+    Now it is just:
+
+        anidb titles search -> load anidb anime data into local animedb
+
 ### Removed
 
+- ashow command.
+- fetch command.
 - Script file support.  Automation will instead be supported via importing
   Animanager as a Python library.
 

@@ -15,12 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from textwrap import dedent
-
-from tabulate import tabulate
-
 from animanager.argparse import compile_re_query
-from animanager.date import fromtimestamp
 from animanager.registry.cmd import CmdRegistry
 
 from .argparse import ArgumentParser
@@ -42,40 +37,6 @@ def do_asearch(self, args):
     self.results['anidb'].print()
 
 
-_ASHOW_MSG = dedent("""\
-    AID: {}
-    Title: {}
-    Type: {}
-    Episodes: {}
-    Start date: {}
-    End date: {}\n""")
-_parser = ArgumentParser(prog='ashow')
-_parser.add_aid()
-
-@registry.register_alias('ash')
-@registry.register_command('ashow', _parser)
-def do_ashow(self, args):
-    """Show information about anime in AniDB."""
-    aid = self.get_aid(args.aid, default_key='anidb')
-    anime = self.anidb.lookup(aid)
-    print(_ASHOW_MSG.format(
-        anime.aid,
-        anime.title,
-        anime.type,
-        anime.episodecount,
-        anime.startdate if anime.startdate else 'N/A',
-        anime.enddate if anime.enddate else 'N/A',
-    ))
-    print(tabulate(
-        (
-            (episode.epno, episode.title, episode.length)
-            for episode in sorted(
-                    anime.episodes,
-                    key=lambda x: (x.type, x.number))),
-        headers=['Number', 'Title', 'min'],
-    ))
-
-
 _parser = ArgumentParser(prog='add')
 _parser.add_aid()
 
@@ -86,14 +47,3 @@ def do_add(self, args):
     aid = self.get_aid(args.aid, default_key='anidb')
     anime = self.anidb.lookup(aid)
     self.animedb.add(anime)
-
-
-_parser = ArgumentParser(prog='fetch')
-_parser.add_aid()
-
-@registry.register_alias('f')
-@registry.register_command('fetch', _parser)
-def do_fetch(self, args):
-    """Fetch AniDB data for anime."""
-    aid = self.get_aid(args.aid, default_key='anidb')
-    self.anidb.lookup(aid, force=True)
