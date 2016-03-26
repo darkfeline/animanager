@@ -10,7 +10,7 @@ setup(
     install_requires=['apsw', 'tabulate'],
     entry_points={
         'console_scripts': [
-            'animanager = animanager.main:main',
+            'animanager = animanager.__main__:main',
         ],
     },
 
