@@ -10,6 +10,7 @@ This projects uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- watch command only offers to bump if the next episode was watched.
 - watching option added to search command.
 - AnimeDB.search() changed to AnimeDB.select() with different semantics.
 - Instead of caching AniDB anime data as local XML files, Animanager's own

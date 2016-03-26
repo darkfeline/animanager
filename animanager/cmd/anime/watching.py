@@ -118,9 +118,10 @@ def do_watch(self, args):
     file = self.file_picker.pick(files)
 
     subprocess.call(self.config.anime.player_args + [file])
-    user_input = input('Bump? [Yn]')
-    if user_input.lower() in ('n', 'no'):
-        print('Not bumped.')
-    else:
-        self.animedb.bump(aid)
-        print('Bumped.')
+    if episode == anime.watched_episodes + 1:
+        user_input = input('Bump? [Yn]')
+        if user_input.lower() in ('n', 'no'):
+            print('Not bumped.')
+        else:
+            self.animedb.bump(aid)
+            print('Bumped.')
