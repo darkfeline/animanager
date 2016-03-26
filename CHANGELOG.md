@@ -4,6 +4,10 @@ This projects uses [semantic versioning](http://semver.org/).
 
 ## master
 
+### Added
+
+- Debug logging.
+
 ### Changed
 
 - watching option added to search command.

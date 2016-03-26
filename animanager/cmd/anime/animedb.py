@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 from textwrap import dedent
 from typing import Any, Dict, List
 
@@ -28,6 +29,7 @@ from animanager.registry.cmd import CmdRegistry
 
 from .argparse import ArgumentParser
 
+logger = logging.getLogger(__name__)
 registry = CmdRegistry()
 
 
@@ -60,6 +62,7 @@ def do_search(self, args):
     for anime in self.animedb.select(where_query, params):
         anime_files = AnimeFiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
+        logger.debug('Found files %s', anime_files.by_episode)
         self.animedb.cache_files(anime.aid, anime_files)
         results.append((
             anime.aid, anime.title, anime.type,

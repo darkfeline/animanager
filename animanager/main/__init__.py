@@ -27,6 +27,9 @@ def _make_parser():
     parser.add_argument('--config',
                         default='',
                         help='Alternate configuration file to use.')
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help='Enable debug output.')
 
     # Set up subparsers.
     subparsers = parser.add_subparsers(title='Managers')
@@ -36,10 +39,22 @@ def _make_parser():
 
 
 def main():
-    logging.basicConfig(level='INFO')
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(
+        '%(levelname)s:%(name)s:%(message)s',
+    ))
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    root_logger.addHandler(handler)
 
     parser = _make_parser()
     args = parser.parse_args()
+
+    if not args.debug:
+        handler.setFormatter(logging.Formatter(
+            '%(levelname)s: %(message)s',
+        ))
+        root_logger.setLevel(logging.INFO)
 
     # Run command.
     try:
