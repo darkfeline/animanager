@@ -106,7 +106,7 @@ def do_delete_rule(self, args):
 
 _watch_parser = ArgumentParser(prog='watch')
 _watch_parser.add_aid()
-_watch_parser.add_argument('episode', default=None, type=int)
+_watch_parser.add_argument('episode', nargs='?', default=None, type=int)
 
 
 @registry.register_alias('w')
