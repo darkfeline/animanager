@@ -1,10 +1,19 @@
 # -*- conf-unix -*-
 
+[MASTER]
+jobs=4
+
 [MESSAGES CONTROL]
-disable=invalid-name,
-  # pylint sucks at detecting this
+disable=
+  # This covers invalid constant names and certain others like e for exceptions,
+  # because pylint whines like a baby.
+  invalid-name,
+  # pylint sucks at detecting these.
   abstract-method,
-  # XXX Should fix this
-  missing-docstring,
-  # pylint doesn't know generics for type hints
+  abstract-class-instantiated,
+  # pylint doesn't know about generics used for type hints.
   unsubscriptable-object
+
+[REPORTS]
+output-format=colorized
+reports=no
