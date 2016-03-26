@@ -41,7 +41,9 @@ class AniDB:
         if force or not self.cache.has(aid):
             request = anime.AnimeRequest(aid)
             response = request.open()
-            return response.xml()
+            tree = response.xml()
+            self.cache.store(tree)
+            return tree
         else:
             return self.cache.retrieve(aid)
 
