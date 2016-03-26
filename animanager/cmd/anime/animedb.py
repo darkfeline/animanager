@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from textwrap import dedent
+from typing import Any, Dict, List
 
 from tabulate import tabulate
 
@@ -31,16 +32,32 @@ registry = CmdRegistry()
 
 
 _parser = ArgumentParser(prog='search')
+_parser.add_argument(
+    '-w', '--watching', action='store_true', help='Limit to registered anime.')
 _parser.add_query()
 
 @registry.register_alias('s')
 @registry.register_command('search', _parser)
 def do_search(self, args):
     """Search Animanager database."""
-    query = compile_sql_query(args.query)
-    all_files = find_files(self.config.anime.watchdir, is_video)
+    where_queries = []  # type: List[str]
+    params = {}  # type: Dict[str, Any]
+
+    if args.watching:
+        where_queries.append('regexp IS NOT NULL')
+
+    if args.query:
+        where_queries.append('title LIKE :title')
+        params['title'] = compile_sql_query(args.query)
+
+    if not where_queries:
+        print('Must include at least one filter.')
+        return
+    where_query = ' AND '.join(where_queries)
+
     results = list()
-    for anime in self.animedb.search(query):
+    all_files = find_files(self.config.anime.watchdir, is_video)
+    for anime in self.animedb.select(where_query, params):
         anime_files = AnimeFiles(anime.regexp)
         anime_files.maybe_add_iter(all_files)
         self.animedb.cache_files(anime.aid, anime_files)

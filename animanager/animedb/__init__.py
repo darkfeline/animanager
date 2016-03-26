@@ -18,7 +18,9 @@
 import logging
 import re
 import shutil
-from typing import Dict, List, Optional
+from typing import (
+    Any, Dict, Iterable, List, Mapping, Optional, Sequence, Union,
+)
 
 import animanager.db.fk
 import animanager.db.migrations
@@ -171,14 +173,21 @@ class AnimeDB(
                         :aid, :type, :number, :title,
                         :length, :user_watched)""", values)
 
-    def search(self, query):
-        """Perform a LIKE title search on the anime table.
+    def select(
+            self, where_query: str,
+            params: Union[Sequence[Any], Mapping[str, Any]],
+    ) -> Iterable[Anime]:
+        """Perform an arbitrary SQL SELECT WHERE on the anime table.
 
         Returns an Anime instance generator.  Caches anime status lazily.
 
         """
         aids = self.cnx.cursor()
-        aids.execute('SELECT aid FROM anime WHERE title LIKE ?', (query,))
+        aids.execute(
+            """SELECT aid FROM anime
+            LEFT JOIN watching USING (aid)
+            WHERE {}""".format(where_query),
+            params)
         for aid in aids:
             aid = aid[0]
             self.cache_status(aid)

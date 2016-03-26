@@ -6,6 +6,8 @@ This projects uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- watching option added to search command.
+- AnimeDB.search() changed to AnimeDB.select() with different semantics.
 - Instead of caching AniDB anime data as local XML files, Animanager's own
   animedb now serves as a "cache".  The original workflow had a redundant step:
 
