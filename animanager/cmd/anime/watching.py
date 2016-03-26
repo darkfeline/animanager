@@ -126,34 +126,9 @@ def do_watch(self, args):
     file = self.file_picker.pick(files)
 
     subprocess.call(self.config.anime.player_args + [file])
-    raise NotImplementedError
-    # XXX get watching shows
-    # XXX find files
-    # XXX match rules
-    # XXX play file
-    # XXX bump
-
-def _watch_list_all(self):
-    # Find files.
-    watchdir = self.config.anime.watchdir
-    files = self._find_files(watchdir)
-
-    # Associate files with watching anime.
-    watching_list = self.animedb.get_watching()
-    anime_files = dict((anime.aid, defaultdict(list)) for anime in watching_list)
-    for filename in files:
-        for anime in watching_list:
-            match = anime.regexp.search(os.path.basename(filename))
-            if match:
-                try:
-                    ep = int(match.group('ep'))
-                except ValueError:
-                    logger.error(
-                        'Invalid episode matched using %s for %s',
-                        anime.title, filename)
-                    continue
-                anime_files[anime.aid][ep].append(files)
-                break
-
-    # Print
-    pass  # XXX
+    user_input = input('Bump? [Yn]')
+    if user_input.lower() in ('n', 'no'):
+        print('Not bumped.')
+    else:
+        self.animedb.bump(aid)
+        print('Bumped.')
