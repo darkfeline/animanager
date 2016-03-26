@@ -2,6 +2,13 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
+## master
+
+### Removed
+
+- Script file support.  Automation will instead be supported via importing
+  Animanager as a Python library.
+
 ## 0.10.0 - 2016-03-26
 
 ### Added

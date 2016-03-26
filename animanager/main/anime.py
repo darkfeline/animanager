@@ -29,14 +29,10 @@ def setup_parser(subparsers):
         description='Anime manager.',
         help='Start anime manager.',
     )
-    parser.add_argument('script', nargs='?')
     parser.set_defaults(func=main)
 
 
 def main(args):
     config = Config(args.config)
-    if args.script:
-        AnimeCmd.run_with_file(config, args.script)
-    else:
-        cmd = AnimeCmd(config)
-        cmd.cmdloop()
+    cmd = AnimeCmd(config)
+    cmd.cmdloop()
