@@ -1,13 +1,15 @@
 .PHONY: all
-all: build
+all: install
 
-.PHONY: build
-build:
-	python3 setup.py build
+INSTALL_FLAGS=
 
 .PHONY: install
-install: build
-	python3 setup.py install
+install:
+	python3 setup.py install ${INSTALL_FLAGS}
+
+.PHONY: requirements
+requirements:
+	pip3 install ${INSTALL_FLAGS} -r requirements.txt
 
 .PHONY: package
 package:
@@ -16,7 +18,7 @@ package:
 
 .PHONY: clean
 clean:
-	python3 setup.py clean
+	python3 setup.py clean --all
 	rm -rf dist
 
 # Publish to PyPi.
