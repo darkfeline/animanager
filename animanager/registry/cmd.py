@@ -45,6 +45,8 @@ class CmdRegistry:
             self.do_reg[name] = new_func
             self.do_reverse[new_func] = name
             # Register help_*.
+            if not parser.description and func.__doc__:
+                parser.description = func.__doc__
             def help_func(self: Cmd) -> None:
                 parser.print_help()
             self.help_reg[name] = help_func
