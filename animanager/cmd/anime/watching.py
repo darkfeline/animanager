@@ -107,7 +107,7 @@ _parser.add_argument('episode', nargs='?', default=None, type=int)
 def do_watch(self, args):
     """Watch an anime."""
     aid = self.get_aid(args.aid, default_key='db')
-    anime = self.animdb.lookup(aid)
+    anime = self.animedb.lookup(aid)
     anime_files = self.animedb.get_files(aid)  # type: BaseAnimeFiles
     if args.episode is None:
         episode = anime.watched_episodes + 1  # type: int
