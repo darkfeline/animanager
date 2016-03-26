@@ -63,8 +63,8 @@ def do_ashow(self, args):
         anime.title,
         anime.type,
         anime.episodecount,
-        fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
-        fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
+        anime.startdate if anime.startdate else 'N/A',
+        anime.enddate if anime.enddate else 'N/A',
     ))
     print(tabulate(
         (
