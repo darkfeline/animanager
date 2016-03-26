@@ -2,6 +2,12 @@
 
 This projects uses [semantic versioning](http://semver.org/).
 
+## master
+
+### Removed
+
+- Removed migration-tools.  Use 0.9.0 for migrations.
+
 ## 0.9.0 - 2016-03-07
 
 This release is provided to "receive" migrated databases from 0.8.1.  This
