@@ -27,7 +27,7 @@ class AnimeCacheMixin(BaseCacheTableMixin):
             aid INTEGER,
             complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
             watched_episodes INTEGER NOT NULL,
-            anime_files BLOB,
+            anime_files TEXT,
             PRIMARY KEY (aid),
             FOREIGN KEY (aid) REFERENCES anime(aid)
                 ON DELETE CASCADE ON UPDATE CASCADE

@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import pickle
 import re
 import shutil
 from typing import Dict, List, Optional
@@ -27,7 +26,7 @@ import animanager.db.sqlite
 import animanager.db.versions
 from animanager.cache import cached_property
 from animanager.date import timestamp
-from animanager.files.anime import BaseAnimeFiles
+from animanager.files.anime import AnimeFiles, BaseAnimeFiles
 
 from . import migrations
 from .cache import AnimeCacheMixin
@@ -328,7 +327,7 @@ class AnimeDB(
                 """UPDATE cache_anime
                 SET anime_files=?
                 WHERE aid=?""",
-                (pickle.dumps(anime_files), aid))
+                (anime_files.to_json(), aid))
 
     def get_files(self, aid: int) -> BaseAnimeFiles:
         with self.cnx:
@@ -338,7 +337,7 @@ class AnimeDB(
             row = cur.fetchone()
             if row is None:
                 raise ValueError('No cached files')
-            return pickle.loads(row[0])
+            return AnimeFiles.from_json(row[0])
 
     def set_regexp(self, aid, regexp):
         """Set watching regexp for anime."""

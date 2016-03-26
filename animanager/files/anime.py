@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import os
 import re
 from abc import abstractmethod
@@ -43,6 +44,12 @@ class BaseAnimeFiles(BaseFiles):
 
 class FakeAnimeFiles(BaseAnimeFiles):
 
+    """AnimeFiles null object.
+
+    Should not be instantiated directly.
+
+    """
+
     def maybe_add(self, filename):
         pass
 
@@ -54,6 +61,13 @@ class FakeAnimeFiles(BaseAnimeFiles):
 
     def get_episode(self, episode: int) -> Sequence[str]:
         return ()
+
+    def to_json(self):
+        return '{}'
+
+    @classmethod
+    def from_json(cls, string):
+        return cls()
 
 
 class AnimeFiles(BaseAnimeFiles):
@@ -88,3 +102,19 @@ class AnimeFiles(BaseAnimeFiles):
 
     def get_episode(self, episode: int) -> List[str]:
         return self.by_episode[episode]
+
+    def to_json(self):
+        return json.dumps({
+            'regexp': self.regexp.pattern,
+            'by_episode': self.by_episode,
+        })
+
+    @classmethod
+    def from_json(cls, string):
+        obj = json.loads(string)
+        if obj:
+            anime_files = cls(obj['regexp'])
+            anime_files.by_episode = defaultdict(list, obj['by_episode'])
+            return anime_files
+        else:
+            return FakeAnimeFiles()

@@ -49,6 +49,15 @@ class BaseFiles(ABC):
     def maybe_add_iter(self, filenames: Iterable[str]) -> None:
         pass
 
+    @abstractmethod
+    def to_json(self):
+        return '{}'
+
+    @classmethod
+    @abstractmethod
+    def from_json(cls, string):
+        return cls()
+
 
 class BasePriorityRule(ABC):
 
