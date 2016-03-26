@@ -1,9 +1,15 @@
+# Python
 __pycache__/
 *.pyc
 *.egg-info
 
+# Python packaging
 /build
 /dist
 /src
 
+# Development
 /.hypothesis
+/GPATH
+/GRTAGS
+/GTAGS
