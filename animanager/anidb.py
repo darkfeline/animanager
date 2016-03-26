@@ -58,28 +58,44 @@ class SearchDB:
         self.cachedir = cachedir
 
     @cached_property
+    def titles_file(self):
+        return os.path.join(self.cachedir, 'anime-titles.xml')
+
+    @cached_property
+    def pickle_file(self):
+        return os.path.join(self.cachedir, 'anime-titles.pickle')
+
+    @cached_property
     def titles_tree(self) -> titles.TitlesTree:
         return self.load_tree()
 
     def load_tree(self) -> titles.TitlesTree:
-        pickle_file = os.path.join(self.cachedir, 'anime-titles.pickle')
         # Try to load from pickled file courageously.
         try:
-            titles_tree = titles.TitlesTree.load(pickle_file)
+            titles_tree = titles.TitlesTree.load(self.pickle_file)
         except Exception as e:
             logger.warning('Error loading pickled search cache: %s', e)
         else:
             return titles_tree
-        titles_file = os.path.join(self.cachedir, 'anime-titles.xml')
         # Download titles data if we don't have it.
-        if not os.path.exists(titles_file):
-            request = titles.TitlesRequest()
-            response = request.open()
-            titles_tree = response.xml()
+        if not os.path.exists(self.titles_file):
+            titles_tree = self.fetch()
         else:
-            titles_tree = titles.TitlesTree.parse(titles_file)
+            titles_tree = titles.TitlesTree.parse(self.titles_file)
         # Dump a pickled file for next time.
-        titles_tree.dump(pickle_file)
+        titles_tree.dump(self.pickle_file)
+        return titles_tree
+
+    def fetch(self) -> titles.TitlesTree:
+        """Fetch fresh titles data from AniDB."""
+        try:
+            os.unlink(self.pickle_file)
+        except OSError:
+            pass
+        request = titles.TitlesRequest()
+        response = request.open()
+        titles_tree = response.xml()
+        titles_tree.save(self.titles_file)
         return titles_tree
 
     def search(self, query):
