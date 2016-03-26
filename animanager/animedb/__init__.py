@@ -367,11 +367,15 @@ class AnimeDB(
             cur = self.cnx.cursor()
             if priority is None:
                 cur.execute('SELECT MAX(priority) FROM file_priority')
-                row = cur.fetchone()  # type: Optional[Tuple[int]]
+                row = cur.fetchone()  # type: Optional[Tuple[Optional[int]]]
                 if cur is None:
                     priority = 1
                 else:
-                    priority = row[0] + 1
+                    highest_priority = row[0]
+                    if highest_priority is None:
+                        priority = 1
+                    else:
+                        priority = highest_priority + 1
             cur.execute(
                 """INSERT INTO file_priority (regexp, priority)
                     VALUES (?, ?)""", (regexp, priority))
