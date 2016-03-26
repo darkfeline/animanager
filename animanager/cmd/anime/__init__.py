@@ -52,7 +52,7 @@ class AnimeCmd(Cmd, BaseCacheHolder):
         super().__init__(*args, **kwargs)
         self.config = config
 
-        self.anidb = AniDB(config.anime.anidb_cache)
+        self.anidb = AniDB()
         self.searchdb = SearchDB(config.anime.anidb_cache)
         self.animedb = AnimeDB(config.anime.database)
 
