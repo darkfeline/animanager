@@ -78,7 +78,7 @@ def do_show(self, args):
     if anime.regexp is None:
         regexp_string = ''
     else:
-        regexp_string = 'Watching regexp: {}\n'.format(anime.regexp)
+        regexp_string = 'Watching regexp: {}'.format(anime.regexp)
     print(_SHOW_MSG.format(
         anime.aid,
         anime.title,
@@ -91,7 +91,7 @@ def do_show(self, args):
         regexp_string,
     ))
     if anime.episodes:
-        print(tabulate(
+        print('\n', tabulate(
             (
                 (
                     self.animedb.get_epno(episode), episode.title, episode.length,
