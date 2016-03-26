@@ -23,6 +23,9 @@ from hypothesis import strategies
 
 import animanager.date
 
+# pylint doesn't understand hypothesis
+# pylint: disable=no-value-for-parameter
+
 MIN_DATETIME = datetime(1970, 1, 1, tzinfo=timezone.utc)
 MAX_DATETIME = datetime(2038, 12, 31, tzinfo=timezone.utc)
 MIN_TIMESTAMP = MIN_DATETIME.timestamp()
