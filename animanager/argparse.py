@@ -29,6 +29,12 @@ class ArgumentParser(argparse.ArgumentParser):
 
     """ArgumentParser customized for Animanager's CLI."""
 
+    def exit(self, status=0, message=None):
+        """Override SystemExit."""
+        if message is not None:
+            print(message)
+        raise CommandError()
+
     def error(self, message):
         """Override printing to stderr."""
         print(message)
