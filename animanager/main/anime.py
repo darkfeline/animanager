@@ -18,21 +18,22 @@
 from animanager.cmd.anime import AnimeCmd
 from animanager.config import Config
 
-
-def setup_parser(subparsers):
-
-    """Setup parsers."""
-
-    # Set up anime command parser.
-    parser = subparsers.add_parser(
-        'anime',
-        description='Anime manager.',
-        help='Start anime manager.',
-    )
-    parser.set_defaults(func=main)
+from animanager.main import Subcommand
 
 
-def main(args):
-    config = Config(args.config)
-    cmd = AnimeCmd(config)
-    cmd.cmdloop()
+class AnimeSubcommand(Subcommand):
+
+    @classmethod
+    def setup_parser(cls, subparsers):
+        parser = subparsers.add_parser(
+            'anime',
+            description='Anime manager.',
+            help='Start anime manager.',
+        )
+        parser.set_defaults(func=cls.main)
+
+    @staticmethod
+    def main(args):
+        config = Config(args.config)
+        cmd = AnimeCmd(config)
+        cmd.cmdloop()
