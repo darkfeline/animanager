@@ -91,3 +91,16 @@ def do_add(self, args):
     aid = self.get_aid(args.aid, default_key='anidb')
     anime = self.anidb.lookup(aid)
     self.animedb.add(anime)
+
+
+_fetch_parser = ArgumentParser(prog='fetch')
+_fetch_parser.add_aid()
+
+
+@registry.register_alias('f')
+@registry.register_do('fetch')
+@_add_parser.parsing
+def do_fetch(self, args):
+    """Fetch AniDB data for anime."""
+    aid = self.get_aid(args.aid, default_key='anidb')
+    self.anidb.lookup(aid, force=True)
