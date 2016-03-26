@@ -114,7 +114,10 @@ class AnimeFiles(BaseAnimeFiles):
         obj = json.loads(string)
         if obj:
             anime_files = cls(obj['regexp'])
-            anime_files.by_episode = defaultdict(list, obj['by_episode'])
+            anime_files.by_episode = defaultdict(
+                list,
+                ((int(ep), files) for ep, files in obj['by_episode'].items()),
+            )
             return anime_files
         else:
             return FakeAnimeFiles()
