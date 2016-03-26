@@ -1,27 +1,18 @@
-Animanager documentation
+Animanager Documentation
 ========================
 
-Project website: https://darkfeline.github.io/animanager/
+Animanager_ is a command line program for advanced anime watching management.
 
-This is the documentation for Animanager.
-
-Animanager is a simple anime watching and tracking program.
+.. _Animanager: https://darkfeline.github.io/animanager/
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   intro
    install
-   quickstart
-   config
-   commands
-   database
-   menu
 
 Indices and tables
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+- :ref:`genindex`
+- :ref:`modindex`
+- :ref:`search`
