@@ -16,6 +16,13 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import animanager.registry
+import animanager.argparse
+from argparse import Namespace
+from cmd import Cmd
+from typing import Callable, Optional
+
+ExtendedCommand = Callable[[Cmd, Namespace], Optional[bool]]
+PlainCommand = Callable[[Cmd, str], Optional[bool]]
 
 
 class CmdRegistry:
@@ -27,29 +34,31 @@ class CmdRegistry:
         self.do_reverse = dict()
         self.help_reg = animanager.registry.Registry('help_')
 
-    def register_do(self, name):
+    def register_command(
+            self, name: str, parser: animanager.argparse.ArgumentParser,
+    ) -> Callable[ExtendedCommand, PlainCommand]:
         """Decorator for registering commands."""
-        def decorate(func):
-            self.do_reg[name] = func
-            self.do_reverse[func] = name
-            if name not in self.help_reg:
-                def help_func(self):
-                    # pylint: disable=unused-argument
-                    print(func.__doc__)
-                self.help_reg[name] = help_func
-            return func
+        def decorate(func: ExtendedCommand) -> PlainCommand:
+            # Add argument parsing.
+            new_func = parser.parsing(func)  # type: PlainCommand
+            # Register do_*.
+            self.do_reg[name] = new_func
+            self.do_reverse[new_func] = name
+            # Register help_*.
+            def help_func(self: Cmd) -> None:
+                parser.print_help()
+            self.help_reg[name] = help_func
+            return new_func
         return decorate
 
-    def register_help(self, name):
-        """Decorator for registering command help."""
-        return self.help_reg.register(name)
-
-    def register_alias(self, alias):
+    def register_alias(
+            self, alias: str,
+    ) -> Callable[PlainCommand, PlainCommand]:
         """Decorator for registering command alias."""
-        def decorate(func):
+        def decorate(func: PlainCommand) -> PlainCommand:
             self.do_reg[alias] = func
-            original = self.do_reverse[func]
-            help_string = 'Alias for {}'.format(original)
+            original_name = self.do_reverse[func]
+            help_string = 'Alias for {}'.format(original_name)
             def help_func(self):
                 # pylint: disable=unused-argument
                 print(help_string)
