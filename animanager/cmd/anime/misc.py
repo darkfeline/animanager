@@ -17,18 +17,24 @@
 
 from animanager.registry.cmd import CmdRegistry
 
+from .argparse import ArgumentParser
+
 registry = CmdRegistry()
 
 
+_parser = ArgumentParser('quit')
+
 @registry.register_alias('q')
-@registry.register_do('quit')
-def do_quit(self, arg):
+@registry.register_command('quit', _parser)
+def do_quit(self, args):
     """Quit."""
     return True
 
 
-@registry.register_do('purgecache')
-def do_purgecache(self, arg):
+_parser = ArgumentParser('purgecache')
+
+@registry.register_command('purgecache', _parser)
+def do_purgecache(self, args):
     """Purge cache tables."""
     self.animedb.purge_cache()
     self.purge_cache()

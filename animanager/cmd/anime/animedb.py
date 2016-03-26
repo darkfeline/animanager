@@ -30,13 +30,11 @@ from .argparse import ArgumentParser
 registry = CmdRegistry()
 
 
-_search_parser = ArgumentParser(prog='search')
-_search_parser.add_query()
-
+_parser = ArgumentParser(prog='search')
+_parser.add_query()
 
 @registry.register_alias('s')
-@registry.register_do('search')
-@_search_parser.parsing
+@registry.register_command('search', _parser)
 def do_search(self, args):
     """Search Animanager database."""
     query = compile_sql_query(args.query)
@@ -65,14 +63,12 @@ _SHOW_MSG = dedent("""\
     End date: {}
     Complete: {}
     {}""")
-_show_parser = ArgumentParser(prog='show')
-_show_parser.add_aid()
-_show_parser.add_argument('-e', '--show-episodes', action='store_true')
-
+_parser = ArgumentParser(prog='show')
+_parser.add_aid()
+_parser.add_argument('-e', '--show-episodes', action='store_true')
 
 @registry.register_alias('sh')
-@registry.register_do('show')
-@_show_parser.parsing
+@registry.register_command('show', _parser)
 def do_show(self, args):
     """Show anime data."""
     aid = self.get_aid(args.aid, default_key='db')
@@ -108,13 +104,11 @@ def do_show(self, args):
         ))
 
 
-_bump_parser = ArgumentParser(prog='bump')
-_bump_parser.add_aid()
-
+_parser = ArgumentParser(prog='bump')
+_parser.add_aid()
 
 @registry.register_alias('b')
-@registry.register_do('bump')
-@_bump_parser.parsing
+@registry.register_command('bump', _parser)
 def do_bump(self, args):
     """Bump anime."""
     aid = self.get_aid(args.aid, default_key='db')

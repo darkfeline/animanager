@@ -16,7 +16,6 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import shlex
 import subprocess
 from argparse import REMAINDER
 
@@ -30,13 +29,12 @@ from .argparse import ArgumentParser
 registry = CmdRegistry()
 
 
-_register_parser = ArgumentParser(prog='register')
-_register_parser.add_aid()
-_register_parser.add_argument('query', nargs=REMAINDER)
+_parser = ArgumentParser(prog='register')
+_parser.add_aid()
+_parser.add_argument('query', nargs=REMAINDER)
 
 @registry.register_alias('r')
-@registry.register_do('register')
-@_register_parser.parsing
+@registry.register_command('register', _parser)
 def do_register(self, args):
     """Register watching regexp for an anime."""
     aid = self.get_aid(args.aid, default_key='db')
@@ -58,26 +56,22 @@ def do_register(self, args):
     self.animedb.set_regexp(aid, pattern)
 
 
-_unregister_parser = ArgumentParser(prog='unregister')
-_unregister_parser.add_aid()
-
+_parser = ArgumentParser(prog='unregister')
+_parser.add_aid()
 
 @registry.register_alias('ur')
-@registry.register_do('unregister')
-@_unregister_parser.parsing
+@registry.register_command('unregister', _parser)
 def do_unregister(self, args):
     """Unregister watching regexp for an anime."""
     aid = self.get_aid(args.aid, default_key='db')
     self.animedb.delete_regexp(aid)
 
 
-_add_rule_parser = ArgumentParser(prog='add_rule')
-_add_rule_parser.add_argument('regexp')
-_add_rule_parser.add_argument('priority', nargs='?', default=None, type=int)
+_parser = ArgumentParser(prog='add_rule')
+_parser.add_argument('regexp')
+_parser.add_argument('priority', nargs='?', default=None, type=int)
 
-
-@registry.register_do('add_rule')
-@_add_rule_parser.parsing
+@registry.register_command('add_rule', _parser)
 def do_add_rule(self, args):
     """Add a priority rule for files."""
     row_id = self.animedb.add_priority_rule(args.regexp, args.priority)
@@ -85,33 +79,31 @@ def do_add_rule(self, args):
     print('Added rule {}'.format(row_id))
 
 
-@registry.register_do('rules')
+_parser = ArgumentParser(prog='rules')
+
+@registry.register_command('rules', _parser)
 def do_rules(self, args):
     """List file priority rules."""
     rules = self.animedb.priority_rules
     print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
 
 
-_delete_rule_parser = ArgumentParser(prog='delete_rule')
-_delete_rule_parser.add_argument('id', type=int)
+_parser = ArgumentParser(prog='delete_rule')
+_parser.add_argument('id', type=int)
 
-
-@registry.register_do('delete_rule')
-@_delete_rule_parser.parsing
+@registry.register_command('delete_rule', _parser)
 def do_delete_rule(self, args):
     """List file priority rules."""
     self.animedb.delete_priority_rule(args.id)
     del self.file_picker
 
 
-_watch_parser = ArgumentParser(prog='watch')
-_watch_parser.add_aid()
-_watch_parser.add_argument('episode', nargs='?', default=None, type=int)
-
+_parser = ArgumentParser(prog='watch')
+_parser.add_aid()
+_parser.add_argument('episode', nargs='?', default=None, type=int)
 
 @registry.register_alias('w')
-@registry.register_do('watch')
-@_watch_parser.parsing
+@registry.register_command('watch', _parser)
 def do_watch(self, args):
     """Watch an anime."""
     aid = self.get_aid(args.aid, default_key='db')

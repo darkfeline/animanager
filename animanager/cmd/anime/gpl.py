@@ -15,11 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 from textwrap import dedent
 
 from animanager.argparse import ArgumentParser
 from animanager.registry.cmd import CmdRegistry
 
+logger = logging.getLogger(__name__)
 registry = CmdRegistry()
 
 GPL_COPYING = dedent('''\
@@ -77,21 +79,17 @@ copy of the Program in return for a fee.
 See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
 
 
-@registry.register_help('gpl')
-def help_gpl(self):
-    print(dedent('''\
+_parser = ArgumentParser(
+    prog='gpl',
+    description=dedent('''\
     Show GPL information.
 
     "gpl c" to show copying information.
-    "gpl w" to show warranty information.'''))
+    "gpl w" to show warranty information.'''),
+)
+_parser.add_argument('info', choices=['c', 'w'])
 
-
-_gpl_parser = ArgumentParser(prog='gpl')
-_gpl_parser.add_argument('info', choices=['c', 'w'])
-
-
-@registry.register_do('gpl')
-@_gpl_parser.parsing
+@registry.register_command('gpl', _parser)
 def do_gpl(self, args):
     """Show GPL information."""
     if args.info == 'c':
@@ -99,4 +97,5 @@ def do_gpl(self, args):
     elif args.info == 'w':
         print(self.GPL_WARRANTY)
     else:
+        logger.warning('Invalid argument was parsed.')
         self.do_help('gpl')

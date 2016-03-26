@@ -28,13 +28,11 @@ from .argparse import ArgumentParser
 registry = CmdRegistry()
 
 
-_asearch_parser = ArgumentParser(prog='asearch')
-_asearch_parser.add_query()
-
+_parser = ArgumentParser(prog='asearch')
+_parser.add_query()
 
 @registry.register_alias('as')
-@registry.register_do('asearch')
-@_asearch_parser.parsing
+@registry.register_command('asearch', _parser)
 def do_asearch(self, args):
     """Search AniDB."""
     query = compile_re_query(args.query)
@@ -51,12 +49,11 @@ _ASHOW_MSG = dedent("""\
     Episodes: {}
     Start date: {}
     End date: {}\n""")
-_ashow_parser = ArgumentParser(prog='ashow')
-_ashow_parser.add_aid()
+_parser = ArgumentParser(prog='ashow')
+_parser.add_aid()
 
 @registry.register_alias('ash')
-@registry.register_do('ashow')
-@_ashow_parser.parsing
+@registry.register_command('ashow', _parser)
 def do_ashow(self, args):
     """Show information about anime in AniDB."""
     aid = self.get_aid(args.aid, default_key='anidb')
@@ -79,13 +76,11 @@ def do_ashow(self, args):
     ))
 
 
-_add_parser = ArgumentParser(prog='add')
-_add_parser.add_aid()
-
+_parser = ArgumentParser(prog='add')
+_parser.add_aid()
 
 @registry.register_alias('a')
-@registry.register_do('add')
-@_add_parser.parsing
+@registry.register_command('add', _parser)
 def do_add(self, args):
     """Add an anime or update an existing anime."""
     aid = self.get_aid(args.aid, default_key='anidb')
@@ -93,13 +88,11 @@ def do_add(self, args):
     self.animedb.add(anime)
 
 
-_fetch_parser = ArgumentParser(prog='fetch')
-_fetch_parser.add_aid()
-
+_parser = ArgumentParser(prog='fetch')
+_parser.add_aid()
 
 @registry.register_alias('f')
-@registry.register_do('fetch')
-@_add_parser.parsing
+@registry.register_command('fetch', _parser)
 def do_fetch(self, args):
     """Fetch AniDB data for anime."""
     aid = self.get_aid(args.aid, default_key='anidb')

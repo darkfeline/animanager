@@ -15,11 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import animanager.registry
-import animanager.argparse
 from argparse import Namespace
 from cmd import Cmd
 from typing import Callable, Optional
+
+import animanager.argparse
+import animanager.registry
 
 ExtendedCommand = Callable[[Cmd, Namespace], Optional[bool]]
 PlainCommand = Callable[[Cmd, str], Optional[bool]]
