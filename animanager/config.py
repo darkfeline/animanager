@@ -93,6 +93,7 @@ class Config(BaseConfig):
     DEF_VALUES = {
         'general': {
             'backup_before_migration': 'true',
+            'colors': 'false',
         },
         'anime': {
             'database': '~/.animanager/database.db',
@@ -116,6 +117,10 @@ class Config(BaseConfig):
         # pylint: disable=no-member
 
         class general:
+
+            def colors(self):
+                """Enable colors."""
+                return self.config.getboolean('colors')
 
             def backup_before_migration(self):
                 """Video player to use."""
