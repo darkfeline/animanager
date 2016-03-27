@@ -19,10 +19,12 @@
 
 import re
 
-import animanager.results
+from .base import Results
+
+__all__ = ['AIDResults', 'AIDResultsManager']
 
 
-class AIDResults(animanager.results.Results):
+class AIDResults(Results):
 
     """SearchResults subclass that guarantees the presence of an aid column."""
 
