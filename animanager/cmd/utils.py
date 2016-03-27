@@ -15,10 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import animanager.cmd
+import re
+from typing import Iterable
+from typing.re import Pattern
 
 
-class ArgumentParser(animanager.cmd.ArgumentParser):
+def compile_re_query(args: Iterable[str]) -> Pattern:
+    return re.compile('.*'.join(args), re.I)
 
-    def add_aid(self):
-        self.add_argument('aid')
+
+def compile_sql_query(args: Iterable[str]) -> str:
+    return '%{}%'.format('%'.join(args))

@@ -21,115 +21,113 @@ from typing import Any, Dict, List
 
 from tabulate import tabulate
 
-from animanager.argparse import compile_sql_query
+from animanager.cmd import CmdMixinMeta
+from animanager.cmd.utils import compile_sql_query
 from animanager.date import fromtimestamp
 from animanager.files import find_files
 from animanager.files.anime import AnimeFiles, is_video
-from animanager.registry.cmd import CmdRegistry
 
 from .argparse import ArgumentParser
 
 logger = logging.getLogger(__name__)
-registry = CmdRegistry()
 
 
-_parser = ArgumentParser(prog='search')
-_parser.add_argument(
-    '-w', '--watching', action='store_true', help='Limit to registered anime.')
-_parser.add_query()
+class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
 
-@registry.register_alias('s')
-@registry.register_command('search', _parser)
-def do_search(self, args):
-    """Search Animanager database."""
-    where_queries = []  # type: List[str]
-    params = {}  # type: Dict[str, Any]
+    parser_search = ArgumentParser()
+    parser_search.add_argument(
+        '-w', '--watching', action='store_true',
+        help='Limit to registered anime.',
+    )
+    parser_search.add_query()
 
-    if args.watching:
-        where_queries.append('regexp IS NOT NULL')
+    alias_s = 'search'
 
-    if args.query:
-        where_queries.append('title LIKE :title')
-        params['title'] = compile_sql_query(args.query)
+    def do_search(self, args):
+        """Search Animanager database."""
 
-    if not where_queries:
-        print('Must include at least one filter.')
-        return
-    where_query = ' AND '.join(where_queries)
+        where_queries = []  # type: List[str]
+        params = {}  # type: Dict[str, Any]
+        if args.watching:
+            where_queries.append('regexp IS NOT NULL')
+        if args.query:
+            where_queries.append('title LIKE :title')
+            params['title'] = compile_sql_query(args.query)
+        if not where_queries:
+            print('Must include at least one filter.')
+            return
+        where_query = ' AND '.join(where_queries)
 
-    results = list()
-    all_files = find_files(self.config.anime.watchdir, is_video)
-    for anime in self.animedb.select(where_query, params):
-        anime_files = AnimeFiles(anime.regexp)
-        anime_files.maybe_add_iter(all_files)
-        logger.debug('Found files %s', anime_files.by_episode)
-        self.animedb.cache_files(anime.aid, anime_files)
-        results.append((
-            anime.aid, anime.title, anime.type,
-            '{}/{}'.format(anime.watched_episodes, anime.episodecount),
-            'yes' if anime.complete else '',
-            anime_files.available_string(),
+        results = list()
+        all_files = find_files(self.config.anime.watchdir, is_video)
+        for anime in self.animedb.select(where_query, params):
+            anime_files = AnimeFiles(anime.regexp)
+            anime_files.maybe_add_iter(all_files)
+            logger.debug('Found files %s', anime_files.by_episode)
+            self.animedb.cache_files(anime.aid, anime_files)
+            results.append((
+                anime.aid, anime.title, anime.type,
+                '{}/{}'.format(anime.watched_episodes, anime.episodecount),
+                'yes' if anime.complete else '',
+                anime_files.available_string(),
+            ))
+        self.results['db'].set(results)
+        self.results['db'].print()
+
+    _SHOW_MSG = dedent("""\
+        AID: {}
+        Title: {}
+        Type: {}
+        Episodes: {}/{}
+        Start date: {}
+        End date: {}
+        Complete: {}
+        {}""")
+
+    parser_show = ArgumentParser()
+    parser_show.add_aid()
+    parser_show.add_argument('-e', '--show-episodes', action='store_true')
+
+    alias_sh = 'show'
+
+    def do_show(self, args):
+        """Show anime data."""
+        aid = self.get_aid(args.aid, default_key='db')
+        anime = self.animedb.lookup(aid, args.show_episodes)
+
+        complete_string = 'yes' if anime.complete else 'no'
+        if anime.regexp is None:
+            regexp_string = ''
+        else:
+            regexp_string = 'Watching regexp: {}'.format(anime.regexp)
+        print(self._SHOW_MSG.format(
+            anime.aid,
+            anime.title,
+            anime.type,
+            anime.watched_episodes,
+            anime.episodecount,
+            fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
+            fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
+            complete_string,
+            regexp_string,
         ))
-    self.results['db'].set(results)
-    self.results['db'].print()
-
-
-_SHOW_MSG = dedent("""\
-    AID: {}
-    Title: {}
-    Type: {}
-    Episodes: {}/{}
-    Start date: {}
-    End date: {}
-    Complete: {}
-    {}""")
-_parser = ArgumentParser(prog='show')
-_parser.add_aid()
-_parser.add_argument('-e', '--show-episodes', action='store_true')
-
-@registry.register_alias('sh')
-@registry.register_command('show', _parser)
-def do_show(self, args):
-    """Show anime data."""
-    aid = self.get_aid(args.aid, default_key='db')
-    anime = self.animedb.lookup(aid, args.show_episodes)
-
-    complete_string = 'yes' if anime.complete else 'no'
-    if anime.regexp is None:
-        regexp_string = ''
-    else:
-        regexp_string = 'Watching regexp: {}'.format(anime.regexp)
-    print(_SHOW_MSG.format(
-        anime.aid,
-        anime.title,
-        anime.type,
-        anime.watched_episodes,
-        anime.episodecount,
-        fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
-        fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
-        complete_string,
-        regexp_string,
-    ))
-    if anime.episodes:
-        print('\n', tabulate(
-            (
+        if anime.episodes:
+            episodes = sorted(anime.episodes, key=lambda x: (x.type, x.number))
+            print('\n', tabulate(
                 (
-                    self.animedb.get_epno(episode), episode.title, episode.length,
-                    'yes' if episode.user_watched else '')
-                for episode in sorted(
-                    anime.episodes,
-                    key=lambda x: (x.type, x.number))
-            ),
-            headers=['Number', 'Title', 'min', 'Watched'],
-        ))
+                    (
+                        self.animedb.get_epno(episode), episode.title,
+                        episode.length, 'yes' if episode.user_watched else '')
+                    for episode in episodes),
+                headers=['Number', 'Title', 'min', 'Watched'],
+            ))
 
+    parser_bump = ArgumentParser()
+    parser_bump.add_aid()
 
-_parser = ArgumentParser(prog='bump')
-_parser.add_aid()
+    alias_b = 'bump'
 
-@registry.register_alias('b')
-@registry.register_command('bump', _parser)
-def do_bump(self, args):
-    """Bump anime."""
-    aid = self.get_aid(args.aid, default_key='db')
-    self.animedb.bump(aid)
+    def do_bump(self, args):
+        """Bump anime."""
+        aid = self.get_aid(args.aid, default_key='db')
+        self.animedb.bump(aid)

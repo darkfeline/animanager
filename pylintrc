@@ -12,7 +12,9 @@ disable=
   abstract-method,
   abstract-class-instantiated,
   # pylint doesn't know about generics used for type hints.
-  unsubscriptable-object
+  unsubscriptable-object,
+  # isort handles this for us.
+  ungrouped-imports,
 
 [REPORTS]
 reports=no

@@ -25,7 +25,7 @@ from textwrap import dedent
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
-from animanager.argparse import CommandError
+from animanager.cmd import CommandError
 from animanager.cache import cached_property
 from animanager.cmd import CmdMeta
 from animanager.files import FilePicker, PriorityRule
@@ -38,6 +38,10 @@ logger = logging.getLogger(__name__)
 
 class AnimeCmd(
         anidb.AniDBCmdMixin,
+        animedb.AnimeDBCmdMixin,
+        gpl.GPLCmdMixin,
+        misc.MiscCmdMixin,
+        watching.WatchingCmdMixin,
         Cmd,
         metaclass=CmdMeta,
 ):
@@ -110,9 +114,3 @@ class AnimeCmd(
             else:
                 self.lastaid = aid
                 return aid
-
-
-animedb.registry.add_commands(AnimeCmd)
-gpl.registry.add_commands(AnimeCmd)
-misc.registry.add_commands(AnimeCmd)
-watching.registry.add_commands(AnimeCmd)

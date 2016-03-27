@@ -15,26 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.registry.cmd import CmdRegistry
-
-from .argparse import ArgumentParser
-
-registry = CmdRegistry()
+from animanager.cmd import CmdMixinMeta
 
 
-_parser = ArgumentParser('quit')
+class MiscCmdMixin(metaclass=CmdMixinMeta):
 
-@registry.register_alias('q')
-@registry.register_command('quit', _parser)
-def do_quit(self, args):
-    """Quit."""
-    return True
+    alias_q = 'quit'
 
+    def do_quit(self, args):
+        """Quit."""
+        return True
 
-_parser = ArgumentParser('purgecache')
-
-@registry.register_command('purgecache', _parser)
-def do_purgecache(self, args):
-    """Purge cache tables."""
-    self.animedb.purge_cache()
-    self.purge_cache()
+    def do_purgecache(self, args):
+        """Purge cache tables."""
+        self.animedb.purge_cache()
+        self.purge_cache()

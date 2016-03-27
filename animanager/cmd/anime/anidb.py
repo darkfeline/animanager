@@ -15,14 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager import cmd
-from animanager.argparse import compile_re_query
-from animanager.registry.cmd import CmdRegistry
+from animanager.cmd import CmdMixinMeta
+from animanager.cmd.utils import compile_re_query
 
 from .argparse import ArgumentParser
 
 
-class AniDBCmdMixin(metaclass=cmd.CmdMixinMeta):
+class AniDBCmdMixin(metaclass=CmdMixinMeta):
 
     parser_asearch = ArgumentParser()
     parser_asearch.add_query()

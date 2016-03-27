@@ -17,11 +17,13 @@
 
 """Animanager's command line interface."""
 
+import argparse
 import functools
 import shlex
-from argparse import ArgumentParser, Namespace
+from argparse import Namespace
 from cmd import Cmd
 from typing import Callable, Optional
+from typing.re import Pattern
 
 ExtendedCommand = Callable[[Cmd, Namespace], Optional[bool]]
 PlainCommand = Callable[[Cmd, str], Optional[bool]]
@@ -30,7 +32,26 @@ HelpCommand = Callable[[Cmd], None]
 
 class CmdMixinMeta(type):
 
-    """Metaclass for making command mixing classes."""
+    """Metaclass for making command mixin classes.
+
+    Command mixin classes are used to add commands to Python's builtin Cmd
+    command line class.
+
+    You must define do_foo and parser_foo for each command.  parser_foo is a
+    customized animanager.cmd.argparse.ArgumentParser used for parsing the
+    builtin Cmd's string argument and providing do_foo with fully featured
+    argument parsing.
+
+    If parser_foo isn't defined, a default parser will be substituted.
+
+    CmdMixinMeta will set prog on the parser automatically and use the command
+    method's docstring to set the parser description if it isn't set already.
+
+    You can also define alias_* to create alias commands:
+
+        alias_f = 'foo'
+
+    """
 
     def __new__(mcs, name, parents, dct):
         # Set up commands.
@@ -45,7 +66,7 @@ class CmdMixinMeta(type):
                 try:
                     parser = dct['parser_' + cmd_name]
                 except KeyError:
-                    raise MissingParserError(cmd_name)
+                    parser = ArgumentParser()
                 # Add command name as parser prog name.
                 parser.prog = cmd_name
                 # Add command docstring as default parser description.
@@ -70,7 +91,7 @@ class CmdMixinMeta(type):
     @staticmethod
     def _with_parsing(
             command: ExtendedCommand,
-            parser: ArgumentParser,
+            parser: 'ArgumentParser',
     ) -> PlainCommand:
         """Wrap an ExtendedCommand with argument parsing."""
         @functools.wraps(command)
@@ -81,7 +102,7 @@ class CmdMixinMeta(type):
         return plain_command
 
     @staticmethod
-    def _command_help(parser: ArgumentParser) -> HelpCommand:
+    def _command_help(parser: 'ArgumentParser') -> HelpCommand:
         """Make a command help_* method."""
         def command_help(self):
             # pylint: disable=missing-docstring,unused-argument
@@ -123,6 +144,27 @@ class CmdMeta(CmdMixinMeta):
         return type.__new__(mcs, name, parents, dct)
 
 
+class ArgumentParser(argparse.ArgumentParser):
+
+    """ArgumentParser customized for Animanager's CLI."""
+
+    def exit(self, status=0, message=None):
+        """Override SystemExit."""
+        if message is not None:
+            print(message)
+        raise CommandError()
+
+    def error(self, message):
+        """Override printing to stderr."""
+        print(message)
+        self.print_help()
+        raise CommandError()
+
+    def add_query(self):
+        """Add a generic query argument."""
+        self.add_argument('query', nargs=argparse.REMAINDER)
+
+
 class MetaCommandError(Exception):
     """Error in meta command definition."""
 
@@ -132,17 +174,7 @@ class MetaCommandError(Exception):
         super().__init__(message)
 
 
-class MissingParserError(Exception):
-    """Command missing its parser in command mixin class."""
-
-    def __init__(self, command):
-        self.command = command
-        message = 'Command do_{} missing its parser parser_{}'.format(
-            command, command)
-        super().__init__(message)
-
-
-class DanglingAliasError(Exception):
+class DanglingAliasError(MetaCommandError):
     """Alias missing its command in command mixin class."""
 
     def __init__(self, alias, full_name):
@@ -151,3 +183,13 @@ class DanglingAliasError(Exception):
         message = 'Alias do_{} missing its command do_{}'.format(
             alias, full_name)
         super().__init__(message)
+
+
+class CommandError(Exception):
+    """Error parsing command arguments.
+
+    This is raised in place of ArgumentParser's default action of
+    sys.exit(), so Animanager's command line processing can handle it
+    properly.
+
+    """
