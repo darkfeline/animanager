@@ -52,6 +52,16 @@ when building from source (see :ref:`requirements`).
 
 .. _requirements:
 
+.. warning::
+
+   Do not use development versions of Animanager except for testing!  They may
+   contain database migrations that are not stable or final.  If you use them
+   with your real database, it may leave it in an inconsistent state.  Stick to
+   versioned releases for regular use.
+
+   It is possible to use development versions if there are no problematic
+   migrations, but you should know what you are doing and back up your database.
+
 Development dependencies
 ------------------------
 
