@@ -15,6 +15,8 @@ This project uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- File picker now prefers files lower in alphabetical sorting (so v2 is picked
+  over v1, for example).
 - Available episodes are displayed starting from the last watched episode,
   instead of displaying all available episodes.  Available episodes are also
   limited to the next eight, to account for anime with potentially hundreds of
