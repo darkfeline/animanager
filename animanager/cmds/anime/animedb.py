@@ -37,7 +37,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
     )
     parser_search.add_argument(
         '-a', '--available', action='store_true',
-        help='Limit to anime with available episodes.',
+        help='Limit to anime with available episodes.  Implies --watching.',
     )
     parser_search.add_query()
 
@@ -48,7 +48,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
 
         where_queries = []  # type: List[str]
         params = {}  # type: Dict[str, Any]
-        if args.watching:
+        if args.watching or args.available:
             where_queries.append('regexp IS NOT NULL')
         if args.query:
             where_queries.append('title LIKE :title')
