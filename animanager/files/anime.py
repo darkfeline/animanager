@@ -50,7 +50,7 @@ class FakeAnimeFiles(BaseAnimeFiles):
     def maybe_add_iter(self, filenames):
         pass
 
-    def available_string(self):
+    def available_string(self, episode):
         return ''
 
     def get_episode(self, episode: int) -> Sequence[str]:
@@ -67,6 +67,8 @@ class FakeAnimeFiles(BaseAnimeFiles):
 class AnimeFiles(BaseAnimeFiles):
 
     """Used for matching and grouping files for an anime."""
+
+    EPISODES_TO_SHOW = 8
 
     def __new__(cls, regexp):
         if regexp:
@@ -90,9 +92,13 @@ class AnimeFiles(BaseAnimeFiles):
         for filename in filenames:
             self.maybe_add(filename)
 
-    def available_string(self):
+    def available_string(self, episode):
         """Return a string of available episodes."""
-        return ','.join(str(ep) for ep in sorted(self.by_episode.keys()))
+        available = sorted(ep for ep in self.by_episode.keys() if ep >= episode)
+        string = ','.join(available[:self.EPISODES_TO_SHOW])
+        if len(available) > self.EPISODES_TO_SHOW:
+            string += '...'
+        return string
 
     def get_episode(self, episode: int) -> List[str]:
         return self.by_episode[episode]

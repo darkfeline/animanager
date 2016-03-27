@@ -65,7 +65,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
                 anime.aid, anime.title, anime.type,
                 '{}/{}'.format(anime.watched_episodes, anime.episodecount),
                 'yes' if anime.complete else '',
-                anime_files.available_string(),
+                anime_files.available_string(anime.watched_episodes),
             ))
         self.results['db'].set(results)
         self.results['db'].print()

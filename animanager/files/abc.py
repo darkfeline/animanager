@@ -46,7 +46,13 @@ class BaseFiles(ABC):
 class BaseAnimeFiles(BaseFiles):
 
     @abstractmethod
-    def available_string(self) -> str:
+    def available_string(self, episode: int) -> str:
+        """Return a string of available episodes.
+
+        episode is the number of currently watched episodes, which is used to
+        determine which episodes to display.
+
+        """
         return ''
 
     @abstractmethod

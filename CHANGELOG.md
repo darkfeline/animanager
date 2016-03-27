@@ -13,6 +13,10 @@ This project uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- Available episodes are displayed starting from the last watched episode,
+  instead of displaying all available episodes.  Available episodes are also
+  limited to the next eight, to account for anime with potentially hundreds of
+  episodes.
 - search command now orders by AID
 - watch command only offers to bump if the next episode was watched.
 - watching option added to search command.
