@@ -13,6 +13,7 @@ This project uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- search command now orders by AID
 - watch command only offers to bump if the next episode was watched.
 - watching option added to search command.
 - AnimeDB.search() changed to AnimeDB.select() with different semantics.

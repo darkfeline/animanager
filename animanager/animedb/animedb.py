@@ -186,7 +186,9 @@ class AnimeDB(
         aids.execute(
             """SELECT aid FROM anime
             LEFT JOIN watching USING (aid)
-            WHERE {}""".format(where_query),
+            WHERE {}
+            ORDER BY aid ASC
+            """.format(where_query),
             params)
         for aid in aids:
             aid = aid[0]
