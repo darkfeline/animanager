@@ -19,7 +19,7 @@ import json
 import os
 import re
 from collections import defaultdict
-from typing import Dict, List, Sequence
+from typing import Any, Dict, List, Sequence
 
 from .abc import BaseAnimeFiles
 
@@ -49,6 +49,10 @@ class FakeAnimeFiles(BaseAnimeFiles):
 
     def maybe_add_iter(self, filenames):
         pass
+
+    def available(self, episode: int) -> Any:
+        """Return whether episode is available."""
+        return False
 
     def available_string(self, episode):
         return ''
@@ -91,6 +95,10 @@ class AnimeFiles(BaseAnimeFiles):
     def maybe_add_iter(self, filenames):
         for filename in filenames:
             self.maybe_add(filename)
+
+    def available(self, episode: int) -> Any:
+        """Return whether episode is available."""
+        return self.by_episode.get(episode, None)
 
     def available_string(self, episode):
         """Return a string of available episodes."""

@@ -35,6 +35,10 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         '-w', '--watching', action='store_true',
         help='Limit to registered anime.',
     )
+    parser_search.add_argument(
+        '-a', '--available', action='store_true',
+        help='Limit to anime with available episodes.',
+    )
     parser_search.add_query()
 
     alias_s = 'search'
@@ -61,12 +65,16 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
             anime_files.maybe_add_iter(all_files)
             logger.debug('Found files %s', anime_files.by_episode)
             self.animedb.cache_files(anime.aid, anime_files)
-            results.append((
-                anime.aid, anime.title, anime.type,
-                '{}/{}'.format(anime.watched_episodes, anime.episodecount),
-                'yes' if anime.complete else '',
-                anime_files.available_string(anime.watched_episodes),
-            ))
+
+            if (
+                    not args.available or
+                    anime_files.available(anime.watched_episodes)):
+                results.append((
+                    anime.aid, anime.title, anime.type,
+                    '{}/{}'.format(anime.watched_episodes, anime.episodecount),
+                    'yes' if anime.complete else '',
+                    anime_files.available_string(anime.watched_episodes),
+                ))
         self.results['db'].set(results)
         self.results['db'].print()
 

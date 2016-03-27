@@ -16,7 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABC, abstractmethod
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Sequence
 
 __all__ = ['BaseFiles']
 
@@ -44,6 +44,11 @@ class BaseFiles(ABC):
 
 
 class BaseAnimeFiles(BaseFiles):
+
+    @abstractmethod
+    def available(self, episode: int) -> Any:
+        """Return whether episode is available."""
+        return False
 
     @abstractmethod
     def available_string(self, episode: int) -> str:

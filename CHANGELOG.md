@@ -10,6 +10,8 @@ This project uses [semantic versioning](http://semver.org/).
 - Add update command, which uses animedb results as opposed to anidb results for
   the add command.
 - Friendlier presentation for AID parse errors.
+- watching option added to search command.
+- search command can now filter anime with available episodes to watch.
 
 ### Changed
 
@@ -19,7 +21,6 @@ This project uses [semantic versioning](http://semver.org/).
   episodes.
 - search command now orders by AID
 - watch command only offers to bump if the next episode was watched.
-- watching option added to search command.
 - AnimeDB.search() changed to AnimeDB.select() with different semantics.
 - Instead of caching AniDB anime data as local XML files, Animanager's own
   animedb now serves as a "cache".  The original workflow had a redundant step:
