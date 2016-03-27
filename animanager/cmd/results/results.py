@@ -89,6 +89,11 @@ class Results:
         >>> Results(['title'], [('Konosuba',), ('Oreimo',)]).get(1)
         ('Konosuba',)
 
+        >>> Results(['title'], [('Konosuba',), ('Oreimo',)]).get(3)
+        Traceback (most recent call last):
+            ...
+        IndexError: list index out of range
+
         """
         return self.results[number - 1]
 

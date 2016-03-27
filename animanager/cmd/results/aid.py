@@ -20,6 +20,7 @@
 import re
 
 from .results import Results
+from .errors import InvalidResultKeyError, InvalidResultNumberError, InvalidSyntaxError
 
 __all__ = ['AIDResults', 'AIDResultsManager']
 
@@ -80,15 +81,28 @@ class AIDResultsManager:
         Default result number:    12
 
         """
+
+        if default_key not in self:
+            raise InvalidResultKeyError(default_key)
+
         if text.startswith('aid:'):
             return int(text[len('aid:'):])
         elif text.startswith('#'):
             match = self._key_pattern.match(text)
             if not match:
-                raise ValueError('Invalid aid syntax')
+                raise InvalidSyntaxError(text)
             key, number = match.groups()
             number = int(number)
         else:
             key = default_key
-            number = int(text)
-        return self[key].get_aid(number)
+            try:
+                number = int(text)
+            except ValueError:
+                raise InvalidSyntaxError(text)
+
+        try:
+            return self[key].get_aid(number)
+        except KeyError:
+            raise InvalidResultKeyError(key)
+        except IndexError:
+            raise InvalidResultNumberError(key, number)

@@ -15,14 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Results handling.
 
-This package provides classes for storing and printing results output from
-interactive commands and accessing those results when running other interactive
-commands.
+class AIDParseError(Exception):
+    pass
 
-"""
 
-from .aid import AIDResults, AIDResultsManager
-from .results import Results
-from .errors import AIDParseError
+class InvalidSyntaxError(ValueError, AIDParseError):
+
+    def __init__(self, text):
+        self.text = text
+        super().__init__('Invalid syntax: {}'.format(text))
+
+
+class InvalidResultKeyError(KeyError, AIDParseError):
+
+    def __init__(self, key):
+        self.key = key
+        super().__init__('Invalid result key {}'.format(key))
+
+
+class InvalidResultNumberError(IndexError, AIDParseError):
+
+    def __init__(self, key, number):
+        self.key = key
+        self.number = number
+        super().__init__('Invalid number {} for key {}'.format(
+            number, key))

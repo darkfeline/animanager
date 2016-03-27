@@ -27,8 +27,8 @@ from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
 from animanager.cache import cached_property
 from animanager.cmd import CmdMeta, CommandExit
-from animanager.cmd.results import AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
+from animanager.cmd.results import AIDResults, AIDResultsManager, AIDParseError
 
 from . import anidb, animedb, gpl, misc, watching
 
@@ -108,8 +108,9 @@ class AnimeCmd(
         else:
             try:
                 aid = self.results.parse_aid(arg, default_key=default_key)
-            except ValueError as e:
-                raise ValueError('Error parsing aid') from e
+            except AIDParseError as e:
+                print(str(e))
+                raise CommandExit()
             else:
                 self.lastaid = aid
                 return aid
