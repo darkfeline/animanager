@@ -103,7 +103,7 @@ class AnimeFiles(BaseAnimeFiles):
     def available_string(self, episode):
         """Return a string of available episodes."""
         available = sorted(ep for ep in self.by_episode.keys() if ep >= episode)
-        string = ','.join(available[:self.EPISODES_TO_SHOW])
+        string = ','.join(str(ep) for ep in available[:self.EPISODES_TO_SHOW])
         if len(available) > self.EPISODES_TO_SHOW:
             string += '...'
         return string
