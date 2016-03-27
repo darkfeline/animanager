@@ -7,6 +7,9 @@ This project uses [semantic versioning](http://semver.org/).
 ### Added
 
 - Debug logging.
+- Add update command, which uses animedb results as opposed to anidb results for
+  the add command.
+- Friendlier presentation for AID parse errors.
 
 ### Changed
 
