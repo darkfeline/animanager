@@ -25,9 +25,8 @@ from textwrap import dedent
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
-from animanager.cmd import CommandError
 from animanager.cache import cached_property
-from animanager.cmd import CmdMeta
+from animanager.cmd import CmdMeta, CommandError
 from animanager.files import FilePicker, PriorityRule
 from animanager.results.aid import AIDResults, AIDResultsManager
 

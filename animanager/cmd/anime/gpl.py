@@ -18,8 +18,7 @@
 import logging
 from textwrap import dedent
 
-from animanager.cmd import CmdMixinMeta
-from animanager.cmd import ArgumentParser
+from animanager.cmd import ArgumentParser, CmdMixinMeta
 
 logger = logging.getLogger(__name__)
 
