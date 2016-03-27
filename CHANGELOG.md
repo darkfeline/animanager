@@ -1,6 +1,6 @@
 # Change log
 
-This projects uses [semantic versioning](http://semver.org/).
+This project uses [semantic versioning](http://semver.org/).
 
 ## master
 
