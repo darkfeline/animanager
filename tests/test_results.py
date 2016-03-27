@@ -17,7 +17,7 @@
 
 import unittest
 
-from animanager.results.aid import AIDResults, AIDResultsManager
+from animanager.cmd.results import AIDResults, AIDResultsManager
 
 
 class ParseAIDTestCase(unittest.TestCase):
