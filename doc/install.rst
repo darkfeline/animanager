@@ -89,4 +89,4 @@ Animanager uses an INI configuration file.  An example ``config.ini`` is
 supplied with the source distribution.
 
 By default, Animanager looks for the configuration file at
-``~/.animanager/config.ini``.  This can be changed with the ``-config`` flag.
+``~/.animanager/config.ini``.  This can be changed with the ``--config`` flag.
