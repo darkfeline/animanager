@@ -27,8 +27,8 @@ from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
 from animanager.cache import cached_property
 from animanager.cmd import CmdMeta, CommandExit
+from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
-from animanager.cmd.results import AIDResults, AIDResultsManager, AIDParseError
 
 from . import anidb, animedb, gpl, misc, watching
 

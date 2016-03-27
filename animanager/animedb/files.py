@@ -15,14 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import (
-    List, Optional,
-)
+from typing import List, Optional
 
 from animanager.cache import cached_property
-from .collections import PriorityRule
 from animanager.files import AnimeFiles
 from animanager.files.abc import BaseAnimeFiles
+
+from .collections import PriorityRule
 
 
 class FilesMixin:

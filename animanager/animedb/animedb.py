@@ -17,9 +17,7 @@
 
 import logging
 import shutil
-from typing import (
-    Any, Dict, Iterator, Mapping, Sequence, Union,
-)
+from typing import Any, Dict, Iterator, Mapping, Sequence, Union
 
 from animanager import db
 from animanager.cache import cached_property
@@ -28,7 +26,6 @@ from animanager.date import timestamp
 from . import migrations
 from .cache import AnimeCacheMixin
 from .collections import Anime, AnimeFull, Episode, EpisodeType
-
 from .files import FilesMixin
 from .status import StatusMixin
 

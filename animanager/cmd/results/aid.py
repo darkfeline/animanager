@@ -19,8 +19,10 @@
 
 import re
 
+from .errors import (
+    InvalidResultKeyError, InvalidResultNumberError, InvalidSyntaxError,
+)
 from .results import Results
-from .errors import InvalidResultKeyError, InvalidResultNumberError, InvalidSyntaxError
 
 __all__ = ['AIDResults', 'AIDResultsManager']
 
