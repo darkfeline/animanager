@@ -30,6 +30,9 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
 
     def do_asearch(self, args):
         """Search AniDB."""
+        if not args.query:
+            print('Must supply query.')
+            return
         query = compile_re_query(args.query)
         results = self.searchdb.search(query)
         results = [(anime.aid, anime.main_title) for anime in results]
