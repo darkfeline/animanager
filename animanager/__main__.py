@@ -18,7 +18,7 @@
 import argparse
 import logging
 
-from animanager.main.anime import AnimeSubcommand
+from animanager import subcommands
 
 
 def _make_parser():
@@ -33,7 +33,7 @@ def _make_parser():
 
     # Set up subparsers.
     subparsers = parser.add_subparsers(title='Managers')
-    AnimeSubcommand.setup_parser(subparsers)
+    subcommands.AnimeSubcommand.setup_parser(subparsers)
 
     return parser
 

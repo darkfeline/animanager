@@ -15,12 +15,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This package contains tools for constructing custom Cmd, command line
-interface classes.
 
-"""
+class MetaCommandError(Exception):
+    """Error in meta command definition."""
 
-from .argparse import ArgumentParser
-from .errors import CommandExit
-from .meta import CmdMeta, CmdMixinMeta
-from .utils import compile_re_query, compile_sql_query
+    def __init__(self, message=''):
+        if not message:
+            message = 'Error in meta command definition'
+        super().__init__(message)
+
+
+class DanglingAliasError(MetaCommandError):
+    """Alias missing its command in command mixin class."""
+
+    def __init__(self, alias, full_name):
+        self.alias = alias
+        self.full_name = full_name
+        message = 'Alias do_{} missing its command do_{}'.format(
+            alias, full_name)
+        super().__init__(message)
+
+
+class CommandExit(Exception):
+    """This is used to exit a command in lieu of sys.exit()"""

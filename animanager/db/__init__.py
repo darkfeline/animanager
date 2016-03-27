@@ -15,21 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABC, abstractmethod
-
-
-class BaseDatabase(ABC):
-
-    """Interface for database classes."""
-
-    @abstractmethod
-    def connect(self, database):
-        pass
-
-    @abstractmethod
-    def close(self):
-        pass
-
-
-class DatabaseError(Exception):
-    """Database error."""
+from .cache import BaseCacheTableMixin
+from .fk import ForeignKeyMixin, MigrationManager
+from .migrations import MigrationMixin, migration
+from .sqlite import SQLiteDB
+from .versions import UserVersionMixin

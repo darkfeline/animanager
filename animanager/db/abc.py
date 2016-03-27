@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,4 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animedb import AnimeDB
+from abc import ABC, abstractmethod
+
+
+class BaseDatabase(ABC):
+
+    """Interface for database classes."""
+
+    @abstractmethod
+    def connect(self, database):
+        pass
+
+    @abstractmethod
+    def close(self):
+        pass

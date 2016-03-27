@@ -15,4 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animedb import AnimeDB
+import os
+from typing import Any, Callable, Iterable
+
+__all__ = ['find_files']
+
+
+def find_files(dirpath: str, test: Callable[[str], Any]) -> Iterable[str]:
+    """Find all files, filtered by test function.
+
+    Returns a generator that yields paths in no particular order.
+
+    """
+    for dirpath, _, filenames in os.walk(dirpath):
+        for filename in filenames:
+            filepath = os.path.join(dirpath, filename)
+            if test(filepath):
+                yield filepath

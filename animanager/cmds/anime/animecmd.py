@@ -26,9 +26,9 @@ from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
 from animanager.cache import cached_property
-from animanager.cmd import CmdMeta, CommandError
+from animanager.cmd import CmdMeta, CommandExit
+from animanager.cmd.results import AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
-from animanager.results.aid import AIDResults, AIDResultsManager
 
 from . import anidb, animedb, gpl, misc, watching
 
@@ -84,7 +84,7 @@ class AnimeCmd(
         # pylint: disable=redefined-builtin,broad-except
         try:
             return super().onecmd(str)
-        except CommandError:
+        except CommandExit:
             pass
         except Exception:
             traceback.print_exc()

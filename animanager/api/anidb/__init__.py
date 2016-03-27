@@ -17,35 +17,5 @@
 
 """AniDB API bindings."""
 
-import urllib.parse
-
-import animanager.api
-
-
-class HTTPAPIRequest(animanager.api.HTTPRequest):
-
-    """AniDB HTTP API request abstract class."""
-
-    CLIENT = 'kfanimanager'
-    CLIENTVER = 1
-    PROTOVER = 1
-
-    def __init__(self, request):
-        self.params = {
-            'client': self.CLIENT,
-            'clientver': self.CLIENTVER,
-            'protover': self.PROTOVER,
-            'request': request,
-        }
-
-    @property
-    def request_uri(self):
-        return 'http://api.anidb.net:9001/httpapi?' + \
-            urllib.parse.urlencode(self.params)
-
-
-class XMLTree(animanager.api.XMLTree):
-
-    @property
-    def error(self):
-        return self.root.find('error')
+from .anime import AnimeRequest
+from .titles import TitlesRequest, TitlesTree

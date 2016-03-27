@@ -18,11 +18,10 @@
 import pickle
 from collections import namedtuple
 
-import animanager.api
-import animanager.api.anidb
+from animanager.api import HTTPRequest, XMLResponse, XMLTree
 
 
-class TitlesRequest(animanager.api.HTTPRequest):
+class TitlesRequest(HTTPRequest):
 
     """Special AniDB request for titles data."""
 
@@ -35,7 +34,7 @@ class TitlesRequest(animanager.api.HTTPRequest):
         return TitlesResponse(response)
 
 
-class TitlesResponse(animanager.api.XMLResponse):
+class TitlesResponse(XMLResponse):
 
     @property
     def tree_class(self):
@@ -45,7 +44,7 @@ class TitlesResponse(animanager.api.XMLResponse):
 SearchEntry = namedtuple('SearchEntry', ['aid', 'main_title', 'titles'])
 
 
-class TitlesTree(animanager.api.anidb.XMLTree):
+class TitlesTree(XMLTree):
 
     @classmethod
     def load(cls, filename):

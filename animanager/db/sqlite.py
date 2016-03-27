@@ -17,7 +17,7 @@
 
 import apsw
 
-from animanager.db import BaseDatabase
+from .abc import BaseDatabase
 
 
 class SQLiteDB(BaseDatabase):

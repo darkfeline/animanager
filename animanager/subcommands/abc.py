@@ -15,4 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animedb import AnimeDB
+"""This module contains ABCs for subcommands."""
+
+from abc import ABC, abstractmethod
+
+__all__ = ['Subcommand']
+
+
+class Subcommand(ABC):
+
+    """Interface for adding subcommand parsers to argparse.ArgumentParser"""
+
+    @classmethod
+    @abstractmethod
+    def setup_parser(cls, subparsers):
+        pass

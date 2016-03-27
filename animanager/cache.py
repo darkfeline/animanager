@@ -19,6 +19,8 @@ import functools
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Optional, TypeVar
 
+__all__ = ['BaseCacheHolder', 'cached_property']
+
 
 class BaseCacheHolder(ABC):
 

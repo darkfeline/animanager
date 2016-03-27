@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.db import DatabaseError
-
+from .errors import DatabaseError
 from .migrations import MigrationManager as PlainMigrationManager
 from .sqlite import SQLiteDB
 

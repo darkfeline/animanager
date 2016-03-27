@@ -19,7 +19,7 @@
 
 import re
 
-from .base import Results
+from .results import Results
 
 __all__ = ['AIDResults', 'AIDResultsManager']
 

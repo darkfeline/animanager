@@ -15,33 +15,37 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import gzip
+import urllib.parse
+import urllib.request
 from abc import abstractmethod
 
-from .errors import DatabaseVersionError
-from .sqlite import SQLiteDB
+from .abc import Request, Response
 
 
-class UserVersionMixin(SQLiteDB):
+class HTTPRequest(Request):
 
-    """Enables SQLite database user version checking."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        version = get_user_version(self.cnx)
-        if version != self.version:
-            raise DatabaseVersionError(self.version, version)
+    """Implements basic HTTP request behavior."""
 
     @property
     @abstractmethod
-    def version(self):
-        return 0
+    def request_uri(self):
+        return ''
+
+    def open(self):
+        super().open()
+        return urllib.request.urlopen(self.request_uri)
 
 
-def get_user_version(cnx):
-    return cnx.cursor().execute('PRAGMA user_version').fetchone()[0]
+class HTTPResponse(Response):
 
+    """HTTP response.  Handles gzipped content."""
 
-def set_user_version(cnx, version):
-    # Parameterization doesn't work with PRAGMA.  This should still be safe
-    # from injections and such.
-    return cnx.cursor().execute('PRAGMA user_version={:d}'.format(version))
+    def __init__(self, response):
+        self.response = response
+
+    def content(self):
+        content = self.response.read()
+        if self.response.getheader('Content-encoding') == 'gzip':
+            content = gzip.decompress(content)
+        return content.decode()

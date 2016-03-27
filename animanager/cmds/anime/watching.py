@@ -21,10 +21,8 @@ from argparse import REMAINDER
 
 from tabulate import tabulate
 
-from animanager.cmd import CmdMixinMeta
-from animanager.files.anime import BaseAnimeFiles
-
-from .argparse import ArgumentParser
+from animanager.cmd import ArgumentParser, CmdMixinMeta
+from animanager.files.abc import BaseAnimeFiles
 
 
 class WatchingCmdMixin(metaclass=CmdMixinMeta):

@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2015-2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,12 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Results handling.
-
-This package provides classes for storing and printing results output from
-interactive commands and accessing those results when running other interactive
-commands.
+"""This package contains stuff needed to set up animanager.__main__, the entry
+point for the Animanager program.
 
 """
 
-__all__ = ['base', 'aid']
+from .anime import AnimeSubcommand

@@ -15,19 +15,40 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This package contains stuff needed to set up animanager.__main__, the entry
-point for the Animanager program.
-
-"""
-
 from abc import ABC, abstractmethod
+from typing import Iterable, Sequence
+
+__all__ = ['BaseFiles']
 
 
-class Subcommand(ABC):
+class BaseFiles(ABC):
 
-    """Interface for adding subcommand parsers to argparse.ArgumentParser"""
+    """Interface for collections of files."""
+
+    @abstractmethod
+    def maybe_add(self, filename: str) -> None:
+        pass
+
+    @abstractmethod
+    def maybe_add_iter(self, filenames: Iterable[str]) -> None:
+        pass
+
+    @abstractmethod
+    def to_json(self):
+        return '{}'
 
     @classmethod
     @abstractmethod
-    def setup_parser(cls, subparsers):
-        pass
+    def from_json(cls, string):
+        return cls()
+
+
+class BaseAnimeFiles(BaseFiles):
+
+    @abstractmethod
+    def available_string(self) -> str:
+        return ''
+
+    @abstractmethod
+    def get_episode(self, episode: int) -> Sequence[str]:
+        return ()

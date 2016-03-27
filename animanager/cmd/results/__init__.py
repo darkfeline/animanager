@@ -15,10 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import animanager.cmd
+"""Results handling.
 
+This package provides classes for storing and printing results output from
+interactive commands and accessing those results when running other interactive
+commands.
 
-class ArgumentParser(animanager.cmd.ArgumentParser):
+"""
 
-    def add_aid(self):
-        self.add_argument('aid')
+from .aid import AIDResults, AIDResultsManager
+from .results import Results

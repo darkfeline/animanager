@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Base results handling module."""
+"""Generic results handling."""
 
 from tabulate import tabulate
 

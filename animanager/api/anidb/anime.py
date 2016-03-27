@@ -19,12 +19,13 @@ import datetime
 import re
 from typing import Optional
 
-import animanager.api.anidb
 from animanager.api import XMLResponse
 from animanager.date import parse_date
 
+from .http import HTTPAPIRequest, XMLTree
 
-class AnimeRequest(animanager.api.anidb.HTTPAPIRequest):
+
+class AnimeRequest(HTTPAPIRequest):
 
     """Request for looking up anime by AID via AniDB's HTTP API."""
 
@@ -46,7 +47,7 @@ class AnimeResponse(XMLResponse):
         return AnimeTree
 
 
-class AnimeTree(animanager.api.anidb.XMLTree):
+class AnimeTree(XMLTree):
 
     @property
     def aid(self):

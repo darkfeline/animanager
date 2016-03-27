@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,4 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animedb import AnimeDB
+
+class DatabaseError(Exception):
+    """Database error."""
+
+
+class DatabaseMigrationError(DatabaseError):
+    """Database migration error."""
+
+
+class DatabaseVersionError(DatabaseError):
+    """Bad database version."""
+
+    def __init__(self, wanted, found):
+        self.wanted = wanted
+        self.found = found
+        super().__init__('Bad database version: wanted {}, found {}'.format(
+            self.wanted, self.found))

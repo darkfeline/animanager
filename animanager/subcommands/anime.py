@@ -15,4 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animedb import AnimeDB
+from animanager.cmds.anime import AnimeCmd
+from animanager.config import Config
+
+from .abc import Subcommand
+
+__all__ = ['AnimeSubcommand']
+
+
+class AnimeSubcommand(Subcommand):
+
+    @classmethod
+    def setup_parser(cls, subparsers):
+        parser = subparsers.add_parser(
+            'anime',
+            description='Anime manager.',
+            help='Start anime manager.',
+        )
+        parser.set_defaults(func=cls.main)
+
+    @staticmethod
+    def main(args):
+        config = Config(args.config)
+        cmd = AnimeCmd(config)
+        cmd.cmdloop()

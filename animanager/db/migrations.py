@@ -18,8 +18,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from animanager.db import DatabaseError
-
+from .errors import DatabaseMigrationError
 from .sqlite import SQLiteDB
 from .versions import get_user_version, set_user_version
 
@@ -156,7 +155,3 @@ def make_migration(from_version, to_version, migrate_func):
             '_to_version': to_version,
             'migrate': staticmethod(migrate_func),
         })
-
-
-class DatabaseMigrationError(DatabaseError):
-    """Database migration error."""

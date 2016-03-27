@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.db.cache import BaseCacheTableMixin
+from animanager.db import BaseCacheTableMixin
 
 
 class AnimeCacheMixin(BaseCacheTableMixin):

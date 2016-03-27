@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,24 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd.anime import AnimeCmd
-from animanager.config import Config
-from animanager.main import Subcommand
-
-
-class AnimeSubcommand(Subcommand):
-
-    @classmethod
-    def setup_parser(cls, subparsers):
-        parser = subparsers.add_parser(
-            'anime',
-            description='Anime manager.',
-            help='Start anime manager.',
-        )
-        parser.set_defaults(func=cls.main)
-
-    @staticmethod
-    def main(args):
-        config = Config(args.config)
-        cmd = AnimeCmd(config)
-        cmd.cmdloop()
+"""Package containing implemented Cmd classes."""

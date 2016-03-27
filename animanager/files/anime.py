@@ -18,28 +18,18 @@
 import json
 import os
 import re
-from abc import abstractmethod
 from collections import defaultdict
 from typing import Dict, List, Sequence
 
-from animanager.files import BaseFiles
+from .abc import BaseAnimeFiles
+
+__all__ = ['is_video', 'AnimeFiles']
 
 
 def is_video(filepath):
     """Check filename extension to see if it's a video file."""
     extension = os.path.splitext(filepath)[1]
     return extension in ('.mkv', '.mp4', '.avi')
-
-
-class BaseAnimeFiles(BaseFiles):
-
-    @abstractmethod
-    def available_string(self) -> str:
-        return ''
-
-    @abstractmethod
-    def get_episode(self, episode: int) -> Sequence[str]:
-        return ()
 
 
 class FakeAnimeFiles(BaseAnimeFiles):

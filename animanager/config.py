@@ -20,7 +20,7 @@ import os
 import shlex
 from typing import Any, Callable, Dict
 
-
+__all__ = ['Config']
 # pylint: disable=too-few-public-methods
 
 

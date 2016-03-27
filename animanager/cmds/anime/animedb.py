@@ -21,13 +21,9 @@ from typing import Any, Dict, List
 
 from tabulate import tabulate
 
-from animanager.cmd import CmdMixinMeta
-from animanager.cmd.utils import compile_sql_query
+from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_sql_query
 from animanager.date import fromtimestamp
-from animanager.files import find_files
-from animanager.files.anime import AnimeFiles, is_video
-
-from .argparse import ArgumentParser
+from animanager.files import AnimeFiles, find_files, is_video
 
 logger = logging.getLogger(__name__)
 
