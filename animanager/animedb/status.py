@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Any
+
 
 class StatusMixin:
 
@@ -64,7 +66,9 @@ class StatusMixin:
             # We store this in the cache.
             self.set_status(aid, enddate and episodecount <= number, number)
 
-    def set_status(self, aid, complete, watched_episodes):
+    def set_status(
+            self, aid: int, complete: Any, watched_episodes: int,
+    ) -> None:
         """Set anime status."""
         with self.cnx:
             cur = self.cnx.cursor()
@@ -80,4 +84,4 @@ class StatusMixin:
                     """INSERT INTO cache_anime
                     (aid, complete, watched_episodes)
                     VALUES (?, ?, ?)""",
-                    (aid, complete, watched_episodes))
+                    (aid, 1 if complete else 0, watched_episodes))
