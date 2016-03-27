@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Any
+from typing import Any, Iterator
 
 
 class StatusMixin:
@@ -85,3 +85,12 @@ class StatusMixin:
                     (aid, complete, watched_episodes)
                     VALUES (?, ?, ?)""",
                     (aid, 1 if complete else 0, watched_episodes))
+
+    def get_complete(self) -> Iterator[int]:
+        """Return AID of complete anime."""
+        cur = self.cnx.cursor()
+        cur.execute(
+            """SELECT aid FROM cache_anime
+            WHERE complete=?""", (1,))
+        for row in cur:
+            yield row[0]

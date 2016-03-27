@@ -18,7 +18,7 @@
 import logging
 import shutil
 from typing import (
-    Any, Dict, Iterable, Mapping, Sequence, Union,
+    Any, Dict, Iterator, Mapping, Sequence, Union,
 )
 
 from animanager import db
@@ -176,7 +176,7 @@ class AnimeDB(
     def select(
             self, where_query: str,
             params: Union[Sequence[Any], Mapping[str, Any]],
-    ) -> Iterable[Anime]:
+    ) -> Iterator[Anime]:
         """Perform an arbitrary SQL SELECT WHERE on the anime table.
 
         Returns an Anime instance generator.  Caches anime status lazily.
