@@ -45,8 +45,8 @@ You can also supply extra flags::
   $ make INSTALL_FLAGS=--user install
 
 This requires setuptools_ for Python 3.  You can also install Animanager's
-development dependencies, which includes setuptools, among other useful packages
-when building from source (see :ref:`requirements`).
+development dependencies, which includes setuptools, when building from source
+(see :ref:`requirements`).
 
 .. _setuptools: https://pythonhosted.org/setuptools/
 
