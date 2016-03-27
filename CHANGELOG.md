@@ -15,6 +15,7 @@ This project uses [semantic versioning](http://semver.org/).
 
 ### Changed
 
+- Anime watching no longer includes broken symlinks.
 - File picker now prefers files lower in alphabetical sorting (so v2 is picked
   over v1, for example).
 - Available episodes are displayed starting from the last watched episode,
