@@ -148,6 +148,10 @@ class ArgumentParser(argparse.ArgumentParser):
 
     """ArgumentParser customized for Animanager's CLI."""
 
+    def __init__(self, *args, **kwargs):
+        add_help = kwargs.pop('add_help', False)
+        super().__init__(self, *args, add_help=add_help, **kwargs)
+
     def exit(self, status=0, message=None):
         """Override SystemExit."""
         if message is not None:
