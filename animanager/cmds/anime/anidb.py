@@ -55,7 +55,7 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
     alias_u = 'update'
 
     def do_update(self, args):
-        """Update an existing anime from a local animedb search."""
-        aid = self.get_aid(args.aid, default_key='animedb')
+        """Update an existing anime from a local database search."""
+        aid = self.get_aid(args.aid, default_key='db')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
