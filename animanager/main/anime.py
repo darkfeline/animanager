@@ -17,7 +17,6 @@
 
 from animanager.cmd.anime import AnimeCmd
 from animanager.config import Config
-
 from animanager.main import Subcommand
 
 

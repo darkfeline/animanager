@@ -21,6 +21,7 @@ import argparse
 import functools
 import re
 import shlex
+import warnings
 from typing import Iterable
 from typing.re import Pattern
 
@@ -50,6 +51,7 @@ class ArgumentParser(argparse.ArgumentParser):
         then calling the original function with the parsed args.
 
         """
+        warnings.warn('parsing is deprecated')
         def decorate(func):
             @functools.wraps(func)
             def parse_args_around(self2, arg):

@@ -15,6 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Class method registration.
+
+This package contains classes for splitting up a class definition across
+multiple files.  Namely, defining some group of methods separate from the class
+and later "registering" those methods back on the class.
+
+Caveat emptor.
+
+"""
+
+import warnings
+
+warnings.warn('registry package is deprecated', stacklevel=0)
+
 
 class Registry:
 

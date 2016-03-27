@@ -24,20 +24,6 @@ from typing import Any, Callable, Dict
 # pylint: disable=too-few-public-methods
 
 
-def _make_section(dct, section_name, section_dct):
-    """Make session dispatcher."""
-    # __slots__
-    section_dct['__slots__'] = ('config',)
-    # __init__
-    def __init__(self, config):
-        self.config = config[section_name]
-    section_dct['__init__'] = __init__
-    # Making the class.
-    section_class = type(section_name, (), section_dct)
-    # Making the property.
-    dct[section_name] = property(lambda self: section_class(self.config))
-
-
 class ConfigMeta(type):
 
     """Metaclass for defining config classes.
@@ -63,8 +49,22 @@ class ConfigMeta(type):
             section_dct = dict()
             for config_name, config_getter in section.__dict__.items():
                 section_dct[config_name] = property(config_getter)
-            _make_section(dct, section_name, section_dct)
+            mcs._make_section(dct, section_name, section_dct)
         return super().__new__(mcs, name, parents, dct)
+
+    @staticmethod
+    def _make_section(dct, section_name, section_dct):
+        """Make session dispatcher."""
+        # __slots__
+        section_dct['__slots__'] = ('config',)
+        # __init__
+        def __init__(self, config):
+            self.config = config[section_name]
+        section_dct['__init__'] = __init__
+        # Making the class.
+        section_class = type(section_name, (), section_dct)
+        # Making the property.
+        dct[section_name] = property(lambda self: section_class(self.config))
 
 
 class BaseConfig(metaclass=ConfigMeta):

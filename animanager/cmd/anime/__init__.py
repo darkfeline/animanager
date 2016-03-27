@@ -26,7 +26,8 @@ from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
 from animanager.argparse import CommandError
-from animanager.cache import BaseCacheHolder, cached_property
+from animanager.cache import cached_property
+from animanager.cmd import CmdMeta
 from animanager.files import FilePicker, PriorityRule
 from animanager.results.aid import AIDResults, AIDResultsManager
 
@@ -35,7 +36,11 @@ from . import anidb, animedb, gpl, misc, watching
 logger = logging.getLogger(__name__)
 
 
-class AnimeCmd(Cmd, BaseCacheHolder):
+class AnimeCmd(
+        anidb.AniDBCmdMixin,
+        Cmd,
+        metaclass=CmdMeta,
+):
 
     # pylint: disable=no-self-use,unused-argument,too-many-instance-attributes
 
@@ -107,7 +112,6 @@ class AnimeCmd(Cmd, BaseCacheHolder):
                 return aid
 
 
-anidb.registry.add_commands(AnimeCmd)
 animedb.registry.add_commands(AnimeCmd)
 gpl.registry.add_commands(AnimeCmd)
 misc.registry.add_commands(AnimeCmd)

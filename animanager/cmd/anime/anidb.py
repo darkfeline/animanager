@@ -15,35 +15,35 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from animanager import cmd
 from animanager.argparse import compile_re_query
 from animanager.registry.cmd import CmdRegistry
 
 from .argparse import ArgumentParser
 
-registry = CmdRegistry()
 
+class AniDBCmdMixin(metaclass=cmd.CmdMixinMeta):
 
-_parser = ArgumentParser(prog='asearch')
-_parser.add_query()
+    parser_asearch = ArgumentParser()
+    parser_asearch.add_query()
 
-@registry.register_alias('as')
-@registry.register_command('asearch', _parser)
-def do_asearch(self, args):
-    """Search AniDB."""
-    query = compile_re_query(args.query)
-    results = self.searchdb.search(query)
-    results = [(anime.aid, anime.main_title) for anime in results]
-    self.results['anidb'].set(results)
-    self.results['anidb'].print()
+    alias_as = 'asearch'
 
+    def do_asearch(self, args):
+        """Search AniDB."""
+        query = compile_re_query(args.query)
+        results = self.searchdb.search(query)
+        results = [(anime.aid, anime.main_title) for anime in results]
+        self.results['anidb'].set(results)
+        self.results['anidb'].print()
 
-_parser = ArgumentParser(prog='add')
-_parser.add_aid()
+    parser_add = ArgumentParser()
+    parser_add.add_aid()
 
-@registry.register_alias('a')
-@registry.register_command('add', _parser)
-def do_add(self, args):
-    """Add an anime or update an existing anime."""
-    aid = self.get_aid(args.aid, default_key='anidb')
-    anime = self.anidb.lookup(aid)
-    self.animedb.add(anime)
+    alias_a = 'add'
+
+    def do_add(self, args):
+        """Add an anime or update an existing anime."""
+        aid = self.get_aid(args.aid, default_key='anidb')
+        anime = self.anidb.lookup(aid)
+        self.animedb.add(anime)

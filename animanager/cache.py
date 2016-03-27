@@ -28,6 +28,12 @@ class BaseCacheHolder(ABC):
     def purge_cache(self) -> None:
         pass
 
+    @classmethod
+    def __subclasshook__(cls, C):
+        if any('purge_cache' in B.__dict__ for B in C.__mro__):
+            return True
+        return NotImplemented
+
 
 T = TypeVar('T')
 
