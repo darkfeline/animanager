@@ -40,6 +40,10 @@ class FakeAnimeFiles(BaseAnimeFiles):
 
     """
 
+    def __init__(self):
+        self.regexp = re.compile('')
+        self.by_episode = {}
+
     def maybe_add(self, filename):
         pass
 
