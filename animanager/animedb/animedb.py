@@ -18,23 +18,26 @@
 import logging
 import shutil
 from typing import (
-    Any, Dict, Iterable, List, Mapping, Optional, Sequence, Union,
+    Any, Dict, Iterable, Mapping, Sequence, Union,
 )
 
 from animanager import db
 from animanager.cache import cached_property
 from animanager.date import timestamp
-from animanager.files import AnimeFiles
-from animanager.files.abc import BaseAnimeFiles
 
 from . import migrations
 from .cache import AnimeCacheMixin
-from .collections import Anime, AnimeFull, Episode, EpisodeType, PriorityRule
+from .collections import Anime, AnimeFull, Episode, EpisodeType
+
+from .files import FilesMixin
+from .status import StatusMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
+        FilesMixin,
+        StatusMixin,
         AnimeCacheMixin,
         db.UserVersionMixin,
         db.MigrationMixin,
@@ -263,144 +266,3 @@ class AnimeDB(
         self.set_watched(aid, self.episode_types['regular'].id, episode)
         self.set_status(
             aid, anime.enddate and episode >= anime.episodecount, episode)
-
-    def cache_status(self, aid, force=False):
-        """Calculate and cache status for given anime.
-
-        Don't do anything if status already exists and force is False.
-
-        """
-        with self.cnx:
-            cur = self.cnx.cursor()
-            if not force:
-                # We don't do anything if we already have this aid in our
-                # cache.
-                cur.execute(
-                    'SELECT 1 FROM cache_anime WHERE aid=?',
-                    (aid,))
-                if cur.fetchone() is not None:
-                    return
-
-            # Retrieve information for determining complete.
-            cur.execute("""
-                SELECT episodecount, enddate FROM anime WHERE aid=?
-                """, (aid,))
-            row = cur.fetchone()
-            if row is None:
-                raise ValueError('aid provided does not exist')
-            episodecount, enddate = row
-
-            # Select all regular episodes in ascending order.
-            cur.execute("""
-                SELECT number, user_watched FROM episode
-                WHERE aid=? AND type=?
-                ORDER BY number ASC
-                """, (aid, self.episode_types['regular'].id))
-
-            # We find the last consecutive episode that is user_watched.
-            number = 0
-            for number, watched in cur:
-                # Once we find the first unwatched episode, we set the last
-                # consecutive watched episode to the previous episode (or 0).
-                if watched == 0:
-                    number -= 1
-                    break
-            # We store this in the cache.
-            self.set_status(aid, enddate and episodecount <= number, number)
-
-    def set_status(self, aid, complete, watched_episodes):
-        """Set anime status."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute(
-                """UPDATE cache_anime
-                SET complete=?, watched_episodes=?
-                WHERE aid=?""",
-                (complete,
-                 watched_episodes,
-                 aid))
-            if self.cnx.changes() == 0:
-                cur.execute(
-                    """INSERT INTO cache_anime
-                    (aid, complete, watched_episodes)
-                    VALUES (?, ?, ?)""",
-                    (aid, complete, watched_episodes))
-
-    def cache_files(self, aid: int, anime_files: BaseAnimeFiles) -> None:
-        with self.cnx:
-            self.cache_status(aid)
-            self.cnx.cursor().execute(
-                """UPDATE cache_anime
-                SET anime_files=?
-                WHERE aid=?""",
-                (anime_files.to_json(), aid))
-
-    def get_files(self, aid: int) -> BaseAnimeFiles:
-        with self.cnx:
-            cur = self.cnx.cursor().execute(
-                'SELECT anime_files FROM cache_anime WHERE aid=?',
-                (aid,))
-            row = cur.fetchone()
-            if row is None:
-                raise ValueError('No cached files')
-            return AnimeFiles.from_json(row[0])
-
-    def set_regexp(self, aid, regexp):
-        """Set watching regexp for anime."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute(
-                'UPDATE watching SET regexp=? WHERE aid=?',
-                (regexp, aid),
-            )
-            if self.cnx.changes() == 0:
-                cur.execute(
-                    """INSERT INTO watching (aid, regexp)
-                    VALUES (?, ?)""", (aid, regexp))
-
-    def delete_regexp(self, aid):
-        """Delete watching regexp for anime."""
-        self.cnx.cursor().execute(
-            """DELETE FROM watching WHERE aid=?""",
-            (aid,))
-
-    def add_priority_rule(
-            self, regexp: str, priority: Optional[int] = None,
-    ) -> int:
-        """Add a file priority rule."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            if priority is None:
-                cur.execute('SELECT MAX(priority) FROM file_priority')
-                row = cur.fetchone()  # type: Optional[Tuple[Optional[int]]]
-                if cur is None:
-                    priority = 1
-                else:
-                    highest_priority = row[0]
-                    if highest_priority is None:
-                        priority = 1
-                    else:
-                        priority = highest_priority + 1
-            cur.execute(
-                """INSERT INTO file_priority (regexp, priority)
-                    VALUES (?, ?)""", (regexp, priority))
-            row_id = cur.execute('SELECT last_insert_rowid()').fetchone()[0]
-            del self.priority_rules
-        return row_id
-
-    @cached_property
-    def priority_rules(self) -> List[PriorityRule]:
-        """List file priority rules."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute('SELECT id, regexp, priority FROM file_priority')
-            return [
-                PriorityRule(rule_id, regexp, priority)
-                for rule_id, regexp, priority in cur]
-
-    def delete_priority_rule(self, rule_id: int) -> None:
-        """Delete a file priority rule."""
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute('DELETE FROM file_priority WHERE id=?', (rule_id,))
-            del self.priority_rules
