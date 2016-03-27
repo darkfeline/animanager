@@ -21,9 +21,13 @@ from typing import Any, Dict, List
 
 from tabulate import tabulate
 
-from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_sql_query
+from animanager.cmd import compile_sql_query
+from animanager.cmd import CmdMixinMeta
+from animanager.cmd import ArgumentParser
+
 from animanager.date import fromtimestamp
-from animanager.files import AnimeFiles, find_files, is_video
+from animanager.files import find_files
+from animanager.files import AnimeFiles, is_video
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +81,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         Episodes: {}/{}
         Start date: {}
         End date: {}
-        Complete: {}
-        {}""")
+        Complete: {}""")
 
     parser_show = ArgumentParser()
     parser_show.add_aid()
@@ -92,10 +95,6 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         anime = self.animedb.lookup(aid, args.show_episodes)
 
         complete_string = 'yes' if anime.complete else 'no'
-        if anime.regexp is None:
-            regexp_string = ''
-        else:
-            regexp_string = 'Watching regexp: {}'.format(anime.regexp)
         print(self._SHOW_MSG.format(
             anime.aid,
             anime.title,
@@ -105,8 +104,9 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
             fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
             fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
             complete_string,
-            regexp_string,
         ))
+        if anime.regexp:
+            print('Watching regexp: {}'.format(anime.regexp))
         if anime.episodes:
             episodes = sorted(anime.episodes, key=lambda x: (x.type, x.number))
             print('\n', tabulate(
