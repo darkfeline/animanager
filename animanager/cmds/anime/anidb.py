@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_re_query
+from animanager.cmd import CmdMixinMeta
+from animanager.cmd import compile_re_query
+from animanager.cmd import ArgumentParser
 
 
 class AniDBCmdMixin(metaclass=CmdMixinMeta):
@@ -42,7 +44,18 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
     alias_a = 'add'
 
     def do_add(self, args):
-        """Add an anime or update an existing anime."""
+        """Add an anime from an AniDB search."""
         aid = self.get_aid(args.aid, default_key='anidb')
+        anime = self.anidb.lookup(aid)
+        self.animedb.add(anime)
+
+    parser_update = ArgumentParser()
+    parser_update.add_aid()
+
+    alias_u = 'update'
+
+    def do_update(self, args):
+        """Update an existing anime from a local animedb search."""
+        aid = self.get_aid(args.aid, default_key='animedb')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
