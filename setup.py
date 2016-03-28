@@ -5,7 +5,7 @@ from setuptools import find_packages
 
 setup(
     name='animanager',
-    version='0.10.0',
+    version='0.10.1',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=['apsw', 'tabulate'],
     entry_points={
