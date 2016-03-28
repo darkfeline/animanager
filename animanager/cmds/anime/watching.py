@@ -103,8 +103,11 @@ class WatchingCmdMixin(metaclass=CmdMixinMeta):
             episode = args.episode  # type: int
         files = anime_files.get_episode(episode)
 
-        file = self.file_picker.pick(files)
+        if not files:
+            print('No files.')
+            return
 
+        file = self.file_picker.pick(files)
         subprocess.call(self.config.anime.player_args + [file])
         if episode == anime.watched_episodes + 1:
             user_input = input('Bump? [Yn]')
