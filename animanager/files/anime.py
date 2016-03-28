@@ -112,6 +112,7 @@ class AnimeFiles(BaseAnimeFiles):
         return string
 
     def get_episode(self, episode: int) -> List[str]:
+        """Get files of the given episode."""
         return self.by_episode[episode]
 
     def to_json(self):
