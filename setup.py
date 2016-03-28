@@ -16,7 +16,7 @@ setup(
 
     author='Allen Li',
     author_email='darkfeline@felesatra.moe',
-    description='Anime tracking and management application',
+    description='Command line program for advanced anime watching management',
     license='GPLv3',
     url='https://darkfeline.github.io/animanager/',
 )
