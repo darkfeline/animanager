@@ -109,3 +109,23 @@ class UpdateMixin:
             self.set_watched(aid, self.episode_types['regular'].id, episode)
             self.set_status(
                 aid, anime.enddate and episode >= anime.episodecount, episode)
+
+    def reset(self, aid, episode):
+        """Reset episode count for anime."""
+        params = {
+            'aid': aid,
+            'type': self.episode_types['regular'],
+            'watched': 1,
+            'number': episode,
+        }
+        with self.cnx:
+            cur = self.cnx.cursor()
+            cur.execute(
+                """UPDATE episode SET user_watched=:watched
+                WHERE aid=:aid AND type=:type AND number<=:number""",
+                params)
+            params['watched'] = 0
+            cur.execute(
+                """UPDATE episode SET user_watched=:watched
+                WHERE aid=:aid AND type=:type AND number>:number""",
+                params)
