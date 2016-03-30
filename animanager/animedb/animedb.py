@@ -70,7 +70,6 @@ class AnimeDB(
         super().purge_cache()
         del self.episode_types
         del self.episode_types_by_id
-        del self.priority_rules
 
     @cached_property
     def episode_types(self) -> Dict[int, EpisodeType]:

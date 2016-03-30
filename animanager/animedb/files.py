@@ -52,6 +52,10 @@ class FilesMixin:
             del self.priority_rules
         return row_id
 
+    def purge_cache(self):
+        super().purge_cache()
+        del self.priority_rules
+
     @cached_property
     def priority_rules(self) -> List[PriorityRule]:
         """List file priority rules."""
