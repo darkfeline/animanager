@@ -21,20 +21,21 @@ from typing import Dict
 
 from animanager import db
 from animanager.cache import cached_property
-from animanager.date import timestamp
 
 from . import migrations
 from .cache import AnimeCacheMixin
 from .collections import EpisodeType
 from .files import FilesMixin
-from .status import StatusMixin
 from .select import SelectMixin
+from .status import StatusMixin
+from .update import UpdateMixin
 
 logger = logging.getLogger(__name__)
 
 
 class AnimeDB(
         SelectMixin,
+        UpdateMixin,
         FilesMixin,
         StatusMixin,
         AnimeCacheMixin,
@@ -110,86 +111,3 @@ class AnimeDB(
         """
         return '{}{}'.format(self.episode_types_by_id[episode.type].prefix,
                              episode.number)
-
-    def add(self, anime):
-        """Add an anime (or update existing).
-
-        anime is an AnimeTree instance.
-
-        """
-        values = {
-            'aid': anime.aid,
-            'title': anime.title,
-            'type': anime.type,
-            'episodecount': anime.episodecount,
-            'startdate': anime.startdate,
-            'enddate': anime.enddate,
-        }
-        if anime.startdate is not None:
-            values['startdate'] = timestamp(anime.startdate)
-        if anime.enddate is not None:
-            values['enddate'] = timestamp(anime.enddate)
-        with self.cnx:
-            cur = self.cnx.cursor()
-            cur.execute(
-                """UPDATE anime
-                SET title=:title, type=:type, episodecount=:episodecount,
-                    startdate=:startdate, enddate=:enddate
-                WHERE aid=:aid""", values)
-            if self.cnx.changes() == 0:
-                cur.execute(
-                    """INSERT INTO anime (
-                        aid, title, type, episodecount,
-                        startdate, enddate)
-                    VALUES (
-                        :aid, :title, :type, :episodecount,
-                        :startdate, :enddate)""", values)
-            for episode in anime.episodes:
-                self.add_episode(anime.aid, episode)
-
-    def add_episode(self, aid, episode):
-        with self.cnx:
-            cur = self.cnx.cursor()
-            values = {
-                'aid': aid,
-                'type': episode.type,
-                'number': episode.number,
-                'title': episode.title,
-                'length': episode.length,
-            }
-            cur.execute(
-                """UPDATE episode
-                SET title=:title, length=:length
-                WHERE aid=:aid AND type=:type AND number=:number""",
-                values)
-            if self.cnx.changes() == 0:
-                values['user_watched'] = 0
-                cur.execute(
-                    """INSERT INTO episode (
-                        aid, type, number, title,
-                        length, user_watched)
-                    VALUES (
-                        :aid, :type, :number, :title,
-                        :length, :user_watched)""", values)
-
-    def set_watched(self, aid, ep_type, number):
-        """Set episode as watched."""
-        self.cnx.cursor().execute(
-            """UPDATE episode SET user_watched=:watched
-            WHERE aid=:aid AND type=:type AND number=:number""",
-            {
-                'aid': aid,
-                'type': ep_type,
-                'number': number,
-                'watched': 1,
-            })
-
-    def bump(self, aid):
-        """Bump anime regular episode count."""
-        anime = self.lookup(aid)
-        if anime.complete:
-            return
-        episode = anime.watched_episodes + 1
-        self.set_watched(aid, self.episode_types['regular'].id, episode)
-        self.set_status(
-            aid, anime.enddate and episode >= anime.episodecount, episode)
