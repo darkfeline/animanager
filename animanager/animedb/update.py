@@ -105,6 +105,7 @@ class UpdateMixin:
         if anime.complete:
             return
         episode = anime.watched_episodes + 1
-        self.set_watched(aid, self.episode_types['regular'].id, episode)
-        self.set_status(
-            aid, anime.enddate and episode >= anime.episodecount, episode)
+        with self.cnx:
+            self.set_watched(aid, self.episode_types['regular'].id, episode)
+            self.set_status(
+                aid, anime.enddate and episode >= anime.episodecount, episode)
