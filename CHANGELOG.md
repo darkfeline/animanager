@@ -8,6 +8,10 @@ This project uses [semantic versioning](http://semver.org/).
 
 - Added reset command.
 
+### Changed
+
+- `r` alias changed from `register` command to `reset` command.
+
 ## 0.10.1 - 2016-03-28
 
 ### Added
