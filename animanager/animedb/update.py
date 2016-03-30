@@ -114,7 +114,7 @@ class UpdateMixin:
         """Reset episode count for anime."""
         params = {
             'aid': aid,
-            'type': self.episode_types['regular'],
+            'type': self.episode_types['regular'].id,
             'watched': 1,
             'number': episode,
         }
