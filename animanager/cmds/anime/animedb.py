@@ -133,3 +133,14 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         """Bump anime."""
         aid = self.get_aid(args.aid, default_key='db')
         self.animedb.bump(aid)
+
+    parser_reset = ArgumentParser()
+    parser_reset.add_aid()
+    parser_reset.add_argument('episode', type=int)
+
+    alias_r = 'reset'
+
+    def do_reset(self, args):
+        """Reset anime watched episodes."""
+        aid = self.get_aid(args.aid, default_key='db')
+        self.animedb.reset(aid, args.episode)

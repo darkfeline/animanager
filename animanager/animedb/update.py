@@ -129,3 +129,4 @@ class UpdateMixin:
                 """UPDATE episode SET user_watched=:watched
                 WHERE aid=:aid AND type=:type AND number>:number""",
                 params)
+            self.cache_status(aid, force=True)

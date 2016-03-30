@@ -31,8 +31,6 @@ class WatchingCmdMixin(metaclass=CmdMixinMeta):
     parser_register.add_aid()
     parser_register.add_argument('query', nargs=REMAINDER)
 
-    alias_r = 'register'
-
     def do_register(self, args):
         """Register watching regexp for an anime."""
         aid = self.get_aid(args.aid, default_key='db')
