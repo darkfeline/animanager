@@ -70,7 +70,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
 
             if (
                     not args.available or
-                    anime_files.available(anime.watched_episodes + 1)):
+                    anime_files.available_string(anime.watched_episodes)):
                 results.append((
                     anime.aid, anime.title, anime.type,
                     '{}/{}'.format(anime.watched_episodes, anime.episodecount),

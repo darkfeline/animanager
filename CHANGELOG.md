@@ -11,6 +11,8 @@ This project uses [semantic versioning](http://semver.org/).
 ### Changed
 
 - `r` alias changed from `register` command to `reset` command.
+- `search -a` command now includes shows with any available unwatched episodes,
+  not just the next unwatched episode.
 
 ## 0.10.1 - 2016-03-28
 
