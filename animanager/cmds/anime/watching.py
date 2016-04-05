@@ -22,7 +22,6 @@ from argparse import REMAINDER
 from tabulate import tabulate
 
 from animanager.cmd import ArgumentParser, CmdMixinMeta
-from animanager.files.abc import BaseAnimeFiles
 
 
 class WatchingCmdMixin(metaclass=CmdMixinMeta):
@@ -94,11 +93,11 @@ class WatchingCmdMixin(metaclass=CmdMixinMeta):
         """Watch an anime."""
         aid = self.get_aid(args.aid, default_key='db')
         anime = self.animedb.lookup(aid)
-        anime_files = self.animedb.get_files(aid)  # type: BaseAnimeFiles
+        anime_files = self.animedb.get_files(aid)
         if args.episode is None:
-            episode = anime.watched_episodes + 1  # type: int
+            episode = anime.watched_episodes + 1
         else:
-            episode = args.episode  # type: int
+            episode = args.episode
         files = anime_files.get_episode(episode)
 
         if not files:

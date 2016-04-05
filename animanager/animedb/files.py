@@ -36,7 +36,7 @@ class FilesMixin:
             cur = self.cnx.cursor()
             if priority is None:
                 cur.execute('SELECT MAX(priority) FROM file_priority')
-                row = cur.fetchone()  # type: Optional[Tuple[Optional[int]]]
+                row = cur.fetchone()
                 if cur is None:
                     priority = 1
                 else:

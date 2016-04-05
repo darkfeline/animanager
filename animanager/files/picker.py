@@ -17,7 +17,7 @@
 
 import re
 from collections import defaultdict
-from typing import Dict, Iterable, List, Sequence
+from typing import Iterable, Sequence
 from typing.re import Pattern
 
 __all__ = ['PriorityRule', 'FilePicker']
@@ -45,7 +45,8 @@ class FilePicker:
     """Class for picking one file out of many based on priority rules."""
 
     def __init__(self, rules: Iterable[PriorityRule]) -> None:
-        self.rules = defaultdict(list)  # type: Dict[int, List[Pattern]]
+        # Maps priority int to lists of regexp patterns.
+        self.rules = defaultdict(list)
         for rule in rules:
             self.rules[rule.priority].append(rule.regexp)
 

@@ -17,7 +17,6 @@
 
 import logging
 from textwrap import dedent
-from typing import Any, Dict, List
 
 from tabulate import tabulate
 
@@ -46,8 +45,8 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
     def do_search(self, args):
         """Search Animanager database."""
 
-        where_queries = []  # type: List[str]
-        params = {}  # type: Dict[str, Any]
+        where_queries = []
+        params = {}
         if args.watching or args.available:
             where_queries.append('regexp IS NOT NULL')
         if args.query:

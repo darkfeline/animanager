@@ -81,10 +81,9 @@ class CmdMixinMeta(type):
                 dct['help_' + cmd_name] = mcs._command_help(parser)
 
         # Set up aliases.
-        for attr, obj in dct_items:
+        for attr, command in dct_items:
             if attr.startswith('alias_'):
                 alias = attr[6:]
-                command = obj  # type: str
                 dct['do_' + alias] = mcs._alias_do(alias, command)
                 dct['help_' + alias] = mcs._alias_help(command)
         return super().__new__(mcs, name, parents, dct)

@@ -19,7 +19,7 @@ import json
 import os
 import re
 from collections import defaultdict
-from typing import Any, Dict, List, Sequence
+from typing import Any, List, Sequence
 
 from .abc import BaseAnimeFiles
 
@@ -85,7 +85,8 @@ class AnimeFiles(BaseAnimeFiles):
 
     def __init__(self, regexp: str) -> None:
         self.regexp = re.compile(regexp)
-        self.by_episode = defaultdict(list)  # type: Dict[int, List[str]]
+        # Maps episode int to list of filename strings.
+        self.by_episode = defaultdict(list)
 
     def maybe_add(self, filename):
         basename = os.path.basename(filename)

@@ -18,7 +18,6 @@
 import configparser
 import os
 import shlex
-from typing import Any, Callable, Dict
 
 __all__ = ['Config']
 # pylint: disable=too-few-public-methods
@@ -69,8 +68,8 @@ class ConfigMeta(type):
 
 class BaseConfig(metaclass=ConfigMeta):
 
-    DEF_VALUES = {}  # type: Dict[str, Dict[str, Any]]
-    CONVERTERS = {}  # type: Dict[str, Callable[[str], Any]]
+    DEF_VALUES = {}
+    CONVERTERS = {}
 
     def __init__(self, path: str) -> None:
         self.path = path
