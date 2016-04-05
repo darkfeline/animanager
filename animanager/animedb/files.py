@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from functools import lru_cache
 from typing import List, Optional
 
-from animanager.cache import cached_property
 from animanager.files import AnimeFiles
 from animanager.files.abc import BaseAnimeFiles
 
@@ -56,7 +56,7 @@ class FilesMixin:
         super().purge_cache()
         del self.priority_rules
 
-    @cached_property
+    @lru_cache(None)
     def priority_rules(self) -> List[PriorityRule]:
         """List file priority rules."""
         with self.cnx:

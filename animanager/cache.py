@@ -15,16 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import functools
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, TypeVar
 
-__all__ = ['BaseCacheHolder', 'cached_property']
+__all__ = ['BaseCacheHolder']
 
 
 class BaseCacheHolder(ABC):
 
     """Interface for objects that hold a cache."""
+
+    # pylint: disable=too-few-public-methods
 
     @abstractmethod
     def purge_cache(self) -> None:
@@ -35,27 +35,3 @@ class BaseCacheHolder(ABC):
         if any('purge_cache' in B.__dict__ for B in C.__mro__):
             return True
         return NotImplemented
-
-
-T = TypeVar('T')
-
-
-def cached_property(func: Callable[[Any], T]) -> T:
-    """Decorator implementing a cached property.
-
-    Property can be cleared via descriptor protocol __delete__.
-
-    """
-    is_set = False
-    cache = None  # type: Optional[T]
-    @functools.wraps(func)
-    def cache_wrapper(self):
-        nonlocal cache, is_set
-        if not is_set:
-            cache = func(self)
-            is_set = True
-        return cache
-    def clear_cache(self):
-        nonlocal is_set
-        is_set = False
-    return property(cache_wrapper, None, clear_cache)

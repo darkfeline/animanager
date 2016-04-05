@@ -17,10 +17,10 @@
 
 import logging
 import shutil
+from functools import lru_cache
 from typing import Dict
 
 from animanager import db
-from animanager.cache import cached_property
 
 from . import migrations
 from .cache import AnimeCacheMixin
@@ -71,7 +71,7 @@ class AnimeDB(
         del self.episode_types
         del self.episode_types_by_id
 
-    @cached_property
+    @lru_cache(None)
     def episode_types(self) -> Dict[int, EpisodeType]:
         """Episode types.
 
@@ -86,7 +86,7 @@ class AnimeDB(
             ep_types[name] = EpisodeType(type_id, prefix)
         return ep_types
 
-    @cached_property
+    @lru_cache(None)
     def episode_types_by_id(self) -> Dict[str, EpisodeType]:
         """Episode types by id.
 

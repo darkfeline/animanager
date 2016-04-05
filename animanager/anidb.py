@@ -17,9 +17,9 @@
 
 import logging
 import os
+from functools import lru_cache
 
 from animanager.api.anidb import AnimeRequest, TitlesRequest, TitlesTree
-from animanager.cache import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -51,15 +51,15 @@ class SearchDB:
     def __init__(self, cachedir):
         self.cachedir = cachedir
 
-    @cached_property
+    @lru_cache(None)
     def titles_file(self):
         return os.path.join(self.cachedir, 'anime-titles.xml')
 
-    @cached_property
+    @lru_cache(None)
     def pickle_file(self):
         return os.path.join(self.cachedir, 'anime-titles.pickle')
 
-    @cached_property
+    @lru_cache(None)
     def titles_tree(self) -> TitlesTree:
         return self.load_tree()
 

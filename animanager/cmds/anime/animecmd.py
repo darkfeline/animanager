@@ -20,12 +20,12 @@ import logging
 import readline  # pylint: disable=unused-import
 import traceback
 from cmd import Cmd
+from functools import lru_cache
 from textwrap import dedent
 
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
 from animanager.animedb import AnimeDB
-from animanager.cache import cached_property
 from animanager.cmd import CmdMeta, CommandExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
@@ -94,7 +94,7 @@ class AnimeCmd(
     def purge_cache(self):
         del self.file_picker
 
-    @cached_property
+    @lru_cache(None)
     def file_picker(self) -> FilePicker:
         return FilePicker((PriorityRule(rule.regexp, rule.priority)
                            for rule in self.animedb.priority_rules))
