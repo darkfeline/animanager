@@ -51,14 +51,17 @@ class SearchDB:
     def __init__(self, cachedir):
         self.cachedir = cachedir
 
+    @property
     @lru_cache(None)
     def titles_file(self):
         return os.path.join(self.cachedir, 'anime-titles.xml')
 
+    @property
     @lru_cache(None)
     def pickle_file(self):
         return os.path.join(self.cachedir, 'anime-titles.pickle')
 
+    @property
     @lru_cache(None)
     def titles_tree(self) -> TitlesTree:
         return self.load_tree()

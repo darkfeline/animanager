@@ -94,6 +94,7 @@ class AnimeCmd(
     def purge_cache(self):
         del self.file_picker
 
+    @property
     @lru_cache(None)
     def file_picker(self) -> FilePicker:
         return FilePicker((PriorityRule(rule.regexp, rule.priority)

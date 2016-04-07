@@ -71,6 +71,7 @@ class AnimeDB(
         del self.episode_types
         del self.episode_types_by_id
 
+    @property
     @lru_cache(None)
     def episode_types(self) -> Dict[int, EpisodeType]:
         """Episode types.
@@ -86,6 +87,7 @@ class AnimeDB(
             ep_types[name] = EpisodeType(type_id, prefix)
         return ep_types
 
+    @property
     @lru_cache(None)
     def episode_types_by_id(self) -> Dict[str, EpisodeType]:
         """Episode types by id.
