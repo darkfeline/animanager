@@ -5,6 +5,9 @@ Animanager_ is a command line program for advanced anime watching management.
 
 .. _Animanager: https://darkfeline.github.io/animanager/
 
+User guide
+----------
+
 .. toctree::
    :maxdepth: 1
 
@@ -14,7 +17,16 @@ Animanager_ is a command line program for advanced anime watching management.
    aid-selection
    adding
    search
+   cmdref
    watching
+
+Developer guide
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   db
 
 Indices and tables
 ==================
