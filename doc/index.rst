@@ -13,6 +13,7 @@ Animanager_ is a command line program for advanced anime watching management.
    cli
    aid-selection
    adding
+   search
    watching
 
 Indices and tables
