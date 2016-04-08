@@ -12,6 +12,8 @@ Animanager_ is a command line program for advanced anime watching management.
    quickstart
    cli
    aid-selection
+   adding
+   watching
 
 Indices and tables
 ==================
