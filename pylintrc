@@ -13,6 +13,7 @@ disable=
   abstract-class-instantiated,
   # pylint doesn't know about generics used for type hints.
   unsubscriptable-object,
+  invalid-sequence-index,
   # isort handles this for us.
   ungrouped-imports,
 

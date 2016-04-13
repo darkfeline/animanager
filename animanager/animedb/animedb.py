@@ -64,7 +64,7 @@ class AnimeDB(
             logger.info('Migration needed, backing up database')
             shutil.copyfile(self.database, self.database + '~')
             logger.info('Migrating database')
-            super().migrate()
+            super().migrate()  # pylint: disable=no-member
 
     def purge_cache(self):
         super().purge_cache()

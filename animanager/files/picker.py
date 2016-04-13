@@ -17,10 +17,12 @@
 
 import re
 from collections import defaultdict
+import typing
 from typing import Iterable, Sequence
-from typing.re import Pattern
 
 __all__ = ['PriorityRule', 'FilePicker']
+
+Pattern = typing.re.Pattern
 
 
 class PriorityRule(tuple):

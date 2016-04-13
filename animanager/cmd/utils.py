@@ -16,8 +16,10 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+import typing
 from typing import Iterable
-from typing.re import Pattern
+
+Pattern = typing.re.Pattern
 
 
 def compile_re_query(args: Iterable[str]) -> Pattern:
