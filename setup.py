@@ -18,5 +18,5 @@ setup(
     author_email='darkfeline@felesatra.moe',
     description='Command line program for advanced anime watching management',
     license='GPLv3',
-    url='https://darkfeline.github.io/animanager/',
+    url='https://www.felesatra.moe/animanager/',
 )

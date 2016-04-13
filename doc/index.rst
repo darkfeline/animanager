@@ -3,7 +3,7 @@ Animanager Documentation
 
 Animanager_ is a command line program for advanced anime watching management.
 
-.. _Animanager: https://darkfeline.github.io/animanager/
+.. _Animanager: https://www.felesatra.moe/animanager/
 
 User guide
 ----------
