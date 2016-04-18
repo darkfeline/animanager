@@ -36,7 +36,9 @@ class SQLiteDB:
 
     def __init__(self, *args, **kwargs):
         self.connect(*args, **kwargs)
-        version = get_version(self.cnx)
+
+        # Check database version.
+        version = self.get_version()
         if version != self.version:
             raise DatabaseVersionError(self.version, version)
 
@@ -66,14 +68,12 @@ class SQLiteDB:
         """Close the database connection."""
         self.cnx.close()
 
+    def get_version(self):
+        """Get database user version."""
+        return self.cursor().execute('PRAGMA user_version').fetchone()[0]
 
-def get_version(cnx):
-    """Get SQLite database user version."""
-    return cnx.cursor().execute('PRAGMA user_version').fetchone()[0]
-
-
-def set_version(cnx, version):
-    """Set SQLite database user version."""
-    # Parameterization doesn't work with PRAGMA, so we have to use string
-    # formatting.  This is safe from injections because it coerces to int.
-    return cnx.cursor().execute('PRAGMA user_version={:d}'.format(version))
+    def set_version(self, version):
+        """Set database user version."""
+        # Parameterization doesn't work with PRAGMA, so we have to use string
+        # formatting.  This is safe from injections because it coerces to int.
+        return self.cursor().execute('PRAGMA user_version={:d}'.format(version))
