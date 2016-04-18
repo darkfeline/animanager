@@ -18,9 +18,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from .errors import DatabaseMigrationError
-from .sqlite import SQLiteDB
-from .versions import get_user_version, set_user_version
+from .sqlite import SQLiteDB, DatabaseError
 
 logger = logging.getLogger(__name__)
 
@@ -155,3 +153,7 @@ def make_migration(from_version, to_version, migrate_func):
             '_to_version': to_version,
             'migrate': staticmethod(migrate_func),
         })
+
+
+class MigrationError(DatabaseError):
+    """Migration error."""

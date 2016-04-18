@@ -17,8 +17,6 @@
 
 import apsw
 
-from .errors import DatabaseVersionError
-
 
 class SQLiteDB:
 
@@ -81,3 +79,18 @@ class SQLiteDB:
         fget=get_version,
         fset=set_version,
         doc='SQLite database user version.')
+
+
+class DatabaseError(Exception):
+    """Generic database error."""
+
+
+class DatabaseVersionError(DatabaseError):
+
+    """Bad database version."""
+
+    def __init__(self, wanted, found):
+        self.wanted = wanted
+        self.found = found
+        super().__init__('Bad database version: wanted {}, found {}'.format(
+            self.wanted, self.found))
