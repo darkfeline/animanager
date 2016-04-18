@@ -42,7 +42,11 @@ class SQLiteDB:
 
     @property
     def version(self):
-        """Required database version."""
+        """Required database version.
+
+        You should override this in subclasses.
+
+        """
         return 0
 
     def connect(self, *args, **kwargs):
