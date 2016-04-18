@@ -17,12 +17,12 @@
 
 import apsw
 
+from .errors import DatabaseVersionError
+
 
 class SQLiteDB:
 
-    """SQLite database.
-
-    Provides minimum functionality for a SQLite connection.
+    """SQLite database for Animanager.
 
     SQLiteDB mixins that extend __init__() should call super().__init__()
     before running their own code, especially if they need access to the SQLite
@@ -36,10 +36,35 @@ class SQLiteDB:
 
     def __init__(self, *args, **kwargs):
         self.connect(*args, **kwargs)
+        version = get_version(self.cnx)
+        if version != self.version:
+            raise DatabaseVersionError(self.version, version)
+
+    @property
+    def version(self):
+        """Required database version."""
+        return 0
 
     def connect(self, *args, **kwargs):
+        """Connect to the database.
+
+        This is called in :meth:`__init__`, so you should not call it yourself.
+
+        """
         # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
 
     def close(self):
         self.cnx.close()
+
+
+def get_version(cnx):
+    """Get SQLite database user version."""
+    return cnx.cursor().execute('PRAGMA user_version').fetchone()[0]
+
+
+def set_version(cnx, version):
+    """Set SQLite database user version."""
+    # Parameterization doesn't work with PRAGMA, so we have to use string
+    # formatting.  This is safe from injections because it coerces to int.
+    return cnx.cursor().execute('PRAGMA user_version={:d}'.format(version))

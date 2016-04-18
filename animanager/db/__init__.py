@@ -19,4 +19,3 @@ from .cache import BaseCacheTableMixin
 from .fk import ForeignKeyMixin, MigrationManager
 from .migrations import MigrationMixin, migration
 from .sqlite import SQLiteDB
-from .versions import UserVersionMixin

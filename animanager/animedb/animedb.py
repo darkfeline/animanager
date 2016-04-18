@@ -39,7 +39,6 @@ class AnimeDB(
         FilesMixin,
         StatusMixin,
         AnimeCacheMixin,
-        db.UserVersionMixin,
         db.MigrationMixin,
         db.ForeignKeyMixin,
         db.SQLiteDB,
