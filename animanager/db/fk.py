@@ -15,22 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .errors import DatabaseError
 from .migrations import MigrationManager as PlainMigrationManager
-from .sqlite import SQLiteDB
-
-
-class ForeignKeyMixin(SQLiteDB):
-
-    """Enables SQLite foreign key support."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        cur = self.cnx.cursor()
-        cur.execute('PRAGMA foreign_keys = 1')
-        cur.execute('PRAGMA foreign_keys')
-        if cur.fetchone()[0] != 1:
-            raise DatabaseError('Foreign keys are not supported.')
 
 
 class MigrationManager(PlainMigrationManager):

@@ -23,27 +23,6 @@ from .sqlite import SQLiteDB, DatabaseError
 logger = logging.getLogger(__name__)
 
 
-class MigrationMixin(SQLiteDB):
-
-    """Automated migration."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.migrate()
-
-    @property
-    @abstractmethod
-    def migration_manager(self):
-        pass
-
-    def needs_migration(self):
-        """Check if database needs migration."""
-        return self.migration_manager.needs_migration(self.cnx)
-
-    def migrate(self):
-        self.migration_manager.migrate(self.cnx)
-
-
 class MigrationManager:
 
     """Simple database migration manager."""

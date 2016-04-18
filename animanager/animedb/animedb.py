@@ -39,8 +39,6 @@ class AnimeDB(
         FilesMixin,
         StatusMixin,
         AnimeCacheMixin,
-        db.MigrationMixin,
-        db.ForeignKeyMixin,
         db.SQLiteDB,
 ): # pylint: disable=too-many-ancestors
 

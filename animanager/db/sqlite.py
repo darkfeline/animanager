@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
 import apsw
+
+logger = logging.getLogger(__name__)
 
 
 class SQLiteDB:
@@ -32,12 +36,40 @@ class SQLiteDB:
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, migration_manager, *args, **kwargs):
+        self.migration_manager = migration_manager
         self.connect(*args, **kwargs)
+
+        self.enable_foreign_keys()
+        self.migrate()
 
         # Check database version.
         if self.version != self.required_version:
-            raise DatabaseVersionError(self.required_version, self.version)
+            raise VersionError(self.required_version, self.version)
+
+    def enable_foreign_keys(self):
+        """Enable SQLite foreign key support."""
+        cur = self.cursor()
+        cur.execute('PRAGMA foreign_keys = 1')
+        cur.execute('PRAGMA foreign_keys')
+        if cur.fetchone()[0] != 1:
+            raise SQLiteError('Foreign keys are not supported.')
+
+    def disable_foreign_keys(self):
+        """Disable SQLite foreign key support."""
+        self.cursor().execute('PRAGMA foreign_keys = 0')
+
+    def needs_migration(self):
+        """Check if database needs migration."""
+        return self.migration_manager.needs_migration(self.cnx)
+
+    def migrate(self):
+        """Migrate database to newest version.
+
+        This method is idempotent.
+
+        """
+        self.migration_manager.migrate(self.cnx)
 
     @property
     def required_version(self):
@@ -85,7 +117,11 @@ class DatabaseError(Exception):
     """Generic database error."""
 
 
-class DatabaseVersionError(DatabaseError):
+class SQLiteError(DatabaseError):
+    """Database error caused by SQLite."""
+
+
+class VersionError(DatabaseError):
 
     """Bad database version."""
 

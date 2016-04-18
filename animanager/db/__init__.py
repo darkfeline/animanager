@@ -17,5 +17,5 @@
 
 from .cache import BaseCacheTableMixin
 from .fk import ForeignKeyMixin, MigrationManager
-from .migrations import MigrationMixin, migration
+from .migrations import migration
 from .sqlite import SQLiteDB
