@@ -17,10 +17,8 @@
 
 import apsw
 
-from .abc import BaseDatabase
 
-
-class SQLiteDB(BaseDatabase):
+class SQLiteDB:
 
     """SQLite database.
 

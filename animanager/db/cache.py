@@ -19,10 +19,8 @@ from abc import abstractmethod
 
 from animanager.cache import BaseCacheHolder
 
-from .abc import BaseDatabase
 
-
-class BaseCacheTableMixin(BaseDatabase, BaseCacheHolder):
+class BaseCacheTableMixin(BaseCacheHolder):
 
     """Interface for cache table mixins.
 
