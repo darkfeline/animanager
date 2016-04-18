@@ -39,11 +39,11 @@ class SQLiteDB:
 
         # Check database version.
         version = self.get_version()
-        if version != self.version:
-            raise DatabaseVersionError(self.version, version)
+        if version != self.required_version:
+            raise DatabaseVersionError(self.required_version, version)
 
     @property
-    def version(self):
+    def required_version(self):
         """Required database version.
 
         You should override this in subclasses.

@@ -51,7 +51,7 @@ class AnimeDB(
         super().__init__(database)
 
     @property
-    def version(self):
+    def required_version(self):
         return self.migration_manager.current_version
 
     @property
