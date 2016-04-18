@@ -55,6 +55,7 @@ class SQLiteDB:
         self.cnx = apsw.Connection(*args, **kwargs)
 
     def close(self):
+        """Close the database connection."""
         self.cnx.close()
 
 
