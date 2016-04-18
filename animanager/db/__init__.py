@@ -16,6 +16,5 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from .cache import BaseCacheTableMixin
-from .fk import ForeignKeyMixin, MigrationManager
-from .migrations import migration
+from .migrations import migration, MigrationManager
 from .sqlite import SQLiteDB

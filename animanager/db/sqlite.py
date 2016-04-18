@@ -36,16 +36,15 @@ class SQLiteDB:
 
     """
 
-    def __init__(self, migration_manager, *args, **kwargs):
-        self.migration_manager = migration_manager
+    def __init__(self, *args, **kwargs):
         self.connect(*args, **kwargs)
 
-        self.enable_foreign_keys()
-        self.migrate()
+    def __enter__(self):
+        return self.cnx.__enter__()
 
-        # Check database version.
-        if self.version != self.required_version:
-            raise VersionError(self.required_version, self.version)
+    def __exit__(self, type, value, tb):
+        # pylint: disable=redefined-builtin
+        return self.cnx.__exit__(type, value, tb)
 
     def enable_foreign_keys(self):
         """Enable SQLite foreign key support."""
@@ -59,35 +58,29 @@ class SQLiteDB:
         """Disable SQLite foreign key support."""
         self.cursor().execute('PRAGMA foreign_keys = 0')
 
-    def needs_migration(self):
-        """Check if database needs migration."""
-        return self.migration_manager.needs_migration(self.cnx)
+    def check_foreign_keys(self):
+        """Check foreign keys for errors.
 
-    def migrate(self):
-        """Migrate database to newest version.
-
-        This method is idempotent.
+        :return: a list of errors
+        :rtype: list
 
         """
-        self.migration_manager.migrate(self.cnx)
-
-    @property
-    def required_version(self):
-        """Required database version.
-
-        You should override this in subclasses.
-
-        """
-        return 0
+        cur = self.cursor()
+        cur.execute('PRAGMA foreign_key_check')
+        return cur.fetchall()
 
     def connect(self, *args, **kwargs):
         """Connect to the database.
 
-        This is called in :meth:`__init__`, so you should not call it yourself.
+        This is called in :meth:`__init__`, so you do not need to call it
+        yourself.
 
         """
         # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
+
+        self.enable_foreign_keys()
+        self.migrate()
 
     def cursor(self):
         """Get database cursor."""
@@ -119,14 +112,3 @@ class DatabaseError(Exception):
 
 class SQLiteError(DatabaseError):
     """Database error caused by SQLite."""
-
-
-class VersionError(DatabaseError):
-
-    """Bad database version."""
-
-    def __init__(self, wanted, found):
-        self.wanted = wanted
-        self.found = found
-        super().__init__('Bad database version: wanted {}, found {}'.format(
-            self.wanted, self.found))

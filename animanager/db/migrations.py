@@ -15,24 +15,40 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-from abc import ABC, abstractmethod
+"""Migration features.
 
-from .sqlite import SQLiteDB, DatabaseError
+"""
+
+import logging
+from collections import namedtuple
+
+from .sqlite import DatabaseError
 
 logger = logging.getLogger(__name__)
 
 
 class MigrationManager:
 
-    """Simple database migration manager."""
+    """Simple database migration manager.
 
-    def __init__(self, initial_version=0):
+    This is used to set up database migrations and is then injected into
+    :class:`SQLiteDB`.
+
+    .. attribute:: initial_ver
+
+       Starting version supported by manager.
+
+    .. attribute:: final_ver
+
+       Final version supported by manager.
+
+    """
+
+    def __init__(self, initial_ver=0):
         self.migrations = dict()
-        self.initial_version = initial_version
-        self.current_version = initial_version
+        self.initial_ver = self.final_ver = initial_ver
 
-    def register(self, migration: 'BaseMigration') -> None:
+    def register(self, migration: 'Migration') -> None:
         """Register a migration.
 
         You can only register migrations in order.  For example, you can
@@ -40,99 +56,83 @@ class MigrationManager:
         cannot register 1 to 2 followed by 3 to 4.  ValueError will be raised.
 
         """
-        if not isinstance(migration, BaseMigration):
-            raise TypeError('migration must be a BaseMigration instance')
-        if migration.from_version != self.current_version:
+        if not isinstance(migration, Migration):
+            raise TypeError('migration must be a Migration instance')
+        if migration.from_ver != self.final_ver:
             raise ValueError('cannot register disjoint migration')
-        if migration.to_version <= migration.from_version:
+        if migration.to_ver <= migration.from_ver:
             raise ValueError('migration must upgrade version')
-        self.migrations[migration.from_version] = migration
-        self.current_version = migration.to_version
+        self.migrations[migration.from_ver] = migration
+        self.final_ver = migration.to_ver
 
-    def needs_migration(self, cnx):
-        """Check if database needs migration."""
-        return get_user_version(cnx) < self.current_version
+    def check_version(self, database):
+        """Check database version."""
+        if database.version != self.final_ver:
+            raise VersionError(self.final_ver, database.version)
 
-    def migrate_single(self, cnx, version: int) -> int:
+    def migrate_single(self, database):
         """Perform a single migration starting from given version.
 
         Returns the version after migration.
 
         """
-        with cnx:
-            try:
-                migration = self.migrations[version]
-            except KeyError:
-                raise DatabaseMigrationError(
-                    'no registered migration for database version')
+        database.disable_foreign_keys()
+        with database:
+            version = database.version
+            if version not in self.migrations:
+                raise MigrationError('No registered migration for database version')
+            migration = self.migrations[version]
             logger.info('Migrating database from %d to %d',
-                        migration.from_version, migration.to_version)
-            migration.migrate(cnx)
-            version = migration.to_version
-            set_user_version(cnx, version)
-            return version
+                        migration.from_ver, migration.to_ver)
+            migration.migrate(database)
+            foreign_key_errors = database.check_foreign_keys()
+            if foreign_key_errors:
+                raise MigrationError(
+                    'Foreign key check failed: %r',
+                    foreign_key_errors)
+            database.version = migration.to_ver
+        database.enable_foreign_keys()
 
-    def migrate(self, cnx):
+    def migrate(self, database):
         """Migrate a database as needed.
 
-        This is safe to call on an up to date database, on an old database, or
-        an uninitialized database (version 0).
+        This method is safe to call on an up to date database, on an old
+        database, or an uninitialized database (version 0).
+
+        This method is idempotent.
+
+        :param database: database to migrate
+        :type database: SQLiteDB
 
         """
-        version = get_user_version(cnx)
-        while version < self.current_version:
-            version = self.migrate_single(cnx, version)
+        while database.version < self.final_ver:
+            self.migrate_single(database)
+
+Migration = namedtuple('Migration', ['from_ver', 'to_ver', 'migrate_func'])
+"""Migration namedtuple representing a single migration specification.
+
+:param int from_ver: version before migration
+:param int to_ver: version after migration
+:param callable migrate_func: a function taking a DB-API connection object
+
+"""
 
 
-class BaseMigration(ABC):
-
-    """Base Migration class.
-
-    Subclasses define database migrations from one version to another version.
-    Migration subclasses should not commit their transaction nor increment the
-    database user version; the MigrationManager handles that.
-
-    """
-
-    _from_version = 0
-    _to_version = 0
-
-    @property
-    def from_version(self):
-        return self._from_version
-
-    @property
-    def to_version(self):
-        return self._to_version
-
-    @staticmethod
-    @abstractmethod
-    def migrate(cnx):
-        """Migrate a database to the current version.
-
-        cnx is a DB-API connection object.
-
-        """
-
-
-def migration(from_version, to_version):
+def migration(from_ver, to_ver):
     """Migration decorator."""
-    def decorate(func):
-        return make_migration(from_version, to_version, func)
-    return decorate
-
-
-def make_migration(from_version, to_version, migrate_func):
-    """Make BaseMigration subclass dynamically."""
-    return type(
-        'M{}'.format(to_version),
-        (BaseMigration,),
-        {
-            '_from_version': from_version,
-            '_to_version': to_version,
-            'migrate': staticmethod(migrate_func),
-        })
+    return lambda func: Migration(from_ver, to_ver, func)
 
 
 class MigrationError(DatabaseError):
     """Migration error."""
+
+
+class VersionError(DatabaseError):
+
+    """Bad database version."""
+
+    def __init__(self, wanted, found):
+        self.wanted = wanted
+        self.found = found
+        super().__init__('Bad database version: wanted {}, found {}'.format(
+            self.wanted, self.found))
