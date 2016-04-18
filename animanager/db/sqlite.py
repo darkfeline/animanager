@@ -38,9 +38,8 @@ class SQLiteDB:
         self.connect(*args, **kwargs)
 
         # Check database version.
-        version = self.get_version()
-        if version != self.required_version:
-            raise DatabaseVersionError(self.required_version, version)
+        if self.version != self.required_version:
+            raise DatabaseVersionError(self.required_version, self.version)
 
     @property
     def required_version(self):
@@ -77,3 +76,8 @@ class SQLiteDB:
         # Parameterization doesn't work with PRAGMA, so we have to use string
         # formatting.  This is safe from injections because it coerces to int.
         return self.cursor().execute('PRAGMA user_version={:d}'.format(version))
+
+    version = property(
+        fget=get_version,
+        fset=set_version,
+        doc='SQLite database user version.')
