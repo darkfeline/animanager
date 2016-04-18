@@ -6,7 +6,8 @@ This project uses [semantic versioning](http://semver.org/).
 
 ### Added
 
-- Added reset command.
+- Added `reset` command.
+- Added `-c` flag to `unregister` command.
 
 ### Changed
 

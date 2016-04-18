@@ -40,8 +40,8 @@ class ArgumentParser(argparse.ArgumentParser):
         self.print_help()
         raise CommandExit()
 
-    def add_aid(self):
-        self.add_argument('aid')
+    def add_aid(self, *args, **kwargs):
+        self.add_argument('aid', *args, **kwargs)
 
     def add_query(self):
         """Add a generic query argument."""

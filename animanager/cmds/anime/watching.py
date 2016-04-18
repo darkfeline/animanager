@@ -50,15 +50,24 @@ class WatchingCmdMixin(metaclass=CmdMixinMeta):
             ))
         self.animedb.set_regexp(aid, pattern)
 
-    parser = ArgumentParser()
-    parser.add_aid()
+    parser_unregister = ArgumentParser()
+    parser_unregister.add_argument(
+        '-c', '--complete', action='store_true',
+        help='Unregister all complete anime.')
+    parser_unregister.add_aid(default=None)
 
     alias_ur = 'unregister'
 
     def do_unregister(self, args):
         """Unregister watching regexp for an anime."""
-        aid = self.get_aid(args.aid, default_key='db')
-        self.animedb.delete_regexp(aid)
+        if args.complete:
+            self.animedb.delete_regexp_complete()
+        else:
+            if args.aid is None:
+                self.do_help('unregister')
+            else:
+                aid = self.get_aid(args.aid, default_key='db')
+                self.animedb.delete_regexp(aid)
 
     parser_add_rule = ArgumentParser()
     parser_add_rule.add_argument('regexp')
