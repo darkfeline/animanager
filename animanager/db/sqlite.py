@@ -58,6 +58,10 @@ class SQLiteDB:
         # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
 
+    def cursor(self):
+        """Get database cursor."""
+        return self.cnx.cursor()
+
     def close(self):
         """Close the database connection."""
         self.cnx.close()
