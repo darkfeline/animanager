@@ -78,7 +78,6 @@ class SQLiteDB:
         """
         # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
-
         self.enable_foreign_keys()
 
     def cursor(self):
