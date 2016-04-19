@@ -35,6 +35,8 @@ class Request(ABC):
 
 class Response(ABC):
 
+    """API response abstract class."""
+
     @abstractmethod
     def content(self):
         """Get response content."""

@@ -22,6 +22,8 @@ from abc import abstractmethod
 
 from .abc import Request, Response
 
+# pylint: disable=too-few-public-methods
+
 
 class HTTPRequest(Request):
 
@@ -30,6 +32,7 @@ class HTTPRequest(Request):
     @property
     @abstractmethod
     def request_uri(self):
+        """URI of request."""
         return ''
 
     def open(self):
@@ -39,7 +42,7 @@ class HTTPRequest(Request):
 
 class HTTPResponse(Response):
 
-    """HTTP response.  Handles gzipped content."""
+    """Basic HTTP response.  Handles gzipped content."""
 
     def __init__(self, response):
         self.response = response
