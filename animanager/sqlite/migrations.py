@@ -15,13 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Migration features."""
+"""Simple SQLite migration features."""
 
 import logging
+from typing import Callable
 
-from .db import DatabaseError
+from .db import DatabaseError, SQLiteDB
 
 logger = logging.getLogger(__name__)
+
+MigrationFunction = Callable[[SQLiteDB], None]
 
 
 class MigrationManager:
@@ -50,7 +53,10 @@ class MigrationManager:
 
         You can only register migrations in order.  For example, you can
         register migrations from version 1 to 2, then 2 to 3, then 3 to 4.  You
-        cannot register 1 to 2 followed by 3 to 4.  ValueError will be raised.
+        cannot register 1 to 2 followed by 3 to 4.
+
+        :raises TypeError: argument is not an instance of :class:`Migration`
+        :raises ValueError: something is wrong with the migration
 
         """
         if not isinstance(migration, Migration):
@@ -62,8 +68,16 @@ class MigrationManager:
         self.migrations[migration.from_ver] = migration
         self.final_ver = migration.to_ver
 
-    def migration(self, from_ver, to_ver):
-        """Function decorator to create a migration and register it."""
+    def migration(self, from_ver: int, to_ver: int) -> \
+        Callable[[MigrationFunction], 'Migration']:
+        """Function decorator to create a migration and register it.
+
+        >>> manager = MigrationManager()
+        >>> @manager.migration(0, 1)
+        ... def migrate(database):
+        ...     pass
+
+        """
         def decorate(func):
             """Decorator."""
             migration = Migration(from_ver, to_ver, func)
@@ -71,12 +85,16 @@ class MigrationManager:
             return migration
         return decorate
 
-    def needs_migration(self, database):
+    def needs_migration(self, database) -> bool:
         """Check if database needs migration."""
         return database.version < self.final_ver
 
     def check_version(self, database):
-        """Check database version."""
+        """Check database version.
+
+        :raises VersionError: database does not satisfy final migration version
+
+        """
         if database.version != self.final_ver:
             raise VersionError(self.final_ver, database.version)
 

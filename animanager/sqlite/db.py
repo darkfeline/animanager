@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""SQLite database module."""
+
 import logging
 
 import apsw
@@ -24,15 +26,17 @@ logger = logging.getLogger(__name__)
 
 class SQLiteDB:
 
-    """SQLite database for Animanager.
+    """This class encapsulates :class:`apsw.Connection` with useful helpers for
+    foreign keys and user version.
 
-    SQLiteDB mixins that extend __init__() should call super().__init__()
-    before running their own code, especially if they need access to the SQLite
-    connection.  Mixins should therefore be included in reverse order:
+    :class:`SQLiteDB` is not DB-API compatible, like :class:`apsw.Connection`.
 
-        class Foo(SpamMixin, EggsMixin, SQLiteDB):
+    Database access is mainly handled through :meth:`cursor` and using
+    :class:`SQLiteDB` as a context manager to control transactions:
 
-    This will run __init__() in order: SQLiteDB, EggsMixin, SpamMixin
+    >>> db = SQLiteDB(':memory:')
+    >>> with db:
+    ...     cur = db.cursor()  # This is in a transaction.
 
     """
 
@@ -58,7 +62,7 @@ class SQLiteDB:
         """Disable SQLite foreign key support."""
         self.cursor().execute('PRAGMA foreign_keys = 0')
 
-    def check_foreign_keys(self):
+    def check_foreign_keys(self) -> list:
         """Check foreign keys for errors.
 
         :return: a list of errors
@@ -88,15 +92,15 @@ class SQLiteDB:
         """Close the database connection."""
         self.cnx.close()
 
-    def get_version(self):
+    def get_version(self) -> int:
         """Get database user version."""
         return self.cursor().execute('PRAGMA user_version').fetchone()[0]
 
-    def set_version(self, version):
+    def set_version(self, version: int) -> None:
         """Set database user version."""
         # Parameterization doesn't work with PRAGMA, so we have to use string
         # formatting.  This is safe from injections because it coerces to int.
-        return self.cursor().execute('PRAGMA user_version={:d}'.format(version))
+        self.cursor().execute('PRAGMA user_version={:d}'.format(version))
 
     version = property(
         fget=get_version,

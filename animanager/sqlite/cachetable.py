@@ -15,17 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Tools for managing temporary cache tables in a SQLite database."""
+
+from typing import Callable, List
+
+from .db import SQLiteDB
+
+CacheFunction = Callable[[SQLiteDB], None]
+
 
 class CacheTableManager:
 
-    """CacheTable manager.
+    """:class:`CacheTable` manager.
 
     Instances of this class manage cache table setup and cleanup on a
     :class:`SQLiteDB`.
 
+    :param SQLiteDB database: database to bind to
+    :param list tables: cache tables to use
+
     """
 
-    def __init__(self, database, tables):
+    def __init__(self, database: SQLiteDB, tables: List['CacheTable']):
         self.database = database
         for table in tables:
             if not isinstance(table, CacheTable):
@@ -52,13 +63,13 @@ class CacheTable:
     """Cache table class.
 
     Instances of this class represent cache tables that can be added to
-    :class:`SQLiteDB`.
+    :class:`~animanager.sqlite.db.SQLiteDB`.
 
     Instances need to define setup and cleanup functions via the :meth:`setup`
-    and :meth`cleanup` decorator methods.  The functions should take the
-    :class:`SQLiteDB` as an argument.
+    and :meth:`cleanup` decorator methods.  The functions should take the
+    :class:`~animanager.sqlite.db.SQLiteDB` as an argument.
 
-    Setup functions should use IF NOT EXISTS to create tables.
+    Setup functions should use ``IF NOT EXISTS`` to create tables.
 
     """
 
@@ -66,12 +77,12 @@ class CacheTable:
         self.setup_func = None
         self.cleanup_func = None
 
-    def setup(self, func):
+    def setup(self, func: CacheFunction):
         """Decorator for setup function."""
         self.setup_func = func
         return func
 
-    def cleanup(self, func):
+    def cleanup(self, func: CacheFunction):
         """Decorator for cleanup function."""
         self.cleanup_func = func
         return func

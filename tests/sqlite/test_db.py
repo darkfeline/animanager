@@ -22,6 +22,7 @@ from hypothesis import strategies
 
 from animanager.sqlite.db import SQLiteDB
 
+
 # pylint doesn't understand hypothesis
 # pylint: disable=no-value-for-parameter
 

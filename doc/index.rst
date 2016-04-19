@@ -26,7 +26,7 @@ Developer guide
 .. toctree::
    :maxdepth: 1
 
-   db
+   sqlite
 
 Indices and tables
 ==================
