@@ -33,6 +33,5 @@ class DatabaseTestCase(unittest.TestCase):
 
     @hypothesis.given(strategies.integers(-2**31, 2**31-1))
     def test_set_version(self, ver):
-        self.db.set_version(ver)
-        new_ver = self.db.get_version()
-        self.assertEqual(ver, new_ver)
+        self.db.version = ver
+        self.assertEqual(self.db.version, ver)
