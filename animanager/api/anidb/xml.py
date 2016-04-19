@@ -15,6 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Optional
+
+from animanager.api.xml import XMLTree
+
+
+def check_for_errors(tree: XMLTree) -> Optional[Exception]:
+    """Check AniDB response XML tree for errors.
+
+    :raises APIError: error found
+
+    """
+    if tree.root.find('error'):
+        raise APIError()
+
 
 class APIError(Exception):
-    pass
+    """AniDB API error."""

@@ -19,32 +19,20 @@ import datetime
 import re
 from typing import Optional
 
-from animanager.api import XMLResponse
+from animanager.api.xml import XMLTree
+from animanager.api.http import get_content
 from animanager.date import parse_date
 
-from .http import HTTPAPIRequest, XMLTree
+from .http import api_request
+from .xml import check_for_errors
 
 
-class AnimeRequest(HTTPAPIRequest):
-
-    """Request for looking up anime by AID via AniDB's HTTP API."""
-
-    def __init__(self, aid):
-        super().__init__('anime')
-        self.params['aid'] = aid
-
-    def open(self):
-        response = super().open()
-        return AnimeResponse(response)
-
-
-class AnimeResponse(XMLResponse):
-
-    """Response from AnimeRequest."""
-
-    @property
-    def tree_class(self):
-        return AnimeTree
+def request_anime(aid):
+    response = api_request('anime', aid=aid)
+    content = get_content(response)
+    tree = AnimeTree.fromstring(content)
+    check_for_errors(tree)
+    return tree
 
 
 class AnimeTree(XMLTree):

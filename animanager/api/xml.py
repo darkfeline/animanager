@@ -16,74 +16,47 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import xml.etree.ElementTree as ET
-from abc import abstractmethod
-
-from .http import HTTPResponse
-
-
-class XMLResponse(HTTPResponse):
-
-    """Abstract class for XML responses.
-
-    Implement tree_class property in subclasses.
-
-    """
-
-    @property
-    @abstractmethod
-    def tree_class(self):
-        pass
-
-    def xml(self):
-        """Return the lookup data as an XMLResponseTree subclass.
-
-        Can raise APIError in case of error.  Errors include being banned or a
-        non-existent AID.
-
-        """
-        content = self.content()
-        # pylint: disable=not-callable
-        tree = self.tree_class(ET.ElementTree(ET.fromstring(content)))
-        if tree.error:
-            raise tree.error
-        return tree
 
 
 class XMLTree:
 
-    """Base class for handling API XML responses.
+    """XML ElementTree wrapper class.
 
-    Check error property for any errors.
+    Be careful, `tree` should be an :class:`xml.etree.ElementTree.ElementTree`
+    instance.
 
-    parse() class method can be used to load the results from an existing XML
-    file containing the data.
+    :param xml.etree.ElementTree.ElementTree tree: XML tree to wrap
 
-    write() method can be used to write the XML data to a file.
+    .. attribute:: tree (ElementTree)
+
+    .. attribute:: root (Element)
 
     """
 
     @classmethod
-    def parse(cls, file):
-        """Create instance from an XML data file."""
-        return cls(ET.parse(file))
+    def parse(cls, file: str) -> 'XMLTree':
+        """Create instance from an XML file.
 
-    def __init__(self, tree: ET.ElementTree) -> None:
-        """Initialize instance.
-
-        Be careful, tree should be an ElementTree, specifically a
-        xml.etree.ElementTree.ElementTree instance.
+        :param str file: file path
 
         """
+        return cls(ET.parse(file))
+
+    @classmethod
+    def fromstring(cls, text: str) -> 'XMLTree':
+        """Create instance from an XML string."""
+        return cls(ET.ElementTree(ET.fromstring(text)))
+
+    def __init__(self, tree: ET.ElementTree) -> None:
         if not isinstance(tree, ET.ElementTree):
             raise TypeError('Not an ElementTree object.')
         self.tree = tree
         self.root = tree.getroot()
 
-    def write(self, file):
-        """Write XML data to a file."""
-        self.tree.write(file)
+    def write(self, file: str) -> None:
+        """Write XML to a file.
 
-    @property
-    def error(self):
-        """Return an exception if anything is wrong."""
-        pass
+        :param str file: file path
+
+        """
+        self.tree.write(file)

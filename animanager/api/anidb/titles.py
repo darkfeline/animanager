@@ -17,34 +17,29 @@
 
 import pickle
 from collections import namedtuple
+from urllib.request import urlopen
 
-from animanager.api import HTTPRequest, XMLResponse, XMLTree
+from animanager.api.xml import XMLTree
+from animanager.api.http import get_content
 
-
-class TitlesRequest(HTTPRequest):
-
-    """Special AniDB request for titles data."""
-
-    @property
-    def request_uri(self):
-        return "http://anidb.net/api/anime-titles.xml.gz"
-
-    def open(self):
-        response = super().open()
-        return TitlesResponse(response)
+from .xml import check_for_errors
 
 
-class TitlesResponse(XMLResponse):
-
-    @property
-    def tree_class(self):
-        return TitlesTree
+def request_titles():
+    """Request AniDB titles file."""
+    response = urlopen('http://anidb.net/api/anime-titles.xml.gz')
+    content = get_content(response)
+    tree = TitlesTree.fromstring(content)
+    check_for_errors(tree)
+    return tree
 
 
 SearchEntry = namedtuple('SearchEntry', ['aid', 'main_title', 'titles'])
 
 
 class TitlesTree(XMLTree):
+
+    """AniDB anime titles."""
 
     @classmethod
     def load(cls, filename):

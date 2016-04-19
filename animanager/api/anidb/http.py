@@ -18,35 +18,22 @@
 """The module contains classes for working with AniDB's HTTP API."""
 
 import urllib.parse
+from urllib.request import urlopen
 
-from animanager import api
-
-
-class HTTPAPIRequest(api.HTTPRequest):
-
-    """AniDB HTTP API request abstract class."""
-
-    CLIENT = 'kfanimanager'
-    CLIENTVER = 1
-    PROTOVER = 1
-
-    def __init__(self, request):
-        self.params = {
-            'client': self.CLIENT,
-            'clientver': self.CLIENTVER,
-            'protover': self.PROTOVER,
-            'request': request,
-        }
-
-    @property
-    def request_uri(self):
-        return 'http://api.anidb.net:9001/httpapi?' + \
-            urllib.parse.urlencode(self.params)
+CLIENT = 'kfanimanager'
+CLIENTVER = 1
+PROTOVER = 1
 
 
-class XMLTree(api.XMLTree):
-
-    @property
-    def error(self):
-        if self.root.find('error'):
-            return api.APIError()
+def api_request(request: str, **params):
+    """Make an AniDB HTTP API request."""
+    request_params = {
+        'client': CLIENT,
+        'clientver': CLIENTVER,
+        'protover': PROTOVER,
+        'request': request,
+    }
+    request_params.update(params)
+    return urlopen(
+        'http://api.anidb.net:9001/httpapi?' +
+        urllib.parse.urlencode(request_params))

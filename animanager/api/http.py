@@ -16,39 +16,18 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import gzip
-import urllib.parse
-import urllib.request
-from abc import abstractmethod
-
-from .abc import Request, Response
-
-# pylint: disable=too-few-public-methods
 
 
-class HTTPRequest(Request):
+def get_content(response) -> str:
+    """Get content from HTTP response.
 
-    """Implements basic HTTP request behavior."""
+    Handles gzipped content.
 
-    @property
-    @abstractmethod
-    def request_uri(self):
-        """URI of request."""
-        return ''
+    :param http.client.HTTPResponse response: HTTP response
+    :rtype: str
 
-    def open(self):
-        super().open()
-        return urllib.request.urlopen(self.request_uri)
-
-
-class HTTPResponse(Response):
-
-    """Basic HTTP response.  Handles gzipped content."""
-
-    def __init__(self, response):
-        self.response = response
-
-    def content(self):
-        content = self.response.read()
-        if self.response.getheader('Content-encoding') == 'gzip':
-            content = gzip.decompress(content)
-        return content.decode()
+    """
+    content = response.read()
+    if response.getheader('Content-encoding') == 'gzip':
+        content = gzip.decompress(content)
+    return content.decode()
