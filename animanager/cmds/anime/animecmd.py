@@ -18,6 +18,7 @@
 import logging
 # readline is needed for command editing.
 import readline  # pylint: disable=unused-import
+import shutil
 import traceback
 from cmd import Cmd
 from functools import lru_cache
@@ -25,7 +26,7 @@ from textwrap import dedent
 
 from animanager import __version__ as VERSION
 from animanager.anidb import AniDB, SearchDB
-from animanager.animedb import AnimeDB
+from animanager.animedb import AnimeDB, cachetable, migrations
 from animanager.cmd import CmdMeta, CommandExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
@@ -62,7 +63,22 @@ class AnimeCmd(
 
         self.anidb = AniDB()
         self.searchdb = SearchDB(config.anime.anidb_cache)
-        self.animedb = AnimeDB(config.anime.database)
+
+        dbfile = config.anime.database
+        self.db = AnimeDB(dbfile)
+        self.animedb = self.db
+
+        migration_manager = migrations.manager
+        if migration_manager.needs_migration(self.db):
+            logger.info('Migration needed, backing up database')
+            shutil.copyfile(dbfile, dbfile + '~')
+            logger.info('Migrating database')
+            migration_manager.migrate(self.db)
+        migration_manager.check_version(self.db)
+
+        self.cache_manager = cachetable.make_manager(self.db)
+        self.cache_manager.setup()
+
 
         # Set lastaid, so I don't have to handle None/uninitialized case.
         # First thing that came to mind was Madoka.  No deep meaning to it.
@@ -92,7 +108,7 @@ class AnimeCmd(
     ###########################################################################
     # Caching
     def purge_cache(self):
-        del self.file_picker
+        self.file_picker.cache_clear()
 
     @property
     @lru_cache(None)

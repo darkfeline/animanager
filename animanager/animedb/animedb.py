@@ -20,10 +20,9 @@ import shutil
 from functools import lru_cache
 from typing import Dict
 
-from animanager import db
+from animanager.sqlite import SQLiteDB
 
 from . import migrations
-from .cache import AnimeCacheMixin
 from .collections import EpisodeType
 from .files import FilesMixin
 from .select import SelectMixin
@@ -38,35 +37,10 @@ class AnimeDB(
         UpdateMixin,
         FilesMixin,
         StatusMixin,
-        AnimeCacheMixin,
-        db.SQLiteDB,
+        SQLiteDB,
 ): # pylint: disable=too-many-ancestors
 
     """Our anime database."""
-
-    def __init__(self, database):
-        self.database = database
-        super().__init__(database)
-
-    @property
-    def required_version(self):
-        return self.migration_manager.current_version
-
-    @property
-    def migration_manager(self):
-        return migrations.manager
-
-    def migrate(self):
-        if self.needs_migration():
-            logger.info('Migration needed, backing up database')
-            shutil.copyfile(self.database, self.database + '~')
-            logger.info('Migrating database')
-            super().migrate()  # pylint: disable=no-member
-
-    def purge_cache(self):
-        super().purge_cache()
-        del self.episode_types
-        del self.episode_types_by_id
 
     @property
     @lru_cache(None)

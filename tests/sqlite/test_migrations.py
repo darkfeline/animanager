@@ -15,6 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .cache import BaseCacheTableMixin
-from .migrations import migration, MigrationManager
-from .sqlite import SQLiteDB
+import unittest
+
+from animanager.sqlite.migrations import Migration, MigrationManager
+
+
+class GoodMigrationsTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.manager = MigrationManager()
+        self.m1 = Migration(0, 1, lambda: None)
+        self.m2 = Migration(1, 2, lambda: None)
+
+    def test_register(self):
+        self.manager.register(self.m1)
+        self.manager.register(self.m2)
+        self.assertEqual(self.manager.final_ver, 2)
+
+    def test_register_disjoint(self):
+        with self.assertRaises(ValueError):
+            self.manager.register(self.m2)

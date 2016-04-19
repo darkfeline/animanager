@@ -15,14 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Migration features.
-
-"""
+"""Migration features."""
 
 import logging
-from collections import namedtuple
 
-from .sqlite import DatabaseError
+from .db import DatabaseError
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +61,19 @@ class MigrationManager:
             raise ValueError('migration must upgrade version')
         self.migrations[migration.from_ver] = migration
         self.final_ver = migration.to_ver
+
+    def migration(self, from_ver, to_ver):
+        """Function decorator to create a migration and register it."""
+        def decorate(func):
+            """Decorator."""
+            migration = Migration(from_ver, to_ver, func)
+            self.register(migration)
+            return migration
+        return decorate
+
+    def needs_migration(self, database):
+        """Check if database needs migration."""
+        return database.version < self.final_ver
 
     def check_version(self, database):
         """Check database version."""
@@ -108,19 +118,36 @@ class MigrationManager:
         while database.version < self.final_ver:
             self.migrate_single(database)
 
-Migration = namedtuple('Migration', ['from_ver', 'to_ver', 'migrate_func'])
-"""Migration namedtuple representing a single migration specification.
 
-:param int from_ver: version before migration
-:param int to_ver: version after migration
-:param callable migrate_func: a function taking a DB-API connection object
+class Migration(tuple):
 
-"""
+    """Migration representing a single migration specification.
 
+    :param int from_ver: version before migration
+    :param int to_ver: version after migration
+    :param callable migrate_func: a function taking a DB-API connection object
 
-def migration(from_ver, to_ver):
-    """Migration decorator."""
-    return lambda func: Migration(from_ver, to_ver, func)
+    """
+
+    __slots__ = []
+
+    def __new__(cls, from_ver, to_ver, migrate_func):
+        return super().__new__(cls, (from_ver, to_ver, migrate_func))
+
+    @property
+    def from_ver(self):
+        """Version before migration."""
+        return self[0]
+
+    @property
+    def to_ver(self):
+        """Version after migration."""
+        return self[1]
+
+    @property
+    def migrate_func(self):
+        """Migration function."""
+        return self[2]
 
 
 class MigrationError(DatabaseError):

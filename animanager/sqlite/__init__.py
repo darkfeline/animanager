@@ -15,19 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import CmdMixinMeta
-
-
-class MiscCmdMixin(metaclass=CmdMixinMeta):
-
-    alias_q = 'quit'
-
-    def do_quit(self, args):
-        """Quit."""
-        return True
-
-    def do_purgecache(self, args):
-        """Purge cache tables."""
-        self.cache_manager.cleanup()
-        self.cache_manager.setup()
-        self.purge_cache()
+from .cachetable import CacheTable, CacheTableManager
+from .db import SQLiteDB
+from .migrations import MigrationManager

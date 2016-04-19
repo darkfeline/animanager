@@ -22,22 +22,17 @@ Has one function, migrate(), for migrating AnimeDB databases.
 """
 
 from animanager.date import parse_date, timestamp
-from animanager.db import MigrationManager, migration
+from animanager.sqlite import MigrationManager
 
 manager = MigrationManager()
 
-
-def _register(migration_class):
-    manager.register(migration_class())
-    # We don't return the registered migration.
+# pylint: disable=missing-docstring
 
 
-# pylint: disable=function-redefined
-@_register
-@migration(0, 1)
-def migrate(cnx):
-    with cnx:
-        cur = cnx.cursor()
+@manager.migration(0, 1)
+def migrate1(database):
+    with database:
+        cur = database.cursor()
         cur.execute("""
         CREATE TABLE anime (
             aid INTEGER,
@@ -92,11 +87,10 @@ def migrate(cnx):
         )""")
 
 
-@_register
-@migration(1, 2)
-def migrate(cnx):
-    with cnx:
-        cur = cnx.cursor()
+@manager.migration(1, 2)
+def migrate2(database):
+    with database:
+        cur = database.cursor()
 
         # Alter anime.
         cur.execute("""
@@ -115,7 +109,8 @@ def migrate(cnx):
         FROM anime
         """)
         # This is done in Python instead of SQL because fuck timezones.
-        row = cnx.cursor().execute('SELECT aid, startdate, enddate FROM anime')
+        row = database.cursor()
+        row = row.execute('SELECT aid, startdate, enddate FROM anime')
         cur.executemany(
             """UPDATE anime_new
             SET startdate=?, enddate=?

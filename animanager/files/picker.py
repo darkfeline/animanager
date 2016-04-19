@@ -16,8 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-from collections import defaultdict
 import typing
+from collections import defaultdict
 from typing import Iterable, Sequence
 
 __all__ = ['PriorityRule', 'FilePicker']

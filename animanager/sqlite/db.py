@@ -80,7 +80,6 @@ class SQLiteDB:
         self.cnx = apsw.Connection(*args, **kwargs)
 
         self.enable_foreign_keys()
-        self.migrate()
 
     def cursor(self):
         """Get database cursor."""
