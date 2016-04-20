@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""General XML tools."""
+
 import xml.etree.ElementTree as ET
 
 
@@ -29,29 +31,37 @@ class XMLTree:
 
     .. attribute:: tree (ElementTree)
 
+       Wrapped ElementTree.
+
     .. attribute:: root (Element)
 
+       Wrapped root Element.
+
     """
-
-    @classmethod
-    def parse(cls, file: str) -> 'XMLTree':
-        """Create instance from an XML file.
-
-        :param str file: file path
-
-        """
-        return cls(ET.parse(file))
-
-    @classmethod
-    def fromstring(cls, text: str) -> 'XMLTree':
-        """Create instance from an XML string."""
-        return cls(ET.ElementTree(ET.fromstring(text)))
 
     def __init__(self, tree: ET.ElementTree) -> None:
         if not isinstance(tree, ET.ElementTree):
             raise TypeError('Not an ElementTree object.')
         self.tree = tree
         self.root = tree.getroot()
+
+    @classmethod
+    def parse(cls, file: str) -> 'XMLTree':
+        """Create instance from an XML file.
+
+        :param str file: XML file path
+
+        """
+        return cls(ET.parse(file))
+
+    @classmethod
+    def fromstring(cls, text: str) -> 'XMLTree':
+        """Create instance from an XML string.
+
+        :param str text: XML string
+
+        """
+        return cls(ET.ElementTree(ET.fromstring(text)))
 
     def write(self, file: str) -> None:
         """Write XML to a file.

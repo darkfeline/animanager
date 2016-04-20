@@ -15,9 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""AniDB titles API.
+
+In the `AniDB documentation <https://wiki.anidb.net/w/API#Anime_Titles>`_, it's
+included with the APIs, but it's really just fetching a single XML file with
+all the titles data.
+
+"""
+
 import pickle
 from collections import namedtuple
 from urllib.request import urlopen
+from typing import List
 
 from animanager.api.xml import XMLTree
 from animanager.api.http import get_content
@@ -26,7 +35,12 @@ from .xml import check_for_errors
 
 
 def request_titles():
-    """Request AniDB titles file."""
+    """Request AniDB titles file.
+
+    :returns: AniDB titles data
+    :rtype: TitlesTree
+
+    """
     response = urlopen('http://anidb.net/api/anime-titles.xml.gz')
     content = get_content(response)
     tree = TitlesTree.fromstring(content)
@@ -35,20 +49,31 @@ def request_titles():
 
 
 SearchEntry = namedtuple('SearchEntry', ['aid', 'main_title', 'titles'])
+"""Represents one anime in the titles data."""
 
 
 class TitlesTree(XMLTree):
 
-    """AniDB anime titles."""
+    """XMLTree representation of AniDB anime titles."""
 
     @classmethod
-    def load(cls, filename):
-        """Load XML tree from pickled file."""
+    def load(cls, filename: str) -> 'TitlesTree':
+        """Load XML tree from pickled file.
+
+        :param str filename: file path
+        :returns: anime titles
+        :rtype: TitlesTree
+
+        """
         with open(filename, 'rb') as file:
             return cls(pickle.load(file))
 
-    def dump(self, filename):
-        """Dump XML tree into pickled file."""
+    def dump(self, filename: str):
+        """Dump XML tree into pickled file.
+
+        :param str filename: file path
+
+        """
         with open(filename, 'wb') as file:
             pickle.dump(self.tree, file)
 
@@ -59,8 +84,13 @@ class TitlesTree(XMLTree):
             if title.attrib['type'] == 'main':
                 return title.text
 
-    def search(self, query):
-        """Search titles using a compiled RE query."""
+    def search(self, query) -> List['SearchEntry']:
+        """Search titles using a compiled RE query.
+
+        :returns: list of matching anime
+        :rtype: list
+
+        """
         found = []
         for anime in self.root:
             for title in anime:

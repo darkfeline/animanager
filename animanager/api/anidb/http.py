@@ -15,7 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""The module contains classes for working with AniDB's HTTP API."""
+"""The module contains classes for working with AniDB's HTTP API.
+
+.. data:: CLIENT
+
+   AniDB API client name.
+
+.. data:: CLIENTVER
+
+   AniDB API client version.
+
+.. data:: PROTOVER
+
+   AniDB API protocol version.
+
+"""
 
 import urllib.parse
 from urllib.request import urlopen
@@ -26,7 +40,13 @@ PROTOVER = 1
 
 
 def api_request(request: str, **params):
-    """Make an AniDB HTTP API request."""
+    """Make an AniDB HTTP API request.
+
+    Check the `AniDB documentation
+    <https://wiki.anidb.net/w/HTTP_API_Definition>`_ for details on `request`
+    and `params`.
+
+    """
     request_params = {
         'client': CLIENT,
         'clientver': CLIENTVER,

@@ -15,15 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""General HTTP tools."""
+
 import gzip
+from http.client import HTTPResponse
 
 
-def get_content(response) -> str:
+def get_content(response: HTTPResponse) -> str:
     """Get content from HTTP response.
 
     Handles gzipped content.
 
-    :param http.client.HTTPResponse response: HTTP response
+    :param HTTPResponse response: HTTP response
+    :returns: HTTP response content
     :rtype: str
 
     """
