@@ -8,6 +8,7 @@ This project uses [semantic versioning](http://semver.org/).
 
 - Added `reset` command.
 - Added `-c` flag to `unregister` command.
+- Added `fetch_titles` command.
 
 ### Changed
 

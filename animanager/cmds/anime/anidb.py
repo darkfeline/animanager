@@ -57,3 +57,9 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
         aid = self.get_aid(args.aid, default_key='db')
         anime = self.anidb.lookup(aid)
         self.animedb.add(anime)
+
+    parser_fetch_titles = ArgumentParser()
+
+    def do_fetch_titles(self, args):
+        """Fetch AniDB titles data."""
+        self.searchdb.fetch()
