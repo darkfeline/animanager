@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.api.xml import XMLTree
+from animanager.xml import XMLTree
 
 
 def check_for_errors(tree: XMLTree) -> None:

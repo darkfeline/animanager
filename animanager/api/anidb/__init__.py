@@ -17,5 +17,5 @@
 
 """AniDB API bindings."""
 
-from .anime import request_anime, AnimeTree
-from .titles import request_titles, TitlesTree
+from .anime import AnimeTree, request_anime
+from .titles import TitlesTree, request_titles

@@ -25,11 +25,11 @@ all the titles data.
 
 import pickle
 from collections import namedtuple
-from urllib.request import urlopen
 from typing import List
+from urllib.request import urlopen
 
-from animanager.api.xml import XMLTree
 from animanager.api.http import get_content
+from animanager.xml import XMLTree
 
 from .xml import check_for_errors
 

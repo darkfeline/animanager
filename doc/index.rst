@@ -28,6 +28,7 @@ Developer guide
 
    dev/sqlite
    dev/api
+   dev/xml
 
 Indices and tables
 ==================

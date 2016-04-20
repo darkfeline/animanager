@@ -21,9 +21,9 @@ import datetime
 import re
 from typing import Iterable, Optional
 
-from animanager.api.xml import XMLTree
 from animanager.api.http import get_content
 from animanager.date import parse_date
+from animanager.xml import XMLTree
 
 from .http import api_request
 from .xml import check_for_errors
