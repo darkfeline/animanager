@@ -34,6 +34,8 @@
 import urllib.parse
 from urllib.request import urlopen
 
+from animanager.xml import XMLTree
+
 CLIENT = 'kfanimanager'
 CLIENTVER = 1
 PROTOVER = 1
@@ -57,3 +59,17 @@ def api_request(request: str, **params):
     return urlopen(
         'http://api.anidb.net:9001/httpapi?' +
         urllib.parse.urlencode(request_params))
+
+
+def check_for_errors(tree: XMLTree) -> None:
+    """Check AniDB response XML tree for errors.
+
+    :raises APIError: error found
+
+    """
+    if tree.root.find('error'):
+        raise APIError()
+
+
+class APIError(Exception):
+    """AniDB API error."""

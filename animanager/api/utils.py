@@ -15,18 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.xml import XMLTree
+"""General API utilities."""
+
+import gzip
+from http.client import HTTPResponse
 
 
-def check_for_errors(tree: XMLTree) -> None:
-    """Check AniDB response XML tree for errors.
+def get_content(response: HTTPResponse) -> str:
+    """Get content from HTTP response.
 
-    :raises APIError: error found
+    Handles gzipped content.
+
+    :param HTTPResponse response: HTTP response
+    :returns: HTTP response content
+    :rtype: str
 
     """
-    if tree.root.find('error'):
-        raise APIError()
-
-
-class APIError(Exception):
-    """AniDB API error."""
+    content = response.read()
+    if response.getheader('Content-encoding') == 'gzip':
+        content = gzip.decompress(content)
+    return content.decode()

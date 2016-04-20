@@ -1,10 +1,10 @@
 :mod:`animanager.api` --- API tools
 ===================================
 
-:mod:`animanager.api.http` --- HTTP tools
------------------------------------------
+:mod:`animanager.api.utils` --- API utilities
+---------------------------------------------
 
-.. automodule:: animanager.api.http
+.. automodule:: animanager.api.utils
    :members:
 
 Subpackages

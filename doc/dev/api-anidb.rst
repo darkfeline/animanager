@@ -7,12 +7,6 @@
 .. automodule:: animanager.api.anidb.http
    :members:
 
-:mod:`animanager.api.anidb.xml` --- AniDB XML tools
------------------------------------------------------
-
-.. automodule:: animanager.api.anidb.xml
-   :members:
-
 :mod:`animanager.api.anidb.titles` --- AniDB titles API
 -------------------------------------------------------
 

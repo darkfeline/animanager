@@ -28,13 +28,13 @@ from collections import namedtuple
 from typing import List
 from urllib.request import urlopen
 
-from animanager.api.http import get_content
+from animanager.api.utils import get_content
 from animanager.xml import XMLTree
 
-from .xml import check_for_errors
+from .http import check_for_errors
 
 
-def request_titles():
+def request_titles() -> 'TitlesTree':
     """Request AniDB titles file.
 
     :returns: AniDB titles data
