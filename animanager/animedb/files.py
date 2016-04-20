@@ -116,6 +116,6 @@ class FilesMixin:
         """Delete watching regexp for complete anime."""
         with self.cnx:
             complete = self.get_complete()
-            self.cnx.cursor().execute(
-                """DELETE FROM watching WHERE aid IN ?""",
-                (tuple(complete),))
+            self.cnx.cursor().executemany(
+                """DELETE FROM watching WHERE aid=?""",
+                ((aid,) for aid in complete))
