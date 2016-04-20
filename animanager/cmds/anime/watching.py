@@ -54,7 +54,7 @@ class WatchingCmdMixin(metaclass=CmdMixinMeta):
     parser_unregister.add_argument(
         '-c', '--complete', action='store_true',
         help='Unregister all complete anime.')
-    parser_unregister.add_aid(default=None)
+    parser_unregister.add_aid(nargs='?', default=None)
 
     alias_ur = 'unregister'
 
