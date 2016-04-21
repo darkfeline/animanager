@@ -29,6 +29,7 @@ Developer guide
    dev/sqlite
    dev/anidb
    dev/xml
+   dev/utils
 
 Indices and tables
 ==================

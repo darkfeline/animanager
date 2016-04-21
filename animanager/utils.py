@@ -15,12 +15,33 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Animanager utilities."""
+
 from weakref import WeakKeyDictionary
 
 
 class CachedProperty:
 
-    """Descriptor implementing a cached property."""
+    """Descriptor implementing a cached property.
+
+    >>> from itertools import count
+    >>> class Foo:
+    ...     def __init__(self):
+    ...         self.count = count(1)
+    ...     def _foo(self):
+    ...         return next(self.count)
+    ...     foo = CachedProperty(_foo)
+    ...
+    >>> x = Foo()
+    >>> x.foo
+    1
+    >>> x.foo
+    1
+    >>> del x.foo
+    >>> x.foo
+    2
+
+    """
 
     # pylint: disable=too-few-public-methods
 
@@ -43,5 +64,24 @@ class CachedProperty:
 
 
 def cached_property(func):
-    """Cached property decorator."""
+    """Cached property decorator.
+
+    >>> from itertools import count
+    >>> class Foo:
+    ...     def __init__(self):
+    ...         self.count = count(1)
+    ...     @cached_property
+    ...     def foo(self):
+    ...         return next(self.count)
+    ...
+    >>> x = Foo()
+    >>> x.foo
+    1
+    >>> x.foo
+    1
+    >>> del x.foo
+    >>> x.foo
+    2
+
+    """
     return CachedProperty(func)
