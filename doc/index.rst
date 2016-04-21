@@ -28,6 +28,7 @@ Developer guide
 
    dev/anidb
    dev/date
+   dev/object
    dev/sqlite
    dev/utils
    dev/xml
