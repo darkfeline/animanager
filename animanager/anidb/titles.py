@@ -23,15 +23,19 @@ all the titles data.
 
 """
 
+import logging
+import os
 import pickle
 from collections import namedtuple
 from typing import List
 from urllib.request import urlopen
 
-from animanager.api.utils import get_content
+from animanager.utils import cached_property
 from animanager.xml import XMLTree
 
-from .http import check_for_errors
+from .http import check_for_errors, get_content
+
+logger = logging.getLogger(__name__)
 
 
 def request_titles() -> 'TitlesTree':
@@ -101,3 +105,57 @@ class TitlesTree(XMLTree):
                     found.append(SearchEntry(aid, main_title, titles))
                     break
         return sorted(found, key=lambda anime: anime.aid)
+
+
+class TitleSearcher:
+
+    """Provides anime title searching, utilizing a local cache.
+
+    Uses a pickle dump of the :class:`TitlesTree` because loading it is
+    time consuming.
+
+    """
+
+    def __init__(self, cachedir):
+        self.cachedir = cachedir
+
+    @cached_property
+    def titles_file(self):
+        return os.path.join(self.cachedir, 'anime-titles.xml')
+
+    @cached_property
+    def pickle_file(self):
+        return os.path.join(self.cachedir, 'anime-titles.pickle')
+
+    @cached_property
+    def titles_tree(self) -> TitlesTree:
+        # Try to load pickled file first.
+        try:
+            titles_tree = TitlesTree.load(self.pickle_file)
+        except OSError as e:
+            logger.warning('Error loading pickled search cache: %s', e)
+        else:
+            return titles_tree
+        if not os.path.exists(self.titles_file):
+            # Download titles data if we don't have it.
+            titles_tree = self.fetch()
+        else:
+            titles_tree = TitlesTree.parse(self.titles_file)
+        # Dump a pickled file for next time.
+        titles_tree.dump(self.pickle_file)
+        return titles_tree
+
+    def fetch(self) -> TitlesTree:
+        """Fetch fresh titles data from AniDB."""
+        try:
+            os.unlink(self.pickle_file)
+        except OSError:
+            pass
+        del self.titles_tree
+        tree = request_titles()
+        tree.write(self.titles_file)
+        return tree
+
+    def search(self, query):
+        """Search titles using a compiled RE query."""
+        return self.titles_tree.search(query)

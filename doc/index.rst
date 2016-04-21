@@ -27,7 +27,7 @@ Developer guide
    :maxdepth: 1
 
    dev/sqlite
-   dev/api
+   dev/anidb
    dev/xml
 
 Indices and tables

@@ -21,15 +21,15 @@ import readline  # pylint: disable=unused-import
 import shutil
 import traceback
 from cmd import Cmd
-from functools import lru_cache
 from textwrap import dedent
 
 from animanager import __version__ as VERSION
-from animanager.anidb import AniDB, SearchDB
+from animanager.anidb.titles import TitleSearcher
 from animanager.animedb import AnimeDB, cachetable, migrations
 from animanager.cmd import CmdMeta, CommandExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.files import FilePicker, PriorityRule
+from animanager.utils import cached_property
 
 from . import anidb, animedb, gpl, misc, watching
 
@@ -61,8 +61,7 @@ class AnimeCmd(
         super().__init__(*args, **kwargs)
         self.config = config
 
-        self.anidb = AniDB()
-        self.searchdb = SearchDB(config.anime.anidb_cache)
+        self.title_searcher = TitleSearcher(config.anime.anidb_cache)
 
         dbfile = config.anime.database
         self.db = AnimeDB(dbfile)
@@ -110,8 +109,7 @@ class AnimeCmd(
     def purge_cache(self):
         self.file_picker.cache_clear()
 
-    @property
-    @lru_cache(None)
+    @cached_property
     def file_picker(self) -> FilePicker:
         return FilePicker((PriorityRule(rule.regexp, rule.priority)
                            for rule in self.animedb.priority_rules))

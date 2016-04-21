@@ -15,10 +15,62 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""General API utilities."""
+"""The module contains classes for working with AniDB's HTTP API.
+
+.. data:: CLIENT
+
+   AniDB API client name.
+
+.. data:: CLIENTVER
+
+   AniDB API client version.
+
+.. data:: PROTOVER
+
+   AniDB API protocol version.
+
+"""
 
 import gzip
+import urllib.parse
 from http.client import HTTPResponse
+from urllib.request import urlopen
+
+from animanager.xml import XMLTree
+
+CLIENT = 'kfanimanager'
+CLIENTVER = 1
+PROTOVER = 1
+
+
+def api_request(request: str, **params):
+    """Make an AniDB HTTP API request.
+
+    Check the `AniDB documentation
+    <https://wiki.anidb.net/w/HTTP_API_Definition>`_ for details on `request`
+    and `params`.
+
+    """
+    request_params = {
+        'client': CLIENT,
+        'clientver': CLIENTVER,
+        'protover': PROTOVER,
+        'request': request,
+    }
+    request_params.update(params)
+    return urlopen(
+        'http://api.anidb.net:9001/httpapi?' +
+        urllib.parse.urlencode(request_params))
+
+
+def check_for_errors(tree: XMLTree) -> None:
+    """Check AniDB response XML tree for errors.
+
+    :raises APIError: error found
+
+    """
+    if tree.root.find('error'):
+        raise APIError()
 
 
 def get_content(response: HTTPResponse) -> str:
@@ -35,3 +87,7 @@ def get_content(response: HTTPResponse) -> str:
     if response.getheader('Content-encoding') == 'gzip':
         content = gzip.decompress(content)
     return content.decode()
+
+
+class APIError(Exception):
+    """AniDB API error."""

@@ -17,10 +17,10 @@
 
 import logging
 import shutil
-from functools import lru_cache
 from typing import Dict
 
 from animanager.sqlite import SQLiteDB
+from animanager.utils import cached_property
 
 from . import migrations
 from .collections import EpisodeType
@@ -42,8 +42,7 @@ class AnimeDB(
 
     """Our anime database."""
 
-    @property
-    @lru_cache(None)
+    @cached_property
     def episode_types(self) -> Dict[int, EpisodeType]:
         """Episode types.
 
@@ -58,8 +57,7 @@ class AnimeDB(
             ep_types[name] = EpisodeType(type_id, prefix)
         return ep_types
 
-    @property
-    @lru_cache(None)
+    @cached_property
     def episode_types_by_id(self) -> Dict[str, EpisodeType]:
         """Episode types by id.
 

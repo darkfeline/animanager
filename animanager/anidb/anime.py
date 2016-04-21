@@ -21,11 +21,10 @@ import datetime
 import re
 from typing import Iterable, Optional
 
-from animanager.api.utils import get_content
 from animanager.date import parse_date
 from animanager.xml import XMLTree
 
-from .http import api_request, check_for_errors
+from .http import api_request, check_for_errors, get_content
 
 
 def request_anime(aid: int) -> 'AnimeTree':
