@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Date utilities."""
+
 import datetime
 
 __all__ = ['timestamp', 'fromtimestamp', 'parse_date']

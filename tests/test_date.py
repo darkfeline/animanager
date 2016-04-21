@@ -53,5 +53,12 @@ class DateTimeTestCase(unittest.TestCase):
     @hypothesis.given(dates())
     def test_timestamp(self, date):
         ts = animanager.date.timestamp(date)
+        self.assertIsInstance(ts, float)
         new_date = animanager.date.fromtimestamp(ts)
+        self.assertEqual(date, new_date)
+
+    @hypothesis.given(dates())
+    def test_parse_date(self, date):
+        text = date.strftime('%Y-%m-%d')
+        new_date = animanager.date.parse_date(text)
         self.assertEqual(date, new_date)

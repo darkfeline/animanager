@@ -26,10 +26,11 @@ Developer guide
 .. toctree::
    :maxdepth: 1
 
-   dev/sqlite
    dev/anidb
-   dev/xml
+   dev/date
+   dev/sqlite
    dev/utils
+   dev/xml
 
 Indices and tables
 ==================
