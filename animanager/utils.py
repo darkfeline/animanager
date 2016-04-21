@@ -49,7 +49,7 @@ class CachedProperty:
         self.cache = WeakKeyDictionary()
         self.func = func
 
-    def __get__(self, obj, owner):
+    def __get__(self, obj, cls):
         if obj is None:
             return self
         if obj not in self.cache:
