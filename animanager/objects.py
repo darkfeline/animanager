@@ -27,7 +27,44 @@ from weakref import WeakKeyDictionary
 # pylint: disable=too-few-public-methods
 
 
-class Object:
+class Field:
+
+    """Transparent attribute descriptor."""
+
+    def __init__(self):
+        self.values = WeakKeyDictionary()
+
+    def __get__(self, obj, cls):
+        if obj is None:
+            return self
+        try:
+            return self.values[obj]
+        except KeyError:
+            raise AttributeError('Field not set')
+
+    def __set__(self, obj, value):
+        self.values[obj] = value
+
+    def __delete__(self, obj):
+        try:
+            del self.values[obj]
+        except KeyError:
+            raise AttributeError('Field not set')
+
+
+class _ObjectMeta(type):
+
+    """Metaclass that makes specifying fields easier."""
+
+    def __new__(mcs, name, parents, dct):
+        if not isinstance(dct.get('fields', ()), Field):
+            fields = dct.pop('fields', ())
+            for field in fields:
+                dct[field] = Field()
+        return super().__new__(mcs, name, parents, dct)
+
+
+class Object(metaclass=_ObjectMeta):
 
     """Class that restricts instance attribute access.
 
@@ -53,6 +90,32 @@ class Object:
     Traceback (most recent call last):
         ...
     AttributeError: No attribute foo
+
+    Fields can be specified with metaclass magic:
+
+    >>> class Foo(Object):
+    ...     fields = ['foo', 'bar']
+    ...
+    >>> x = Foo()
+    >>> x.foo = 2
+    >>> x.baz = 2
+    Traceback (most recent call last):
+        ...
+    AttributeError: No attribute baz
+
+    You can still use ``fields``:
+
+    >>> class Foo(Object):
+    ...     fields = ['fields']
+    ...
+    >>> x = Foo()
+    >>> x.fields = 2
+
+    >>> class Foo(Object):
+    ...     fields = Field()
+    ...
+    >>> x = Foo()
+    >>> x.fields = 2
 
     Initial values can be passed to the instance constructor:
 
@@ -92,28 +155,3 @@ class Object:
             raise AttributeError('No attribute {}'.format(name))
         else:
             descriptor.__delete__(self)
-
-
-class Field:
-
-    """Transparent attribute descriptor."""
-
-    def __init__(self):
-        self.values = WeakKeyDictionary()
-
-    def __get__(self, obj, cls):
-        if obj is None:
-            return self
-        try:
-            return self.values[obj]
-        except KeyError:
-            raise AttributeError('Field not set')
-
-    def __set__(self, obj, value):
-        self.values[obj] = value
-
-    def __delete__(self, obj):
-        try:
-            del self.values[obj]
-        except KeyError:
-            raise AttributeError('Field not set')
