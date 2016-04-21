@@ -50,6 +50,9 @@ class SQLiteDB:
         # pylint: disable=redefined-builtin
         return self.cnx.__exit__(type, value, tb)
 
+    def __getattr__(self, name):
+        return getattr(self.cnx, name)
+
     def enable_foreign_keys(self):
         """Enable SQLite foreign key support."""
         cur = self.cursor()
@@ -83,14 +86,6 @@ class SQLiteDB:
         # pylint: disable=no-member
         self.cnx = apsw.Connection(*args, **kwargs)
         self.enable_foreign_keys()
-
-    def cursor(self):
-        """Get database cursor."""
-        return self.cnx.cursor()
-
-    def close(self):
-        """Close the database connection."""
-        self.cnx.close()
 
     def get_version(self) -> int:
         """Get database user version."""
