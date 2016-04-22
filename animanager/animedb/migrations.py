@@ -17,7 +17,9 @@
 
 """Migrations module.
 
-Has one function, migrate(), for migrating AnimeDB databases.
+.. data:: manager
+
+   Migration manager for Animanager anime database.
 
 """
 

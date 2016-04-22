@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Animanager database cache tables."""
+
 from animanager.sqlite import CacheTable, CacheTableManager
 
 anime_cache = CacheTable()

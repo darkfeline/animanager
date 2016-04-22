@@ -15,4 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Animanager anime database package."""
+
 from .animedb import AnimeDB
