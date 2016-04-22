@@ -22,7 +22,6 @@ from typing import Dict
 from animanager.sqlite import SQLiteDB
 from animanager.utils import cached_property
 
-from . import migrations
 from .collections import EpisodeType
 from .files import FilesMixin
 from .select import SelectMixin
