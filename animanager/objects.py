@@ -22,9 +22,9 @@ crossed with dict.
 
 """
 
-from weakref import WeakKeyDictionary
-
 # pylint: disable=too-few-public-methods
+
+from weakref import WeakKeyDictionary
 
 
 class Field:

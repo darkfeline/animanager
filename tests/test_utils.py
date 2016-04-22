@@ -23,13 +23,16 @@ from animanager.utils import CachedProperty
 
 class CachedPropertyTestCase(unittest.TestCase):
 
+    """Test CachedProperty"""
+
     def setUp(self):
-        self.func = Mock()
+        self.func = Mock([])
         self.prop = CachedProperty(self.func)
         self.type = type('Foo', (), {'foo': self.prop})
         self.obj = self.type()
 
     def test_cached_property(self):
+        """Test CachedProperty get and delete."""
         # First access
         foo = self.obj.foo
         self.assertIs(foo, self.func.return_value)
@@ -47,3 +50,8 @@ class CachedPropertyTestCase(unittest.TestCase):
         foo = self.obj.foo
         self.assertIs(foo, self.func.return_value)
         self.func.assert_called_once_with(self.obj)
+
+    def test_cached_property_set(self):
+        """Test CachedProperty set."""
+        with self.assertRaises(AttributeError):
+            self.obj.foo = 2

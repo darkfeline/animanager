@@ -16,18 +16,19 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import Mock, NonCallableMagicMock
 
 from animanager.sqlite.cachetable import CacheTable, CacheTableManager
+from animanager.sqlite.db import SQLiteDB
 
 
 class CacheTableTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db = MagicMock()
+        self.db = NonCallableMagicMock(SQLiteDB)
         self.table = table = CacheTable()
-        self.setup = MagicMock()
-        self.cleanup = MagicMock()
+        self.setup = Mock([])
+        self.cleanup = Mock([])
 
         table.setup(self.setup)
         table.cleanup(self.cleanup)
