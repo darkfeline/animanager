@@ -18,7 +18,7 @@
 """Episode type queries."""
 
 from collections import namedtuple
-from typing import Iterator, Iterable
+from typing import Iterable, Iterator
 from weakref import WeakKeyDictionary
 
 from .collections import Episode
