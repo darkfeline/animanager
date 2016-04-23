@@ -38,6 +38,9 @@ class SQLiteDB:
     >>> with db:
     ...     cur = db.cursor()  # This is in a transaction.
 
+    :meth:`__getattr__` has been overridden so :class:`apsw.Connection` methods
+    can be accessed directly.
+
     """
 
     def __init__(self, *args, **kwargs):

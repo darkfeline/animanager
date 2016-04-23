@@ -9,8 +9,6 @@
 .. autoclass:: SQLiteDB
 
    .. automethod:: connect
-   .. automethod:: cursor
-   .. automethod:: close
 
    .. automethod:: enable_foreign_keys
    .. automethod:: disable_foreign_keys
