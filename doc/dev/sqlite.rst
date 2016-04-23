@@ -32,6 +32,12 @@
 .. autoexception:: SQLiteError
    :show-inheritance:
 
+:mod:`animanager.sqlite.utils` --- SQLite utilities
+---------------------------------------------------
+
+.. automodule:: animanager.sqlite.utils
+   :members:
+
 :mod:`animanager.sqlite.migrations` --- Simple migrations
 ---------------------------------------------------------
 
