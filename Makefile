@@ -35,6 +35,11 @@ publish: clean package
 test:
 	nosetests --with-doctest
 
+# Dev setup.
+.PHONY: addhooks
+addhooks:
+	ln -s hook/pre-commit .git/hooks
+
 # Run all checks.
 .PHONY: check
 check: isort pylint mypy
