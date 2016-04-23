@@ -19,6 +19,8 @@
 
 from typing import Any, Iterator
 
+from animanager.sqlite.utils import upsert
+
 from .eptype import get_eptype
 
 
@@ -71,19 +73,11 @@ def set_status(
         watched_episodes: int,
 ) -> None:
     """Set anime status."""
-    with db:
-        cur = db.cursor()
-        cur.execute(
-            """UPDATE cache_anime
-            SET complete=?, watched_episodes=?
-            WHERE aid=?""",
-            (complete, watched_episodes, aid))
-        if db.changes() == 0:
-            cur.execute(
-                """INSERT INTO cache_anime
-                (aid, complete, watched_episodes)
-                VALUES (?, ?, ?)""",
-                (aid, 1 if complete else 0, watched_episodes))
+    upsert(db, 'cache_anime', 'aid', {
+        'aid': aid,
+        'complete': 1 if complete else 0,
+        'watched_episodes': watched_episodes,
+    })
 
 
 def get_complete(db) -> Iterator[int]:

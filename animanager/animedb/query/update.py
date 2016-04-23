@@ -18,13 +18,13 @@
 import logging
 
 from animanager.date import timestamp
+from animanager.sqlite.utils import upsert
 
 from .eptype import get_eptype
 from .select import lookup
 from .status import cache_status, set_status
 
 logger = logging.getLogger(__name__)
-
 
 
 def add(db, anime):
@@ -46,49 +46,21 @@ def add(db, anime):
     if anime.enddate is not None:
         values['enddate'] = timestamp(anime.enddate)
     with db:
-        cur = db.cursor()
-        cur.execute(
-            """UPDATE anime
-            SET title=:title, type=:type, episodecount=:episodecount,
-                startdate=:startdate, enddate=:enddate
-            WHERE aid=:aid""", values)
-        if db.changes() == 0:
-            cur.execute(
-                """INSERT INTO anime (
-                    aid, title, type, episodecount,
-                    startdate, enddate)
-                VALUES (
-                    :aid, :title, :type, :episodecount,
-                    :startdate, :enddate)""", values)
+        upsert(db, 'anime', 'aid', values)
         for episode in anime.episodes:
             add_episode(db, anime.aid, episode)
 
 
 def add_episode(db, aid, episode):
     """Add an episode."""
-    with db:
-        cur = db.cursor()
-        values = {
-            'aid': aid,
-            'type': episode.type,
-            'number': episode.number,
-            'title': episode.title,
-            'length': episode.length,
-        }
-        cur.execute(
-            """UPDATE episode
-            SET title=:title, length=:length
-            WHERE aid=:aid AND type=:type AND number=:number""",
-            values)
-        if db.changes() == 0:
-            values['user_watched'] = 0
-            cur.execute(
-                """INSERT INTO episode (
-                    aid, type, number, title,
-                    length, user_watched)
-                VALUES (
-                    :aid, :type, :number, :title,
-                    :length, :user_watched)""", values)
+    values = {
+        'aid': aid,
+        'type': episode.type,
+        'number': episode.number,
+        'title': episode.title,
+        'length': episode.length,
+    }
+    upsert(db, 'episode', 'aid', values)
 
 
 def set_watched(db, aid, ep_type, number):
