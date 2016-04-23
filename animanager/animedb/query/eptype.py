@@ -36,6 +36,11 @@ def get_episode_types(db) -> Iterator[EpisodeType]:
         yield EpisodeType(type_id, name, prefix)
 
 
+def get_eptype(db, name):
+    """Get episode type by name or id."""
+    return EpisodeTypes.from_db(db)[name]
+
+
 class EpisodeTypes:
 
     """A class for storing all episode types.

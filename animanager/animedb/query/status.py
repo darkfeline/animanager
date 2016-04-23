@@ -19,7 +19,7 @@
 
 from typing import Any, Iterator
 
-from .eptype import EpisodeTypes
+from .eptype import get_eptype
 
 
 def cache_status(db, aid, force=False):
@@ -50,7 +50,7 @@ def cache_status(db, aid, force=False):
             SELECT number, user_watched FROM episode
             WHERE aid=? AND type=?
             ORDER BY number ASC
-            """, (aid, EpisodeTypes.from_db(db)['regular'].id))
+            """, (aid, get_eptype(db, 'regular').id))
 
         # We find the last consecutive episode that is user_watched.
         number = 0
