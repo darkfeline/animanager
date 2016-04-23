@@ -20,8 +20,8 @@ import logging
 from animanager.date import timestamp
 
 from .eptype import get_eptype
-from .status import cache_status, set_status
 from .select import lookup
+from .status import cache_status, set_status
 
 logger = logging.getLogger(__name__)
 

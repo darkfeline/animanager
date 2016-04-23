@@ -17,8 +17,8 @@
 
 import unittest
 
-from animanager.sqlite.db import SQLiteDB
 from animanager.sqlite import utils
+from animanager.sqlite.db import SQLiteDB
 
 
 class DatabaseTestCase(unittest.TestCase):
