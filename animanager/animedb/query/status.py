@@ -63,6 +63,7 @@ def cache_status(db, aid, force=False):
         # We store this in the cache.
         set_status(db, aid, enddate and episodecount <= number, number)
 
+
 def set_status(
         db,
         aid: int,
