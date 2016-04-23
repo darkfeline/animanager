@@ -131,8 +131,10 @@ def select(
 def lookup(
         db,
         aid: int,
+        fields: FieldsParam = ALL,
+        episode_fields: FieldsParam = (),
 ) -> Anime:
-    """Look up full information for a single anime.
+    """Look up information for a single anime.
 
     :param fields: anime fields to get.  If ``None``, get all fields.
     :param episode_fields: episode fields to get.
@@ -143,6 +145,6 @@ def lookup(
         db,
         'aid=?',
         (aid,),
-        fields=ALL,
-        episode_fields=ALL,
+        fields=fields,
+        episode_fields=episode_fields,
     ))
