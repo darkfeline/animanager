@@ -134,14 +134,11 @@ def lookup(
 ) -> Anime:
     """Look up full information for a single anime.
 
-    This forces status calculation.
-
     :param fields: anime fields to get.  If ``None``, get all fields.
     :param episode_fields: episode fields to get.
         If ``None``, get all fields.  If empty, don't get episodes.
 
     """
-    cache_status(db, aid)
     return next(select(
         db,
         'aid=?',
