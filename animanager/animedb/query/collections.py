@@ -19,13 +19,7 @@
 
 # pylint: disable=too-few-public-methods
 
-from collections import namedtuple
-
 from animanager.objects import Object
-
-PriorityRule = namedtuple(
-    'PriorityRule',
-    ['id', 'regexp', 'priority'])
 
 
 class Anime(Object):

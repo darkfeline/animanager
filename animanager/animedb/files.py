@@ -18,7 +18,6 @@
 from typing import List, Optional
 
 from animanager.files import AnimeFiles
-from animanager.files.abc import BaseAnimeFiles
 from animanager.utils import cached_property
 
 from .collections import PriorityRule
@@ -73,7 +72,7 @@ class FilesMixin:
             cur.execute('DELETE FROM file_priority WHERE id=?', (rule_id,))
             del self.priority_rules
 
-    def cache_files(self, aid: int, anime_files: BaseAnimeFiles) -> None:
+    def cache_files(self, aid: int, anime_files: AnimeFiles) -> None:
         with self.cnx:
             self.cache_status(aid)
             self.cnx.cursor().execute(
@@ -82,7 +81,7 @@ class FilesMixin:
                 WHERE aid=?""",
                 (anime_files.to_json(), aid))
 
-    def get_files(self, aid: int) -> BaseAnimeFiles:
+    def get_files(self, aid: int) -> AnimeFiles:
         with self.cnx:
             cur = self.cnx.cursor().execute(
                 'SELECT anime_files FROM cache_anime WHERE aid=?',
