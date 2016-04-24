@@ -24,5 +24,4 @@ commands.
 """
 
 from .aid import AIDResults, AIDResultsManager
-from .errors import AIDParseError
 from .results import Results

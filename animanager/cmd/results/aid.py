@@ -17,11 +17,9 @@
 
 """AID-specific results handling."""
 
+import functools
 import re
 
-from .errors import (
-    InvalidResultKeyError, InvalidResultNumberError, InvalidSyntaxError,
-)
 from .results import Results
 
 __all__ = ['AIDResults', 'AIDResultsManager']
@@ -55,8 +53,12 @@ class AIDResultsManager:
 
     """
 
+    # pylint: disable=too-few-public-methods
+
     def __init__(self):
         self.results = dict()
+        # Set last_aid, so I don't have to handle None/uninitialized case.
+        self.last_aid = 8069
 
     def __getitem__(self, key):
         return self.results[key]
@@ -67,8 +69,20 @@ class AIDResultsManager:
     def __contains__(self, key):
         return key in self.results
 
-    _key_pattern = re.compile(r'#(\w+):(\d+)')
+    @staticmethod
+    def _set_last_aid(func):
+        """Decorator for setting last_aid."""
+        @functools.wraps(func)
+        def new_func(self, *args, **kwargs):
+            # pylint: disable=missing-docstring
+            aid = func(self, *args, **kwargs)
+            self.last_aid = aid
+            return aid
+        return new_func
 
+    _key_pattern = re.compile(r'^(\w+):(\d+)$')
+
+    @_set_last_aid
     def parse_aid(self, text, default_key):
         """Parse argument text for aid.
 
@@ -76,25 +90,31 @@ class AIDResultsManager:
         determines which search results to use by default; True means aresults
         is the default.
 
+        The last aid when no aid has been parsed yet is undefined.
+
         The accepted formats, in order:
 
-        Explicit AID:             aid:12345
-        Explicit result number:   #key:12
-        Default result number:    12
+        Last AID:                .
+        Explicit AID:            aid:12345
+        Explicit result number:  key:12
+        Default result number:   12
 
         """
 
         if default_key not in self:
             raise InvalidResultKeyError(default_key)
 
-        if text.startswith('aid:'):
+        if text == '.':
+            return self.last_aid
+        elif text.startswith('aid:'):
             return int(text[len('aid:'):])
-        elif text.startswith('#'):
-            match = self._key_pattern.match(text)
+
+        if ':' in text:
+            match = self._key_pattern.search(text)
             if not match:
                 raise InvalidSyntaxError(text)
-            key, number = match.groups()
-            number = int(number)
+            key = match.groups(1)
+            number = int(match.groups(2))
         else:
             key = default_key
             try:
@@ -108,3 +128,37 @@ class AIDResultsManager:
             raise InvalidResultKeyError(key)
         except IndexError:
             raise InvalidResultNumberError(key, number)
+
+
+class AIDParseError(Exception):
+
+    """Generic AID parse error."""
+
+
+class InvalidSyntaxError(ValueError, AIDParseError):
+
+    """Invalid AID syntax."""
+
+    def __init__(self, text):
+        self.text = text
+        super().__init__('Invalid syntax: {}'.format(text))
+
+
+class InvalidResultKeyError(KeyError, AIDParseError):
+
+    """Invalid AID result key."""
+
+    def __init__(self, key):
+        self.key = key
+        super().__init__('Invalid result key {}'.format(key))
+
+
+class InvalidResultNumberError(IndexError, AIDParseError):
+
+    """Invalid AID result number."""
+
+    def __init__(self, key, number):
+        self.key = key
+        self.number = number
+        super().__init__('Invalid number {} for key {}'.format(
+            number, key))

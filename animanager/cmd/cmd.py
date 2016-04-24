@@ -20,8 +20,6 @@ import shlex
 import traceback
 from itertools import chain
 
-from animanager.utils import HybridMethod
-
 from .argparse import ParseExit
 
 
@@ -29,12 +27,16 @@ class Cmd:
 
     """Our CLI class."""
 
+    # pylint: disable=too-few-public-methods
+
     prompt = '> '
     intro = ''
     commands = {}
+    safe_exceptions = set()
 
     def __init__(self):
-        self.commands = {}
+        self._commands = {}
+        self.safe_exceptions = set()
 
     def runloop(self):
         """Start CLI REPL."""
@@ -53,21 +55,15 @@ class Cmd:
                 stop = command(self, tokens)
             except ParseExit:
                 continue
-            except Exception:
-                traceback.print_exc()
+            except Exception as e:
+                if e not in self.safe_exceptions:
+                    traceback.print_exc()
 
     @classmethod
-    def _add_class_command(cls, command, name, *names):
+    def add_command(cls, command, name, *names):
         """Add a command."""
         for name in chain([name], names):
             cls.commands[name] = command
-
-    def _add_instance_command(self, command, name, *names):
-        """Add a command."""
-        for name in chain([name], names):
-            self.commands[name] = command
-
-    add_command = HybridMethod(_add_class_command, _add_instance_command)
 
 
 class Command:
