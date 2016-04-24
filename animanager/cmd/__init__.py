@@ -21,6 +21,5 @@ interface classes.
 """
 
 from .argparse import ArgumentParser
-from .errors import CommandExit
-from .meta import CmdMeta, CmdMixinMeta
+from .cmd import Cmd, Command
 from .utils import compile_re_query, compile_sql_query
