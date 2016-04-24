@@ -29,7 +29,7 @@ class AnimeFiles:
 
     r"""Used for matching and grouping files for an anime.
 
-    >>> x = AnimeFiles(r'madoka.*(?P<ep>\d+)')
+    >>> x = AnimeFiles(r'madoka.*?(?P<ep>\d+)')
     >>> x.add('madoka - 01.mkv')
     >>> x.add('madoka - 01v2.mkv')
     >>> x.add('madoka - 02.mkv')
@@ -39,7 +39,7 @@ class AnimeFiles:
     >>> x.available_string(0)
     '1,2'
     >>> x[1]
-    set(['madoka - 01.mkv', 'madoka - 01v2.mkv'])
+    {'madoka - 01.mkv', 'madoka - 01v2.mkv'}
 
     """
 
