@@ -34,7 +34,7 @@ publish: clean package
 # Dev setup.
 .PHONY: addhooks
 addhooks:
-	ln -s hook/pre-commit .git/hooks
+	ln -s ../../hooks/pre-commit .git/hooks
 
 # Run all checks.
 .PHONY: check
