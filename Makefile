@@ -33,7 +33,7 @@ publish: clean package
 
 .PHONY: test
 test:
-	nosetests --with-doctest
+	py.test --doctest-modules animanager tests
 
 # Dev setup.
 .PHONY: addhooks
