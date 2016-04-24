@@ -17,28 +17,22 @@
 
 import argparse
 
-from .errors import CommandExit
-
 
 class ArgumentParser(argparse.ArgumentParser):
 
     """ArgumentParser customized for Animanager's CLI."""
 
-    def __init__(self, *args, **kwargs):
-        add_help = kwargs.pop('add_help', False)
-        super().__init__(self, *args, add_help=add_help, **kwargs)
-
     def exit(self, status=0, message=None):
         """Override SystemExit."""
         if message is not None:
             print(message)
-        raise CommandExit()
+        raise ParseExit()
 
     def error(self, message):
         """Override printing to stderr."""
         print(message)
         self.print_help()
-        raise CommandExit()
+        raise ParseExit()
 
     def add_aid(self, *args, **kwargs):
         self.add_argument('aid', *args, **kwargs)
@@ -46,3 +40,7 @@ class ArgumentParser(argparse.ArgumentParser):
     def add_query(self):
         """Add a generic query argument."""
         self.add_argument('query', nargs=argparse.REMAINDER)
+
+
+class ParseExit(Exception):
+    """This is used to exit parsing in lieu of sys.exit()"""
