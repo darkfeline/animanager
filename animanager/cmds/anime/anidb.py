@@ -17,6 +17,8 @@
 
 from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_re_query
 
+from animanager.anidb import request_anime
+
 
 class AniDBCmdMixin(metaclass=CmdMixinMeta):
 
@@ -31,7 +33,7 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
             print('Must supply query.')
             return
         query = compile_re_query(args.query)
-        results = self.searchdb.search(query)
+        results = self.title_searcher.search(query)
         results = [(anime.aid, anime.main_title) for anime in results]
         self.results['anidb'].set(results)
         self.results['anidb'].print()
@@ -44,7 +46,7 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
     def do_add(self, args):
         """Add an anime from an AniDB search."""
         aid = self.get_aid(args.aid, default_key='anidb')
-        anime = self.anidb.lookup(aid)
+        anime = request_anime(aid)
         self.animedb.add(anime)
 
     parser_update = ArgumentParser()
@@ -55,7 +57,7 @@ class AniDBCmdMixin(metaclass=CmdMixinMeta):
     def do_update(self, args):
         """Update an existing anime from a local database search."""
         aid = self.get_aid(args.aid, default_key='db')
-        anime = self.anidb.lookup(aid)
+        anime = request_anime(aid)
         self.animedb.add(anime)
 
     parser_fetch_titles = ArgumentParser()
