@@ -23,7 +23,7 @@ anime_cache = CacheTable()
 
 
 @anime_cache.setup
-def anime_cache_setup(self):
+def cache_setup(self):
     self.cnx.cursor().execute("""
     CREATE TABLE IF NOT EXISTS cache_anime (
         aid INTEGER,
@@ -37,7 +37,7 @@ def anime_cache_setup(self):
 
 
 @anime_cache.cleanup
-def anime_cache_cleanup(self):
+def cache_cleanup(self):
     self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
 
 

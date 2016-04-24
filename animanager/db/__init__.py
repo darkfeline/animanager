@@ -16,5 +16,3 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 """Animanager anime database package."""
-
-from .animedb import AnimeDB

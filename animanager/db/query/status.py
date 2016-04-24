@@ -23,6 +23,11 @@ from animanager.sqlite.utils import upsert
 
 from .eptype import get_eptype
 
+STATUS_FIELDS = {
+    'complete': 'complete',
+    'watched_episodes': 'watched_episodes',
+}
+
 
 def cache_status(db, aid, force=False):
     """Calculate and cache status for given anime.
