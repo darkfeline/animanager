@@ -16,17 +16,46 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from unittest.mock import Mock
+from itertools import partial
+from unittest import mock
 
-from animanager.utils import CachedProperty
+from animanager.utils import CachedProperty, HybridMethod
+
+
+class HybridMethodTestCase(unittest.TestCase):
+
+    """Test HybridMethod."""
+
+    def setUp(self):
+        self.class_func = class_func = mock.Mock([])
+        self.instance_func = instance_func = mock.Mock([])
+        self.prop = HybridMethod(
+            classmethod(self.class_func),
+            self.instance_func)
+        self.type = type('Foo', (), {'foo': self.prop})
+        class_func.__get__ = lambda obj, _: partial(class_func, obj)
+        instance_func.__get__ = lambda obj, _: partial(instance_func, obj)
+        self.obj = self.type()
+
+    def test_hybrid_class_method(self):
+        """Test calling hybrid method as class method."""
+        self.type.foo()
+        self.class_func.assert_called_once_with(self.type)
+        self.instance_func.assert_not_called()
+
+    def test_hybrid_instance_method(self):
+        """Test calling hybrid method as instance method."""
+        self.obj.foo()
+        self.instance_func.assert_called_once_with(self.obj)
+        self.class_func.assert_not_called()
 
 
 class CachedPropertyTestCase(unittest.TestCase):
 
-    """Test CachedProperty"""
+    """Test CachedProperty."""
 
     def setUp(self):
-        self.func = Mock([])
+        self.func = mock.Mock([])
         self.prop = CachedProperty(self.func)
         self.type = type('Foo', (), {'foo': self.prop})
         self.obj = self.type()

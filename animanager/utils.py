@@ -20,6 +20,38 @@
 from weakref import WeakKeyDictionary
 
 
+class HybridMethod:
+
+    """Descriptor that implements a hybrid instance and class method.
+
+    >>> class Foo:
+    ...     @classmethod
+    ...     def class_method(cls):
+    ...         print('class')
+    ...     def instance_method(self):
+    ...         print('instance')
+    ...     hybrid_method = HybridMethod(class_method, instance_method)
+    ...
+    >>> Foo.hybrid_method()
+    class
+    >>> Foo().hybrid_method()
+    instance
+
+    """
+
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, class_method, instance_method):
+        self.class_method = class_method
+        self.instance_method = instance_method
+
+    def __get__(self, obj, objtype):
+        if obj is None:
+            return self.class_method.__get__(obj, objtype)
+        else:
+            return self.instance_method.__get__(obj, objtype)
+
+
 class CachedProperty:
 
     """Descriptor implementing a cached property.
