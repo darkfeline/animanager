@@ -49,13 +49,13 @@ class CacheTableManager:
         """Setup cache tables."""
         for table in self.tables:
             with self.database:
-                table.setup_func(self.database)
+                table.fsetup(self.database)
 
-    def cleanup(self):
+    def teardown(self):
         """Cleanup cache tables."""
         for table in reversed(self.tables):
             with self.database:
-                table.cleanup_func(self.database)
+                table.fteardown(self.database)
 
 
 class CacheTable:
@@ -73,21 +73,8 @@ class CacheTable:
 
     """
 
-    def __init__(self):
-        self.setup_func = None
-        self.cleanup_func = None
+    # pylint: disable=too-few-public-methods
 
-    def setup(self, func: CacheFunction):
-        """Decorator for setup function."""
-        self.setup_func = func
-        return func
-
-    def cleanup(self, func: CacheFunction):
-        """Decorator for cleanup function."""
-        self.cleanup_func = func
-        return func
-
-    @property
-    def is_complete(self):
-        """Whether cache table is completely defined."""
-        return self.setup_func is not None and self.cleanup_func is not None
+    def __init__(self, fsetup: CacheFunction, fteardown: CacheFunction):
+        self.fsetup = fsetup
+        self.fteardown = fteardown
