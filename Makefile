@@ -47,7 +47,6 @@ test:
 .PHONY: isort
 isort:
 	isort -rc animanager tests
-	find stubs -name "*.pyi" -print0 | xargs -0 isort
 
 .PHONY: pylint
 pylint:

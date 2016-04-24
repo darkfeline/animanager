@@ -24,7 +24,7 @@ from weakref import WeakKeyDictionary
 from animanager.files import AnimeFiles
 from animanager.sqlite.utils import upsert
 
-from .status import get_complete, cache_status
+from .status import cache_status, get_complete
 
 PriorityRule = namedtuple(
     'PriorityRule',
