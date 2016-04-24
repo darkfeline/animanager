@@ -16,19 +16,24 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from typing import Any, Callable, Iterable
-
-__all__ = ['find_files']
+from typing import Iterable
 
 
-def find_files(dirpath: str, test: Callable[[str], Any]) -> Iterable[str]:
-    """Find all files, filtered by test function.
+def find_files(dirpath: str) -> Iterable[str]:
+    """Find files recursively.
 
     Returns a generator that yields paths in no particular order.
 
     """
     for dirpath, _, filenames in os.walk(dirpath):
         for filename in filenames:
-            filepath = os.path.join(dirpath, filename)
-            if test(filepath):
-                yield filepath
+            yield os.path.join(dirpath, filename)
+
+
+def is_video(filepath) -> bool:
+    """Check filename extension to see if it's a video file."""
+    if os.path.exists(filepath):  # Could be broken symlink
+        extension = os.path.splitext(filepath)[1]
+        return extension in ('.mkv', '.mp4', '.avi')
+    else:
+        return False

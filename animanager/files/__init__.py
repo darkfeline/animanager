@@ -17,6 +17,6 @@
 
 """This package contains stuff for finding, matching, and grouping files."""
 
-from .anime import AnimeFiles, is_video
+from .anime import AnimeFiles
 from .picker import FilePicker, PriorityRule
-from .utils import find_files
+from .utils import find_files, is_video

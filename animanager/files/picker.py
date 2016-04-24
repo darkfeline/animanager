@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Tools for picking a file according to rules."""
+
 import re
 import typing
 from collections import defaultdict
@@ -27,6 +29,8 @@ Pattern = typing.re.Pattern
 
 class PriorityRule(tuple):
 
+    """Represents one rule for picking files."""
+
     __slots__ = ()
 
     def __new__(cls, regexp: str, priority: int) -> 'PriorityRule':
@@ -35,16 +39,20 @@ class PriorityRule(tuple):
 
     @property
     def regexp(self) -> Pattern:
+        """Regexp to match rule."""
         return self[0]
 
     @property
     def priority(self) -> int:
+        """Rule priority."""
         return self[1]
 
 
 class FilePicker:
 
     """Class for picking one file out of many based on priority rules."""
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self, rules: Iterable[PriorityRule]) -> None:
         # Maps priority int to lists of regexp patterns.
