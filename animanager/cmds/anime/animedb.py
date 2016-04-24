@@ -59,11 +59,13 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         logger.debug('Search where %s with params %s', where_query, params)
 
         results = list()
-        all_files = list(find_files(self.config.anime.watchdir, is_video))
+        all_files = [
+            filename for filename in find_files(self.config.anime.watchdir)
+            if is_video(filename)]
         for anime in self.animedb.select(where_query, params):
             logger.debug('For anime %s with regexp %s', anime.aid, anime.regexp)
             anime_files = AnimeFiles(anime.regexp)
-            anime_files.maybe_add_iter(all_files)
+            anime_files.add_iter(all_files)
             logger.debug('Found files %s', anime_files.by_episode.items())
             self.animedb.cache_files(anime.aid, anime_files)
 
