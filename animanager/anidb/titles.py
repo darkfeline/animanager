@@ -121,14 +121,17 @@ class TitleSearcher:
 
     @cached_property
     def titles_file(self):
+        """Anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.xml')
 
     @cached_property
     def pickle_file(self):
+        """Pickled anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.pickle')
 
     @cached_property
     def titles_tree(self) -> TitlesTree:
+        """Titles XML tree."""
         # Try to load pickled file first.
         try:
             titles_tree = TitlesTree.load(self.pickle_file)

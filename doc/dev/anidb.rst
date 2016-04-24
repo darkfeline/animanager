@@ -8,7 +8,7 @@
    :members:
 
 :mod:`animanager.anidb.titles` --- AniDB titles API
--------------------------------------------------------
+---------------------------------------------------
 
 .. automodule:: animanager.anidb.titles
 
@@ -20,8 +20,11 @@
    .. autoclass:: TitlesTree
       :members:
 
+   .. autoclass:: TitleSearcher
+      :members:
+
 :mod:`animanager.anidb.anime` --- AniDB anime API
--------------------------------------------------------
+-------------------------------------------------
 
 .. automodule:: animanager.anidb.anime
    :members:
