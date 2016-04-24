@@ -65,8 +65,7 @@ class AnimeDBCmdMixin(metaclass=CmdMixinMeta):
         for anime in self.animedb.select(where_query, params):
             logger.debug('For anime %s with regexp %s', anime.aid, anime.regexp)
             if anime.regexp is not None:
-                anime_files = AnimeFiles(anime.regexp)
-                anime_files.add_iter(all_files)
+                anime_files = AnimeFiles(anime.regexp, all_files)
                 logger.debug('Found files %s', anime_files.filenames)
                 self.animedb.cache_files(anime.aid, anime_files)
                 available = anime_files.available_string(anime.watched_episodes)
