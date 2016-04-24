@@ -31,10 +31,6 @@ publish: clean package
 	python3 setup.py register
 	twine upload dist/*
 
-.PHONY: test
-test:
-	py.test --doctest-modules animanager tests
-
 # Dev setup.
 .PHONY: addhooks
 addhooks:
@@ -42,7 +38,11 @@ addhooks:
 
 # Run all checks.
 .PHONY: check
-check: isort pylint mypy
+check: test isort pylint
+
+.PHONY: test
+test:
+	py.test --doctest-modules animanager tests
 
 .PHONY: isort
 isort:
@@ -52,7 +52,3 @@ isort:
 .PHONY: pylint
 pylint:
 	pylint --output-format=colorized animanager tests || true
-
-.PHONY: mypy
-mypy:
-	MYPYPATH=stubs mypy animanager || true

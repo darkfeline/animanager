@@ -15,9 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_re_query
-
 from animanager.anidb import request_anime
+from animanager.cmd import ArgumentParser, CmdMixinMeta, compile_re_query
 
 
 class AniDBCmdMixin(metaclass=CmdMixinMeta):
