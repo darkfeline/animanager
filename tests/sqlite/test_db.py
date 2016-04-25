@@ -17,14 +17,7 @@
 
 import unittest
 
-import hypothesis
-from hypothesis import strategies
-
 from animanager.sqlite.db import SQLiteDB
-
-
-# pylint doesn't understand hypothesis
-# pylint: disable=no-value-for-parameter
 
 
 class DatabaseTestCase(unittest.TestCase):
@@ -32,7 +25,6 @@ class DatabaseTestCase(unittest.TestCase):
     def setUp(self):
         self.db = SQLiteDB(':memory:')
 
-    @hypothesis.given(strategies.integers(-2**31, 2**31-1))
-    def test_set_version(self, ver):
-        self.db.version = ver
-        self.assertEqual(self.db.version, ver)
+    def test_set_version(self):
+        self.db.version = 5
+        self.assertEqual(self.db.version, 5)
