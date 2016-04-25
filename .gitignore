@@ -9,6 +9,7 @@ __pycache__/
 /src/
 
 # Development
+/doc/_build/
 /.hypothesis/
 /.cache/
 /GPATH
