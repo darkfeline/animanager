@@ -116,7 +116,7 @@ def select(
             cache_status(db, row[0])
 
     if 'aid' in fields:
-        episode_fields = _clean_fields(ANIME_FIELDS, episode_fields)
+        episode_fields = _clean_fields(EPISODE_FIELDS, episode_fields)
     else:
         episode_fields = ()
 
