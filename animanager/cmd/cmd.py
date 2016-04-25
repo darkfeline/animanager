@@ -34,7 +34,7 @@ class Cmd:
     commands = {}
     safe_exceptions = set()
 
-    def runloop(self):
+    def cmdloop(self):
         """Start CLI REPL."""
         # pylint: disable=broad-except
         stop = False

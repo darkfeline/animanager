@@ -26,7 +26,9 @@ class Subcommand(ABC):
 
     """Interface for adding subcommand parsers to argparse.ArgumentParser"""
 
+    # pylint: disable=too-few-public-methods
+
     @classmethod
     @abstractmethod
     def setup_parser(cls, subparsers):
-        pass
+        """Setup parser with subcommand."""

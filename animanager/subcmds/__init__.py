@@ -20,4 +20,6 @@ point for the Animanager program.
 
 """
 
-from .anime import AnimeSubcommand
+from .anime import AnimeSubcmd
+
+subcommands = [AnimeSubcmd]

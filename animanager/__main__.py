@@ -18,7 +18,7 @@
 import argparse
 import logging
 
-from animanager import subcommands
+from animanager import subcmds
 
 
 def _make_parser():
@@ -33,12 +33,14 @@ def _make_parser():
 
     # Set up subparsers.
     subparsers = parser.add_subparsers(title='Managers')
-    subcommands.AnimeSubcommand.setup_parser(subparsers)
+    for subcommand in subcmds.subcommands:
+        subcommand.setup_parser(subparsers)
 
     return parser
 
 
 def main():
+    """Animanager program entry point."""
     handler = logging.StreamHandler()
     handler.setFormatter(logging.Formatter(
         '%(levelname)s:%(name)s:%(message)s',

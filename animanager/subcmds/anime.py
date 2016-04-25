@@ -20,10 +20,10 @@ from animanager.config import Config
 
 from .abc import Subcommand
 
-__all__ = ['AnimeSubcommand']
+__all__ = ['AnimeSubcmd']
 
 
-class AnimeSubcommand(Subcommand):
+class AnimeSubcmd(Subcommand):
 
     @classmethod
     def setup_parser(cls, subparsers):
