@@ -137,3 +137,36 @@ def migrate2(database):
             regexp TEXT NOT NULL,
             priority INTEGER NOT NULL
         )""")
+
+
+@manager.migration(2, 3)
+def migrate3(database):
+    with database:
+        cur = database.cursor()
+
+        # Alter anime.
+        cur.execute("""
+        CREATE TABLE episode_new (
+            id INTEGER,
+            aid INTEGER NOT NULL,
+            type INTEGER NOT NULL,
+            number INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            length INTEGER NOT NULL,
+            user_watched INTEGER NOT NULL CHECK (user_watched IN (0, 1))
+                DEFAULT 0,
+            PRIMARY KEY (id),
+            UNIQUE (aid, type, number),
+            FOREIGN KEY (aid) REFERENCES anime (aid)
+                ON DELETE CASCADE ON UPDATE CASCADE,
+            FOREIGN KEY (type) REFERENCES episode_type (id)
+                ON DELETE RESTRICT ON UPDATE CASCADE
+        )""")
+        cur.execute("""
+        INSERT INTO episode_new
+        (id, aid, type, number, title, length, user_watched)
+        SELECT id, aid, type, number, title, length, user_watched
+        FROM episode
+        """)
+        cur.execute('DROP TABLE episode')
+        cur.execute('ALTER TABLE episode_new RENAME TO episode')
