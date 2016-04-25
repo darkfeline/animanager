@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import readline  # pylint: disable=unused-import
 import shlex
-import traceback
 from inspect import cleandoc
 
 from .argparse import ParseExit
+
+logger = logging.getLogger(__name__)
 
 
 class Cmd:
@@ -53,7 +55,7 @@ class Cmd:
                 continue
             except Exception as e:
                 if e not in self.safe_exceptions:
-                    traceback.print_exc()
+                    logger.exception('Error!')
 
 
 class Command:
