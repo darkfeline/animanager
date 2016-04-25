@@ -23,7 +23,7 @@ parser = ArgumentParser(prog='purgecache')
 def func(cmd, args):
     # pylint: disable=unused-argument
     """Purge all caches."""
-    cmd.cache_manager.cleanup()
+    cmd.cache_manager.teardown()
     cmd.cache_manager.setup()
     EpisodeTypes.forget(cmd.db)
     del cmd.file_picker
