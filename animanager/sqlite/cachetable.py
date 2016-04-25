@@ -17,7 +17,7 @@
 
 """Tools for managing temporary cache tables in a SQLite database."""
 
-from typing import Callable, List
+from typing import Callable, Iterable
 
 from .db import SQLiteDB
 
@@ -36,7 +36,7 @@ class CacheTableManager:
 
     """
 
-    def __init__(self, database: SQLiteDB, tables: List['CacheTable']):
+    def __init__(self, database: SQLiteDB, tables: Iterable['CacheTable']):
         self.database = database
         self.tables = tuple(tables)
 

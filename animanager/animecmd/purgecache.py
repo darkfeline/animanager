@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2016  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,27 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.animecmd import AnimeCmd
-from animanager.config import Config
+from animanager.cmd import ArgumentParser, Command
 
-from .abc import Subcommand
+parser = ArgumentParser(prog='quit')
 
-__all__ = ['AnimeSubcmd']
+def func(cmd, args):
+    # pylint: disable=unused-argument
+    """Purge all caches."""
+    cmd.cache_manager.cleanup()
+    cmd.cache_manager.setup()
+    del cmd.file_picker
 
-
-class AnimeSubcmd(Subcommand):
-
-    @classmethod
-    def setup_parser(cls, subparsers):
-        parser = subparsers.add_parser(
-            'anime',
-            description='Anime manager.',
-            help='Start anime manager.',
-        )
-        parser.set_defaults(func=cls.main)
-
-    @staticmethod
-    def main(args):
-        config = Config(args.config)
-        cmd = AnimeCmd(config)
-        cmd.cmdloop()
+command = Command(parser, func)

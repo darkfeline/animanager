@@ -37,23 +37,29 @@ class PriorityRules:
 
     # pylint: disable=too-few-public-methods
 
-    cache = WeakKeyDictionary()
+    _cache = WeakKeyDictionary()
+
+    def __init__(self, rules: Iterable[PriorityRule]):
+        self.rules = list(rules)
+
+    @classmethod
+    def from_db(cls, db, force=False):
 
     @classmethod
     def get(cls, db):
         """Get priority rules."""
-        if db not in cls.cache:
+        if db not in cls._cache:
             cur = db.cursor()
             cur.execute('SELECT id, regexp, priority FROM file_priority')
-            cls.cache[db] = [
+            cls._cache[db] = [
                 PriorityRule(rule_id, regexp, priority)
                 for rule_id, regexp, priority in cur]
-        return cls.cache[db]
+        return cls._cache[db]
 
     @classmethod
-    def clear(cls):
-        """Clear cache."""
-        cls.cache.clear()
+    def forget(cls, db):
+        """Forget cache for database."""
+        cls._cache.pop(db, None)
 
 
 def add_priority_rule(
@@ -73,7 +79,7 @@ def add_priority_rule(
             INSERT INTO file_priority (regexp, priority)
             VALUES (?, ?)""", (regexp, priority))
         row_id = db.last_insert_rowid()
-    del PriorityRules.cache[db]
+    PriorityRules.forget(db)
     return row_id
 
 
@@ -82,7 +88,7 @@ def delete_priority_rule(db, rule_id: int) -> None:
     with db:
         cur = db.cursor()
         cur.execute('DELETE FROM file_priority WHERE id=?', (rule_id,))
-    del PriorityRules.cache[db]
+    PriorityRules.forget(db)
 
 
 def cache_files(db, aid: int, anime_files: AnimeFiles) -> None:

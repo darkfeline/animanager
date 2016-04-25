@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from .cachedview import CachedView
 from .cachetable import CacheTable, CacheTableManager
 from .db import SQLiteDB
 from .migrations import MigrationManager
+from .utils import upsert

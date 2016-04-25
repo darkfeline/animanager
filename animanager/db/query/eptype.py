@@ -19,7 +19,8 @@
 
 from collections import namedtuple
 from typing import Iterable, Iterator
-from weakref import WeakKeyDictionary
+
+from animanager.sqlite import CachedView
 
 from .collections import Episode
 
@@ -41,7 +42,7 @@ def get_eptype(db, name):
     return EpisodeTypes.from_db(db)[name]
 
 
-class EpisodeTypes:
+class EpisodeTypes(CachedView):
 
     """A class for storing all episode types.
 
@@ -59,7 +60,7 @@ class EpisodeTypes:
 
     """
 
-    def __init__(self, episode_types: Iterable[EpisodeType]) -> None:
+    def __init__(self, episode_types: Iterable[EpisodeType]):
         self.types = tuple(episode_types)
         self.by_id = {}
         self.by_name = {}
@@ -75,24 +76,9 @@ class EpisodeTypes:
         else:
             raise KeyError(key)
 
-    _db_cache = WeakKeyDictionary()
-
     @classmethod
-    def from_db(cls, db, force=False) -> 'EpisodeTypes':
-        """Make instance from database.
-
-        For performance, this caches the episode types for the database.  The
-        `force` parameter can be used to bypass this.
-
-        """
-        if force or db not in cls._db_cache:
-            cls._db_cache[db] = cls(get_episode_types(db))
-        return cls._db_cache[db]
-
-    @classmethod
-    def forget(cls, db):
-        """Forget cache for database."""
-        cls._db_cache.pop(db, None)
+    def new_from_db(cls, db) -> 'EpisodeTypes':
+        return cls(get_episode_types(db))
 
     def get_epno(self, episode: Episode):
         """Return epno for an Episode instance.
