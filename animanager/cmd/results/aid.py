@@ -43,6 +43,17 @@ class AIDResults(Results):
         return self.get(number)[0]
 
 
+def _set_last_aid(func):
+    """Decorator for setting last_aid."""
+    @functools.wraps(func)
+    def new_func(self, *args, **kwargs):
+        # pylint: disable=missing-docstring
+        aid = func(self, *args, **kwargs)
+        self.last_aid = aid
+        return aid
+    return new_func
+
+
 class AIDResultsManager:
 
     """Class for managing multiple AIDResults.
@@ -69,17 +80,6 @@ class AIDResultsManager:
     def __contains__(self, key):
         return key in self.results
 
-    @staticmethod
-    def _set_last_aid(func):
-        """Decorator for setting last_aid."""
-        @functools.wraps(func)
-        def new_func(self, *args, **kwargs):
-            # pylint: disable=missing-docstring
-            aid = func(self, *args, **kwargs)
-            self.last_aid = aid
-            return aid
-        return new_func
-
     _key_pattern = re.compile(r'^(\w+):(\d+)$')
 
     @_set_last_aid
@@ -102,7 +102,7 @@ class AIDResultsManager:
         """
 
         if default_key not in self:
-            raise InvalidResultKeyError(default_key)
+            raise ResultKeyError(default_key)
 
         if text == '.':
             return self.last_aid
@@ -113,21 +113,22 @@ class AIDResultsManager:
             match = self._key_pattern.search(text)
             if not match:
                 raise InvalidSyntaxError(text)
-            key = match.groups(1)
-            number = int(match.groups(2))
+            key = match.group(1)
+            number = match.group(2)
         else:
             key = default_key
-            try:
-                number = int(text)
-            except ValueError:
-                raise InvalidSyntaxError(text)
+            number = text
+        try:
+            number = int(number)
+        except ValueError:
+            raise InvalidSyntaxError(number)
 
         try:
             return self[key].get_aid(number)
         except KeyError:
-            raise InvalidResultKeyError(key)
+            raise ResultKeyError(key)
         except IndexError:
-            raise InvalidResultNumberError(key, number)
+            raise ResultNumberError(key, number)
 
 
 class AIDParseError(Exception):
@@ -144,7 +145,7 @@ class InvalidSyntaxError(ValueError, AIDParseError):
         super().__init__('Invalid syntax: {}'.format(text))
 
 
-class InvalidResultKeyError(KeyError, AIDParseError):
+class ResultKeyError(KeyError, AIDParseError):
 
     """Invalid AID result key."""
 
@@ -153,7 +154,7 @@ class InvalidResultKeyError(KeyError, AIDParseError):
         super().__init__('Invalid result key {}'.format(key))
 
 
-class InvalidResultNumberError(IndexError, AIDParseError):
+class ResultNumberError(IndexError, AIDParseError):
 
     """Invalid AID result number."""
 

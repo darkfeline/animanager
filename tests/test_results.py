@@ -18,6 +18,9 @@
 import unittest
 
 from animanager.cmd.results import AIDResults, AIDResultsManager
+from animanager.cmd.results.aid import (
+    InvalidSyntaxError, ResultKeyError, ResultNumberError,
+)
 
 
 class ParseAIDTestCase(unittest.TestCase):
@@ -35,19 +38,19 @@ class ParseAIDTestCase(unittest.TestCase):
         self.assertEqual(self.manager.parse_aid('aid:12345', 'foo'), 12345)
 
     def test_explicit_key(self):
-        self.assertEqual(self.manager.parse_aid('#foo:2', 'foo'), 2)
+        self.assertEqual(self.manager.parse_aid('foo:2', 'foo'), 2)
 
     def test_implicit_key(self):
         self.assertEqual(self.manager.parse_aid('3', 'bar'), 6)
 
     def test_invalid_key_syntax(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InvalidSyntaxError):
             self.manager.parse_aid('#:3', 'foo')
 
     def test_invalid_key(self):
-        with self.assertRaises(KeyError):
-            self.manager.parse_aid('#spam:3', 'foo')
+        with self.assertRaises(ResultKeyError):
+            self.manager.parse_aid('spam:3', 'foo')
 
     def test_invalid_number(self):
-        with self.assertRaises(IndexError):
-            self.manager.parse_aid('#foo:5', 'foo')
+        with self.assertRaises(ResultNumberError):
+            self.manager.parse_aid('foo:5', 'foo')
