@@ -18,7 +18,7 @@
 import readline  # pylint: disable=unused-import
 import shlex
 import traceback
-from itertools import chain
+from inspect import cleandoc
 
 from .argparse import ParseExit
 
@@ -65,6 +65,8 @@ class Command:
     def __init__(self, parser, func):
         self.parser = parser
         self.func = func
+        if parser.description is None:
+            self.parser.description = cleandoc(self.func.__doc__)
 
     def __call__(self, cmd, *args):
         args = self.parser.parse_args(args)

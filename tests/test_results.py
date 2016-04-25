@@ -26,13 +26,16 @@ from animanager.cmd.results.aid import (
 class ParseAIDTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.manager = AIDResultsManager()
-        results = AIDResults(['Title'])
-        results.set([(1, 'Madoka'), (2, 'Madoka'), (3, 'Madoka')])
-        self.manager['foo'] = results
-        results = AIDResults(['Title'])
-        results.set([(4, 'Madoka'), (5, 'Madoka'), (6, 'Madoka')])
-        self.manager['bar'] = results
+        self.manager = AIDResultsManager({
+            'foo': AIDResults(
+                ['Title'],
+                [(1, 'Madoka'), (2, 'Madoka'), (3, 'Madoka')],
+            ),
+            'bar': AIDResults(
+                ['Title'],
+                [(4, 'Madoka'), (5, 'Madoka'), (6, 'Madoka')],
+            ),
+        })
 
     def test_explicit_aid(self):
         self.assertEqual(self.manager.parse_aid('aid:12345', 'foo'), 12345)

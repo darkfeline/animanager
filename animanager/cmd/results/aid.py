@@ -66,16 +66,13 @@ class AIDResultsManager:
 
     # pylint: disable=too-few-public-methods
 
-    def __init__(self):
-        self.results = dict()
+    def __init__(self, results):
+        self.results = dict(results)
         # Set last_aid, so I don't have to handle None/uninitialized case.
         self.last_aid = 8069
 
     def __getitem__(self, key):
         return self.results[key]
-
-    def __setitem__(self, key, value):
-        self.results[key] = value
 
     def __contains__(self, key):
         return key in self.results
