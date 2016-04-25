@@ -33,11 +33,12 @@ class DatabaseTestCase(unittest.TestCase):
             lastname TEXT)""")
         cur.execute("""
         INSERT INTO mytable (id, firstname, lastname)
-        VALUES (1, 'Mir', 'Jakuri')
+        VALUES
+        (1, 'Mir', 'Jakuri')
         """)
 
     def test_upsert_insert(self):
-        utils.upsert(self.db, 'mytable', 'id', {
+        utils.upsert(self.db, 'mytable', ['id'], {
             'id': 2,
             'firstname': 'Ion',
             'lastname': 'Preciel',
@@ -48,10 +49,49 @@ class DatabaseTestCase(unittest.TestCase):
         self.assertEqual((2, 'Ion', 'Preciel'), cur.fetchone())
 
     def test_upsert_update(self):
-        utils.upsert(self.db, 'mytable', 'id', {
+        utils.upsert(self.db, 'mytable', ['id'], {
             'id': 1,
             'lastname': 'Teiwaz',
         })
         cur = self.db.cursor()
         cur.execute('SELECT * FROM mytable')
         self.assertEqual((1, 'Mir', 'Teiwaz'), cur.fetchone())
+
+
+class MultipleKeyTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.db = SQLiteDB(':memory:')
+        cur = self.db.cursor()
+        cur.execute("""
+        CREATE TABLE mytable (
+            firstname TEXT,
+            lastname TEXT,
+            age INTEGER
+        )""")
+        cur.execute("""
+        INSERT INTO mytable (firstname, lastname, age)
+        VALUES
+        ('Mir', 'Jakuri', 10)
+        """)
+
+    def test_upsert_multiple_key_insert(self):
+        utils.upsert(self.db, 'mytable', ['firstname', 'lastname'], {
+            'firstname': 'Mir',
+            'lastname': 'Teiwaz',
+            'age': 350,
+        })
+        cur = self.db.cursor()
+        cur.execute('SELECT * FROM mytable')
+        self.assertEqual(('Mir', 'Jakuri', 10), cur.fetchone())
+        self.assertEqual(('Mir', 'Teiwaz', 350), cur.fetchone())
+
+    def test_upsert_multiple_key_update(self):
+        utils.upsert(self.db, 'mytable', ['firstname', 'lastname'], {
+            'firstname': 'Mir',
+            'lastname': 'Jakuri',
+            'age': 350,
+        })
+        cur = self.db.cursor()
+        cur.execute('SELECT * FROM mytable')
+        self.assertEqual(('Mir', 'Jakuri', 350), cur.fetchone())

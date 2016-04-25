@@ -22,14 +22,14 @@ def _sqlpformat(name):
     return '{0}=:{0}'.format(name)
 
 
-def upsert(db, table, pk_col, update_dict):
+def upsert(db, table, key_cols, update_dict):
     """Fabled upsert for SQLiteDB.
 
     Perform an upsert based on primary key.
 
     :param SQLiteDB db: database
     :param str table: table to upsert into
-    :param str pk_col: name of primary key column
+    :param str key_cols: name of key columns
     :param dict update_dict: key-value pairs to upsert
 
     """
@@ -39,8 +39,10 @@ def upsert(db, table, pk_col, update_dict):
             'UPDATE {} SET {} WHERE {}'.format(
                 table,
                 ','.join(_sqlpformat(col) for col in update_dict.keys()),
-                _sqlpformat(pk_col)),
-            update_dict)
+                ' AND '.join(_sqlpformat(col) for col in key_cols),
+            ),
+            update_dict,
+        )
         if db.changes() == 0:
             keys, values = zip(*update_dict.items())
             cur.execute(

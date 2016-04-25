@@ -90,7 +90,7 @@ def get_files(self, aid: int) -> AnimeFiles:
 
 def set_regexp(db, aid, regexp):
     """Set watching regexp for anime."""
-    upsert(db, 'watching', 'aid', {'aid': aid, 'regexp': regexp})
+    upsert(db, 'watching', ['aid'], {'aid': aid, 'regexp': regexp})
 
 
 def delete_regexp(db, aid):

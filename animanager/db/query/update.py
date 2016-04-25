@@ -46,7 +46,7 @@ def add(db, anime):
     if anime.enddate is not None:
         values['enddate'] = timestamp(anime.enddate)
     with db:
-        upsert(db, 'anime', 'aid', values)
+        upsert(db, 'anime', ['aid'], values)
         for episode in anime.episodes:
             add_episode(db, anime.aid, episode)
 
@@ -60,7 +60,7 @@ def add_episode(db, aid, episode):
         'title': episode.title,
         'length': episode.length,
     }
-    upsert(db, 'episode', 'aid', values)
+    upsert(db, 'episode', ['aid', 'type', 'number'], values)
 
 
 def set_watched(db, aid, ep_type, number):
