@@ -34,10 +34,6 @@ class Cmd:
     commands = {}
     safe_exceptions = set()
 
-    def __init__(self):
-        self._commands = {}
-        self.safe_exceptions = set()
-
     def runloop(self):
         """Start CLI REPL."""
         # pylint: disable=broad-except
@@ -58,12 +54,6 @@ class Cmd:
             except Exception as e:
                 if e not in self.safe_exceptions:
                     traceback.print_exc()
-
-    @classmethod
-    def add_command(cls, command, name, *names):
-        """Add a command."""
-        for name in chain([name], names):
-            cls.commands[name] = command
 
 
 class Command:

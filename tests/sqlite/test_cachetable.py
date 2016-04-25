@@ -26,21 +26,18 @@ class CacheTableTestCase(unittest.TestCase):
 
     def setUp(self):
         self.db = NonCallableMagicMock(SQLiteDB)
-        self.table = table = CacheTable()
         self.setup = Mock([])
-        self.cleanup = Mock([])
-
-        table.setup(self.setup)
-        table.cleanup(self.cleanup)
+        self.teardown = Mock([])
+        self.table = table = CacheTable(self.setup, self.teardown)
 
         self.manager = CacheTableManager(self.db, [table])
 
     def test_setup(self):
         self.manager.setup()
         self.setup.assert_called_once_with(self.db)
-        self.cleanup.assert_not_called()
+        self.teardown.assert_not_called()
 
     def test_cleanup(self):
-        self.manager.cleanup()
+        self.manager.teardown()
         self.setup.assert_not_called()
-        self.cleanup.assert_called_once_with(self.db)
+        self.teardown.assert_called_once_with(self.db)

@@ -38,11 +38,6 @@ class CacheTableManager:
 
     def __init__(self, database: SQLiteDB, tables: List['CacheTable']):
         self.database = database
-        for table in tables:
-            if not isinstance(table, CacheTable):
-                raise TypeError('{} is not a CacheTable'.format(table))
-            if not table.is_complete:
-                raise ValueError('{} is not completely defined'.format(table))
         self.tables = tuple(tables)
 
     def setup(self):

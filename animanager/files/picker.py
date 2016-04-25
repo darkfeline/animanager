@@ -22,18 +22,16 @@ import typing
 from collections import defaultdict
 from typing import Iterable, Sequence
 
-__all__ = ['PriorityRule', 'FilePicker']
-
 Pattern = typing.re.Pattern
 
 
-class PriorityRule(tuple):
+class Rule(tuple):
 
     """Represents one rule for picking files."""
 
     __slots__ = ()
 
-    def __new__(cls, regexp: str, priority: int) -> 'PriorityRule':
+    def __new__(cls, regexp: str, priority: int) -> 'Rule':
         compiled_regexp = re.compile(regexp, re.I)
         return super().__new__(cls, (compiled_regexp, priority))
 
@@ -54,7 +52,7 @@ class FilePicker:
 
     # pylint: disable=too-few-public-methods
 
-    def __init__(self, rules: Iterable[PriorityRule]) -> None:
+    def __init__(self, rules: Iterable[Rule]) -> None:
         # Maps priority int to lists of regexp patterns.
         self.rules = defaultdict(list)
         for rule in rules:

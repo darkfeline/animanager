@@ -38,8 +38,8 @@ class AnimeFiles:
     [1, 2]
     >>> x.available_string(0)
     '1,2'
-    >>> x[1]
-    {'madoka - 01.mkv', 'madoka - 01v2.mkv'}
+    >>> x[1] == {'madoka - 01.mkv', 'madoka - 01v2.mkv'}
+    True
 
     """
 

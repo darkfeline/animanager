@@ -39,7 +39,9 @@ class PriorityRules:
 
     cache = WeakKeyDictionary()
 
-    def __new__(cls, db):
+    @classmethod
+    def get(cls, db):
+        """Get priority rules."""
         if db not in cls.cache:
             cur = db.cursor()
             cur.execute('SELECT id, regexp, priority FROM file_priority')
