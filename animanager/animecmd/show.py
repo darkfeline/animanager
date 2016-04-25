@@ -42,7 +42,7 @@ parser.add_argument(
 def func(cmd, args):
     """Show anime data."""
     aid = cmd.results.parse_aid(args.aid, default_key='db')
-    anime = query.select.lookup(aid, args.episode_fields)
+    anime = query.select.lookup(cmd.db, aid, episode_fields=args.episode_fields)
 
     complete_string = 'yes' if anime.complete else 'no'
     print(SHOW_MSG.format(
