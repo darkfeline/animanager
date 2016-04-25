@@ -163,7 +163,7 @@ class Migration(tuple):
         return self[1]
 
     @property
-    def migrate_func(self):
+    def migrate(self):
         """Migration function."""
         return self[2]
 
