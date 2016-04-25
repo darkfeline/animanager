@@ -65,6 +65,14 @@ def _clean_fields(allowed_fields: dict, fields: FieldsParam) -> Iterable[str]:
     return fields
 
 
+ANIME_QUERY = """
+    SELECT {}
+    FROM anime
+        LEFT JOIN cache_anime USING (aid)
+        LEFT JOIN watching USING (aid)
+    WHERE {}"""
+
+
 def select(
         db,
         where_query: str,
@@ -94,12 +102,15 @@ def select(
 
     """
 
+    logger.debug(
+        'select(%r, %r, %r, %r, %r)',
+        db, where_query, where_params, fields, episode_fields)
     fields = _clean_fields(ANIME_FIELDS, fields)
     if not fields:
         raise ValueError('Fields cannot be empty')
     if set(fields) & STATUS_FIELDS.keys():
         cur = db.cursor().execute(
-            'SELECT aid FROM anime WHERE {}'.format(where_query),
+            ANIME_QUERY.format('aid', where_query),
             where_params)
         for row in cur:
             cache_status(db, row[0])
@@ -110,15 +121,10 @@ def select(
         episode_fields = ()
 
     with db:
-        anime_query = """
-            SELECT {}
-            FROM anime
-                JOIN cache_anime USING (aid)
-                LEFT JOIN watching USING (aid)
-            WHERE {}""".format(where_query)
-        anime_query = anime_query.format(
-            ','.join(ANIME_FIELDS[field] for field in fields))
-
+        anime_query = ANIME_QUERY.format(
+            ','.join(ANIME_FIELDS[field] for field in fields),
+            where_query,
+        )
         anime_rows = db.cursor().execute(anime_query, where_params)
         for row in anime_rows:
             anime = Anime(**{
