@@ -57,7 +57,7 @@ def func(cmd, args):
     ))
     if anime.regexp:
         print('Watching regexp: {}'.format(anime.regexp))
-    if anime.episodes:
+    if hasattr(anime, 'episodes'):
         episodes = sorted(anime.episodes, key=lambda x: (x.type, x.number))
         print('\n', tabulate(
             (
