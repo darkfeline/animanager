@@ -20,7 +20,7 @@
 import re
 import typing
 from collections import defaultdict
-from typing import Iterable, Sequence
+from typing import Iterable
 
 Pattern = typing.re.Pattern
 
@@ -58,7 +58,7 @@ class FilePicker:
         for rule in rules:
             self.rules[rule.priority].append(rule.regexp)
 
-    def pick(self, filenames: Sequence[str]) -> str:
+    def pick(self, filenames: Iterable[str]) -> str:
         """Pick one filename based on priority rules."""
         filenames = sorted(filenames, reverse=True)  # e.g., v2 before v1
         for priority in sorted(self.rules.keys(), reverse=True):

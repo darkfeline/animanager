@@ -15,4 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Package containing implemented Cmd classes."""
+from animanager.cmd import ArgumentParser, Command
+
+parser = ArgumentParser(prog='fetchtitles')
+
+def func(cmd, args):
+    # pylint: disable=unused-argument
+    """Fetch AniDB titles data."""
+    cmd.titles.fetch()
+
+command = Command(parser, func)

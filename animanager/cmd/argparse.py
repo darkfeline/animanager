@@ -34,13 +34,6 @@ class ArgumentParser(argparse.ArgumentParser):
         self.print_help()
         raise ParseExit()
 
-    def add_aid(self, *args, **kwargs):
-        self.add_argument('aid', *args, **kwargs)
-
-    def add_query(self):
-        """Add a generic query argument."""
-        self.add_argument('query', nargs=argparse.REMAINDER)
-
 
 class ParseExit(Exception):
     """This is used to exit parsing in lieu of sys.exit()"""

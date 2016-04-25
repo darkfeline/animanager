@@ -16,16 +16,24 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from animanager.cmd import ArgumentParser, Command
-from animanager.db.query.eptype import EpisodeTypes
+from animanager.db import query
 
-parser = ArgumentParser(prog='purgecache')
+parser = ArgumentParser(prog='unregister')
+
+parser.add_argument(
+    '-c', '--complete', action='store_true',
+    help='Unregister all complete anime.')
+parser.add_argument('aid', nargs='?', default=None)
 
 def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Purge all caches."""
-    cmd.cache_manager.cleanup()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
-    del cmd.file_picker
+    """Unregister watching regexp for an anime."""
+    if args.complete:
+        query.files.delete_regexp_complete(cmd.db)
+    else:
+        if args.aid is None:
+            parser.print_help()
+        else:
+            aid = cmd.results.parse_aid(args.aid, default_key='db')
+            query.files.delete_regexp(cmd.db, aid)
 
 command = Command(parser, func)

@@ -15,19 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import CmdMixinMeta
+from inspect import cleandoc
 
+from animanager.cmd import ArgumentParser, Command
 
-class MiscCmdMixin(metaclass=CmdMixinMeta):
+parser = ArgumentParser(prog='help')
 
-    alias_q = 'quit'
+def func(cmd, args):
+    # pylint: disable=unused-argument
+    """Commands help."""
+    print(cleandoc("""Commands:
+    {}
 
-    def do_quit(self, args):
-        """Quit."""
-        return True
+    Type `<command> -h` for command-specific help.
+    """.format('\n'.join(sorted(cmd.commands)))))
 
-    def do_purgecache(self, args):
-        """Purge cache tables."""
-        self.cache_manager.cleanup()
-        self.cache_manager.setup()
-        self.purge_cache()
+command = Command(parser, func)

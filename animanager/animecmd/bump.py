@@ -16,16 +16,14 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from animanager.cmd import ArgumentParser, Command
-from animanager.db.query.eptype import EpisodeTypes
+from animanager.db import query
 
-parser = ArgumentParser(prog='purgecache')
+parser = ArgumentParser(prog='bump')
+parser.add_argument('aid')
 
 def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Purge all caches."""
-    cmd.cache_manager.cleanup()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
-    del cmd.file_picker
+    """Bump anime."""
+    aid = cmd.results.parse_aid(args.aid, default_key='db')
+    query.update.bump(cmd.db, aid)
 
 command = Command(parser, func)

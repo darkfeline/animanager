@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, Command
-from animanager.db.query.eptype import EpisodeTypes
+from tabulate import tabulate
 
-parser = ArgumentParser(prog='purgecache')
+from animanager.cmd import ArgumentParser, Command
+from animanager.db import query
+
+parser = ArgumentParser(prog='rules')
 
 def func(cmd, args):
     # pylint: disable=unused-argument
-    """Purge all caches."""
-    cmd.cache_manager.cleanup()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
-    del cmd.file_picker
+    """List file priority rules."""
+    rules = query.files.get_priority_rules(cmd.db)
+    print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
 
 command = Command(parser, func)

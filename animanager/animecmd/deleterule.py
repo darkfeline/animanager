@@ -16,16 +16,14 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from animanager.cmd import ArgumentParser, Command
-from animanager.db.query.eptype import EpisodeTypes
+from animanager.db import query
 
-parser = ArgumentParser(prog='purgecache')
+parser = ArgumentParser(prog='deleterule')
+parser.add_argument('id', type=int)
 
 def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Purge all caches."""
-    cmd.cache_manager.cleanup()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
+    """Delete priority rule."""
+    query.files.delete_priority_rule(cmd.db, args.id)
     del cmd.file_picker
 
 command = Command(parser, func)

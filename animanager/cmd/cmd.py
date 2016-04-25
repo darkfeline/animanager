@@ -44,9 +44,7 @@ class Cmd:
             try:
                 command = self.commands[tokens.pop(0)]
             except KeyError:
-                print('Invalid command.\n\nCommands: {}'.format(
-                    ', '.join(sorted(self.commands))
-                ))
+                print('Invalid command.')
             try:
                 stop = command(self, tokens)
             except ParseExit:

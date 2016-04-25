@@ -15,4 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .animecmd import AnimeCmd
+from animanager.cmd import ArgumentParser, Command
+from animanager.db import query
+
+parser = ArgumentParser(prog='addrule')
+parser.add_argument('regexp')
+parser.add_argument('priority', nargs='?', default=None, type=int)
+
+def func(cmd, args):
+    """Add a priority rule for files."""
+    row_id = query.files.add_priority_rule(cmd.db, args.regexp, args.priority)
+    del cmd.file_picker
+    print('Added rule {}'.format(row_id))
+
+command = Command(parser, func)

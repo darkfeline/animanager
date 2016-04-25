@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=import-self
-
 import logging
 import shutil
 from textwrap import dedent
@@ -25,13 +23,16 @@ from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
 from animanager.cmd import Cmd
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
-from animanager.db import cachetable, migrations
-from animanager.db.query.files import PriorityRules
+from animanager.db import cachetable, migrations, query
 from animanager.files import FilePicker, Rule
 from animanager.sqlite import SQLiteDB
 from animanager.utils import cached_property
 
-from . import gpl, purgecache, quitcmd
+# pylint: disable=import-self
+from . import (
+    add, addrule, asearch, bump, deleterule, gpl, helpcmd, purgecache,
+    quitcmd, register, reset, rules, search, show, unregister, update, watch,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +50,33 @@ class AnimeCmd(Cmd):
     under certain conditions; type "gpl c" for details.''').format(VERSION)
     prompt = 'A> '
     commands = {
+        '?': helpcmd.command,
+        'a': add.command,
+        'add': add.command,
+        'addrule': addrule.command,
+        'as': asearch.command,
+        'asearch': asearch.command,
+        'b': bump.command,
+        'bump': bump.command,
+        'deleterule': deleterule.command,
         'gpl': gpl.command,
+        'help': helpcmd.command,
         'purgecache': purgecache.command,
         'q': quitcmd.command,
         'quit': quitcmd.command,
+        'r': reset.command,
+        'register': register.command,
+        'reset': reset.command,
+        'rules': rules.command,
+        's': search.command,
+        'search': search.command,
+        'sh': show.command,
+        'show': show.command,
+        'u': update.command,
+        'unregister': unregister.command,
+        'update': update.command,
+        'w': watch.command,
+        'watch': watch.command,
     }
     safe_exceptions = set([AIDParseError])
 
@@ -87,4 +111,4 @@ class AnimeCmd(Cmd):
         """Cached file picker property."""
         return FilePicker(
             Rule(rule.regexp, rule.priority)
-            for rule in PriorityRules.get(self.db))
+            for rule in query.files.get_priority_rules(self.db))

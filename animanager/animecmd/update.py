@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+from animanager.anidb import request_anime
 from animanager.cmd import ArgumentParser, Command
-from animanager.db.query.eptype import EpisodeTypes
+from animanager.db import query
 
-parser = ArgumentParser(prog='purgecache')
+parser = ArgumentParser(prog='update')
+parser.add_argument('aid')
 
 def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Purge all caches."""
-    cmd.cache_manager.cleanup()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
-    del cmd.file_picker
+    """Update an existing anime from a local database search."""
+    aid = cmd.results.parse_aid(args.aid, default_key='db')
+    anime = request_anime(aid)
+    query.update.add(cmd.db, anime)
 
 command = Command(parser, func)
