@@ -33,7 +33,7 @@ def func(cmd, args):
         regexp = '.*'.join(args.query)
     else:
         # Make default regexp.
-        title = query.select.lookup(cmd.db, aid, ['title'])[0]
+        title = query.select.lookup(cmd.db, aid, fields=['title'])[0]
         # Replace non-word, non-whitespace with whitespace.
         regexp = re.sub(r'[^\w\s]', ' ', title)
         # Split on whitespace and join with wildcard regexp.
