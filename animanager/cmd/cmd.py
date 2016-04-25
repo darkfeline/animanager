@@ -37,6 +37,7 @@ class Cmd:
     def cmdloop(self):
         """Start CLI REPL."""
         # pylint: disable=broad-except
+        print(self.intro)
         stop = False
         while not stop:
             cmdline = input(self.prompt)
@@ -46,7 +47,7 @@ class Cmd:
             except KeyError:
                 print('Invalid command.')
             try:
-                stop = command(self, tokens)
+                stop = command(self, *tokens)
             except ParseExit:
                 continue
             except Exception as e:
