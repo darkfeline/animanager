@@ -46,7 +46,7 @@ class AnimeFiles:
     EPISODES_TO_SHOW = 6
 
     def __init__(self, regexp: str, filenames: Iterable = ()) -> None:
-        self.regexp = re.compile(regexp)
+        self.regexp = re.compile(regexp, re.I)
         # Maps episode int to list of filename strings.
         self.by_episode = defaultdict(set)
         self.add_iter(filenames)
