@@ -28,7 +28,7 @@ def func(cmd, args):
         print('Must supply query.')
         return
     search_query = compile_re_query(args.query)
-    results = cmd.title_searcher.search(search_query)
+    results = cmd.titles.search(search_query)
     results = [(anime.aid, anime.main_title) for anime in results]
     cmd.results['anidb'].set(results)
     cmd.results['anidb'].print()
