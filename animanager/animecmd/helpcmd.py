@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from inspect import cleandoc
+from textwrap import dedent
 
 from animanager.cmd import ArgumentParser, Command
 
@@ -24,10 +24,12 @@ parser = ArgumentParser(prog='help')
 def func(cmd, args):
     # pylint: disable=unused-argument
     """Commands help."""
-    print(cleandoc("""Commands:
+    print(dedent("""\
+    Commands
+    --------
     {}
 
     Type `<command> -h` for command-specific help.
-    """.format('\n'.join(sorted(cmd.commands)))))
+    """).format('\n'.join(sorted(cmd.commands))))
 
 command = Command(parser, func)
