@@ -37,9 +37,11 @@ def func(cmd, args):
         aids = [aid]
     anime = request_anime(aids.pop())
     query.update.add(cmd.db, anime)
+    print('Updated {} {}'.format(anime.aid, anime.title))
     for aid in aids:
         time.sleep(1)
         anime = request_anime(aid)
         query.update.add(cmd.db, anime)
+        print('Updated {} {}'.format(anime.aid, anime.title))
 
 command = Command(parser, func)
