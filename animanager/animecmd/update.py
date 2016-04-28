@@ -15,17 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 from animanager.anidb import request_anime
 from animanager.cmd import ArgumentParser, Command
 from animanager.db import query
 
 parser = ArgumentParser(prog='update')
-parser.add_argument('aid')
+parser.add_argument('aid', nargs='?', default=None)
+parser.add_argument(
+    '-i', '--incomplete', action='store_true',
+    help='Update all incomplete anime.')
 
 def func(cmd, args):
     """Update an existing anime from a local database search."""
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
-    anime = request_anime(aid)
+    if args.incomplete:
+        rows = query.select.select(cmd.db, 'enddate=?', [None], ['aid'])
+        aids = [anime.aid for anime in rows]
+    else:
+        aid = cmd.results.parse_aid(args.aid, default_key='db')
+        aids = [aid]
+    anime = request_anime(aids.pop())
     query.update.add(cmd.db, anime)
+    for aid in aids:
+        time.sleep(1)
+        anime = request_anime(aid)
+        query.update.add(cmd.db, anime)
 
 command = Command(parser, func)
