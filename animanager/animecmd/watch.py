@@ -40,8 +40,8 @@ def func(cmd, args):
         return
 
     file = cmd.file_picker.pick(files)
-    subprocess.call(cmd.config.anime.player_args + [file])
-    if episode == anime.watched_episodes + 1:
+    ret = subprocess.call(cmd.config.anime.player_args + [file])
+    if ret == 0 and episode == anime.watched_episodes + 1:
         user_input = input('Bump? [Yn]')
         if user_input.lower() in ('n', 'no'):
             print('Not bumped.')

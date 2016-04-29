@@ -8,6 +8,10 @@ This project uses [semantic versioning](http://semver.org/).
 
 - Added `-i` flag to `update` command.
 
+### Changed
+
+- Don't offer to bump when video player exits with non-zero status.
+
 ## 0.10.2 - 2016-04-24
 
 ### Added
