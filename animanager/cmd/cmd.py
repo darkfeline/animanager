@@ -36,6 +36,9 @@ class Cmd:
     commands = {}
     safe_exceptions = set()
 
+    def __init__(self):
+        self.last_cmd = []
+
     def cmdloop(self):
         """Start CLI REPL."""
         # pylint: disable=broad-except
@@ -44,13 +47,21 @@ class Cmd:
         while not stop:
             cmdline = input(self.prompt)
             tokens = shlex.split(cmdline)
+            if not tokens:
+                if self.last_cmd:
+                    tokens = self.last_cmd
+                else:
+                    print('No previous command.')
+                    continue
             try:
-                command = self.commands[tokens.pop(0)]
+                command = self.commands[tokens[0]]
             except KeyError:
                 print('Invalid command.')
                 continue
+            else:
+                self.last_cmd = tokens
             try:
-                stop = command(self, *tokens)
+                stop = command(self, *tokens[1:])
             except ParseExit:
                 continue
             except Exception as e:
