@@ -7,6 +7,8 @@ This project uses [semantic versioning](http://semver.org/).
 ### Added
 
 - Added `-i` flag to `update` command.
+- Added feature to use previous command when hitting Enter at a blank command
+  line.
 
 ### Changed
 
@@ -25,6 +27,8 @@ This project uses [semantic versioning](http://semver.org/).
 - `r` alias changed from `register` command to `reset` command.
 - `search -a` command now includes shows with any available unwatched episodes,
   not just the next unwatched episode.
+- Rewrote command line code, so behavior will be different than before (e.g.,
+  for help).
 
 ## 0.10.1 - 2016-03-28
 
