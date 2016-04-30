@@ -30,11 +30,13 @@ parser.add_argument(
 def func(cmd, args):
     """Update an existing anime from a local database search."""
     if args.incomplete:
-        rows = query.select.select(cmd.db, 'enddate=?', [None], ['aid'])
+        rows = query.select.select(cmd.db, 'enddate is NULL', [], ['aid'])
         aids = [anime.aid for anime in rows]
     else:
         aid = cmd.results.parse_aid(args.aid, default_key='db')
         aids = [aid]
+    if not aids:
+        return
     anime = request_anime(aids.pop())
     query.update.add(cmd.db, anime)
     print('Updated {} {}'.format(anime.aid, anime.title))
