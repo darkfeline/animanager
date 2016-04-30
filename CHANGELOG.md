@@ -14,6 +14,10 @@ This project uses [semantic versioning](http://semver.org/).
 
 - Don't offer to bump when video player exits with non-zero status.
 
+### Fixed
+
+- Fixed bug where `enddate` gets set to `0` instead of `NULL`.
+
 ## 0.10.2 - 2016-04-24
 
 ### Added

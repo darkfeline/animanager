@@ -38,8 +38,6 @@ def add(db, anime):
         'title': anime.title,
         'type': anime.type,
         'episodecount': anime.episodecount,
-        'startdate': anime.startdate,
-        'enddate': anime.enddate,
     }
     if anime.startdate is not None:
         values['startdate'] = timestamp(anime.startdate)
