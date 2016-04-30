@@ -41,7 +41,7 @@ def func(cmd, args):
     query.update.add(cmd.db, anime)
     print('Updated {} {}'.format(anime.aid, anime.title))
     for aid in aids:
-        time.sleep(1)
+        time.sleep(2)
         anime = request_anime(aid)
         query.update.add(cmd.db, anime)
         print('Updated {} {}'.format(anime.aid, anime.title))
