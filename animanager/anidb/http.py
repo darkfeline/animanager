@@ -69,8 +69,8 @@ def check_for_errors(tree: XMLTree) -> None:
     :raises APIError: error found
 
     """
-    if tree.root.find('error'):
-        raise APIError()
+    if tree.root.tag == 'error':
+        raise APIError(tree.root.text)
 
 
 def get_content(response: HTTPResponse) -> str:
