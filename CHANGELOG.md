@@ -9,6 +9,7 @@ This project uses [semantic versioning](http://semver.org/).
 - Added `-i` flag to `update` command.
 - Added feature to use previous command when hitting Enter at a blank command
   line.
+- Added `reg` and `unreg` aliases for `register` and `unregister`.
 
 ### Changed
 
