@@ -1,6 +1,5 @@
 # Python
 __pycache__/
-*.pyc
 *.egg-info
 
 # Python packaging
@@ -12,7 +11,3 @@ __pycache__/
 /doc/_build/
 /.hypothesis/
 /.cache/
-/GPATH
-/GRTAGS
-/GTAGS
-/.venv/
