@@ -21,7 +21,7 @@ from animanager.date import timestamp
 from animanager.sqlite.utils import upsert
 
 from .eptype import get_eptype
-from .select import lookup
+from .select import ALL, lookup
 from .status import cache_status, set_status
 
 logger = logging.getLogger(__name__)
@@ -33,8 +33,9 @@ def add(db, anime):
     anime is an AnimeTree instance.
 
     """
+    aid = anime.aid
     values = {
-        'aid': anime.aid,
+        'aid': aid,
         'title': anime.title,
         'type': anime.type,
         'episodecount': anime.episodecount,
@@ -45,8 +46,17 @@ def add(db, anime):
         values['enddate'] = timestamp(anime.enddate)
     with db:
         upsert(db, 'anime', ['aid'], values)
+        our_anime = lookup(db, anime.aid, episode_fields=ALL)
+        our_episodes = our_anime.episodes
         for episode in anime.episodes:
-            add_episode(db, anime.aid, episode)
+            add_episode(db, aid, episode)
+            our_episodes = [
+                ep for ep in our_episodes
+                if not (ep.type == episode.type and ep.number == episode.number)
+            ]
+        # Remove extra episodes that we have.
+        for episode in our_episodes:
+            delete_episode(db, aid, episode)
 
 
 def add_episode(db, aid, episode):
@@ -59,6 +69,17 @@ def add_episode(db, aid, episode):
         'length': episode.length,
     }
     upsert(db, 'episode', ['aid', 'type', 'number'], values)
+
+
+def delete_episode(db, aid, episode):
+    """Delete an episode."""
+    db.cursor().execute(
+        'DELETE FROM episode WHERE aid=:aid AND type=:type AND number=:number',
+        {
+            'aid': aid,
+            'type': episode.type,
+            'number': episode.number,
+        })
 
 
 def set_watched(db, aid, ep_type, number):
