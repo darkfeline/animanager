@@ -26,11 +26,17 @@ parser.add_argument('aid', nargs='?', default=None)
 parser.add_argument(
     '-i', '--incomplete', action='store_true',
     help='Update all incomplete anime.')
+parser.add_argument(
+    '-w', '--watching', action='store_true',
+    help='Update all watching anime.')
 
 def func(cmd, args):
     """Update an existing anime from a local database search."""
-    if args.incomplete:
-        rows = query.select.select(cmd.db, 'enddate is NULL', [], ['aid'])
+    if args.watching:
+        rows = query.select.select(cmd.db, 'regexp IS NOT NULL', [], ['aid'])
+        aids = [anime.aid for anime in rows]
+    elif args.incomplete:
+        rows = query.select.select(cmd.db, 'enddate IS NULL', [], ['aid'])
         aids = [anime.aid for anime in rows]
     else:
         aid = cmd.results.parse_aid(args.aid, default_key='db')
