@@ -31,16 +31,6 @@ publish: clean package
 	python3 setup.py register
 	twine upload dist/*
 
-# Dev setup.
-.PHONY: installhooks
-installhooks:
-	ln -s ../../git-hooks/pre-commit .git/hooks
-
 .PHONY: test
 test:
 	py.test --doctest-modules animanager tests
-
-.PHONY: lint
-lint:
-	isort -rc animanager tests
-	pylint --output-format=colorized animanager tests || true
