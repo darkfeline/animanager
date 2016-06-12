@@ -32,22 +32,15 @@ publish: clean package
 	twine upload dist/*
 
 # Dev setup.
-.PHONY: addhooks
-addhooks:
-	ln -s ../../hooks/pre-commit .git/hooks
-
-# Run all checks.
-.PHONY: check
-check: test isort pylint
+.PHONY: installhooks
+installhooks:
+	ln -s ../../git-hooks/pre-commit .git/hooks
 
 .PHONY: test
 test:
 	py.test --doctest-modules animanager tests
 
-.PHONY: isort
-isort:
+.PHONY: lint
+lint:
 	isort -rc animanager tests
-
-.PHONY: pylint
-pylint:
 	pylint --output-format=colorized animanager tests || true

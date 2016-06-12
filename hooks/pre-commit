@@ -1,3 +1,0 @@
-#!/bin/sh
-
-hooks/pre-commit.isort || exit 1
