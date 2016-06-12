@@ -19,6 +19,7 @@ import logging
 import shutil
 from textwrap import dedent
 
+import animanager.descriptors
 from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
 from animanager.cmd import Cmd
@@ -26,7 +27,6 @@ from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, migrations, query
 from animanager.files import FilePicker, Rule
 from animanager.sqlite import SQLiteDB
-from animanager.utils import cached_property
 
 # pylint: disable=import-self
 from . import (
@@ -108,7 +108,7 @@ class AnimeCmd(Cmd):
             'anidb': AIDResults(['Title']),
         })
 
-    @cached_property
+    @animanager.descriptors.CachedProperty
     def file_picker(self) -> FilePicker:
         """Cached file picker property."""
         return FilePicker(

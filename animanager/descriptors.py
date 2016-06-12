@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Animanager utilities."""
-
 from weakref import WeakKeyDictionary
 
 
@@ -43,45 +41,19 @@ class CachedProperty:
 
     """
 
-    # pylint: disable=too-few-public-methods
-
-    def __init__(self, func):
+    def __init__(self, fget):
         self.cache = WeakKeyDictionary()
-        self.func = func
+        self.fget = fget
 
-    def __get__(self, obj, cls):
-        if obj is None:
+    def __get__(self, instance, owner):
+        if instance is None:
             return self
-        if obj not in self.cache:
-            self.cache[obj] = self.func(obj)
-        return self.cache[obj]
+        if instance not in self.cache:
+            self.cache[instance] = self.fget(instance)
+        return self.cache[instance]
 
-    def __set__(self, obj, value):
+    def __set__(self, instance, value):
         raise AttributeError('Cannot set value on CachedProperty')
 
-    def __delete__(self, obj):
-        self.cache.pop(obj, None)
-
-
-def cached_property(func):
-    """Cached property decorator.
-
-    >>> from itertools import count
-    >>> class Foo:
-    ...     def __init__(self):
-    ...         self.count = count(1)
-    ...     @cached_property
-    ...     def foo(self):
-    ...         return next(self.count)
-    ...
-    >>> x = Foo()
-    >>> x.foo
-    1
-    >>> x.foo
-    1
-    >>> del x.foo
-    >>> x.foo
-    2
-
-    """
-    return CachedProperty(func)
+    def __delete__(self, instance):
+        self.cache.pop(instance, None)

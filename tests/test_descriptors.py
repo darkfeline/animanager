@@ -18,7 +18,7 @@
 import unittest
 from unittest import mock
 
-from animanager.utils import CachedProperty
+from animanager.descriptors import CachedProperty
 
 
 class CachedPropertyTestCase(unittest.TestCase):

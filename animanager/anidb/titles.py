@@ -30,7 +30,7 @@ from collections import namedtuple
 from typing import List
 from urllib.request import urlopen
 
-from animanager.utils import cached_property
+from animanager.descriptors import CachedProperty
 from animanager.xml import XMLTree
 
 from .http import check_for_errors, get_content
@@ -119,17 +119,17 @@ class TitleSearcher:
     def __init__(self, cachedir):
         self.cachedir = cachedir
 
-    @cached_property
+    @CachedProperty
     def titles_file(self):
         """Anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.xml')
 
-    @cached_property
+    @CachedProperty
     def pickle_file(self):
         """Pickled anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.pickle')
 
-    @cached_property
+    @CachedProperty
     def titles_tree(self) -> TitlesTree:
         """Titles XML tree."""
         # Try to load pickled file first.
