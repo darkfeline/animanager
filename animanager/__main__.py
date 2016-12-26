@@ -21,24 +21,6 @@ import logging
 from animanager import subcmds
 
 
-def _make_parser():
-    # Set up main parser.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config',
-                        default='',
-                        help='Alternate configuration file to use.')
-    parser.add_argument('--debug',
-                        action='store_true',
-                        help='Enable debug output.')
-
-    # Set up subparsers.
-    subparsers = parser.add_subparsers(title='Managers')
-    for subcommand in subcmds.subcommands:
-        subcommand.setup_parser(subparsers)
-
-    return parser
-
-
 def main():
     """Animanager program entry point."""
     handler = logging.StreamHandler()
@@ -65,6 +47,24 @@ def main():
         parser.print_help()
     else:
         func(args)
+
+
+def _make_parser():
+    # Set up main parser.
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config',
+                        default='',
+                        help='Alternate configuration file to use.')
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help='Enable debug output.')
+
+    # Set up subparsers.
+    subparsers = parser.add_subparsers(title='Managers')
+    for subcommand in subcmds.subcommands:
+        subcommand.setup_parser(subparsers)
+
+    return parser
 
 
 if __name__ == '__main__':
