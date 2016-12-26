@@ -23,24 +23,11 @@ from animanager import subcmds
 
 def main():
     """Animanager program entry point."""
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(
-        '%(levelname)s:%(name)s:%(message)s',
-    ))
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-    root_logger.addHandler(handler)
-
     parser = _make_parser()
     args = parser.parse_args()
 
-    if not args.debug:
-        handler.setFormatter(logging.Formatter(
-            '%(levelname)s: %(message)s',
-        ))
-        root_logger.setLevel(logging.INFO)
+    _setup_logging(args)
 
-    # Run command.
     try:
         func = args.func
     except AttributeError:
@@ -65,6 +52,22 @@ def _make_parser():
         subcommand.setup_parser(subparsers)
 
     return parser
+
+
+def _setup_logging(args):
+    root_logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    root_logger.addHandler(handler)
+    if args.debug:
+        root_logger.setLevel(logging.DEBUG)
+        handler.setFormatter(logging.Formatter(
+            '%(levelname)s:%(name)s:%(message)s',
+        ))
+    else:
+        root_logger.setLevel(logging.INFO)
+        handler.setFormatter(logging.Formatter(
+            '%(levelname)s: %(message)s',
+        ))
 
 
 if __name__ == '__main__':
