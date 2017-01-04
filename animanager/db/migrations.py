@@ -17,24 +17,22 @@
 
 """Migrations module.
 
-.. data:: manager
+Members:
 
-   Migration manager for Animanager anime database.
-
+manager
 """
 
+from mir.sqlqs.migration import MigrationManager
+
 from animanager.date import parse_date, timestamp
-from animanager.sqlite import MigrationManager
 
 manager = MigrationManager()
 
-# pylint: disable=missing-docstring
-
 
 @manager.migration(0, 1)
-def migrate1(database):
-    with database:
-        cur = database.cursor()
+def _migrate1(conn):
+    with conn:
+        cur = conn.cursor()
         cur.execute("""
         CREATE TABLE anime (
             aid INTEGER,
@@ -90,9 +88,9 @@ def migrate1(database):
 
 
 @manager.migration(1, 2)
-def migrate2(database):
-    with database:
-        cur = database.cursor()
+def _migrate2(conn):
+    with conn:
+        cur = conn.cursor()
 
         # Alter anime.
         cur.execute("""
@@ -111,7 +109,7 @@ def migrate2(database):
         FROM anime
         """)
         # This is done in Python instead of SQL because fuck timezones.
-        row = database.cursor()
+        row = conn.cursor()
         row = row.execute('SELECT aid, startdate, enddate FROM anime')
         cur.executemany(
             """UPDATE anime_new
@@ -140,9 +138,9 @@ def migrate2(database):
 
 
 @manager.migration(2, 3)
-def migrate3(database):
-    with database:
-        cur = database.cursor()
+def _migrate3(conn):
+    with conn:
+        cur = conn.cursor()
 
         # Alter anime.
         cur.execute("""

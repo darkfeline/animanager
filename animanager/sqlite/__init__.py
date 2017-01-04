@@ -18,5 +18,4 @@
 from .cachedview import CachedView
 from .cachetable import CacheTable, CacheTableManager
 from .db import SQLiteDB
-from .migrations import MigrationManager
 from .utils import upsert

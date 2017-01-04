@@ -91,12 +91,11 @@ class AnimeCmd(Cmd):
         self.db = SQLiteDB(dbfile)
 
         manager = migrations.manager
-        if manager.needs_migration(self.db):
+        if manager.should_migrate(self.db):
             logger.info('Migration needed, backing up database')
             shutil.copyfile(dbfile, dbfile + '~')
             logger.info('Migrating database')
             manager.migrate(self.db)
-        manager.check_version(self.db)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
