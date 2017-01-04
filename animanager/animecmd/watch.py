@@ -24,6 +24,7 @@ parser = ArgumentParser(prog='watch')
 parser.add_argument('aid')
 parser.add_argument('episode', nargs='?', default=None, type=int)
 
+
 def func(cmd, args):
     """Watch an anime."""
     aid = cmd.results.parse_aid(args.aid, default_key='db')

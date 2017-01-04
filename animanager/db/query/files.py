@@ -76,10 +76,10 @@ def cache_files(db, aid: int, anime_files: AnimeFiles) -> None:
             (anime_files.to_json(), aid))
 
 
-def get_files(self, aid: int) -> AnimeFiles:
+def get_files(conn, aid: int) -> AnimeFiles:
     """Get cached files for anime."""
-    with self.cnx:
-        cur = self.cnx.cursor().execute(
+    with conn:
+        cur = conn.cursor().execute(
             'SELECT anime_files FROM cache_anime WHERE aid=?',
             (aid,))
         row = cur.fetchone()

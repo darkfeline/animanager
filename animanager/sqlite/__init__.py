@@ -17,5 +17,4 @@
 
 from .cachedview import CachedView
 from .cachetable import CacheTable, CacheTableManager
-from .db import SQLiteDB
 from .utils import upsert

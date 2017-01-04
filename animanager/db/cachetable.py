@@ -20,9 +20,9 @@
 from animanager.sqlite import CacheTable, CacheTableManager
 
 
-def setup(self):
+def setup(conn):
     """CacheTable setup function."""
-    self.cnx.cursor().execute("""
+    conn.cursor().execute("""
     CREATE TABLE IF NOT EXISTS cache_anime (
         aid INTEGER,
         complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
@@ -34,9 +34,9 @@ def setup(self):
     )""")
 
 
-def teardown(self):
+def teardown(conn):
     """CacheTable teardown function."""
-    self.cnx.cursor().execute('DROP TABLE IF EXISTS cache_anime')
+    conn.cursor().execute('DROP TABLE IF EXISTS cache_anime')
 
 anime_cache = CacheTable(setup, teardown)
 

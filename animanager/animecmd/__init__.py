@@ -19,6 +19,10 @@ import logging
 import shutil
 from textwrap import dedent
 
+import apsw
+
+from mir.sqlqs.pragma import PragmaHelper
+
 import animanager.descriptors
 from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
@@ -26,7 +30,6 @@ from animanager.cmd import Cmd
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, migrations, query
 from animanager.files import FilePicker, Rule
-from animanager.sqlite import SQLiteDB
 
 # pylint: disable=import-self
 from . import (
@@ -88,7 +91,7 @@ class AnimeCmd(Cmd):
         self.config = config
         self.titles = TitleSearcher(config.anime.anidb_cache)
         dbfile = config.anime.database
-        self.db = SQLiteDB(dbfile)
+        self.db = self._connect(dbfile)
 
         manager = migrations.manager
         if manager.should_migrate(self.db):
@@ -106,6 +109,13 @@ class AnimeCmd(Cmd):
             ]),
             'anidb': AIDResults(['Title']),
         })
+
+    def _connect(self, dbfile) -> apsw.Connection:
+        """Connect to SQLite database file."""
+        conn = apsw.Connection(dbfile)
+        PragmaHelper(conn).foreign_keys = 1
+        assert PragmaHelper(conn).foreign_keys == 1
+        return conn
 
     @animanager.descriptors.CachedProperty
     def file_picker(self) -> FilePicker:
