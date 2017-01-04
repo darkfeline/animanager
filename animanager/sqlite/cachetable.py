@@ -26,20 +26,20 @@ class CacheTableManager:
     """
 
     def __init__(self, conn, tables: 'Iterable[CacheTable]'):
-        self.conn = conn
-        self.tables = tuple(tables)
+        self._conn = conn
+        self._tables = tuple(tables)
 
     def setup(self):
         """Setup cache tables."""
-        for table in self.tables:
-            with self.conn:
-                table.fsetup(self.conn)
+        for table in self._tables:
+            with self._conn:
+                table.fsetup(self._conn)
 
     def teardown(self):
         """Cleanup cache tables."""
-        for table in reversed(self.tables):
-            with self.conn:
-                table.fteardown(self.conn)
+        for table in reversed(self._tables):
+            with self._conn:
+                table.fteardown(self._conn)
 
 
 class CacheTable:
