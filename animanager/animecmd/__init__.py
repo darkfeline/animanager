@@ -31,7 +31,6 @@ from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, migrations, query
 from animanager.files import FilePicker, Rule
 
-# pylint: disable=import-self
 from . import (
     add, addrule, asearch, bump, deleterule, gpl, helpcmd, purgecache,
     quitcmd, register, reset, rules, search, show, unregister, update, watch,

@@ -17,10 +17,15 @@
 
 """Animanager database cache tables."""
 
-from animanager.sqlite import CacheTable, CacheTableManager
+from animanager.sqlite import CacheTableSpec, CacheTableManager
 
 
-def setup(conn):
+def make_manager(conn):
+    """Make CacheTableManager."""
+    return CacheTableManager(conn, [_anime_cache])
+
+
+def _setup(conn):
     """CacheTable setup function."""
     conn.cursor().execute("""
     CREATE TABLE IF NOT EXISTS cache_anime (
@@ -34,13 +39,9 @@ def setup(conn):
     )""")
 
 
-def teardown(conn):
+def _teardown(conn):
     """CacheTable teardown function."""
     conn.cursor().execute('DROP TABLE IF EXISTS cache_anime')
 
-anime_cache = CacheTable(setup, teardown)
 
-
-def make_manager(database):
-    """Make CacheTableManager."""
-    return CacheTableManager(database, [anime_cache])
+_anime_cache = CacheTableSpec(_setup, _teardown)

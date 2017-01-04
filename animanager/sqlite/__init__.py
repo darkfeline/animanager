@@ -16,5 +16,5 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from .cachedview import CachedView
-from .cachetable import CacheTable, CacheTableManager
+from .cachetable import CacheTableSpec, CacheTableManager
 from .utils import upsert

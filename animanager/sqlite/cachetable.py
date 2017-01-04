@@ -18,6 +18,9 @@
 """Tools for managing temporary cache tables in a SQLite database."""
 
 
+from collections import namedtuple
+
+
 class CacheTableManager:
 
     """CacheTable manager.
@@ -25,37 +28,21 @@ class CacheTableManager:
     Instances of this class manage cache table setup and cleanup.
     """
 
-    def __init__(self, conn, tables: 'Iterable[CacheTable]'):
+    def __init__(self, conn, table_specs: 'Iterable[CacheTableSpec]'):
         self._conn = conn
-        self._tables = tuple(tables)
+        self._table_specs = tuple(table_specs)
 
     def setup(self):
         """Setup cache tables."""
-        for table in self._tables:
+        for table_spec in self._table_specs:
             with self._conn:
-                table.fsetup(self._conn)
+                table_spec.setup(self._conn)
 
     def teardown(self):
         """Cleanup cache tables."""
-        for table in reversed(self._tables):
+        for table_spec in reversed(self._table_specs):
             with self._conn:
-                table.fteardown(self._conn)
+                table_spec.teardown(self._conn)
 
 
-class CacheTable:
-
-    """Cache table class.
-
-    Instances of this class represent cache tables that can be added to
-    :class:`~animanager.sqlite.db.SQLiteDB`.
-
-    Instances need to define setup and cleanup functions via the
-    :meth:`setup` and :meth:`cleanup` decorator methods.  The functions
-    are called with a connection object.
-
-    Setup functions should use ``IF NOT EXISTS`` to create tables.
-    """
-
-    def __init__(self, fsetup, fteardown):
-        self.fsetup = fsetup
-        self.fteardown = fteardown
+CacheTableSpec = namedtuple('CacheTableSpec', 'setup,teardown')
