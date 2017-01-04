@@ -90,14 +90,9 @@ class AnimeCmd(Cmd):
         self.config = config
         self.titles = TitleSearcher(config.anime.anidb_cache)
         dbfile = config.anime.database
-        self.db = self._connect(dbfile)
+        self.conn = self.db = self._connect(dbfile)
 
-        manager = migrations.manager
-        if manager.should_migrate(self.db):
-            logger.info('Migration needed, backing up database')
-            shutil.copyfile(dbfile, dbfile + '~')
-            logger.info('Migrating database')
-            manager.migrate(self.db)
+        self._migrate(self.conn, dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -115,6 +110,15 @@ class AnimeCmd(Cmd):
         PragmaHelper(conn).foreign_keys = 1
         assert PragmaHelper(conn).foreign_keys == 1
         return conn
+
+    def _migrate(self, conn, dbfile):
+        """Do any necessary database migrations."""
+        manager = migrations.manager
+        if manager.should_migrate(self.db):
+            logger.info('Migration needed, backing up database')
+            shutil.copyfile(dbfile, dbfile + '~')
+            logger.info('Migrating database')
+            manager.migrate(self.db)
 
     @animanager.descriptors.CachedProperty
     def file_picker(self) -> FilePicker:
