@@ -53,7 +53,6 @@ def request_titles() -> 'TitlesTree':
 
 
 SearchEntry = namedtuple('SearchEntry', ['aid', 'main_title', 'titles'])
-"""Represents one anime in the titles data."""
 
 
 class TitlesTree(XMLTree):
