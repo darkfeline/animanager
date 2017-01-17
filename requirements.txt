@@ -6,3 +6,4 @@ mir.sqlqs==0.2.0
 pytest==3.0.4
 pytest-catchlog==1.2.2
 pytest-cov==2.4.0
+hypothesis==3.6.1
