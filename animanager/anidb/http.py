@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2016-2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,73 +15,44 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""The module contains classes for working with AniDB's HTTP API.
-
-.. data:: CLIENT
-
-   AniDB API client name.
-
-.. data:: CLIENTVER
-
-   AniDB API client version.
-
-.. data:: PROTOVER
-
-   AniDB API protocol version.
-
-"""
+"""The module contains classes for working with AniDB's HTTP API."""
 
 import gzip
-import urllib.parse
-from http.client import HTTPResponse
+from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from animanager.xml import XMLTree
 
-CLIENT = 'kfanimanager'
-CLIENTVER = 1
-PROTOVER = 1
+_CLIENT = 'kfanimanager'
+_CLIENTVER = 1
+_PROTOVER = 1
 
 
-def api_request(request: str, **params):
+def api_request(request: str, **params) -> 'HttpResponse':
     """Make an AniDB HTTP API request.
 
-    Check the `AniDB documentation
-    <https://wiki.anidb.net/w/HTTP_API_Definition>`_ for details on `request`
-    and `params`.
-
+    https://wiki.anidb.net/w/HTTP_API_Definition
     """
-    request_params = {
-        'client': CLIENT,
-        'clientver': CLIENTVER,
-        'protover': PROTOVER,
+    urlparams = urlencode({
+        'client': _CLIENT,
+        'clientver': _CLIENTVER,
+        'protover': _PROTOVER,
         'request': request,
-    }
-    request_params.update(params)
-    return urlopen(
-        'http://api.anidb.net:9001/httpapi?' +
-        urllib.parse.urlencode(request_params))
+        **params
+    })
+    return urlopen(f'http://api.anidb.net:9001/httpapi?{urlparams}')
 
 
-def check_for_errors(tree: XMLTree) -> None:
-    """Check AniDB response XML tree for errors.
-
-    :raises APIError: error found
-
-    """
+def check_for_errors(tree: XMLTree):
+    """Check AniDB response XML tree for errors."""
     if tree.root.tag == 'error':
         raise APIError(tree.root.text)
 
 
-def get_content(response: HTTPResponse) -> str:
+def get_content(response: 'HTTPResponse') -> str:
     """Get content from HTTP response.
 
     Handles gzipped content.
-
-    :param HTTPResponse response: HTTP response
-    :returns: HTTP response content
-    :rtype: str
-
     """
     content = response.read()
     if response.getheader('Content-encoding') == 'gzip':
