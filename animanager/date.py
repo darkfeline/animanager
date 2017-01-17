@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2016-2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -28,7 +28,6 @@ def timestamp(date: datetime.date) -> float:
     >>> from datetime import date
     >>> timestamp(date(2001, 1, 2))
     978393600.0
-
     """
     return datetime.datetime(
         date.year, date.month, date.day,
@@ -40,7 +39,6 @@ def fromtimestamp(ts: float) -> datetime.date:
 
     >>> fromtimestamp(978393600.0)
     datetime.date(2001, 1, 2)
-
     """
     return datetime.datetime.fromtimestamp(
         ts, tz=datetime.timezone.utc).date()
@@ -51,6 +49,5 @@ def parse_date(string: str) -> datetime.date:
 
     >>> parse_date('1990-01-02')
     datetime.date(1990, 1, 2)
-
     """
     return datetime.datetime.strptime(string, '%Y-%m-%d').date()
