@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2016-2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -24,49 +24,26 @@ class XMLTree:
 
     """XML ElementTree wrapper class.
 
-    Be careful, `tree` should be an :class:`xml.etree.ElementTree.ElementTree`
+    Be careful, tree should be an xml.etree.ElementTree.ElementTree
     instance.
-
-    :param xml.etree.ElementTree.ElementTree tree: XML tree to wrap
-
-    .. attribute:: tree (ElementTree)
-
-       Wrapped ElementTree.
-
-    .. attribute:: root (Element)
-
-       Wrapped root Element.
-
     """
 
-    def __init__(self, tree: ET.ElementTree) -> None:
+    def __init__(self, tree: ET.ElementTree):
         if not isinstance(tree, ET.ElementTree):
             raise TypeError('Not an ElementTree object.')
         self.tree = tree
         self.root = tree.getroot()
 
     @classmethod
-    def parse(cls, file: str) -> 'XMLTree':
-        """Create instance from an XML file.
-
-        :param str file: XML file path
-
-        """
+    def parse(cls: 'A', file: str) -> 'A':
+        """Create instance from an XML file."""
         return cls(ET.parse(file))
 
     @classmethod
-    def fromstring(cls, text: str) -> 'XMLTree':
-        """Create instance from an XML string.
-
-        :param str text: XML string
-
-        """
+    def fromstring(cls: 'A', text: str) -> 'A':
+        """Create instance from an XML string."""
         return cls(ET.ElementTree(ET.fromstring(text)))
 
-    def write(self, file: str) -> None:
-        """Write XML to a file.
-
-        :param str file: file path
-
-        """
+    def write(self, file: str):
+        """Write XML to a file."""
         self.tree.write(file)
