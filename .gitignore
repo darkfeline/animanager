@@ -1,13 +1,13 @@
-# Python
 __pycache__/
-*.egg-info
 
-# Python packaging
+# Build artifacts
 /build/
 /dist/
-/src/
+/*.egg-info/
 
-# Development
-/doc/_build/
-/.hypothesis/
+# Test artifacts
 /.cache/
+/.coverage
+/.tox/
+/.pytest/
+/.hypothesis/
