@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2016  Allen Li
+# Copyright (C) 2015-2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -17,6 +17,7 @@
 
 import argparse
 import logging
+import logging.config
 
 from animanager import subcmds
 
@@ -25,9 +26,7 @@ def main():
     """Animanager program entry point."""
     parser = _make_parser()
     args = parser.parse_args()
-
     _setup_logging(args)
-
     try:
         func = args.func
     except AttributeError:
@@ -55,19 +54,28 @@ def _make_parser():
 
 
 def _setup_logging(args):
-    root_logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    root_logger.addHandler(handler)
-    if args.debug:
-        root_logger.setLevel(logging.DEBUG)
-        handler.setFormatter(logging.Formatter(
-            '%(levelname)s:%(name)s:%(message)s',
-        ))
-    else:
-        root_logger.setLevel(logging.INFO)
-        handler.setFormatter(logging.Formatter(
-            '%(levelname)s: %(message)s',
-        ))
+    logging.config.dictConfig({
+        'version': 1,
+        'root': {
+            'level': 'DEBUG' if args.debug else 'INFO',
+            'handlers': ['console'],
+        },
+        'formatters': {
+            'simple': {
+                'format': '%(levelname)s: %(message)s',
+            },
+            'verbose': {
+                'format': '%(levelname)s:%(name)s:%(message)s',
+            },
+        },
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose' if args.debug else 'simple',
+            },
+        },
+        'disable_existing_loggers': False,
+    })
 
 
 if __name__ == '__main__':
