@@ -48,7 +48,7 @@ class CachedView(ABC):
 
     @classmethod
     @abstractmethod
-    def new_from_db(cls, db):
+    def _new_from_db(cls, db):
         """Make a new instance from a database.
 
         This should not be called directly; use :meth:`from_db`
@@ -66,7 +66,7 @@ class CachedView(ABC):
 
         """
         if force or db not in cls._cache:
-            cls._cache[db] = cls.new_from_db(db)
+            cls._cache[db] = cls._new_from_db(db)
         return cls._cache[db]
 
     @classmethod

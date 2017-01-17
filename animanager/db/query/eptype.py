@@ -77,7 +77,7 @@ class EpisodeTypes(CachedView):
             raise KeyError(key)
 
     @classmethod
-    def new_from_db(cls, db) -> 'EpisodeTypes':
+    def _new_from_db(cls, db) -> 'EpisodeTypes':
         return cls(get_episode_types(db))
 
     def get_epno(self, episode: Episode):
