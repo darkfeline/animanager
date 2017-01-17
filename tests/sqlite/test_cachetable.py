@@ -16,19 +16,22 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from unittest.mock import Mock, NonCallableMagicMock
+from unittest import mock
+from unittest.mock import Mock
 
-from animanager.sqlite.cachetable import CacheTable, CacheTableManager
-from animanager.sqlite.db import SQLiteDB
+from apsw import Connection
+
+from animanager.sqlite.cachetable import CacheTableSpec
+from animanager.sqlite.cachetable import CacheTableManager
 
 
 class CacheTableTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db = NonCallableMagicMock(SQLiteDB)
+        self.db = mock.create_autospec(Connection, instance=True)
         self.setup = Mock([])
         self.teardown = Mock([])
-        self.table = table = CacheTable(self.setup, self.teardown)
+        self.table = table = CacheTableSpec(self.setup, self.teardown)
 
         self.manager = CacheTableManager(self.db, [table])
 

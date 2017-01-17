@@ -26,12 +26,12 @@ class CachedView(ABC):
     """A cached view of a database.
 
     >>> from itertools import count
-    >>> from animanager.sqlite import SQLiteDB
-    >>> db = SQLiteDB(':memory:')
+    >>> from apsw import Connection
+    >>> db = Connection(':memory:')
     >>> class Foo(CachedView):
     ...     counter = count(1)
     ...     @classmethod
-    ...     def new_from_db(cls, db):
+    ...     def _new_from_db(cls, db):
     ...         return next(cls.counter)
     ...
     >>> Foo.from_db(db)
