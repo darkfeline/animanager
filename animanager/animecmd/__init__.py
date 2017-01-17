@@ -112,7 +112,7 @@ class AnimeCmd(Cmd):
         assert PragmaHelper(conn).foreign_keys == 1
         return conn
 
-    def _migrate(self, conn, dbfile):
+    def _migrate(self, conn, dbfile: 'PathLike'):
         """Do any necessary database migrations."""
         manager = migrations.manager
         if manager.should_migrate(self.db):
