@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import os
 import shutil
 from textwrap import dedent
 
@@ -104,9 +105,9 @@ class AnimeCmd(Cmd):
             'anidb': AIDResults(['Title']),
         })
 
-    def _connect(self, dbfile) -> apsw.Connection:
+    def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
         """Connect to SQLite database file."""
-        conn = apsw.Connection(dbfile)
+        conn = apsw.Connection(os.fspath(dbfile))
         PragmaHelper(conn).foreign_keys = 1
         assert PragmaHelper(conn).foreign_keys == 1
         return conn

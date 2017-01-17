@@ -16,80 +16,82 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import configparser
-import os
+from pathlib import Path
 import shlex
 
 __all__ = ['Config']
-# pylint: disable=too-few-public-methods
 
 
-class ConfigMeta(type):
+class _ConfigMeta(type):
 
     """Metaclass for defining config classes.
 
-    Config classes should define a nested class Sections, which should define
-    nested classes (section classes) for INI section access.  Each section
-    class should define methods for accessing INI configuration options in that
-    section.
+    Config classes should define a nested class Sections, which should
+    define nested classes (section classes) for INI section access.
+    Each section class should define methods for accessing INI
+    configuration options in that section.
 
-    A property will be created for each section class, which will return an
-    object that will further have properties corresponding to that section
-    class's methods.
+    A property will be created for each section class, which will return
+    an object that will further have properties corresponding to that
+    section class's methods.
 
     You should probably just look at how it's being used.
-
     """
 
     def __new__(mcs, name, parents, dct):
         sections = dct['Sections']
-        for section_name, section in sections.__dict__.items():
-            if section_name.startswith('_'):
+        for name, section_cls in sections.__dict__.items():
+            if name.startswith('_'):
                 continue
-            section_dct = dict()
-            for config_name, config_getter in section.__dict__.items():
-                section_dct[config_name] = property(config_getter)
-            mcs._make_section(dct, section_name, section_dct)
+            mcs._add_section(dct, name, section_cls)
         return super().__new__(mcs, name, parents, dct)
 
     @staticmethod
-    def _make_section(dct, section_name, section_dct):
-        """Make session dispatcher."""
-        # __slots__
-        section_dct['__slots__'] = ('config',)
-        # __init__
-        def __init__(self, config):
-            self.config = config[section_name]
-        section_dct['__init__'] = __init__
-        # Making the class.
-        section_class = type(section_name, (), section_dct)
-        # Making the property.
-        dct[section_name] = property(lambda self: section_class(self.config))
+    def _add_section(dct, name, section_cls):
+        dispatcher_class = _make_section_dispatcher(
+            name=name,
+            dct={
+                name: property(getter)
+                for name, getter in section_cls.__dict__.items()
+            })
+        dct[name] = property(lambda self: dispatcher_class(self._config))
 
 
-class BaseConfig(metaclass=ConfigMeta):
+def _make_section_dispatcher(name, dct):
+    """Make session dispatcher."""
+    dct['__slots__'] = ('_config',)
+    def __init__(self, config):
+        self._config = config[name]
+    dct['__init__'] = __init__
+    return type(name, (), dct)
 
-    DEF_VALUES = {}
-    CONVERTERS = {}
 
-    def __init__(self, path: str) -> None:
-        self.path = path
-        self.config = configparser.ConfigParser(
-            converters=self.CONVERTERS)
-        self.config.read_dict(self.DEF_VALUES)
-        self.config.read(self.path)
+class _BaseConfig(metaclass=_ConfigMeta):
+
+    _DEF_VALUES = {}
+    _CONVERTERS = {}
+
+    def __init__(self, path: 'PathLike'):
+        self._path = Path(path)
+        self._config = configparser.ConfigParser(
+            converters=self._CONVERTERS)
+
+        self._config.read_dict(self._DEF_VALUES)
+        with self._path.open() as file:
+            self._config.read_file(file)
 
     def save(self):
-        with open(self.path, 'w') as file:
-            self.config.write(file)
+        with self._path.open('w') as file:
+            self._config.write(file)
 
     class Sections:
         pass
 
 
-class Config(BaseConfig):
+class Config(_BaseConfig):
 
-    DEF_PATH = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
-    DEF_VALUES = {
+    _DEF_PATH = Path.home() / '.animanager' / 'config.ini'
+    _DEF_VALUES = {
         'general': {
             'backup_before_migration': 'true',
             'colors': 'false',
@@ -101,44 +103,44 @@ class Config(BaseConfig):
             'player': 'mpv',
         },
     }
-    CONVERTERS = {
-        'path': os.path.expanduser,
+    _CONVERTERS = {
+        'path': lambda x: Path(x).expanduser(),
         'args': shlex.split,
     }
 
-    def __init__(self, path: str = '') -> None:
-        if not path:
-            path = self.DEF_PATH
+    def __init__(self, path: 'PathLike' = ''):
+        if path:
+            path = Path(path)
+        else:
+            path = self._DEF_PATH
         super().__init__(path)
 
     class Sections:
-
-        # pylint: disable=no-member
 
         class general:
 
             def colors(self):
                 """Enable colors."""
-                return self.config.getboolean('colors')
+                return self._config.getboolean('colors')
 
             def backup_before_migration(self):
                 """Video player to use."""
-                return self.config.getboolean('backup_before_migration')
+                return self._config.getboolean('backup_before_migration')
 
         class anime:
 
             def database(self):
                 """Anime database file."""
-                return self.config.getpath('database')
+                return self._config.getpath('database')
 
             def anidb_cache(self):
                 """AniDB cache directory."""
-                return self.config.getpath('anidb_cache')
+                return self._config.getpath('anidb_cache')
 
             def watchdir(self):
                 """Directory to look for watching anime files."""
-                return self.config.getpath('watchdir')
+                return self._config.getpath('watchdir')
 
             def player_args(self):
                 """Video player to use."""
-                return self.config.getargs('player')
+                return self._config.getargs('player')
