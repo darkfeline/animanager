@@ -17,14 +17,15 @@
 
 import unittest
 
+from apsw import Connection
+
 from animanager.sqlite import utils
-from animanager.sqlite.db import SQLiteDB
 
 
 class DatabaseTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db = SQLiteDB(':memory:')
+        self.db = Connection(':memory:')
         cur = self.db.cursor()
         cur.execute("""
         CREATE TABLE mytable (
@@ -61,7 +62,7 @@ class DatabaseTestCase(unittest.TestCase):
 class MultipleKeyTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db = SQLiteDB(':memory:')
+        self.db = Connection(':memory:')
         cur = self.db.cursor()
         cur.execute("""
         CREATE TABLE mytable (
