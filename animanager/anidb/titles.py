@@ -123,7 +123,7 @@ class TitleSearcher:
     time consuming.
     """
 
-    def __init__(self, cachedir):
+    def __init__(self, cachedir: 'str'):
         self.cachedir = cachedir
 
     def _titles_file(self):
