@@ -126,10 +126,12 @@ class TitleSearcher:
     def __init__(self, cachedir: 'str'):
         self.cachedir = cachedir
 
+    @property
     def _titles_file(self):
         """Anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.xml')
 
+    @property
     def _pickle_file(self):
         """Pickled anime titles data file path."""
         return os.path.join(self.cachedir, 'anime-titles.pickle')
