@@ -35,7 +35,13 @@ setup(
     ],
 
     packages=find_packages(exclude=['tests', 'tests.*']),
-    install_requires=['apsw', 'tabulate', 'mir.sqlqs'],
+    install_requires=[
+        'apsw',
+        'tabulate',
+        'wcwidth',
+        'mir.anidb',
+        'mir.sqlqs',
+    ],
     entry_points={
         'console_scripts': [
             'animanager = animanager.__main__:main',
