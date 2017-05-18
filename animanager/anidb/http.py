@@ -18,29 +18,8 @@
 """The module contains classes for working with AniDB's HTTP API."""
 
 import gzip
-from urllib.parse import urlencode
-from urllib.request import urlopen
 
 from animanager.xml import XMLTree
-
-_CLIENT = 'kfanimanager'
-_CLIENTVER = 1
-_PROTOVER = 1
-
-
-def api_request(request: str, **params) -> 'HttpResponse':
-    """Make an AniDB HTTP API request.
-
-    https://wiki.anidb.net/w/HTTP_API_Definition
-    """
-    urlparams = urlencode({
-        'client': _CLIENT,
-        'clientver': _CLIENTVER,
-        'protover': _PROTOVER,
-        'request': request,
-        **params
-    })
-    return urlopen(f'http://api.anidb.net:9001/httpapi?{urlparams}')
 
 
 def check_for_errors(tree: XMLTree):

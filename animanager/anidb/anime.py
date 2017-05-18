@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2016-2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -20,11 +20,32 @@
 import datetime
 import re
 from typing import Iterable, Optional
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from animanager.date import parse_date
 from animanager.xml import XMLTree
 
-from .http import api_request, check_for_errors, get_content
+from .http import check_for_errors, get_content
+
+_CLIENT = 'kfanimanager'
+_CLIENTVER = 1
+_PROTOVER = 1
+
+
+def api_request(request: str, **params) -> 'HttpResponse':
+    """Make an AniDB HTTP API request.
+
+    https://wiki.anidb.net/w/HTTP_API_Definition
+    """
+    urlparams = urlencode({
+        'client': _CLIENT,
+        'clientver': _CLIENTVER,
+        'protover': _PROTOVER,
+        'request': request,
+        **params
+    })
+    return urlopen(f'http://api.anidb.net:9001/httpapi?{urlparams}')
 
 
 def request_anime(aid: int) -> 'AnimeTree':
