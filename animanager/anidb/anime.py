@@ -30,7 +30,6 @@ from .http import check_for_errors, get_content
 
 _CLIENT = 'kfanimanager'
 _CLIENTVER = 1
-_PROTOVER = 1
 
 
 def api_request(request: str, **params) -> 'HttpResponse':
@@ -41,7 +40,7 @@ def api_request(request: str, **params) -> 'HttpResponse':
     urlparams = urlencode({
         'client': _CLIENT,
         'clientver': _CLIENTVER,
-        'protover': _PROTOVER,
+        'protover': 1,
         'request': request,
         **params
     })
