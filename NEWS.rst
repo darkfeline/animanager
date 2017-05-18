@@ -3,7 +3,7 @@ animanager Release Notes
 
 This project uses `semantic versioning <http://semver.org/>`_.
 
-master
+0.10.3
 ------
 
 Added

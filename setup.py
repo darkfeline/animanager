@@ -19,7 +19,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='animanager',
-    version='0.10.2',
+    version='0.10.3',
     description='Command line program for advanced anime watching management',
     long_description='',
     keywords='',
