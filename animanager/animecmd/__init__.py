@@ -46,7 +46,7 @@ class AnimeCmd(Cmd):
 
     intro = dedent('''\
     Animanager {}
-    Copyright (C) 2015-2016  Allen Li
+    Copyright (C) 2015-2017  Allen Li
 
     This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
     This is free software, and you are welcome to redistribute it
