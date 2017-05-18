@@ -20,39 +20,28 @@
 import datetime
 import re
 from typing import Iterable, Optional
-from urllib.parse import urlencode
-from urllib.request import urlopen
+import xml.etree.ElementTree as ET
 
 from animanager.date import parse_date
 from animanager.xml import XMLTree
 
-from .http import check_for_errors, get_content
+from mir.anidb import api
 
 _CLIENT = 'kfanimanager'
 _CLIENTVER = 1
 
-
-def api_request(request: str, **params) -> 'HttpResponse':
-    """Make an AniDB HTTP API request.
-
-    https://wiki.anidb.net/w/HTTP_API_Definition
-    """
-    urlparams = urlencode({
-        'client': _CLIENT,
-        'clientver': _CLIENTVER,
-        'protover': 1,
-        'request': request,
-        **params
-    })
-    return urlopen(f'http://api.anidb.net:9001/httpapi?{urlparams}')
+_client = api.Client(
+    name=_CLIENT,
+    version=_CLIENTVER,
+)
 
 
 def request_anime(aid: int) -> 'AnimeTree':
     """Make an anime API request."""
-    response = api_request('anime', aid=aid)
-    content = get_content(response)
+    response = api.httpapi_request(_client, request='anime', aid=aid)
+    tree = api.unpack_xml_response(response)
+    content = ET.tostring(tree.getroot())
     tree = AnimeTree.fromstring(content)
-    check_for_errors(tree)
     return tree
 
 
