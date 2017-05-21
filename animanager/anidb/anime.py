@@ -47,15 +47,19 @@ class Anime(anime.Anime):
     @property
     def title(self) -> str:
         """Main title."""
-        for title in self.titles:
-            if title.type == 'main':
-                return title.title
+        get_main_title(self.titles)
 
     @property
     def episodes(self) -> 'Tuple[Episode]':
         """The anime's episodes."""
         return tuple(Episode._make(ep)
                      for ep in anime.Anime.episodes.fget(self))
+
+
+def get_main_title(titles: 'Iterable[AnimeTitle]'):
+    for title in titles:
+        if title.type == 'main':
+            return title.title
 
 
 class Episode(anime.Episode):
