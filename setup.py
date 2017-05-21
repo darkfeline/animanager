@@ -39,7 +39,7 @@ setup(
         'apsw',
         'tabulate',
         'wcwidth',
-        'mir.anidb',
+        'mir.anidb==1.0.0',
         'mir.sqlqs',
     ],
     entry_points={
