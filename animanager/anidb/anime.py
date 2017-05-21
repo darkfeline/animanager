@@ -17,15 +17,10 @@
 
 """AniDB HTTP anime API."""
 
-import datetime
 import re
-from typing import Iterable, Optional
-import xml.etree.ElementTree as ET
-
-from animanager.date import parse_date
-from animanager.xml import XMLTree
 
 from mir.anidb import api
+from mir.anidb import anime
 
 _CLIENT = 'kfanimanager'
 _CLIENTVER = 1
@@ -38,81 +33,34 @@ _client = api.Client(
 
 def request_anime(aid: int) -> 'AnimeTree':
     """Make an anime API request."""
-    response = api.httpapi_request(_client, request='anime', aid=aid)
-    tree = api.unpack_xml_response(response)
-    content = ET.tostring(tree.getroot())
-    tree = AnimeTree.fromstring(content)
-    return tree
+    anime_info = anime.request_anime(_client, aid)
+    return _rewrap_anime(anime_info)
 
 
-class AnimeTree(XMLTree):
+def _rewrap_anime(anime_tuple):
+    """Replace anime.Anime tuple with an instance of our subclass."""
+    return Anime._make(anime_tuple)
 
-    """XMLTree repesentation of an anime."""
 
-    @property
-    def aid(self) -> int:
-        """AniDB ID (AID)."""
-        return int(self.root.get('id'))
-
-    @property
-    def type(self) -> str:
-        """Anime type."""
-        return self.root.find('type').text
-
-    @property
-    def episodecount(self) -> int:
-        """Number of episodes."""
-        return int(self.root.find('episodecount').text)
-
-    @property
-    def startdate(self) -> Optional[datetime.date]:
-        """Start date of anime."""
-        text = self.root.find('startdate').text
-        try:
-            return parse_date(text)
-        except ValueError:
-            return None
-
-    @property
-    def enddate(self) -> Optional[datetime.date]:
-        """End date of anime."""
-        text = self.root.find('enddate').text
-        try:
-            return parse_date(text)
-        except ValueError:
-            return None
+class Anime(anime.Anime):
 
     @property
     def title(self) -> str:
         """Main title."""
-        for element in self.root.find('titles'):
-            if element.get('type') == 'main':
-                return element.text
+        for title in self.titles:
+            if title.type == 'main':
+                return title.title
 
     @property
-    def episodes(self) -> Iterable['Episode']:
+    def episodes(self) -> 'Tuple[Episode]':
         """The anime's episodes."""
-        for element in self.root.find('episodes'):
-            yield Episode(element)
+        return tuple(Episode._make(ep)
+                     for ep in anime.Anime.episodes.fget(self))
 
 
-class Episode:
-
-    """Episode XML element."""
+class Episode(anime.Episode):
 
     _NUMBER_SUFFIX = re.compile(r'(\d+)$')
-
-    def __init__(self, element):
-        self.element = element
-
-    @property
-    def epno(self) -> str:
-        """Concatenation of type and episode number.
-
-        Unique for an anime.
-
-        """
-        return self.element.find('epno').text
 
     @property
     def number(self) -> int:
@@ -120,27 +68,15 @@ class Episode:
 
         Unique for an anime and episode type, but not unique across episode
         types for the same anime.
-
         """
-        epno = self.element.find('epno').text
-        match = self._NUMBER_SUFFIX.search(epno)
+        match = self._NUMBER_SUFFIX.search(self.epno)
         return int(match.group(1))
-
-    @property
-    def type(self) -> int:
-        """Episode type."""
-        return int(self.element.find('epno').get('type'))
-
-    @property
-    def length(self) -> int:
-        """Length of episode in minutes."""
-        return int(self.element.find('length').text)
 
     @property
     def title(self) -> str:
         """Episode title."""
-        for title in self.element.iterfind('title'):
-            if title.get('xml:lang') == 'ja':
-                return title.text
+        for title in self.titles:
+            if title.lang == 'ja':
+                return title.title
         # In case there's no Japanese title.
-        return self.element.find('title').text
+        return self.titles[0].title
