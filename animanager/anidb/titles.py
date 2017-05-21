@@ -24,10 +24,10 @@ but it's really just fetching a single XML file with all the titles
 data.
 """
 
-import functools
 import logging
 import os
 import pickle
+from typing import NamedTuple
 from urllib.request import urlopen
 
 from animanager.descriptors import CachedProperty
@@ -94,27 +94,10 @@ def _extract_titles(anime: 'Element'):
     )
 
 
-@functools.total_ordering
-class _WorkTitles:
-
-    __slots__ = ('aid', 'main_title', 'titles')
-
-    def __init__(self, aid, main_title, titles):
-        self.aid = aid
-        self.main_title = main_title
-        self.titles = titles
-
-    def __eq__(self, other):
-        if isinstance(other, type(self)):
-            return self.aid == other.aid
-        else:
-            return NotImplemented
-
-    def __lt__(self, other):
-        if isinstance(other, type(self)):
-            return self.aid < other.aid
-        else:
-            return NotImplemented
+class _WorkTitles(NamedTuple):
+    aid: int
+    main_title: str
+    titles: 'List[str]'
 
 
 class TitleSearcher:
