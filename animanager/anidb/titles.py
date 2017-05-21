@@ -36,6 +36,8 @@ from animanager.xml import XMLTree
 from animanager.anidb.http import check_for_errors
 from animanager.anidb.http import get_content
 
+from mir.anidb import titles
+
 logger = logging.getLogger(__name__)
 
 
@@ -124,17 +126,17 @@ class TitleSearcher:
     """
 
     def __init__(self, cachedir: 'str'):
-        self.cachedir = cachedir
+        self._cachedir = cachedir
 
     @property
     def _titles_file(self):
         """Anime titles data file path."""
-        return os.path.join(self.cachedir, 'anime-titles.xml')
+        return os.path.join(self._cachedir, 'anime-titles.xml')
 
     @property
     def _pickle_file(self):
         """Pickled anime titles data file path."""
-        return os.path.join(self.cachedir, 'anime-titles.pickle')
+        return os.path.join(self._cachedir, 'anime-titles.pickle')
 
     @CachedProperty
     def titles_tree(self) -> TitlesTree:
