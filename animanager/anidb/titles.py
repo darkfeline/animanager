@@ -127,6 +127,10 @@ class TitleSearcher:
 
     def __init__(self, cachedir: 'str'):
         self._cachedir = cachedir
+        self._titles_getter = titles.CachedTitlesGetter(
+            cache=titles.PickleCache(self._pickle_file),
+            requester=titles.api_requester,
+        )
 
     @property
     def _titles_file(self):

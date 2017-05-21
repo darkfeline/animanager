@@ -22,6 +22,13 @@ Changed
 - File search now skips dot directories.
 - animanager now depends in ``mir.sqlqs``.
 
+Removed
+^^^^^^^
+
+- Removed ``fetch_titles`` command.  The rewritten titles caching
+  logic does not need it.  (Due to a typo, the command wasn't
+  available anyway.)
+
 Fixed
 ^^^^^
 
