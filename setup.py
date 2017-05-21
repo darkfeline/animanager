@@ -31,7 +31,7 @@ setup(
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Intended Audience :: End Users/Desktop',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 
     packages=find_packages(exclude=['tests', 'tests.*']),
