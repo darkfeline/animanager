@@ -12,14 +12,6 @@
 
 .. automodule:: animanager.anidb.titles
 
-   .. autofunction:: request_titles
-
-   .. autoclass:: SearchEntry(aid: int, main_title: str, titles: List[str])
-      :members:
-
-   .. autoclass:: TitlesTree
-      :members:
-
    .. autoclass:: TitleSearcher
       :members:
 

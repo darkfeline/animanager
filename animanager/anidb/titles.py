@@ -25,136 +25,48 @@ data.
 """
 
 import logging
-import os
-import pickle
+from pathlib import Path
 from typing import NamedTuple
-from urllib.request import urlopen
 
+from animanager.anidb.anime import get_main_title
 from animanager.descriptors import CachedProperty
-from animanager.xml import XMLTree
 
-from animanager.anidb.http import check_for_errors
-from animanager.anidb.http import get_content
-
-from mir.anidb import titles
+import mir.anidb.titles
 
 logger = logging.getLogger(__name__)
 
 
-def request_titles() -> 'TitlesTree':
-    """Request AniDB titles file."""
-    response = urlopen('http://anidb.net/api/anime-titles.xml.gz')
-    content = get_content(response)
-    tree = TitlesTree.fromstring(content)
-    check_for_errors(tree)
-    return tree
+class TitleSearcher:
 
+    """Provides anime title searching, utilizing a local cache."""
 
-class TitlesTree(XMLTree):
+    def __init__(self, cachedir: 'str'):
+        lib = mir.anidb.titles
+        self._titles_getter = lib.CachedTitlesGetter(
+            cache=lib.PickleCache(Path(cachedir) / 'anime-titles.pickle'),
+            requester=lib.api_requester,
+        )
 
-    """XMLTree representation of AniDB anime titles."""
+    @CachedProperty
+    def _titles_list(self):
+        return self._titles_getter.get()
 
-    @classmethod
-    def load(cls: 'A', filename: str) -> 'A':
-        """Load XML tree from pickled file."""
-        with open(filename, 'rb') as file:
-            return cls(pickle.load(file))
-
-    def dump(self, filename: str):
-        """Dump XML tree into pickled file."""
-        with open(filename, 'wb') as file:
-            pickle.dump(self.tree, file)
-
-    def search(self, query: 're.Pattern'):
+    def search(self, query: 're.Pattern') -> 'Iterable[_WorkTitles]':
         """Search titles using a compiled RE query."""
-        return sorted(_extract_titles(anime)
-                      for anime in self._find(query))
-
-    def _find(self, query: 're.Pattern'):
-        """Yield anime that match the search query."""
-        for anime in self.root:
-            for title in anime:
-                if query.search(title.text):
-                    yield anime
-                    break
-
-
-def _get_main_title(anime: 'Element'):
-    """Get main title of anime Element."""
-    for title in anime:
-        if title.attrib['type'] == 'main':
-            return title.text
-
-
-def _extract_titles(anime: 'Element'):
-    return _WorkTitles(
-        aid=int(anime.attrib['aid']),
-        main_title=_get_main_title(anime),
-        titles=[title.text for title in anime],
-    )
+        titles: 'Titles'
+        for titles in self._titles_list:
+            title: 'AnimeTitle'
+            for title in titles.titles:
+                if query.search(title.title):
+                    yield _WorkTitles(
+                        aid=titles.aid,
+                        main_title=get_main_title(titles.titles),
+                        titles=[t.title for t in titles.titles],
+                    )
+                    continue
 
 
 class _WorkTitles(NamedTuple):
     aid: int
     main_title: str
     titles: 'List[str]'
-
-
-class TitleSearcher:
-
-    """Provides anime title searching, utilizing a local cache.
-
-    Uses a pickle dump of the :class:`TitlesTree` because loading it is
-    time consuming.
-    """
-
-    def __init__(self, cachedir: 'str'):
-        self._cachedir = cachedir
-        self._titles_getter = titles.CachedTitlesGetter(
-            cache=titles.PickleCache(self._pickle_file),
-            requester=titles.api_requester,
-        )
-
-    @property
-    def _titles_file(self):
-        """Anime titles data file path."""
-        return os.path.join(self._cachedir, 'anime-titles.xml')
-
-    @property
-    def _pickle_file(self):
-        """Pickled anime titles data file path."""
-        return os.path.join(self._cachedir, 'anime-titles.pickle')
-
-    @CachedProperty
-    def titles_tree(self) -> TitlesTree:
-        """Titles XML tree."""
-        # Try to load pickled file first.
-        try:
-            titles_tree = TitlesTree.load(self._pickle_file)
-        except OSError as e:
-            logger.warning('Error loading pickled search cache: %s', e)
-        else:
-            return titles_tree
-        if not os.path.exists(self._titles_file):
-            # Download titles data if we don't have it.
-            titles_tree = self.fetch()
-        else:
-            titles_tree = TitlesTree.parse(self._titles_file)
-        # Dump a pickled file for next time.
-        titles_tree.dump(self._pickle_file)
-        return titles_tree
-
-    def fetch(self) -> TitlesTree:
-        """Fetch fresh titles data from AniDB."""
-        try:
-            os.unlink(self._pickle_file)
-        except OSError:
-            pass
-        del self.titles_tree
-        tree = request_titles()
-        tree.write(self._titles_file)
-        return tree
-
-    def search(self, query):
-        """Search titles using a compiled RE query."""
-        return self.titles_tree.search(query)

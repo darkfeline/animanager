@@ -18,4 +18,3 @@
 """AniDB API bindings."""
 
 from .anime import request_anime
-from .titles import TitlesTree, request_titles
