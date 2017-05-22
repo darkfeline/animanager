@@ -22,9 +22,9 @@ from textwrap import dedent
 
 import apsw
 
+import mir.cp
 from mir.sqlqs.pragma import PragmaHelper
 
-import animanager.descriptors
 from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
 from animanager.cmd import Cmd
@@ -121,7 +121,7 @@ class AnimeCmd(Cmd):
             logger.info('Migrating database')
             manager.migrate(self.db)
 
-    @animanager.descriptors.CachedProperty
+    @mir.cp.NonDataCachedProperty
     def file_picker(self) -> FilePicker:
         """Cached file picker property."""
         return FilePicker(

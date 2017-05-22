@@ -40,6 +40,7 @@ setup(
         'tabulate',
         'wcwidth',
         'mir.anidb==1.0.0',
+        'mir.cp==1.0.0',
         'mir.sqlqs',
     ],
     entry_points={

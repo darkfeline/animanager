@@ -29,9 +29,9 @@ from pathlib import Path
 from typing import NamedTuple
 
 from animanager.anidb.anime import get_main_title
-from animanager.descriptors import CachedProperty
 
 import mir.anidb.titles
+import mir.cp
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class TitleSearcher:
             requester=lib.api_requester,
         )
 
-    @CachedProperty
+    @mir.cp.NonDataCachedProperty
     def _titles_list(self):
         return self._titles_getter.get()
 
