@@ -3,6 +3,7 @@ wcwidth==0.1.6
 mir.anidb==1.0.0
 mir.cp==1.0.0
 mir.sqlqs==0.3.0
+SQLAlchemy==1.1.10
 
 # Test dependencies
 pytest==3.0.4
