@@ -23,7 +23,7 @@ from textwrap import dedent
 import apsw
 
 import mir.cp
-from mir.sqlqs.pragma import PragmaHelper
+from mir.sqlqs import pragma
 
 from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
@@ -108,8 +108,8 @@ class AnimeCmd(Cmd):
     def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
         """Connect to SQLite database file."""
         conn = apsw.Connection(os.fspath(dbfile))
-        PragmaHelper(conn).foreign_keys = 1
-        assert PragmaHelper(conn).foreign_keys == 1
+        pragma.set_foreign_keys(conn, 1)
+        assert pragma.get_foreign_keys(conn) == 1
         return conn
 
     def _migrate(self, conn, dbfile: 'PathLike'):
