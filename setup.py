@@ -41,7 +41,7 @@ setup(
         'wcwidth',
         'mir.anidb==1.0.0',
         'mir.cp==1.0.0',
-        'mir.sqlqs',
+        'mir.sqlqs==0.3.0',
     ],
     entry_points={
         'console_scripts': [
