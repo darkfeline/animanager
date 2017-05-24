@@ -47,7 +47,7 @@ class Anime(anime.Anime):
     @property
     def title(self) -> str:
         """Main title."""
-        get_main_title(self.titles)
+        return get_main_title(self.titles)
 
     @property
     def episodes(self) -> 'Tuple[Episode]':
