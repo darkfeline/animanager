@@ -41,7 +41,7 @@ setup(
         'wcwidth',
         'mir.anidb==1.0.0',
         'mir.cp==1.0.0',
-        'mir.sqlqs==0.3.0',
+        'mir.sqlqs==0.4.0',
         'SQLAlchemy==1.1.10',
     ],
     entry_points={
