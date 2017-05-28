@@ -17,6 +17,7 @@
 
 import logging
 import os
+from os import fspath
 import shutil
 from textwrap import dedent
 
@@ -117,7 +118,7 @@ class AnimeCmd(Cmd):
         manager = migrations.manager
         if manager.should_migrate(self.db):
             logger.info('Migration needed, backing up database')
-            shutil.copyfile(dbfile, str(dbfile) + '~')
+            shutil.copyfile(dbfile, fspath(dbfile) + '~')
             logger.info('Migrating database')
             manager.migrate(self.db)
 
