@@ -22,6 +22,7 @@ import shutil
 from textwrap import dedent
 
 import apsw
+import sqlalchemy
 
 import mir.cp
 from mir.sqlqs import pragma
@@ -93,8 +94,9 @@ class AnimeCmd(Cmd):
         self.titles = TitleSearcher(config.anime.anidb_cache)
         dbfile = config.anime.database
         self.conn = self.db = self._connect(dbfile)
+        self.engine = self._connect_engine(dbfile)
 
-        self._migrate(self.conn, dbfile)
+        self._migrate(self.engine.connect(), dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -113,14 +115,19 @@ class AnimeCmd(Cmd):
         assert pragma.get_foreign_keys(conn) == 1
         return conn
 
+    def _connect_engine(self, dbfile: 'PathLike') -> sqlalchemy.engine.Engine:
+        """Connect to SQLite database file."""
+        engine = sqlalchemy.create_engine('sqlite:///' + os.fspath(dbfile))
+        return engine
+
     def _migrate(self, conn, dbfile: 'PathLike'):
         """Do any necessary database migrations."""
         manager = migrations.manager
-        if manager.should_migrate(self.db):
+        if manager.should_migrate(conn):
             logger.info('Migration needed, backing up database')
             shutil.copyfile(dbfile, fspath(dbfile) + '~')
             logger.info('Migrating database')
-            manager.migrate(self.db)
+            manager.migrate(conn)
 
     @mir.cp.NonDataCachedProperty
     def file_picker(self) -> FilePicker:
