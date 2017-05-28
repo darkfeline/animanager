@@ -117,7 +117,7 @@ class AnimeCmd(Cmd):
         manager = migrations.manager
         if manager.should_migrate(self.db):
             logger.info('Migration needed, backing up database')
-            shutil.copyfile(dbfile, dbfile + '~')
+            shutil.copyfile(dbfile, str(dbfile) + '~')
             logger.info('Migrating database')
             manager.migrate(self.db)
 
