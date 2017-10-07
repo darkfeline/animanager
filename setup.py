@@ -15,11 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from setuptools import find_packages, setup
+import re
+from setuptools import setup, find_packages
+
+
+def find_version(path):
+    with open(path) as f:
+        text = f.read()
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              text, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
 
 setup(
     name='animanager',
-    version='0.10.3',
+    version=find_version('animanager/__init__.py'),
     description='Command line program for advanced anime watching management',
     long_description='',
     keywords='',
@@ -36,13 +48,13 @@ setup(
 
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
-        'apsw',
-        'tabulate',
-        'wcwidth',
-        'mir.anidb==1.0.1',
-        'mir.cp==1.0.0',
-        'mir.sqlqs==0.4.0',
-        'SQLAlchemy==1.1.10',
+        'apsw~=3.9',
+        'tabulate==0.8.1',
+        'wcwidth==0.1.7',
+        'mir.anidb~=1.0',
+        'mir.cp~=1.0',
+        'mir.sqlqs',
+        'SQLAlchemy~=1.1',
     ],
     entry_points={
         'console_scripts': [
