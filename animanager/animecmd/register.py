@@ -37,7 +37,7 @@ def func(cmd, args):
         # Replace non-word, non-whitespace with whitespace.
         regexp = re.sub(r'[^\w\s]', ' ', title)
         # Split on whitespace and join with wildcard regexp.
-        regexp = '.*'.join(re.escape(x) for x in regexp.split())
+        regexp = '.*?'.join(re.escape(x) for x in regexp.split())
         # Append episode matching regexp.
         regexp = '.*?'.join((
             regexp,
