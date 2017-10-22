@@ -4,13 +4,14 @@ verify_ssl = true
 
 [packages]
 
+apsw = "~=3.9"
 tabulate = "==0.8.1"
 wcwidth = "==0.1.7"
 "mir.anidb" = "~=1.0"
 "mir.cp" = "~=1.0"
 "mir.sqlqs" = "*"
+"mir.sqlite3m" = "~=1.0"
 sqlalchemy = "~=1.1"
-apsw = "~=3.9"
 
 [dev-packages]
 

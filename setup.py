@@ -54,6 +54,7 @@ setup(
         'mir.anidb~=1.0',
         'mir.cp~=1.0',
         'mir.sqlqs',
+        'mir.sqlite3m~=1.0',
         'SQLAlchemy~=1.1',
     ],
     entry_points={
