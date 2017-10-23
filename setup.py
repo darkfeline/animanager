@@ -53,7 +53,6 @@ setup(
         'wcwidth==0.1.7',
         'mir.anidb~=1.0',
         'mir.cp~=1.0',
-        'mir.sqlqs',
         'mir.sqlite3m~=1.0',
         'SQLAlchemy~=1.1',
     ],

@@ -26,7 +26,6 @@ import apsw
 import sqlalchemy
 
 import mir.cp
-from mir.sqlqs import pragma
 
 from animanager import __version__ as VERSION
 from animanager.anidb.titles import TitleSearcher
@@ -112,8 +111,8 @@ class AnimeCmd(Cmd):
     def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
         """Connect to SQLite database file."""
         conn = apsw.Connection(os.fspath(dbfile))
-        pragma.set_foreign_keys(conn, 1)
-        assert pragma.get_foreign_keys(conn) == 1
+        set_foreign_keys(conn, 1)
+        assert get_foreign_keys(conn) == 1
         return conn
 
     def _connect_engine(self, dbfile: 'PathLike') -> sqlalchemy.engine.Engine:
@@ -138,3 +137,14 @@ class AnimeCmd(Cmd):
         return FilePicker(
             Rule(rule.regexp, rule.priority)
             for rule in query.files.get_priority_rules(self.db))
+
+
+def get_foreign_keys(conn):
+    cur = conn.cursor()
+    cur.execute('PRAGMA foreign_keys')
+    return cur.fetchone()[0]
+
+
+def set_foreign_keys(conn, value: int):
+    cur = conn.cursor()
+    cur.execute(f'PRAGMA foreign_keys={value:d}')

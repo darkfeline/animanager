@@ -20,7 +20,7 @@ Changed
 
 - Don't offer to bump when video player exits with non-zero status.
 - File search now skips dot directories.
-- animanager now depends in ``mir.sqlqs``.
+- animanager now depends on ``mir.sqlite3m``.
 
 Removed
 ^^^^^^^
