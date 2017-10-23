@@ -19,6 +19,7 @@ import logging
 import os
 from os import fspath
 import shutil
+import sqlite3
 from textwrap import dedent
 
 import apsw
@@ -96,7 +97,7 @@ class AnimeCmd(Cmd):
         self.conn = self.db = self._connect(dbfile)
         self.engine = self._connect_engine(dbfile)
 
-        self._migrate(self.engine.connect(), dbfile)
+        self._migrate(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -120,14 +121,16 @@ class AnimeCmd(Cmd):
         engine = sqlalchemy.create_engine('sqlite:///' + os.fspath(dbfile))
         return engine
 
-    def _migrate(self, conn, dbfile: 'PathLike'):
+    def _migrate(self, dbfile: 'PathLike'):
         """Do any necessary database migrations."""
+        conn = sqlite3.connect(fspath(dbfile))
         manager = migrations.manager
         if manager.should_migrate(conn):
             logger.info('Migration needed, backing up database')
             shutil.copyfile(dbfile, fspath(dbfile) + '~')
             logger.info('Migrating database')
             manager.migrate(conn)
+        conn.close()
 
     @mir.cp.NonDataCachedProperty
     def file_picker(self) -> FilePicker:
