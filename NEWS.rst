@@ -3,6 +3,9 @@ animanager Release Notes
 
 This project uses `semantic versioning <http://semver.org/>`_.
 
+0.12.0 ()
+---------
+
 0.11.0 (2017-10-22)
 -------------------
 

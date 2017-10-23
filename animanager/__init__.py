@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = '0.11.0'
+__version__ = '0.12.0'
 
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
