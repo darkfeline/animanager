@@ -48,8 +48,7 @@ def start_command_line(cmd, loop=None):
         loop = asyncio.get_event_loop()
     prompt = Prompt()
     handler = _make_handler(prompt, cmd)
-    prompt.print()
-    base.start_command_line(handler, loop=loop)
+    base.start_command_line(handler, pre_hook=prompt.print, loop=loop)
 
 
 def _make_handler(prompt, cmd):
@@ -67,14 +66,12 @@ async def _asearch(state, args):
     args = parser.parse_args(args)
     if not args.query:
         print('Must supply query.')
-        state.print_prompt()
         return
     search_query = compile_re_query(args.query)
     results = state.cmd.titles.search(search_query)
     results = [(anime.aid, anime.main_title) for anime in results]
     state.cmd.results['anidb'].set(results)
     state.cmd.results['anidb'].print()
-    state.print_prompt()
 
 
 class CmdState:
