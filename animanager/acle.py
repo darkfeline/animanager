@@ -28,7 +28,6 @@ from mir.acle import base
 from mir.acle import handlers
 
 import animanager
-
 from animanager.cmd.argparse import ArgumentParser
 from animanager.cmd.utils import compile_re_query
 
@@ -52,17 +51,22 @@ def start_command_line(cmd, loop=None):
 
 def _make_handler(prompt, cmd):
     handler = handlers.ShellHandler()
-    state = CmdState(prompt, cmd)
-    # handler.set_default_handler(handler)
+    state = CmdState(cmd=cmd)
+    handler.set_default_handler(functools.partial(_default, state))
+    handler.add_command('as', functools.partial(_asearch, state))
     handler.add_command('asearch', functools.partial(_asearch, state))
     return handler
+
+
+async def _default(state, args):
+    ...
 
 
 async def _asearch(state, args):
     """Search AniDB."""
     parser = ArgumentParser(prog='asearch')
     parser.add_argument('query', nargs=argparse.REMAINDER)
-    args = parser.parse_args(args)
+    args = parser.parse_args(args[1:])
     if not args.query:
         print('Must supply query.')
         return
@@ -75,13 +79,9 @@ async def _asearch(state, args):
 
 class CmdState:
 
-    def __init__(self, prompt, cmd):
+    def __init__(self, *, cmd):
         self.last_command = None
-        self._prompt = prompt
         self.cmd = cmd
-
-    def print_prompt(self):
-        self._prompt.print()
 
 
 class Prompt:
