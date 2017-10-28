@@ -20,74 +20,8 @@ interface classes.
 
 """
 
-import argparse
-import asyncio
-import functools
-
-from mir.acle import base
-from mir.acle import handlers
-
-import animanager
-
 from .argparse import ArgumentParser
-from .cmd import Cmd, Command
-from .utils import compile_re_query, compile_sql_query
-
-
-_INTRO = f'''\
-Animanager {animanager.__version__}
-Copyright (C) 2015-2017  Allen Li
-
-This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
-This is free software, and you are welcome to redistribute it
-under certain conditions; type "gpl c" for details.'''
-
-
-def start_command_line(cmd, loop=None):
-    if loop is None:  # pragma: no cover
-        loop = asyncio.get_event_loop()
-    prompt = Prompt()
-    handler = _make_handler(prompt, cmd)
-    base.start_command_line(handler, pre_hook=prompt.print, loop=loop)
-
-
-def _make_handler(prompt, cmd):
-    handler = handlers.ShellHandler()
-    state = CmdState(prompt, cmd)
-    # handler.set_default_handler(handler)
-    handler.add_command('asearch', functools.partial(_asearch, state))
-    return handler
-
-
-async def _asearch(state, args):
-    """Search AniDB."""
-    parser = ArgumentParser(prog='asearch')
-    parser.add_argument('query', nargs=argparse.REMAINDER)
-    args = parser.parse_args(args)
-    if not args.query:
-        print('Must supply query.')
-        return
-    search_query = compile_re_query(args.query)
-    results = state.cmd.titles.search(search_query)
-    results = [(anime.aid, anime.main_title) for anime in results]
-    state.cmd.results['anidb'].set(results)
-    state.cmd.results['anidb'].print()
-
-
-class CmdState:
-
-    def __init__(self, prompt, cmd):
-        self.last_command = None
-        self._prompt = prompt
-        self.cmd = cmd
-
-    def print_prompt(self):
-        self._prompt.print()
-
-
-class Prompt:
-
-    prompt = 'A> '
-
-    def print(self):
-        print(self.prompt, end='', flush=True)
+from .cmd import Cmd
+from .cmd import Command
+from .utils import compile_re_query
+from .utils import compile_sql_query

@@ -20,9 +20,9 @@ import argparse
 import logging
 import logging.config
 
+from animanager import acle
 from animanager.animecmd import AnimeCmd
 from animanager.config import Config
-from animanager import cmd
 
 
 def main():
@@ -124,12 +124,12 @@ class _AnimeCommand(_Command):
     def main(self, args):
         if args.acle:
             config = Config(args.config)
-            cmd_ = AnimeCmd(config)
-            cmd.start_command_line(cmd=cmd_)
+            cmd = AnimeCmd(config)
+            acle.start_command_line(cmd=cmd)
         else:
             config = Config(args.config)
-            cmd_ = AnimeCmd(config)
-            cmd_.cmdloop()
+            cmd = AnimeCmd(config)
+            cmd.cmdloop()
 
 
 if __name__ == '__main__':
