@@ -22,6 +22,7 @@ import logging.config
 
 from animanager.animecmd import AnimeCmd
 from animanager.config import Config
+from animanager import cmd
 
 
 def main():
@@ -116,12 +117,19 @@ class _AnimeCommand(_Command):
             description='Anime manager.',
             help='Start anime manager.',
         )
+        parser.add_argument('--acle', action='store_true',
+                            help='Use new experimental UI')
         parser.set_defaults(func=self.main)
 
     def main(self, args):
-        config = Config(args.config)
-        cmd = AnimeCmd(config)
-        cmd.cmdloop()
+        if args.acle:
+            config = Config(args.config)
+            cmd_ = AnimeCmd(config)
+            cmd.start_command_line(cmd=cmd_)
+        else:
+            config = Config(args.config)
+            cmd_ = AnimeCmd(config)
+            cmd_.cmdloop()
 
 
 if __name__ == '__main__':
