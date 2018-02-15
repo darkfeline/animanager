@@ -124,8 +124,7 @@ class _AnimeCommand(_Command):
     def main(self, args):
         if args.acle:
             config = Config(args.config)
-            cmd = AnimeCmd(config)
-            acle.start_command_line(cmd=cmd)
+            acle.start_command_line(config)
         else:
             config = Config(args.config)
             cmd = AnimeCmd(config)

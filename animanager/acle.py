@@ -21,7 +21,6 @@ interface classes.
 """
 
 import argparse
-import asyncio
 import functools
 
 from mir.acle import base
@@ -41,17 +40,15 @@ This is free software, and you are welcome to redistribute it
 under certain conditions; type "gpl c" for details.'''
 
 
-def start_command_line(cmd, loop=None):
-    if loop is None:  # pragma: no cover
-        loop = asyncio.get_event_loop()
+def start_command_line(config):
     prompt = Prompt()
-    handler = _make_handler(prompt, cmd)
-    base.start_command_line(handler, pre_hook=prompt.print, loop=loop)
+    handler = _make_handler(prompt, config)
+    base.start_command_line(handler, pre_hook=prompt.print)
 
 
-def _make_handler(prompt, cmd):
+def _make_handler(prompt, config):
     handler = handlers.ShellHandler()
-    state = CmdState(cmd=cmd)
+    state = CmdState(config)
     handler.set_default_handler(functools.partial(_default, state))
     handler.add_command('as', functools.partial(_asearch, state))
     handler.add_command('asearch', functools.partial(_asearch, state))
@@ -79,7 +76,7 @@ async def _asearch(state, args):
 
 class CmdState:
 
-    def __init__(self, *, cmd):
+    def __init__(self, config):
         self.last_command = None
         self.cmd = cmd
 
