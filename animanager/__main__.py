@@ -34,11 +34,6 @@ def main():
 
 
 def _make_parser():
-    parser = _make_root_parser()
-    return parser
-
-
-def _make_root_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
                         default='',
