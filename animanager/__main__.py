@@ -19,7 +19,6 @@ import argparse
 import logging
 import logging.config
 
-from animanager import acle
 from animanager.animecmd import AnimeCmd
 from animanager.config import Config
 
