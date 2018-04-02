@@ -36,8 +36,6 @@ class Cmd:
 
     """Our CLI class."""
 
-    # pylint: disable=too-few-public-methods
-
     prompt = '> '
     intro = ''
     commands = {}
@@ -48,7 +46,6 @@ class Cmd:
 
     def cmdloop(self):
         """Start CLI REPL."""
-        # pylint: disable=broad-except
         print(self.intro)
         stop = False
         while not stop:
@@ -79,8 +76,6 @@ class Cmd:
 class Command:
 
     """A CLI command."""
-
-    # pylint: disable=too-few-public-methods
 
     def __init__(self, parser, func):
         self.parser = parser
