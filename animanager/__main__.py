@@ -117,8 +117,6 @@ class _AnimeCommand(_Command):
             description='Anime manager.',
             help='Start anime manager.',
         )
-        parser.add_argument('--acle', action='store_true',
-                            help='Use new experimental UI')
         parser.set_defaults(func=self.main)
 
     def main(self, args):
