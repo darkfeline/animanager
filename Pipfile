@@ -7,7 +7,6 @@ verify_ssl = true
 apsw = "~=3.9"
 tabulate = "==0.8.1"
 wcwidth = "==0.1.7"
-"mir.acle" = "~=0.1"
 "mir.anidb" = "~=1.0"
 "mir.cp" = "~=1.0"
 "mir.sqlite3m" = "~=1.0"
