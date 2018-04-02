@@ -20,8 +20,95 @@ interface classes.
 
 """
 
-from .argparse import ArgumentParser
-from .cmd import Cmd
-from .cmd import Command
+import argparse
+import logging
+import readline  # pylint: disable=unused-import
+import shlex
+from inspect import cleandoc
+
 from .utils import compile_re_query
 from .utils import compile_sql_query
+
+logger = logging.getLogger(__name__)
+
+
+class Cmd:
+
+    """Our CLI class."""
+
+    # pylint: disable=too-few-public-methods
+
+    prompt = '> '
+    intro = ''
+    commands = {}
+    safe_exceptions = set()
+
+    def __init__(self):
+        self.last_cmd = []
+
+    def cmdloop(self):
+        """Start CLI REPL."""
+        # pylint: disable=broad-except
+        print(self.intro)
+        stop = False
+        while not stop:
+            cmdline = input(self.prompt)
+            tokens = shlex.split(cmdline)
+            if not tokens:
+                if self.last_cmd:
+                    tokens = self.last_cmd
+                else:
+                    print('No previous command.')
+                    continue
+            try:
+                command = self.commands[tokens[0]]
+            except KeyError:
+                print('Invalid command.')
+                continue
+            else:
+                self.last_cmd = tokens
+            try:
+                stop = command(self, *tokens[1:])
+            except ParseExit:
+                continue
+            except Exception as e:
+                if e not in self.safe_exceptions:
+                    logger.exception('Error!')
+
+
+class Command:
+
+    """A CLI command."""
+
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, parser, func):
+        self.parser = parser
+        self.func = func
+        if parser.description is None:
+            self.parser.description = cleandoc(self.func.__doc__)
+
+    def __call__(self, cmd, *args):
+        args = self.parser.parse_args(args)
+        return self.func(cmd, args)
+
+
+class ArgumentParser(argparse.ArgumentParser):
+
+    """ArgumentParser customized for Animanager's CLI."""
+
+    def exit(self, status=0, message=None):
+        """Override SystemExit."""
+        if message is not None:
+            print(message)
+        raise ParseExit()
+
+    def error(self, message):
+        """Override printing to stderr."""
+        print(message)
+        self.print_help()
+        raise ParseExit()
+
+
+class ParseExit(Exception):
+    """This is used to exit parsing in lieu of sys.exit()"""
