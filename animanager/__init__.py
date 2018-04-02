@@ -16,13 +16,3 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.12.0'
-
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
-
-
-@event.listens_for(Engine, "connect")
-def _enable_sqlite_foreign_key(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=1")
-    cursor.close()

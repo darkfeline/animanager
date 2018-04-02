@@ -10,7 +10,6 @@ wcwidth = "==0.1.7"
 "mir.anidb" = "~=1.0"
 "mir.cp" = "~=1.0"
 "mir.sqlite3m" = "~=1.0"
-sqlalchemy = "~=1.1"
 
 [dev-packages]
 

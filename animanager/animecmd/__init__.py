@@ -23,7 +23,6 @@ import sqlite3
 from textwrap import dedent
 
 import apsw
-import sqlalchemy
 
 import mir.cp
 
@@ -94,7 +93,6 @@ class AnimeCmd(Cmd):
         self.titles = TitleSearcher(config.anime.anidb_cache)
         dbfile = config.anime.database
         self.conn = self.db = self._connect(dbfile)
-        self.engine = self._connect_engine(dbfile)
 
         self._migrate(dbfile)
 
@@ -114,11 +112,6 @@ class AnimeCmd(Cmd):
         set_foreign_keys(conn, 1)
         assert get_foreign_keys(conn) == 1
         return conn
-
-    def _connect_engine(self, dbfile: 'PathLike') -> sqlalchemy.engine.Engine:
-        """Connect to SQLite database file."""
-        engine = sqlalchemy.create_engine('sqlite:///' + os.fspath(dbfile))
-        return engine
 
     def _migrate(self, dbfile: 'PathLike'):
         """Do any necessary database migrations."""
