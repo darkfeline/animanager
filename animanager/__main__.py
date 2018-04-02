@@ -28,7 +28,9 @@ def main():
     parser = _make_parser()
     args = parser.parse_args()
     _setup_logging(args)
-    _main(args)
+    config = Config(args.config)
+    cmd = AnimeCmd(config)
+    cmd.cmdloop()
 
 
 def _make_parser():
@@ -70,12 +72,6 @@ def _setup_logging(args):
         },
         'disable_existing_loggers': False,
     })
-
-
-def _main(args):
-    config = Config(args.config)
-    cmd = AnimeCmd(config)
-    cmd.cmdloop()
 
 
 if __name__ == '__main__':
