@@ -41,7 +41,7 @@ def func(cmd, args):
         return
 
     file = cmd.file_picker.pick(files)
-    ret = subprocess.call(cmd.config['anime'].getargs('playerargs') + [file])
+    ret = subprocess.call(cmd.config['anime'].getargs('player') + [file])
     if ret == 0 and episode == anime.watched_episodes + 1:
         user_input = input('Bump? [Yn]')
         if user_input.lower() in ('n', 'no'):
