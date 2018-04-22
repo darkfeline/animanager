@@ -19,7 +19,7 @@ import argparse
 import logging
 import os
 
-from animanager.cmd import ArgumentParser, Command, compile_sql_query
+from animanager.cmd import ArgumentParser, Command
 from animanager.db import query
 from animanager.files import AnimeFiles
 
@@ -45,7 +45,7 @@ def func(cmd, args):
         where_queries.append('regexp IS NOT NULL')
     if args.query:
         where_queries.append('title LIKE :title')
-        params['title'] = compile_sql_query(args.query)
+        params['title'] = _compile_sql_query(args.query)
     if not where_queries:
         print('Must include at least one filter.')
         return
@@ -99,3 +99,7 @@ def _find_files(dirpath: str) -> 'Iterable[str]':
             del dirnames[:]
         for filename in filenames:
             yield os.path.join(dirpath, filename)
+
+
+def _compile_sql_query(args: 'Iterable[str]') -> str:
+    return '%{}%'.format('%'.join(args))

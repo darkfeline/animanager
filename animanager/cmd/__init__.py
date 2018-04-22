@@ -27,7 +27,6 @@ import shlex
 from inspect import cleandoc
 
 from .utils import compile_re_query
-from .utils import compile_sql_query
 
 logger = logging.getLogger(__name__)
 

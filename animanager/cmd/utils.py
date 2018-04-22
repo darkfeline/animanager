@@ -24,7 +24,3 @@ Pattern = typing.re.Pattern
 
 def compile_re_query(args: Iterable[str]) -> Pattern:
     return re.compile('.*'.join(args), re.I)
-
-
-def compile_sql_query(args: Iterable[str]) -> str:
-    return '%{}%'.format('%'.join(args))
