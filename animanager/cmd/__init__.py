@@ -83,24 +83,6 @@ class Command:
         return self.func(cmd, args)
 
 
-class StateCommand:
-
-    """Alternative command that takes CmdState instead of Cmd.
-
-    This is used to rewrite code to use CmdState.
-    """
-
-    def __init__(self, parser, func):
-        self.parser = parser
-        self.func = func
-        if parser.description is None:
-            self.parser.description = cleandoc(self.func.__doc__)
-
-    def __call__(self, cmd, *args):
-        args = self.parser.parse_args(args)
-        return self.func(cmd.state, args)
-
-
 class ArgumentParser(argparse.ArgumentParser):
 
     """ArgumentParser customized for Animanager's CLI."""
