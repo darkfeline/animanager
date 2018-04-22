@@ -29,8 +29,9 @@ import mir.cp
 from animanager.anidb import TitleSearcher
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
-from animanager.db import cachetable, migrations, query
+from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule
+from animanager import migrations
 
 from . import (
     add, addrule, asearch, bump, deleterule, gpl, helpcmd, purgecache,
