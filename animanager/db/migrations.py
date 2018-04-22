@@ -22,10 +22,12 @@ Members:
 manager
 """
 
+import datetime
+
 from mir.sqlite3m import CheckForeignKeysWrapper
 from mir.sqlite3m import MigrationManager
 
-from animanager.date import parse_date, timestamp
+from animanager.date import timestamp
 
 manager = MigrationManager()
 manager.register_wrapper(CheckForeignKeysWrapper)
@@ -111,8 +113,8 @@ def _migrate2(conn):
             UPDATE anime_new
             SET startdate=?, enddate=?
             WHERE aid=?""",
-            ([timestamp(parse_date(startdate)) if startdate else None,
-              timestamp(parse_date(enddate)) if enddate else None,
+            ([timestamp(_parse_date(startdate)) if startdate else None,
+              timestamp(_parse_date(enddate)) if enddate else None,
               aid]
              for aid, startdate, enddate in result),
         )
@@ -162,3 +164,12 @@ def _migrate3(conn):
         """)
     conn.execute('DROP TABLE episode')
     conn.execute('ALTER TABLE episode_new RENAME TO episode')
+
+
+def _parse_date(string: str) -> datetime.date:
+    """Parse an ISO format date (YYYY-mm-dd).
+
+    >>> _parse_date('1990-01-02')
+    datetime.date(1990, 1, 2)
+    """
+    return datetime.datetime.strptime(string, '%Y-%m-%d').date()

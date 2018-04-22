@@ -19,8 +19,6 @@
 
 import datetime
 
-__all__ = ['timestamp', 'fromtimestamp', 'parse_date']
-
 
 def timestamp(date: datetime.date) -> float:
     """Return UNIX timestamp.
@@ -42,12 +40,3 @@ def fromtimestamp(ts: float) -> datetime.date:
     """
     return datetime.datetime.fromtimestamp(
         ts, tz=datetime.timezone.utc).date()
-
-
-def parse_date(string: str) -> datetime.date:
-    """Parse an ISO format date (YYYY-mm-dd).
-
-    >>> parse_date('1990-01-02')
-    datetime.date(1990, 1, 2)
-    """
-    return datetime.datetime.strptime(string, '%Y-%m-%d').date()
