@@ -23,6 +23,7 @@ import os
 import animanager
 from animanager.animecmd import AnimeCmd
 from animanager import config
+from animanager import migrations
 
 _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 _INTRO = f'''\
@@ -38,6 +39,8 @@ def main():
     args = _parse_args()
     _setup_logging(args)
     cfg = config.load(args.config)
+    db_path = cfg['anime'].getpath('database')
+    migrations.migrate(str(db_path))
     cmd = AnimeCmd(cfg)
     print(_INTRO)
     cmd.cmdloop()

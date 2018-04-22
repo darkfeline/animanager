@@ -28,7 +28,6 @@ from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule
-from animanager import migrations
 
 from . import (
     add, addrule, asearch, bump, deleterule, gpl, helpcmd, purgecache,
@@ -81,8 +80,6 @@ class AnimeCmd:
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
         dbfile = config['anime'].getpath('database')
         self.conn = self.db = self._connect(dbfile)
-
-        migrations.migrate(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
