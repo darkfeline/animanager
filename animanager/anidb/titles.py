@@ -25,7 +25,7 @@ data.
 """
 
 import logging
-from pathlib import Path
+import os
 from typing import NamedTuple
 
 from animanager.anidb.anime import get_main_title
@@ -40,10 +40,10 @@ class TitleSearcher:
 
     """Provides anime title searching, utilizing a local cache."""
 
-    def __init__(self, cachedir: 'str'):
+    def __init__(self, cachedir):
         lib = mir.anidb.titles
         self._titles_getter = lib.CachedTitlesGetter(
-            cache=lib.PickleCache(Path(cachedir) / 'anime-titles.pickle'),
+            cache=lib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle')),
             requester=lib.api_requester,
         )
 
