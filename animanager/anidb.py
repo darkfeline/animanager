@@ -42,20 +42,12 @@ class Anime(anime.Anime):
 
     @property
     def title(self) -> str:
-        """Main title."""
-        return get_main_title(self.titles)
+        return _get_main_title(self.titles)
 
     @property
     def episodes(self) -> 'Tuple[Episode]':
-        """The anime's episodes."""
         return tuple(Episode._make(ep)
                      for ep in anime.Anime.episodes.fget(self))
-
-
-def get_main_title(titles: 'Iterable[AnimeTitle]'):
-    for title in titles:
-        if title.type == 'main':
-            return title.title
 
 
 class Episode(anime.Episode):
@@ -105,7 +97,7 @@ class TitleSearcher:
                 if query.search(title.title):
                     yield WorkTitles(
                         aid=titles.aid,
-                        main_title=get_main_title(titles.titles),
+                        main_title=_get_main_title(titles.titles),
                         titles=[t.title for t in titles.titles],
                     )
                     continue
@@ -115,3 +107,9 @@ class WorkTitles(NamedTuple):
     aid: int
     main_title: str
     titles: 'List[str]'
+
+
+def _get_main_title(titles: 'Iterable[AnimeTitle]'):
+    for title in titles:
+        if title.type == 'main':
+            return title.title
