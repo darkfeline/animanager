@@ -34,7 +34,7 @@ from animanager.files import FilePicker, Rule
 
 from . import (
     add, addrule, asearch, bump, deleterule, purgecache,
-    quitcmd, register, reset, rules, search, show, unregister, update, watch,
+    register, reset, rules, search, show, unregister, update, watch,
 )
 
 logger = logging.getLogger(__name__)
@@ -56,8 +56,8 @@ class AnimeCmd:
         'gpl': commands.gpl,
         'help': commands.help,
         'purgecache': purgecache.command,
-        'q': quitcmd.command,
-        'quit': quitcmd.command,
+        'q': commands.quit,
+        'quit': commands.quit,
         'r': reset.command,
         'reg': register.command,
         'register': register.command,

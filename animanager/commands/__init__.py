@@ -17,3 +17,7 @@
 
 from .gpl import command as gpl
 from .help import command as help
+
+
+def quit(cmd, args):
+    return True
