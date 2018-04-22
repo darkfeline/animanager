@@ -17,10 +17,11 @@
 
 import argparse
 import logging
+import os
 
 from animanager.cmd import ArgumentParser, Command, compile_sql_query
 from animanager.db import query
-from animanager.files import AnimeFiles, find_files, is_video
+from animanager.files import AnimeFiles
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +54,8 @@ def func(cmd, args):
 
     results = list()
     all_files = [
-        filename for filename in find_files(cmd.config['anime'].getpath('watchdir'))
-        if is_video(filename)
+        filename for filename in _find_files(cmd.config['anime'].getpath('watchdir'))
+        if _is_video(filename)
     ]
     for anime in query.select.select(cmd.db, where_query, params):
         logger.debug('For anime %s with regexp %s', anime.aid, anime.regexp)
@@ -76,3 +77,25 @@ def func(cmd, args):
     cmd.results['db'].print()
 
 command = Command(parser, func)
+
+
+def _is_video(filepath) -> bool:
+    """Check filename extension to see if it's a video file."""
+    if os.path.exists(filepath):  # Could be broken symlink
+        extension = os.path.splitext(filepath)[1]
+        return extension in ('.mkv', '.mp4', '.avi')
+    else:
+        return False
+
+
+def _find_files(dirpath: str) -> 'Iterable[str]':
+    """Find files recursively.
+
+    Returns a generator that yields paths in no particular order.
+    """
+    for dirpath, dirnames, filenames in os.walk(dirpath, topdown=True,
+                                                followlinks=True):
+        if os.path.basename(dirpath).startswith('.'):
+            del dirnames[:]
+        for filename in filenames:
+            yield os.path.join(dirpath, filename)
