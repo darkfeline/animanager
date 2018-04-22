@@ -24,13 +24,12 @@ manager
 
 import datetime
 
-from mir.sqlite3m import CheckForeignKeysWrapper
-from mir.sqlite3m import MigrationManager
+from mir import sqlite3m
 
 from animanager import datets
 
-manager = MigrationManager()
-manager.register_wrapper(CheckForeignKeysWrapper)
+manager = sqlite3m.MigrationManager()
+manager.register_wrapper(sqlite3m.CheckForeignKeysWrapper)
 
 
 @manager.migration(0, 1)
