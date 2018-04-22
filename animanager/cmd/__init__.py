@@ -44,8 +44,7 @@ class Cmd:
     def cmdloop(self):
         """Start CLI REPL."""
         print(self.intro)
-        stop = False
-        while not stop:
+        while True:
             cmdline = input(self.prompt)
             tokens = shlex.split(cmdline)
             if not tokens:
@@ -62,7 +61,8 @@ class Cmd:
             else:
                 self.last_cmd = tokens
             try:
-                stop = command(self, *tokens[1:])
+                if command(self, *tokens[1:]):
+                    break
             except ParseExit:
                 continue
             except Exception as e:
