@@ -18,14 +18,68 @@
 """AniDB API bindings."""
 
 import os
+import re
 from typing import NamedTuple
 
-from animanager.anidb.anime import get_main_title
-
+from mir.anidb import anime
+from mir.anidb import api
 import mir.anidb.titles as tlib
 import mir.cp
 
-from .anime import request_anime
+_CLIENT = api.Client(
+    name='kfanimanager',
+    version=1,
+)
+
+
+def request_anime(aid: int) -> 'AnimeTree':
+    """Make an anime API request."""
+    anime_info = anime.request_anime(_CLIENT, aid)
+    return Anime._make(anime_info)
+
+
+class Anime(anime.Anime):
+
+    @property
+    def title(self) -> str:
+        """Main title."""
+        return get_main_title(self.titles)
+
+    @property
+    def episodes(self) -> 'Tuple[Episode]':
+        """The anime's episodes."""
+        return tuple(Episode._make(ep)
+                     for ep in anime.Anime.episodes.fget(self))
+
+
+def get_main_title(titles: 'Iterable[AnimeTitle]'):
+    for title in titles:
+        if title.type == 'main':
+            return title.title
+
+
+class Episode(anime.Episode):
+
+    _NUMBER_SUFFIX = re.compile(r'(\d+)$')
+
+    @property
+    def number(self) -> int:
+        """Episode number.
+
+        Unique for an anime and episode type, but not unique across episode
+        types for the same anime.
+        """
+        match = self._NUMBER_SUFFIX.search(self.epno)
+        return int(match.group(1))
+
+    @property
+    def title(self) -> str:
+        """Episode title."""
+        for title in self.titles:
+            if title.lang == 'ja':
+                return title.title
+        # In case there's no Japanese title.
+        return self.titles[0].title
 
 
 class TitleSearcher:
