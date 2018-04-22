@@ -17,7 +17,7 @@
 
 import logging
 
-from animanager.date import timestamp
+from animanager import datets
 from animanager.sqlite.utils import upsert
 
 from .eptype import get_eptype
@@ -41,9 +41,9 @@ def add(db, anime):
         'episodecount': anime.episodecount,
     }
     if anime.startdate is not None:
-        values['startdate'] = timestamp(anime.startdate)
+        values['startdate'] = datets.to_ts(anime.startdate)
     if anime.enddate is not None:
-        values['enddate'] = timestamp(anime.enddate)
+        values['enddate'] = datets.to_ts(anime.enddate)
     with db:
         upsert(db, 'anime', ['aid'], values)
         our_anime = lookup(db, anime.aid, episode_fields=ALL)

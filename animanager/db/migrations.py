@@ -27,7 +27,7 @@ import datetime
 from mir.sqlite3m import CheckForeignKeysWrapper
 from mir.sqlite3m import MigrationManager
 
-from animanager.date import timestamp
+from animanager import datets
 
 manager = MigrationManager()
 manager.register_wrapper(CheckForeignKeysWrapper)
@@ -113,8 +113,8 @@ def _migrate2(conn):
             UPDATE anime_new
             SET startdate=?, enddate=?
             WHERE aid=?""",
-            ([timestamp(_parse_date(startdate)) if startdate else None,
-              timestamp(_parse_date(enddate)) if enddate else None,
+            ([datets.to_ts(_parse_date(startdate)) if startdate else None,
+              datets.to_ts(_parse_date(enddate)) if enddate else None,
               aid]
              for aid, startdate, enddate in result),
         )

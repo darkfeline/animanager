@@ -18,7 +18,7 @@
 from tabulate import tabulate
 
 from animanager.cmd import ArgumentParser, Command
-from animanager.date import fromtimestamp
+from animanager import datets
 from animanager.db import query
 from animanager.db.query.eptype import EpisodeTypes
 
@@ -51,8 +51,8 @@ def func(cmd, args):
         anime.type,
         anime.watched_episodes,
         anime.episodecount,
-        fromtimestamp(anime.startdate) if anime.startdate else 'N/A',
-        fromtimestamp(anime.enddate) if anime.enddate else 'N/A',
+        datets.to_date(anime.startdate) if anime.startdate else 'N/A',
+        datets.to_date(anime.enddate) if anime.enddate else 'N/A',
         complete_string,
     ))
     if anime.regexp:

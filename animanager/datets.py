@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017  Allen Li
+# Copyright (C) 2016-2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,16 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Date utilities."""
+"""Date timestamp utilities."""
 
 import datetime
 
 
-def timestamp(date: datetime.date) -> float:
-    """Return UNIX timestamp.
+def to_ts(date: datetime.date) -> float:
+    """Convert date to timestamp.
 
-    >>> from datetime import date
-    >>> timestamp(date(2001, 1, 2))
+    >>> to_ts(datetime.date(2001, 1, 2))
     978393600.0
     """
     return datetime.datetime(
@@ -32,10 +31,10 @@ def timestamp(date: datetime.date) -> float:
         tzinfo=datetime.timezone.utc).timestamp()
 
 
-def fromtimestamp(ts: float) -> datetime.date:
-    """Convert timestamp into date.
+def to_date(ts: float) -> datetime.date:
+    """Convert timestamp to date.
 
-    >>> fromtimestamp(978393600.0)
+    >>> to_date(978393600.0)
     datetime.date(2001, 1, 2)
     """
     return datetime.datetime.fromtimestamp(
