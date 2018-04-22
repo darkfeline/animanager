@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,11 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from textwrap import dedent
 
-from animanager.cmd import ArgumentParser, Command
+def command(state, args):
+    if len(args) < 2:
+        _print_usage(args[0])
+    elif args[1] == 'c':
+        print(_COPYING)
+    elif args[1] == 'w':
+        print(_WARRANTY)
+    else:
+        _print_usage(args[0])
 
-GPL_COPYING = dedent('''\
+
+def _print_usage(prog):
+    print(f'Usage: {prog} {{c|w}}')
+
+
+_COPYING = '''\
 Animanager is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as
 published by the Free Software Foundation, either version 3 of
@@ -32,9 +44,9 @@ General Public License for more details.
 
 You should have received a copy of the GNU General Public
 License along with this program. If not, see
-<http://www.gnu.org/licenses/gpl.html>.''')
+<http://www.gnu.org/licenses/gpl.html>.'''
 
-GPL_WARRANTY = dedent('''\
+_WARRANTY = '''\
 Animanager is distributed WITHOUT ANY WARRANTY. The following
 sections from the GNU General Public License, version 3, should
 make that clear.
@@ -71,24 +83,4 @@ an absolute waiver of all civil liability in connection with the
 Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
-See <http://www.gnu.org/licenses/gpl.html>, for more details.''')
-
-parser = ArgumentParser(prog='gpl')
-parser.add_argument('info', choices=['c', 'w'])
-
-def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Show GPL information.
-
-    "gpl c" to show copying information.
-    "gpl w" to show warranty information.
-
-    """
-    if args.info == 'c':
-        print(GPL_COPYING)
-    elif args.info == 'w':
-        print(GPL_WARRANTY)
-    else:
-        parser.print_help()
-
-command = Command(parser, func)
+See <http://www.gnu.org/licenses/gpl.html>, for more details.'''

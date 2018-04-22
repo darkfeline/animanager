@@ -28,11 +28,12 @@ from animanager.anidb import TitleSearcher
 from animanager.cmd import Command
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
+from animanager import commands
 from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule
 
 from . import (
-    add, addrule, asearch, bump, deleterule, gpl, helpcmd, purgecache,
+    add, addrule, asearch, bump, deleterule, helpcmd, purgecache,
     quitcmd, register, reset, rules, search, show, unregister, update, watch,
 )
 
@@ -52,7 +53,7 @@ class AnimeCmd:
         'b': bump.command,
         'bump': bump.command,
         'deleterule': deleterule.command,
-        'gpl': gpl.command,
+        'gpl': commands.gpl,
         'help': helpcmd.command,
         'purgecache': purgecache.command,
         'q': quitcmd.command,
