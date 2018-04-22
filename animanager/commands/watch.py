@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -17,22 +17,20 @@
 
 import subprocess
 
-from animanager.cmd import ArgumentParser, Command
 from animanager.db import query
 
-parser = ArgumentParser(prog='watch')
-parser.add_argument('aid')
-parser.add_argument('episode', nargs='?', default=None, type=int)
 
-
-def func(cmd, args):
+def command(cmd, args):
     """Watch an anime."""
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
+    if len(args) < 2:
+        print(f'Usage: {args[0]} {{ID|aid:AID}} [EPISODE]')
+        return
+    aid = cmd.results.parse_aid(args[1], default_key='db')
     anime = query.select.lookup(cmd.db, aid)
-    if args.episode is None:
+    if len(args) < 3:
         episode = anime.watched_episodes + 1
     else:
-        episode = args.episode
+        episode = int(args[2])
     anime_files = query.files.get_files(cmd.db, aid)
     files = anime_files[episode]
 
@@ -49,5 +47,3 @@ def func(cmd, args):
         else:
             query.update.bump(cmd.db, aid)
             print('Bumped.')
-
-command = Command(parser, func)

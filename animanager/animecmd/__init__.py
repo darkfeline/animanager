@@ -34,7 +34,7 @@ from animanager.files import FilePicker, Rule
 
 from . import (
     addrule, asearch, deleterule, purgecache,
-    register, reset, rules, search, show, unregister, update, watch,
+    register, reset, rules, search, show, unregister, update,
 )
 
 logger = logging.getLogger(__name__)
@@ -69,8 +69,8 @@ class AnimeCmd:
         'unreg': unregister.command,
         'unregister': unregister.command,
         'update': update.command,
-        'w': watch.command,
-        'watch': watch.command,
+        'w': commands.watch,
+        'watch': commands.watch,
     }
     safe_exceptions = set([AIDParseError])
 

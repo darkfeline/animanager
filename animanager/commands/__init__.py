@@ -18,6 +18,7 @@
 from .add import command as add
 from .gpl import command as gpl
 from .help import command as help
+from .watch import command as watch
 
 
 def quit(cmd, args):
