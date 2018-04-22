@@ -80,10 +80,6 @@ class _BaseConfig(metaclass=_ConfigMeta):
         with self._path.open() as file:
             self._config.read_file(file)
 
-    def save(self):
-        with self._path.open('w') as file:
-            self._config.write(file)
-
     class Sections:
         pass
 
