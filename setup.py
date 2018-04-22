@@ -49,6 +49,7 @@ setup(
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
         'apsw~=3.9',
+        'dataclasses==0.5',
         'tabulate==0.8.1',
         'wcwidth==0.1.7',
         'mir.anidb~=1.0',
