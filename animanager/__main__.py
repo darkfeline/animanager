@@ -20,10 +20,18 @@ import logging
 import logging.config
 import os
 
+import animanager
 from animanager.animecmd import AnimeCmd
 from animanager import config
 
 _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
+_INTRO = f'''\
+Animanager {animanager.__version__}
+Copyright (C) 2015-2017  Allen Li
+
+This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
+This is free software, and you are welcome to redistribute it
+under certain conditions; type "gpl c" for details.'''
 
 
 def main():
@@ -31,6 +39,7 @@ def main():
     _setup_logging(args)
     cfg = config.load(args.config)
     cmd = AnimeCmd(cfg)
+    print(_INTRO)
     cmd.cmdloop()
 
 

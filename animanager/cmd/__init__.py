@@ -34,7 +34,6 @@ class Cmd:
     """Our CLI class."""
 
     prompt = '> '
-    intro = ''
     commands = {}
     safe_exceptions = set()
 
@@ -43,7 +42,6 @@ class Cmd:
 
     def cmdloop(self):
         """Start CLI REPL."""
-        print(self.intro)
         while True:
             cmdline = input(self.prompt)
             tokens = shlex.split(cmdline)

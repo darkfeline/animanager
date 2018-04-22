@@ -26,7 +26,6 @@ import apsw
 
 import mir.cp
 
-from animanager import __version__ as VERSION
 from animanager.anidb import TitleSearcher
 from animanager.cmd import Cmd
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
@@ -45,13 +44,6 @@ class AnimeCmd(Cmd):
 
     """Animanager anime CLI."""
 
-    intro = dedent('''\
-    Animanager {}
-    Copyright (C) 2015-2017  Allen Li
-
-    This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
-    This is free software, and you are welcome to redistribute it
-    under certain conditions; type "gpl c" for details.''').format(VERSION)
     prompt = 'A> '
     commands = {
         '?': helpcmd.command,
