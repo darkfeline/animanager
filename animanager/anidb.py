@@ -21,8 +21,8 @@ import os
 import re
 from typing import NamedTuple
 
-from mir.anidb import anime
 from mir.anidb import api
+import mir.anidb.anime as alib
 import mir.anidb.titles as tlib
 import mir.cp
 
@@ -34,11 +34,11 @@ _CLIENT = api.Client(
 
 def request_anime(aid: int) -> 'Anime':
     """Make an anime API request."""
-    anime_info = anime.request_anime(_CLIENT, aid)
+    anime_info = alib.request_anime(_CLIENT, aid)
     return Anime._make(anime_info)
 
 
-class Anime(anime.Anime):
+class Anime(alib.Anime):
 
     @property
     def title(self) -> str:
@@ -47,10 +47,10 @@ class Anime(anime.Anime):
     @property
     def episodes(self) -> 'Tuple[Episode]':
         return tuple(Episode._make(ep)
-                     for ep in anime.Anime.episodes.fget(self))
+                     for ep in alib.Anime.episodes.fget(self))
 
 
-class Episode(anime.Episode):
+class Episode(alib.Episode):
 
     _NUMBER_SUFFIX = re.compile(r'(\d+)$')
 
