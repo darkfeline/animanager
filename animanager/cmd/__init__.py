@@ -17,15 +17,15 @@
 
 """This package contains tools for constructing custom Cmd, command line
 interface classes.
-
 """
 
 import argparse
 import logging
-import readline  # pylint: disable=unused-import
+import readline
 import shlex
 from inspect import cleandoc
 
+del readline
 logger = logging.getLogger(__name__)
 
 
