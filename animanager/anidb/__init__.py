@@ -22,7 +22,7 @@ from typing import NamedTuple
 
 from animanager.anidb.anime import get_main_title
 
-import mir.anidb.titles
+import mir.anidb.titles as tlib
 import mir.cp
 
 from .anime import request_anime
@@ -33,10 +33,9 @@ class TitleSearcher:
     """Provides anime title searching, utilizing a local cache."""
 
     def __init__(self, cachedir):
-        lib = mir.anidb.titles
-        self._titles_getter = lib.CachedTitlesGetter(
-            cache=lib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle')),
-            requester=lib.api_requester,
+        self._titles_getter = tlib.CachedTitlesGetter(
+            cache=tlib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle')),
+            requester=tlib.api_requester,
         )
 
     @mir.cp.NonDataCachedProperty
