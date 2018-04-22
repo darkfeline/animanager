@@ -36,7 +36,7 @@ _DEFAULTS = {
 }
 
 
-def load_config(path):
+def load(path):
     parser = configparser.ConfigParser(
         converters=_CONVERTERS)
     parser.read_dict(_DEFAULTS)

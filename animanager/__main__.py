@@ -21,7 +21,7 @@ import logging.config
 import os
 
 from animanager.animecmd import AnimeCmd
-from animanager.config import load_config
+from animanager import config
 
 _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 
@@ -29,8 +29,8 @@ _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 def main():
     args = _parse_args()
     _setup_logging(args)
-    config = load_config(args.config)
-    cmd = AnimeCmd(config)
+    cfg = config.load(args.config)
+    cmd = AnimeCmd(cfg)
     cmd.cmdloop()
 
 
