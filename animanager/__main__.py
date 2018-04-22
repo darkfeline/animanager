@@ -27,16 +27,14 @@ _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 
 
 def main():
-    """Animanager program entry point."""
-    parser = _make_parser()
-    args = parser.parse_args()
+    args = _parse_args()
     _setup_logging(args)
     config = load_config(args.config)
     cmd = AnimeCmd(config)
     cmd.cmdloop()
 
 
-def _make_parser():
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
                         default=_DEFAULT_CONFIG,
@@ -44,7 +42,7 @@ def _make_parser():
     parser.add_argument('--debug',
                         action='store_true',
                         help='Enable debug output.')
-    return parser
+    return parser.parse_args()
 
 
 def _setup_logging(args):
