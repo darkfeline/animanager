@@ -27,7 +27,7 @@ import apsw
 import mir.cp
 
 from animanager import __version__ as VERSION
-from animanager.anidb.titles import TitleSearcher
+from animanager.anidb import TitleSearcher
 from animanager.cmd import Cmd
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, migrations, query

@@ -17,4 +17,48 @@
 
 """AniDB API bindings."""
 
+import os
+from typing import NamedTuple
+
+from animanager.anidb.anime import get_main_title
+
+import mir.anidb.titles
+import mir.cp
+
 from .anime import request_anime
+
+
+class TitleSearcher:
+
+    """Provides anime title searching, utilizing a local cache."""
+
+    def __init__(self, cachedir):
+        lib = mir.anidb.titles
+        self._titles_getter = lib.CachedTitlesGetter(
+            cache=lib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle')),
+            requester=lib.api_requester,
+        )
+
+    @mir.cp.NonDataCachedProperty
+    def _titles_list(self):
+        return self._titles_getter.get()
+
+    def search(self, query: 're.Pattern') -> 'Iterable[_WorkTitles]':
+        """Search titles using a compiled RE query."""
+        titles: 'Titles'
+        for titles in self._titles_list:
+            title: 'AnimeTitle'
+            for title in titles.titles:
+                if query.search(title.title):
+                    yield _WorkTitles(
+                        aid=titles.aid,
+                        main_title=get_main_title(titles.titles),
+                        titles=[t.title for t in titles.titles],
+                    )
+                    continue
+
+
+class _WorkTitles(NamedTuple):
+    aid: int
+    main_title: str
+    titles: 'List[str]'
