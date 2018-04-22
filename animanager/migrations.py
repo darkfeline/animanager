@@ -23,10 +23,26 @@ manager
 """
 
 import datetime
+import logging
+import shutil
+import sqlite3
 
 from mir import sqlite3m
 
 from animanager import datets
+
+logger = logging.getLogger(__name__)
+
+
+def migrate(path: str):
+    conn = sqlite3.connect(path)
+    if manager.should_migrate(conn):
+        logger.info('Migration needed, backing up database')
+        shutil.copyfile(path, path + '~')
+        logger.info('Migrating database')
+        manager.migrate(conn)
+    conn.close()
+
 
 manager = sqlite3m.MigrationManager()
 manager.register_wrapper(sqlite3m.CheckForeignKeysWrapper)

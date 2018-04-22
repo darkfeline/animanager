@@ -17,10 +17,7 @@
 
 import logging
 import os
-from os import fspath
 import shlex
-import shutil
-import sqlite3
 
 import apsw
 
@@ -85,7 +82,7 @@ class AnimeCmd:
         dbfile = config['anime'].getpath('database')
         self.conn = self.db = self._connect(dbfile)
 
-        self._migrate(dbfile)
+        migrations.migrate(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -128,17 +125,6 @@ class AnimeCmd:
         _set_foreign_keys(conn, 1)
         assert _get_foreign_keys(conn) == 1
         return conn
-
-    def _migrate(self, dbfile: 'PathLike'):
-        """Do any necessary database migrations."""
-        conn = sqlite3.connect(fspath(dbfile))
-        manager = migrations.manager
-        if manager.should_migrate(conn):
-            logger.info('Migration needed, backing up database')
-            shutil.copyfile(dbfile, fspath(dbfile) + '~')
-            logger.info('Migrating database')
-            manager.migrate(conn)
-        conn.close()
 
     @mir.cp.NonDataCachedProperty
     def file_picker(self) -> FilePicker:
