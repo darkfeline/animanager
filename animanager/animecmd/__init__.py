@@ -18,16 +18,16 @@
 import logging
 import os
 from os import fspath
+import shlex
 import shutil
 import sqlite3
-from textwrap import dedent
 
 import apsw
 
 import mir.cp
 
 from animanager.anidb import TitleSearcher
-from animanager.cmd import Cmd
+from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, migrations, query
 from animanager.files import FilePicker, Rule
@@ -40,9 +40,7 @@ from . import (
 logger = logging.getLogger(__name__)
 
 
-class AnimeCmd(Cmd):
-
-    """Animanager anime CLI."""
+class AnimeCmd:
 
     prompt = 'A> '
     commands = {
@@ -78,8 +76,8 @@ class AnimeCmd(Cmd):
     }
     safe_exceptions = set([AIDParseError])
 
-    def __init__(self, config, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, config):
+        self.last_cmd = []
 
         self.config = config
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
@@ -97,6 +95,31 @@ class AnimeCmd(Cmd):
             ]),
             'anidb': AIDResults(['Title']),
         })
+
+    def cmdloop(self):
+        """Start CLI REPL."""
+        while True:
+            cmdline = input(self.prompt)
+            tokens = shlex.split(cmdline)
+            if not tokens:
+                if self.last_cmd:
+                    tokens = self.last_cmd
+                else:
+                    print('No previous command.')
+                    continue
+            if tokens[0] not in self.commands:
+                print('Invalid command')
+                continue
+            command = self.commands[tokens[0]]
+            self.last_cmd = tokens
+            try:
+                if command(self, *tokens[1:]):
+                    break
+            except ParseExit:
+                continue
+            except Exception as e:
+                if e not in self.safe_exceptions:
+                    logger.exception('Error!')
 
     def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
         """Connect to SQLite database file."""

@@ -22,48 +22,10 @@ interface classes.
 import argparse
 import logging
 import readline
-import shlex
 from inspect import cleandoc
 
 del readline
 logger = logging.getLogger(__name__)
-
-
-class Cmd:
-
-    """Our CLI class."""
-
-    prompt = '> '
-    commands = {}
-    safe_exceptions = set()
-
-    def __init__(self):
-        self.last_cmd = []
-
-    def cmdloop(self):
-        """Start CLI REPL."""
-        while True:
-            cmdline = input(self.prompt)
-            tokens = shlex.split(cmdline)
-            if not tokens:
-                if self.last_cmd:
-                    tokens = self.last_cmd
-                else:
-                    print('No previous command.')
-                    continue
-            if tokens[0] not in self.commands:
-                print('Invalid command')
-                continue
-            command = self.commands[tokens[0]]
-            self.last_cmd = tokens
-            try:
-                if command(self, *tokens[1:]):
-                    break
-            except ParseExit:
-                continue
-            except Exception as e:
-                if e not in self.safe_exceptions:
-                    logger.exception('Error!')
 
 
 class Command:
