@@ -32,7 +32,7 @@ _CLIENT = api.Client(
 )
 
 
-def request_anime(aid: int) -> 'AnimeTree':
+def request_anime(aid: int) -> 'Anime':
     """Make an anime API request."""
     anime_info = anime.request_anime(_CLIENT, aid)
     return Anime._make(anime_info)
