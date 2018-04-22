@@ -79,14 +79,16 @@ class TitleSearcher:
     """Provides anime title searching, utilizing a local cache."""
 
     def __init__(self, cachedir):
-        self._titles_getter = tlib.CachedTitlesGetter(
-            cache=tlib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle')),
-            requester=tlib.api_requester,
-        )
+        self._cache = tlib.PickleCache(os.path.join(cachedir, 'anime-titles.pickle'))
 
     @mir.cp.NonDataCachedProperty
     def _titles_list(self):
-        return self._titles_getter.get()
+        try:
+            return self._cache.load()
+        except tlib.CacheMissingError:
+            titles = tlib.request_titles()
+            self._cache.save(titles)
+            return titles
 
     def search(self, query: 're.Pattern') -> 'Iterable[_WorkTitles]':
         """Search titles using a compiled RE query."""
