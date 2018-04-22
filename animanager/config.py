@@ -89,7 +89,6 @@ class Config(_BaseConfig):
     _DEF_PATH = Path.home() / '.animanager' / 'config.ini'
     _DEF_VALUES = {
         'general': {
-            'backup_before_migration': 'true',
             'colors': 'false',
         },
         'anime': {
@@ -118,10 +117,6 @@ class Config(_BaseConfig):
             def colors(self):
                 """Enable colors."""
                 return self._config.getboolean('colors')
-
-            def backup_before_migration(self):
-                """Video player to use."""
-                return self._config.getboolean('backup_before_migration')
 
         class anime:
 
