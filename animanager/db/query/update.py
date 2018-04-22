@@ -22,7 +22,7 @@ from animanager.sqlite.utils import upsert
 
 from .eptype import get_eptype
 from .select import ALL, lookup
-from .status import cache_status, set_status
+from .status import cache_status
 
 logger = logging.getLogger(__name__)
 
