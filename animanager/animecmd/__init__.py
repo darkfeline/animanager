@@ -82,7 +82,7 @@ class AnimeCmd:
         self.config = config
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
         dbfile = config['anime'].getpath('database')
-        self.conn = self.db = self._connect(dbfile)
+        self.conn = self.db = _connect(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -123,13 +123,6 @@ class AnimeCmd:
                 if e not in self.safe_exceptions:
                     logger.exception('Error!')
 
-    def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
-        """Connect to SQLite database file."""
-        conn = apsw.Connection(os.fspath(dbfile))
-        _set_foreign_keys(conn, 1)
-        assert _get_foreign_keys(conn) == 1
-        return conn
-
     @mir.cp.NonDataCachedProperty
     def file_picker(self) -> FilePicker:
         """Cached file picker property."""
@@ -141,6 +134,14 @@ class AnimeCmd:
 @dataclass
 class State:
     ...
+
+
+def _connect(dbfile: 'PathLike') -> apsw.Connection:
+    """Connect to SQLite database file."""
+    conn = apsw.Connection(os.fspath(dbfile))
+    _set_foreign_keys(conn, 1)
+    assert _get_foreign_keys(conn) == 1
+    return conn
 
 
 def _get_foreign_keys(conn):
