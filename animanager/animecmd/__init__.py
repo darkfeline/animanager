@@ -125,8 +125,8 @@ class AnimeCmd:
     def _connect(self, dbfile: 'PathLike') -> apsw.Connection:
         """Connect to SQLite database file."""
         conn = apsw.Connection(os.fspath(dbfile))
-        set_foreign_keys(conn, 1)
-        assert get_foreign_keys(conn) == 1
+        _set_foreign_keys(conn, 1)
+        assert _get_foreign_keys(conn) == 1
         return conn
 
     def _migrate(self, dbfile: 'PathLike'):
@@ -148,12 +148,12 @@ class AnimeCmd:
             for rule in query.files.get_priority_rules(self.db))
 
 
-def get_foreign_keys(conn):
+def _get_foreign_keys(conn):
     cur = conn.cursor()
     cur.execute('PRAGMA foreign_keys')
     return cur.fetchone()[0]
 
 
-def set_foreign_keys(conn, value: int):
+def _set_foreign_keys(conn, value: int):
     cur = conn.cursor()
     cur.execute(f'PRAGMA foreign_keys={value:d}')
