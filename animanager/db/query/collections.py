@@ -17,38 +17,28 @@
 
 """Shared collection types used by queries."""
 
-# pylint: disable=too-few-public-methods
-
-from animanager.objects import Object
+from dataclasses import dataclass
 
 
-class Anime(Object):
-
-    """Anime object."""
-
-    fields = [
-        'aid',
-        'title',
-        'type',
-        'episodecount',
-        'startdate',
-        'enddate',
-        'watched_episodes',
-        'complete',
-        'regexp',
-        'episodes',
-    ]
+@dataclass
+class Anime:
+    aid: int
+    title: str
+    type: str
+    episodecount: int
+    startdate: int
+    enddate: int
+    watched_episodes: int
+    complete: bool
+    regexp: str
+    episodes: 'List[Episode]' = ()
 
 
-class Episode(Object):
-
-    """Episode object."""
-
-    fields = [
-        'aid',
-        'type',
-        'number',
-        'title',
-        'length',
-        'user_watched',
-    ]
+@dataclass
+class Episode:
+    aid: int
+    type: str
+    number: int
+    title: str
+    length: int
+    user_watched: bool
