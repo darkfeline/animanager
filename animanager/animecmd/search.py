@@ -53,7 +53,7 @@ def func(cmd, args):
 
     results = list()
     all_files = [
-        filename for filename in find_files(cmd.config.anime.watchdir)
+        filename for filename in find_files(cmd.config['anime'].getpath('watchdir'))
         if is_video(filename)
     ]
     for anime in query.select.select(cmd.db, where_query, params):
