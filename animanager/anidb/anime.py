@@ -22,18 +22,15 @@ import re
 from mir.anidb import api
 from mir.anidb import anime
 
-_CLIENT = 'kfanimanager'
-_CLIENTVER = 1
-
-_client = api.Client(
-    name=_CLIENT,
-    version=_CLIENTVER,
+_CLIENT = api.Client(
+    name='kfanimanager',
+    version=1,
 )
 
 
 def request_anime(aid: int) -> 'AnimeTree':
     """Make an anime API request."""
-    anime_info = anime.request_anime(_client, aid)
+    anime_info = anime.request_anime(_CLIENT, aid)
     return Anime._make(anime_info)
 
 
