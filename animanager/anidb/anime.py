@@ -34,12 +34,7 @@ _client = api.Client(
 def request_anime(aid: int) -> 'AnimeTree':
     """Make an anime API request."""
     anime_info = anime.request_anime(_client, aid)
-    return _rewrap_anime(anime_info)
-
-
-def _rewrap_anime(anime_tuple):
-    """Replace anime.Anime tuple with an instance of our subclass."""
-    return Anime._make(anime_tuple)
+    return Anime._make(anime_info)
 
 
 class Anime(anime.Anime):
