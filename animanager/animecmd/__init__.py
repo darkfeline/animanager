@@ -19,11 +19,13 @@ import logging
 import os
 import shlex
 
+from dataclasses import dataclass
 import apsw
 
 import mir.cp
 
 from animanager.anidb import TitleSearcher
+from animanager.cmd import Command
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.db import cachetable, query
@@ -74,6 +76,7 @@ class AnimeCmd:
     safe_exceptions = set([AIDParseError])
 
     def __init__(self, config):
+        self.state = State()
         self.last_cmd = []
 
         self.config = config
@@ -108,8 +111,12 @@ class AnimeCmd:
             command = self.commands[tokens[0]]
             self.last_cmd = tokens
             try:
-                if command(self, *tokens[1:]):
-                    break
+                if isinstance(command, Command):
+                    if command(self, *tokens[1:]):
+                        break
+                else:
+                    if command(self.state, tokens):
+                        break
             except ParseExit:
                 continue
             except Exception as e:
@@ -129,6 +136,11 @@ class AnimeCmd:
         return FilePicker(
             Rule(rule.regexp, rule.priority)
             for rule in query.files.get_priority_rules(self.db))
+
+
+@dataclass
+class State:
+    ...
 
 
 def _get_foreign_keys(conn):
