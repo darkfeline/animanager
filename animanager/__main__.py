@@ -18,9 +18,12 @@
 import argparse
 import logging
 import logging.config
+import os
 
 from animanager.animecmd import AnimeCmd
 from animanager.config import Config
+
+_DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 
 
 def main():
@@ -36,7 +39,7 @@ def main():
 def _make_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
-                        default='',
+                        default=_DEFAULT_CONFIG,
                         help='Alternate configuration file to use.')
     parser.add_argument('--debug',
                         action='store_true',
