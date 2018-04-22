@@ -95,20 +95,6 @@ def set_watched(db, aid, ep_type, number):
         })
 
 
-def bump(db, aid):
-    """Bump anime regular episode count."""
-    anime = lookup(db, aid)
-    if anime.complete:
-        return
-    episode = anime.watched_episodes + 1
-    with db:
-        set_watched(db, aid, get_eptype(db, 'regular').id, episode)
-        set_status(
-            db, aid,
-            anime.enddate and episode >= anime.episodecount,
-            episode)
-
-
 def reset(db, aid, episode):
     """Reset episode count for anime."""
     params = {
