@@ -53,13 +53,11 @@ class Cmd:
                 else:
                     print('No previous command.')
                     continue
-            try:
-                command = self.commands[tokens[0]]
-            except KeyError:
-                print('Invalid command.')
+            if tokens[0] not in self.commands:
+                print('Invalid command')
                 continue
-            else:
-                self.last_cmd = tokens
+            command = self.commands[tokens[0]]
+            self.last_cmd = tokens
             try:
                 if command(self, *tokens[1:]):
                     break
