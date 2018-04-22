@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -16,16 +16,14 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from animanager.anidb import request_anime
-from animanager.cmd import ArgumentParser, Command
 from animanager.db import query
 
-parser = ArgumentParser(prog='add')
-parser.add_argument('aid')
 
-def func(cmd, args):
+def command(cmd, args):
     """Add an anime from an AniDB search."""
-    aid = cmd.results.parse_aid(args.aid, default_key='anidb')
+    if len(args) < 2:
+        print(f'Usage: {args[0]} {{ID|aid:AID}}')
+        return
+    aid = cmd.results.parse_aid(args[1], default_key='anidb')
     anime = request_anime(aid)
     query.update.add(cmd.db, anime)
-
-command = Command(parser, func)
