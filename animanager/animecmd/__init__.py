@@ -86,10 +86,11 @@ class AnimeCmd(Cmd):
     }
     safe_exceptions = set([AIDParseError])
 
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, config, config2, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.config = config
+        self.config2 = config2
         self.titles = TitleSearcher(config.anime.anidb_cache)
         dbfile = config.anime.database
         self.conn = self.db = self._connect(dbfile)

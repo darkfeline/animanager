@@ -22,6 +22,7 @@ import os
 
 from animanager.animecmd import AnimeCmd
 from animanager.config import Config
+from animanager.config import load_config
 
 _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 
@@ -32,7 +33,8 @@ def main():
     args = parser.parse_args()
     _setup_logging(args)
     config = Config(args.config)
-    cmd = AnimeCmd(config)
+    config2 = load_config(args.config)
+    cmd = AnimeCmd(config, config2)
     cmd.cmdloop()
 
 

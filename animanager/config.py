@@ -84,6 +84,32 @@ class _BaseConfig(metaclass=_ConfigMeta):
         pass
 
 
+_CONVERTERS = {
+    'path': lambda x: Path(x).expanduser(),
+    'args': shlex.split,
+}
+_DEFAULTS = {
+    'general': {
+        'colors': 'false',
+    },
+    'anime': {
+        'database': '~/.animanager/database.db',
+        'anidb_cache': '~/.animanager/anidb',
+        'watchdir': '~/anime',
+        'player': 'mpv',
+    },
+}
+
+
+def load_config(path):
+    parser = configparser.ConfigParser(
+        converters=_CONVERTERS)
+    parser.read_dict(_DEFAULTS)
+    with open(path) as f:
+        parser.read_file(f)
+    return parser
+
+
 class Config(_BaseConfig):
 
     _DEF_PATH = Path.home() / '.animanager' / 'config.ini'
