@@ -16,3 +16,4 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from .gpl import command as gpl
+from .help import command as help

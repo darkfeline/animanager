@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,21 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from textwrap import dedent
 
-from animanager.cmd import ArgumentParser, Command
-
-parser = ArgumentParser(prog='help')
-
-def func(cmd, args):
-    # pylint: disable=unused-argument
-    """Commands help."""
-    print(dedent("""\
-    Commands
-    --------
-    {}
-
-    Type `<command> -h` for command-specific help.
-    """).format('\n'.join(sorted(cmd.commands))))
-
-command = Command(parser, func)
+def command(cmd, args):
+    commands = '\n'.join(sorted(cmd.commands))
+    print(f'''\
+Commands
+--------
+{commands}''')
