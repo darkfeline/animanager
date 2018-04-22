@@ -16,8 +16,9 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import re
 
-from animanager.cmd import ArgumentParser, Command, compile_re_query
+from animanager.cmd import ArgumentParser, Command
 
 parser = ArgumentParser(prog='asearch')
 parser.add_argument('query', nargs=argparse.REMAINDER)
@@ -27,10 +28,14 @@ def func(cmd, args):
     if not args.query:
         print('Must supply query.')
         return
-    search_query = compile_re_query(args.query)
+    search_query = _compile_re_query(args.query)
     results = cmd.titles.search(search_query)
     results = [(anime.aid, anime.main_title) for anime in results]
     cmd.results['anidb'].set(results)
     cmd.results['anidb'].print()
 
 command = Command(parser, func)
+
+
+def _compile_re_query(args: 'Iterable[str]') -> 're.Pattern':
+    return re.compile('.*'.join(args), re.I)

@@ -26,8 +26,6 @@ import readline  # pylint: disable=unused-import
 import shlex
 from inspect import cleandoc
 
-from .utils import compile_re_query
-
 logger = logging.getLogger(__name__)
 
 
