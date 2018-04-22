@@ -49,7 +49,7 @@ class TitleSearcher:
             title: 'AnimeTitle'
             for title in titles.titles:
                 if query.search(title.title):
-                    yield _WorkTitles(
+                    yield WorkTitles(
                         aid=titles.aid,
                         main_title=get_main_title(titles.titles),
                         titles=[t.title for t in titles.titles],
@@ -57,7 +57,7 @@ class TitleSearcher:
                     continue
 
 
-class _WorkTitles(NamedTuple):
+class WorkTitles(NamedTuple):
     aid: int
     main_title: str
     titles: 'List[str]'
