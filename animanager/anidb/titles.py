@@ -24,7 +24,6 @@ but it's really just fetching a single XML file with all the titles
 data.
 """
 
-import logging
 import os
 from typing import NamedTuple
 
@@ -32,8 +31,6 @@ from animanager.anidb.anime import get_main_title
 
 import mir.anidb.titles
 import mir.cp
-
-logger = logging.getLogger(__name__)
 
 
 class TitleSearcher:
