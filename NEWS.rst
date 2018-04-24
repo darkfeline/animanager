@@ -6,11 +6,6 @@ This project uses `semantic versioning <http://semver.org/>`_.
 0.12.0 ()
 ---------
 
-Removed
-^^^^^^^
-
-- Removed ``bump`` command.
-
 0.11.0 (2017-10-22)
 -------------------
 
