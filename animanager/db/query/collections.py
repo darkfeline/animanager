@@ -22,23 +22,23 @@ from dataclasses import dataclass
 
 @dataclass
 class Anime:
-    aid: int
-    title: str
-    type: str
-    episodecount: int
-    startdate: int
-    enddate: int
-    watched_episodes: int
-    complete: bool
-    regexp: str
+    aid: int = 0
+    title: str = ''
+    type: str = ''
+    episodecount: int = 0
+    startdate: int = 0
+    enddate: int = 0
+    watched_episodes: int = 0
+    complete: bool = False
+    regexp: str = ''
     episodes: 'List[Episode]' = ()
 
 
 @dataclass
 class Episode:
-    aid: int
-    type: str
-    number: int
-    title: str
-    length: int
-    user_watched: bool
+    aid: int = 0
+    type: str = ''
+    number: int = 0
+    title: str = ''
+    length: int = 0
+    user_watched: bool = False
