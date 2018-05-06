@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2017  Allen Li
+# Copyright (C) 2015-2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -28,7 +28,7 @@ from animanager import migrations
 _DEFAULT_CONFIG = os.path.join(os.environ['HOME'], '.animanager', 'config.ini')
 _INTRO = f'''\
 Animanager {animanager.__version__}
-Copyright (C) 2015-2017  Allen Li
+Copyright (C) 2015-2018  Allen Li
 
 This program comes with ABSOLUTELY NO WARRANTY; for details type "gpl w".
 This is free software, and you are welcome to redistribute it
