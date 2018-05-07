@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -18,13 +18,12 @@
 import argparse
 import re
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.argparse import ArgumentParser
 
-parser = ArgumentParser(prog='asearch')
-parser.add_argument('query', nargs=argparse.REMAINDER)
 
-def func(cmd, args):
+def command(cmd, args):
     """Search AniDB."""
+    args = parser.parse_args(args[1:])
     if not args.query:
         print('Must supply query.')
         return
@@ -34,8 +33,10 @@ def func(cmd, args):
     cmd.results['anidb'].set(results)
     cmd.results['anidb'].print()
 
-command = Command(parser, func)
-
 
 def _compile_re_query(args: 'Iterable[str]') -> 're.Pattern':
     return re.compile('.*'.join(args), re.I)
+
+
+parser = ArgumentParser(prog='asearch')
+parser.add_argument('query', nargs=argparse.REMAINDER)

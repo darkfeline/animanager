@@ -16,6 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 from .add import command as add
+from .asearch import command as asearch
 from .gpl import command as gpl
 from .help import command as help
 from .update import command as update
