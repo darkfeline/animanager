@@ -21,9 +21,7 @@ interface classes.
 
 import argparse
 import logging
-import readline
 
-del readline
 logger = logging.getLogger(__name__)
 
 

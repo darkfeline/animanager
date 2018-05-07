@@ -19,6 +19,7 @@ import argparse
 import logging
 import logging.config
 import os
+import readline
 
 import animanager
 from animanager.animecmd import AnimeCmd
