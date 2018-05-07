@@ -23,8 +23,6 @@ import argparse
 import logging
 import readline
 
-from animanager.cmd import CmdExit
-
 del readline
 logger = logging.getLogger(__name__)
 
@@ -42,3 +40,7 @@ class ArgumentParser(argparse.ArgumentParser):
         print(message)
         self.print_help()
         raise CmdExit()
+
+
+class CmdExit(Exception):
+    """Exception for exiting CLI."""

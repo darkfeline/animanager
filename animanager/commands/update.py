@@ -18,7 +18,7 @@
 import time
 
 from animanager.anidb import request_anime
-from animanager.argparse import ArgumentParser
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 

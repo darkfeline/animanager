@@ -26,9 +26,9 @@ import mir.cp
 
 from animanager.anidb import TitleSearcher
 from animanager.cmd import Command
-from animanager.cmd import CmdExit
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
+from animanager.cmdlib import CmdExit
 from animanager import commands
 from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule

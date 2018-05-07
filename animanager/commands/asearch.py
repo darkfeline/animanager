@@ -18,7 +18,7 @@
 import argparse
 import re
 
-from animanager.argparse import ArgumentParser
+from animanager.cmdlib import ArgumentParser
 
 
 def command(cmd, args):

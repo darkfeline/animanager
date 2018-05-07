@@ -62,7 +62,3 @@ class ArgumentParser(argparse.ArgumentParser):
 
 class ParseExit(Exception):
     """This is used to exit parsing in lieu of sys.exit()"""
-
-
-class CmdExit(Exception):
-    """Exception for exiting CLI."""
