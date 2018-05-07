@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,17 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, Command
 from animanager.db.query.eptype import EpisodeTypes
 
-parser = ArgumentParser(prog='purgecache')
 
-def func(cmd, args):
-    # pylint: disable=unused-argument
+def command(cmd, args):
     """Purge all caches."""
     cmd.cache_manager.teardown()
     cmd.cache_manager.setup()
     EpisodeTypes.forget(cmd.db)
     del cmd.file_picker
-
-command = Command(parser, func)

@@ -19,6 +19,7 @@ from .add import command as add
 from .asearch import command as asearch
 from .gpl import command as gpl
 from .help import command as help
+from .purgecache import command as purgecache
 from .update import command as update
 from .watch import command as watch
 
