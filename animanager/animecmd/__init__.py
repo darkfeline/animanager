@@ -26,6 +26,7 @@ import mir.cp
 
 from animanager.anidb import TitleSearcher
 from animanager.cmd import Command
+from animanager.cmd import CmdExit
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager import commands
@@ -34,7 +35,7 @@ from animanager.files import FilePicker, Rule
 
 from . import (
     addrule, asearch, bump, deleterule, purgecache,
-    register, reset, rules, search, show, unregister, update,
+    register, reset, rules, search, show, unregister,
 )
 
 logger = logging.getLogger(__name__)
@@ -67,10 +68,10 @@ class AnimeCmd:
         'search': search.command,
         'sh': show.command,
         'show': show.command,
-        'u': update.command,
+        'u': commands.update,
         'unreg': unregister.command,
         'unregister': unregister.command,
-        'update': update.command,
+        'update': commands.update,
         'w': commands.watch,
         'watch': commands.watch,
     }
@@ -119,6 +120,8 @@ class AnimeCmd:
                     if command(self, tokens):
                         break
             except ParseExit:
+                continue
+            except CmdExit:
                 continue
             except Exception as e:
                 if e not in self.safe_exceptions:

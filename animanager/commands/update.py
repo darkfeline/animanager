@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -18,20 +18,13 @@
 import time
 
 from animanager.anidb import request_anime
-from animanager.cmd import ArgumentParser, Command
+from animanager.argparse import ArgumentParser
 from animanager.db import query
 
-parser = ArgumentParser(prog='update')
-parser.add_argument('aid', nargs='?', default=None)
-parser.add_argument(
-    '-i', '--incomplete', action='store_true',
-    help='Update all incomplete anime.')
-parser.add_argument(
-    '-w', '--watching', action='store_true',
-    help='Update all watching anime.')
 
-def func(cmd, args):
-    """Update an existing anime from a local database search."""
+def command(cmd, args):
+    """Add an anime from an AniDB search."""
+    args = parser.parse_args(args[1:])
     if args.watching:
         rows = query.select.select(cmd.db, 'regexp IS NOT NULL', [], ['aid'])
         aids = [anime.aid for anime in rows]
@@ -52,4 +45,12 @@ def func(cmd, args):
         query.update.add(cmd.db, anime)
         print('Updated {} {}'.format(anime.aid, anime.title))
 
-command = Command(parser, func)
+
+parser = ArgumentParser(prog='update')
+parser.add_argument('aid', nargs='?', default=None)
+parser.add_argument(
+    '-i', '--incomplete', action='store_true',
+    help='Update all incomplete anime.')
+parser.add_argument(
+    '-w', '--watching', action='store_true',
+    help='Update all watching anime.')

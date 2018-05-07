@@ -1,4 +1,4 @@
-# Copyright (C) 2018  Allen Li
+# Copyright (C) 2016, 2017  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,12 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .add import command as add
-from .gpl import command as gpl
-from .help import command as help
-from .update import command as update
-from .watch import command as watch
+"""This package contains tools for constructing custom Cmd, command line
+interface classes.
+"""
+
+import argparse
+import logging
+import readline
+
+from animanager.cmd import CmdExit
+
+del readline
+logger = logging.getLogger(__name__)
 
 
-def quit(cmd, args):
-    return True
+class ArgumentParser(argparse.ArgumentParser):
+
+    """Modified to not exit."""
+
+    def exit(self, status=0, message=None):
+        if message is not None:
+            print(message)
+        raise CmdExit()
+
+    def error(self, message):
+        print(message)
+        self.print_help()
+        raise CmdExit()
