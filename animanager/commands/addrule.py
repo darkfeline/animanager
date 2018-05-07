@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,17 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
-parser = ArgumentParser(prog='addrule')
-parser.add_argument('regexp')
-parser.add_argument('priority', nargs='?', default=None, type=int)
 
-def func(cmd, args):
+def command(cmd, args):
     """Add a priority rule for files."""
+    args = parser.parse_args(args[1:])
     row_id = query.files.add_priority_rule(cmd.db, args.regexp, args.priority)
     del cmd.file_picker
     print('Added rule {}'.format(row_id))
 
-command = Command(parser, func)
+
+parser = ArgumentParser(prog='addrule')
+parser.add_argument('regexp')
+parser.add_argument('priority', nargs='?', default=None, type=int)
