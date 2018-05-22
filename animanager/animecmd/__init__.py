@@ -34,7 +34,6 @@ from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule
 
 from . import (
-    deleterule,
     register, reset, rules, search, show, unregister,
 )
 
@@ -51,7 +50,7 @@ class AnimeCmd:
         'addrule': commands.addrule,
         'as': commands.asearch,
         'asearch': commands.asearch,
-        'deleterule': deleterule.command,
+        'deleterule': commands.deleterule,
         'gpl': commands.gpl,
         'help': commands.help,
         'purgecache': commands.purgecache,

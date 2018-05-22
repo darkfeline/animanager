@@ -18,6 +18,7 @@
 from .add import command as add
 from .addrule import command as addrule
 from .asearch import command as asearch
+from .deleterule import command as deleterule
 from .gpl import command as gpl
 from .help import command as help
 from .purgecache import command as purgecache
