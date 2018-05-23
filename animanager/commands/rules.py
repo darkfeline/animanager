@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -17,15 +17,11 @@
 
 from tabulate import tabulate
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
-parser = ArgumentParser(prog='rules')
 
-def func(cmd, args):
-    # pylint: disable=unused-argument
+def command(cmd, args):
     """List file priority rules."""
     rules = query.files.get_priority_rules(cmd.db)
     print(tabulate(rules, headers=['ID', 'Regexp', 'Priority']))
-
-command = Command(parser, func)
