@@ -127,7 +127,6 @@ class State:
             for rule in query.files.get_priority_rules(self.db))
 
 
-
 def _connect(dbfile: 'PathLike') -> apsw.Connection:
     """Connect to SQLite database file."""
     conn = apsw.Connection(os.fspath(dbfile))
