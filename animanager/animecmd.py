@@ -23,7 +23,6 @@ from dataclasses import dataclass
 import apsw
 
 from animanager.anidb import TitleSearcher
-from animanager.cmd import Command
 from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.cmdlib import CmdExit
@@ -117,12 +116,8 @@ class AnimeCmd:
             command = self.commands[tokens[0]]
             self.last_cmd = tokens
             try:
-                if isinstance(command, Command):
-                    if command(self, *tokens[1:]):
-                        break
-                else:
-                    if command(self, tokens):
-                        break
+                if command(self, tokens):
+                    break
             except ParseExit:
                 continue
             except CmdExit:
