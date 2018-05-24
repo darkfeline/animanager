@@ -92,8 +92,7 @@ class AnimeCmd:
         s.cache_manager = cachetable.make_manager(s.db_conn)
         s.cache_manager.setup()
         s.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
-
-        self.results = AIDResultsManager({
+        s.results = AIDResultsManager({
             'db': AIDResults([
                 'Title', 'Type', 'Episodes', 'Complete', 'Available',
             ]),
@@ -141,6 +140,7 @@ class AnimeCmd:
     cache_manager = _StateProxy('cache_manager')
     config = _StateProxy('config')
     db = _StateProxy('db_conn')
+    results = _StateProxy('results')
     titles = _StateProxy('titles')
 
 
@@ -149,8 +149,8 @@ class State:
     cache_manager: 'CacheTableManager' = None
     config: 'ConfigParser' = None
     db_conn: 'Connection' = None
+    results: 'AIDResultsManager' = None
     titles: 'TitleSearcher' = None
-    ...
 
 
 def _connect(dbfile: 'PathLike') -> apsw.Connection:
