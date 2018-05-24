@@ -86,16 +86,14 @@ class AnimeCmd:
 
     def __init__(self, config: 'ConfigParser'):
         self.last_cmd = []
+        self.state = s = State()
+        s.config = config
         dbfile = config['anime'].getpath('database')
-        self.state = State(
-            config=config,
-            db_conn=_connect(dbfile),
-        )
+        s.db_conn = _connect(dbfile)
+        s.cache_manager = cachetable.make_manager(s.db_conn)
+        s.cache_manager.setup()
 
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
-
-        self.cache_manager = cachetable.make_manager(self.db)
-        self.cache_manager.setup()
 
         self.results = AIDResultsManager({
             'db': AIDResults([
@@ -142,14 +140,16 @@ class AnimeCmd:
             Rule(rule.regexp, rule.priority)
             for rule in query.files.get_priority_rules(self.db))
 
+    cache_manager = _StateProxy('cache_manager')
     config = _StateProxy('config')
     db = _StateProxy('db_conn')
 
 
 @dataclass
 class State:
-    config: 'ConfigParser'
-    db_conn: 'Connection'
+    cache_manager: 'CacheTableManager' = None
+    config: 'ConfigParser' = None
+    db_conn: 'Connection' = None
     ...
 
 
