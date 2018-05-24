@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -19,26 +19,17 @@ import argparse
 import logging
 import os
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 from animanager.files import AnimeFiles
 
 logger = logging.getLogger(__name__)
 
-parser = ArgumentParser(prog='search')
-parser.add_argument(
-    '-w', '--watching', action='store_true',
-    help='Limit to registered anime.',
-)
-parser.add_argument(
-    '-a', '--available', action='store_true',
-    help='Limit to anime with available episodes.  Implies --watching.',
-)
-parser.add_argument('query', nargs=argparse.REMAINDER)
 
-def func(cmd, args):
+def command(cmd, args):
     """Search Animanager database."""
 
+    args = parser.parse_args(args[1:])
     where_queries = []
     params = {}
     if args.watching or args.available:
@@ -76,7 +67,17 @@ def func(cmd, args):
     cmd.results['db'].set(results)
     cmd.results['db'].print()
 
-command = Command(parser, func)
+
+parser = ArgumentParser(prog='search')
+parser.add_argument(
+    '-w', '--watching', action='store_true',
+    help='Limit to registered anime.',
+)
+parser.add_argument(
+    '-a', '--available', action='store_true',
+    help='Limit to anime with available episodes.  Implies --watching.',
+)
+parser.add_argument('query', nargs=argparse.REMAINDER)
 
 
 def _is_video(filepath) -> bool:

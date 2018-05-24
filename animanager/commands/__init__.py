@@ -25,6 +25,7 @@ from .purgecache import command as purgecache
 from .register import command as register
 from .reset import command as reset
 from .rules import command as rules
+from .search import command as search
 from .show import command as show
 from .unregister import command as unregister
 from .update import command as update
