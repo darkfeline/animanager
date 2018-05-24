@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -17,30 +17,15 @@
 
 from tabulate import tabulate
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager import datets
 from animanager.db import query
 from animanager.db.query.eptype import EpisodeTypes
 
-SHOW_MSG = """\
-AID: {}
-Title: {}
-Type: {}
-Episodes: {}/{}
-Start date: {}
-End date: {}
-Complete: {}"""
 
-parser = ArgumentParser(prog='show')
-parser.add_argument('aid')
-parser.add_argument(
-    '-e', '--show-episodes',
-    default=(), const=query.select.ALL, action='store_const',
-    dest='episode_fields',
-)
-
-def func(cmd, args):
+def command(cmd, args):
     """Show anime data."""
+    args = parser.parse_args(args[1:])
     aid = cmd.results.parse_aid(args.aid, default_key='db')
     anime = query.select.lookup(cmd.db, aid, episode_fields=args.episode_fields)
 
@@ -72,4 +57,20 @@ def func(cmd, args):
             headers=['Number', 'Title', 'min', 'Watched'],
         ))
 
-command = Command(parser, func)
+
+SHOW_MSG = """\
+AID: {}
+Title: {}
+Type: {}
+Episodes: {}/{}
+Start date: {}
+End date: {}
+Complete: {}"""
+
+parser = ArgumentParser(prog='show')
+parser.add_argument('aid')
+parser.add_argument(
+    '-e', '--show-episodes',
+    default=(), const=query.select.ALL, action='store_const',
+    dest='episode_fields',
+)

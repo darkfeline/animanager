@@ -34,7 +34,7 @@ from animanager.db import cachetable, query
 from animanager.files import FilePicker, Rule
 
 from . import (
-    reset, search, show,
+    reset, search,
 )
 
 logger = logging.getLogger(__name__)
@@ -63,8 +63,8 @@ class AnimeCmd:
         'rules': commands.rules,
         's': search.command,
         'search': search.command,
-        'sh': show.command,
-        'show': show.command,
+        'sh': commands.show,
+        'show': commands.show,
         'u': commands.update,
         'unreg': commands.unregister,
         'unregister': commands.unregister,
