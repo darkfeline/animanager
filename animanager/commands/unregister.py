@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,18 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
-parser = ArgumentParser(prog='unregister')
 
-parser.add_argument(
-    '-c', '--complete', action='store_true',
-    help='Unregister all complete anime.')
-parser.add_argument('aid', nargs='?', default=None)
-
-def func(cmd, args):
+def command(cmd, args):
     """Unregister watching regexp for an anime."""
+    args = parser.parse_args(args[1:])
     if args.complete:
         query.files.delete_regexp_complete(cmd.db)
     else:
@@ -36,4 +31,9 @@ def func(cmd, args):
             aid = cmd.results.parse_aid(args.aid, default_key='db')
             query.files.delete_regexp(cmd.db, aid)
 
-command = Command(parser, func)
+
+parser = ArgumentParser(prog='unregister')
+parser.add_argument(
+    '-c', '--complete', action='store_true',
+    help='Unregister all complete anime.')
+parser.add_argument('aid', nargs='?', default=None)
