@@ -22,8 +22,6 @@ import shlex
 from dataclasses import dataclass
 import apsw
 
-import mir.cp
-
 from animanager.anidb import TitleSearcher
 from animanager.cmd import Command
 from animanager.cmd import ParseExit
@@ -98,6 +96,9 @@ class AnimeCmd:
             ]),
             'anidb': AIDResults(['Title']),
         })
+        s.file_picker = FilePicker(
+            Rule(rule.regexp, rule.priority)
+            for rule in query.files.get_priority_rules(self.db))
 
     def cmdloop(self):
         """Start CLI REPL."""
@@ -130,16 +131,10 @@ class AnimeCmd:
                 if e not in self.safe_exceptions:
                     logger.exception('Error!')
 
-    @mir.cp.NonDataCachedProperty
-    def file_picker(self) -> FilePicker:
-        """Cached file picker property."""
-        return FilePicker(
-            Rule(rule.regexp, rule.priority)
-            for rule in query.files.get_priority_rules(self.db))
-
     cache_manager = _StateProxy('cache_manager')
     config = _StateProxy('config')
     db = _StateProxy('db_conn')
+    file_picker = _StateProxy('file_picker')
     results = _StateProxy('results')
     titles = _StateProxy('titles')
 
@@ -149,6 +144,7 @@ class State:
     cache_manager: 'CacheTableManager' = None
     config: 'ConfigParser' = None
     db_conn: 'Connection' = None
+    file_picker: 'FilePicker' = None
     results: 'AIDResultsManager' = None
     titles: 'TitleSearcher' = None
 
