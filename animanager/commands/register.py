@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -18,15 +18,13 @@
 import argparse
 import re
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
-parser = ArgumentParser(prog='register')
-parser.add_argument('aid')
-parser.add_argument('query', nargs=argparse.REMAINDER)
 
-def func(cmd, args):
+def command(cmd, args):
     """Register watching regexp for an anime."""
+    args = parser.parse_args(args[1:])
     aid = cmd.results.parse_aid(args.aid, default_key='db')
     if args.query:
         # Use regexp provided by user.
@@ -45,4 +43,7 @@ def func(cmd, args):
         ))
     query.files.set_regexp(cmd.db, aid, regexp)
 
-command = Command(parser, func)
+
+parser = ArgumentParser(prog='register')
+parser.add_argument('aid')
+parser.add_argument('query', nargs=argparse.REMAINDER)

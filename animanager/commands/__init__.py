@@ -22,6 +22,7 @@ from .deleterule import command as deleterule
 from .gpl import command as gpl
 from .help import command as help
 from .purgecache import command as purgecache
+from .register import command as register
 from .rules import command as rules
 from .update import command as update
 from .watch import command as watch
