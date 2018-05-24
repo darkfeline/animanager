@@ -15,21 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from .add import command as add
-from .addrule import command as addrule
-from .asearch import command as asearch
-from .deleterule import command as deleterule
-from .gpl import command as gpl
-from .help import command as help
-from .purgecache import command as purgecache
-from .register import command as register
-from .reset import command as reset
-from .rules import command as rules
-from .search import command as search
-from .show import command as show
-from .unregister import command as unregister
-from .update import command as update
-from .watch import command as watch
+import importlib
+import pkgutil
+
+_g = globals()
+for _, name, _ in pkgutil.iter_modules(__path__):
+    _g[name] = importlib.import_module(f'.{name}', __name__).command
 
 
 def quit(cmd, args):
