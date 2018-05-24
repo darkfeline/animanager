@@ -92,7 +92,7 @@ class AnimeCmd:
 
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
         dbfile = config['anime'].getpath('database')
-        self.conn = self.db = _connect(dbfile)
+        self.db = _connect(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
