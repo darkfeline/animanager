@@ -19,8 +19,9 @@ import logging
 import os
 import shlex
 
-from dataclasses import dataclass
 import apsw
+from dataclasses import dataclass
+import mir.cp
 
 from animanager.anidb import TitleSearcher
 from animanager.cmd import ParseExit
@@ -95,9 +96,6 @@ class AnimeCmd:
             ]),
             'anidb': AIDResults(['Title']),
         })
-        s.file_picker = FilePicker(
-            Rule(rule.regexp, rule.priority)
-            for rule in query.files.get_priority_rules(self.db))
 
     def cmdloop(self):
         """Start CLI REPL."""
@@ -129,7 +127,6 @@ class AnimeCmd:
     cache_manager = _StateProxy('cache_manager')
     config = _StateProxy('config')
     db = _StateProxy('db')
-    file_picker = _StateProxy('file_picker')
     results = _StateProxy('results')
     titles = _StateProxy('titles')
 
@@ -142,6 +139,13 @@ class State:
     file_picker: 'FilePicker' = None
     results: 'AIDResultsManager' = None
     titles: 'TitleSearcher' = None
+
+    @mir.cp.NonDataCachedProperty
+    def file_picker(self):
+        return FilePicker(
+            Rule(rule.regexp, rule.priority)
+            for rule in query.files.get_priority_rules(self.db))
+
 
 
 def _connect(dbfile: 'PathLike') -> apsw.Connection:
