@@ -34,20 +34,6 @@ from animanager.files import FilePicker, Rule
 logger = logging.getLogger(__name__)
 
 
-class _StateProxy:
-
-    def __init__(self, name):
-        self._name = name
-
-    def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        return getattr(instance.state, self._name)
-
-    def __set__(self, instance, value):
-        setattr(instance.state, self._name, value)
-
-
 class AnimeCmd:
 
     prompt = 'A> '
@@ -123,12 +109,6 @@ class AnimeCmd:
             except Exception as e:
                 if e not in self.safe_exceptions:
                     logger.exception('Error!')
-
-    cache_manager = _StateProxy('cache_manager')
-    config = _StateProxy('config')
-    db = _StateProxy('db')
-    results = _StateProxy('results')
-    titles = _StateProxy('titles')
 
 
 @dataclass
