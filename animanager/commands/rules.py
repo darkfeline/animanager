@@ -17,7 +17,6 @@
 
 from tabulate import tabulate
 
-from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 
