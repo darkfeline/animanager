@@ -36,6 +36,20 @@ from animanager.files import FilePicker, Rule
 logger = logging.getLogger(__name__)
 
 
+class _StateProxy:
+
+    def __init__(self, name):
+        self._name = name
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return getattr(instance.state, self._name)
+
+    def __set__(self, instance, value):
+        setattr(instance.state, self._name, value)
+
+
 class AnimeCmd:
 
     prompt = 'A> '
@@ -70,11 +84,12 @@ class AnimeCmd:
     }
     safe_exceptions = set([AIDParseError])
 
-    def __init__(self, config):
-        self.state = State()
+    def __init__(self, config: 'ConfigParser'):
         self.last_cmd = []
+        self.state = State(
+            config=config
+        )
 
-        self.config = config
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
         dbfile = config['anime'].getpath('database')
         self.conn = self.db = _connect(dbfile)
@@ -127,9 +142,12 @@ class AnimeCmd:
             Rule(rule.regexp, rule.priority)
             for rule in query.files.get_priority_rules(self.db))
 
+    config = _StateProxy('config')
+
 
 @dataclass
 class State:
+    config: 'ConfigParser'
     ...
 
 
