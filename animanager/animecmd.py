@@ -116,7 +116,7 @@ class AnimeCmd:
             command = self.commands[tokens[0]]
             self.last_cmd = tokens
             try:
-                if command(self, tokens):
+                if command(self.state, tokens):
                     break
             except ParseExit:
                 continue
