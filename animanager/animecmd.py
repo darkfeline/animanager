@@ -93,7 +93,6 @@ class AnimeCmd:
         s.cache_manager.setup()
 
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
-
         self.results = AIDResultsManager({
             'db': AIDResults([
                 'Title', 'Type', 'Episodes', 'Complete', 'Available',
