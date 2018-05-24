@@ -18,31 +18,3 @@
 """This package contains tools for constructing custom Cmd, command line
 interface classes.
 """
-
-import argparse
-import logging
-import readline
-
-del readline
-logger = logging.getLogger(__name__)
-
-
-class ArgumentParser(argparse.ArgumentParser):
-
-    """ArgumentParser customized for Animanager's CLI."""
-
-    def exit(self, status=0, message=None):
-        """Override SystemExit."""
-        if message is not None:
-            print(message)
-        raise ParseExit()
-
-    def error(self, message):
-        """Override printing to stderr."""
-        print(message)
-        self.print_help()
-        raise ParseExit()
-
-
-class ParseExit(Exception):
-    """This is used to exit parsing in lieu of sys.exit()"""

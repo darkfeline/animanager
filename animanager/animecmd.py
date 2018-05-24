@@ -24,7 +24,6 @@ from dataclasses import dataclass
 import mir.cp
 
 from animanager.anidb import TitleSearcher
-from animanager.cmd import ParseExit
 from animanager.cmd.results import AIDParseError, AIDResults, AIDResultsManager
 from animanager.cmdlib import CmdExit
 from animanager import commands
@@ -102,8 +101,6 @@ class AnimeCmd:
             try:
                 if command(self.state, tokens):
                     break
-            except ParseExit:
-                continue
             except CmdExit:
                 continue
             except Exception as e:
