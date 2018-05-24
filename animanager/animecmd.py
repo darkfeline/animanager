@@ -86,13 +86,13 @@ class AnimeCmd:
 
     def __init__(self, config: 'ConfigParser'):
         self.last_cmd = []
+        dbfile = config['anime'].getpath('database')
         self.state = State(
-            config=config
+            config=config,
+            db_conn=_connect(dbfile),
         )
 
         self.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
-        dbfile = config['anime'].getpath('database')
-        self.db = _connect(dbfile)
 
         self.cache_manager = cachetable.make_manager(self.db)
         self.cache_manager.setup()
@@ -143,11 +143,13 @@ class AnimeCmd:
             for rule in query.files.get_priority_rules(self.db))
 
     config = _StateProxy('config')
+    db = _StateProxy('db_conn')
 
 
 @dataclass
 class State:
     config: 'ConfigParser'
+    db_conn: 'Connection'
     ...
 
 
