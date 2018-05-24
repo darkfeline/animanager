@@ -88,8 +88,7 @@ class AnimeCmd:
         self.last_cmd = []
         self.state = s = State()
         s.config = config
-        dbfile = config['anime'].getpath('database')
-        s.db_conn = _connect(dbfile)
+        s.db_conn = _connect(config['anime'].getpath('database'))
         s.cache_manager = cachetable.make_manager(s.db_conn)
         s.cache_manager.setup()
 
