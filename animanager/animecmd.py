@@ -86,8 +86,8 @@ class AnimeCmd:
         self.last_cmd = []
         self.state = s = State()
         s.config = config
-        s.db_conn = _connect(config['anime'].getpath('database'))
-        s.cache_manager = cachetable.make_manager(s.db_conn)
+        s.db = _connect(config['anime'].getpath('database'))
+        s.cache_manager = cachetable.make_manager(s.db)
         s.cache_manager.setup()
         s.titles = TitleSearcher(config['anime'].getpath('anidb_cache'))
         s.results = AIDResultsManager({
@@ -133,7 +133,7 @@ class AnimeCmd:
 
     cache_manager = _StateProxy('cache_manager')
     config = _StateProxy('config')
-    db = _StateProxy('db_conn')
+    db = _StateProxy('db')
     file_picker = _StateProxy('file_picker')
     results = _StateProxy('results')
     titles = _StateProxy('titles')
@@ -143,7 +143,7 @@ class AnimeCmd:
 class State:
     cache_manager: 'CacheTableManager' = None
     config: 'ConfigParser' = None
-    db_conn: 'Connection' = None
+    db: 'Connection' = None
     file_picker: 'FilePicker' = None
     results: 'AIDResultsManager' = None
     titles: 'TitleSearcher' = None
