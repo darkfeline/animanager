@@ -23,6 +23,7 @@ from .gpl import command as gpl
 from .help import command as help
 from .purgecache import command as purgecache
 from .register import command as register
+from .reset import command as reset
 from .rules import command as rules
 from .show import command as show
 from .unregister import command as unregister

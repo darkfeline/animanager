@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Allen Li
+# Copyright (C) 2018  Allen Li
 #
 # This file is part of Animanager.
 #
@@ -15,16 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
-from animanager.cmd import ArgumentParser, Command
+from animanager.cmdlib import ArgumentParser
 from animanager.db import query
+
+
+def command(cmd, args):
+    """Reset anime watched episodes."""
+    args = parser.parse_args(args[1:])
+    aid = cmd.results.parse_aid(args.aid, default_key='db')
+    query.update.reset(cmd.db, aid, args.episode)
+
 
 parser = ArgumentParser(prog='reset')
 parser.add_argument('aid')
 parser.add_argument('episode', type=int)
-
-def func(cmd, args):
-    """Reset anime watched episodes."""
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
-    query.update.reset(cmd.db, aid, args.episode)
-
-command = Command(parser, func)
