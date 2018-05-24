@@ -19,11 +19,11 @@ from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 
-def command(cmd, args):
+def command(state, args):
     """Reset anime watched episodes."""
     args = parser.parse_args(args[1:])
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
-    query.update.reset(cmd.db, aid, args.episode)
+    aid = state.results.parse_aid(args.aid, default_key='db')
+    query.update.reset(state.db, aid, args.episode)
 
 
 parser = ArgumentParser(prog='reset')

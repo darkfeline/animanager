@@ -23,11 +23,11 @@ from animanager.db import query
 from animanager.db.query.eptype import EpisodeTypes
 
 
-def command(cmd, args):
+def command(state, args):
     """Show anime data."""
     args = parser.parse_args(args[1:])
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
-    anime = query.select.lookup(cmd.db, aid, episode_fields=args.episode_fields)
+    aid = state.results.parse_aid(args.aid, default_key='db')
+    anime = query.select.lookup(state.db, aid, episode_fields=args.episode_fields)
 
     complete_string = 'yes' if anime.complete else 'no'
     print(SHOW_MSG.format(
@@ -47,7 +47,7 @@ def command(cmd, args):
         print('\n', tabulate(
             (
                 (
-                    EpisodeTypes.from_db(cmd.db).get_epno(episode),
+                    EpisodeTypes.from_db(state.db).get_epno(episode),
                     episode.title,
                     episode.length,
                     'yes' if episode.user_watched else '',

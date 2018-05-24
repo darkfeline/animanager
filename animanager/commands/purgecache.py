@@ -18,9 +18,9 @@
 from animanager.db.query.eptype import EpisodeTypes
 
 
-def command(cmd, args):
+def command(state, args):
     """Purge all caches."""
-    cmd.cache_manager.teardown()
-    cmd.cache_manager.setup()
-    EpisodeTypes.forget(cmd.db)
-    del cmd.file_picker
+    state.cache_manager.teardown()
+    state.cache_manager.setup()
+    EpisodeTypes.forget(state.db)
+    del state.file_picker

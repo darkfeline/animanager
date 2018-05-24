@@ -19,11 +19,11 @@ from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 
-def command(cmd, args):
+def command(state, args):
     """Delete priority rule."""
     args = parser.parse_args(args[1:])
-    query.files.delete_priority_rule(cmd.db, args.id)
-    del cmd.file_picker
+    query.files.delete_priority_rule(state.db, args.id)
+    del state.file_picker
 
 
 parser = ArgumentParser(prog='deleterule')

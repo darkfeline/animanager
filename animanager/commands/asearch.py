@@ -21,17 +21,17 @@ import re
 from animanager.cmdlib import ArgumentParser
 
 
-def command(cmd, args):
+def command(state, args):
     """Search AniDB."""
     args = parser.parse_args(args[1:])
     if not args.query:
         print('Must supply query.')
         return
     search_query = _compile_re_query(args.query)
-    results = cmd.titles.search(search_query)
+    results = state.titles.search(search_query)
     results = [(anime.aid, anime.main_title) for anime in results]
-    cmd.results['anidb'].set(results)
-    cmd.results['anidb'].print()
+    state.results['anidb'].set(results)
+    state.results['anidb'].print()
 
 
 def _compile_re_query(args: 'Iterable[str]') -> 're.Pattern':

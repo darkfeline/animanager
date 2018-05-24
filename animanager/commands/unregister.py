@@ -19,17 +19,17 @@ from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 
-def command(cmd, args):
+def command(state, args):
     """Unregister watching regexp for an anime."""
     args = parser.parse_args(args[1:])
     if args.complete:
-        query.files.delete_regexp_complete(cmd.db)
+        query.files.delete_regexp_complete(state.db)
     else:
         if args.aid is None:
             parser.print_help()
         else:
-            aid = cmd.results.parse_aid(args.aid, default_key='db')
-            query.files.delete_regexp(cmd.db, aid)
+            aid = state.results.parse_aid(args.aid, default_key='db')
+            query.files.delete_regexp(state.db, aid)
 
 
 parser = ArgumentParser(prog='unregister')

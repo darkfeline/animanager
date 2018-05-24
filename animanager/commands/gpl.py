@@ -16,7 +16,7 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def command(cmd, args):
+def command(state, args):
     if len(args) < 2:
         _print_usage(args[0])
     elif args[1] == 'c':

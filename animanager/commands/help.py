@@ -16,8 +16,8 @@
 # along with Animanager.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def command(cmd, args):
-    commands = '\n'.join(sorted(cmd.commands))
+def command(state, args):
+    commands = '\n'.join(sorted(state.commands))
     print(f'''\
 Commands
 --------

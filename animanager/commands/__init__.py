@@ -23,5 +23,5 @@ for _, name, _ in pkgutil.iter_modules(__path__):
     _g[name] = importlib.import_module(f'.{name}', __name__).command
 
 
-def quit(cmd, args):
+def quit(state, args):
     return True

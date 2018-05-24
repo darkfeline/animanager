@@ -22,16 +22,16 @@ from animanager.cmdlib import ArgumentParser
 from animanager.db import query
 
 
-def command(cmd, args):
+def command(state, args):
     """Register watching regexp for an anime."""
     args = parser.parse_args(args[1:])
-    aid = cmd.results.parse_aid(args.aid, default_key='db')
+    aid = state.results.parse_aid(args.aid, default_key='db')
     if args.query:
         # Use regexp provided by user.
         regexp = '.*'.join(args.query)
     else:
         # Make default regexp.
-        title = query.select.lookup(cmd.db, aid, fields=['title']).title
+        title = query.select.lookup(state.db, aid, fields=['title']).title
         # Replace non-word, non-whitespace with whitespace.
         regexp = re.sub(r'[^\w\s]', ' ', title)
         # Split on whitespace and join with wildcard regexp.
@@ -41,7 +41,7 @@ def command(cmd, args):
             regexp,
             r'\b(?P<ep>[0-9]+)(v[0-9]+)?',
         ))
-    query.files.set_regexp(cmd.db, aid, regexp)
+    query.files.set_regexp(state.db, aid, regexp)
 
 
 parser = ArgumentParser(prog='register')
