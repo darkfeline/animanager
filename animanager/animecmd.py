@@ -113,7 +113,6 @@ class State:
     cache_manager: 'CacheTableManager' = None
     config: 'ConfigParser' = None
     db: 'Connection' = None
-    file_picker: 'FilePicker' = None
     results: 'AIDResultsManager' = None
     titles: 'TitleSearcher' = None
 
