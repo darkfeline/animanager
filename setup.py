@@ -52,7 +52,7 @@ setup(
         'dataclasses==0.5',
         'tabulate==0.8.1',
         'wcwidth==0.1.7',
-        'mir.anidb~=1.0',
+        'mir.anidb~=2.0',
         'mir.cp~=1.0',
         'mir.sqlite3m~=1.0',
         'SQLAlchemy~=1.1',
