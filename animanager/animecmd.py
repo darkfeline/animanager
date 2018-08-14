@@ -44,6 +44,7 @@ class AnimeCmd:
         'as': commands.asearch,
         'asearch': commands.asearch,
         'deleterule': commands.deleterule,
+        'fix': commands.fix,
         'gpl': commands.gpl,
         'help': commands.help,
         'purgecache': commands.purgecache,

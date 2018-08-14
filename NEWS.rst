@@ -6,6 +6,28 @@ This project uses `semantic versioning <http://semver.org/>`_.
 0.12.0 ()
 ---------
 
+This is the last release of the Python version of Animanager (barring
+bug fixes for bugs that prevent migration to the new version).
+
+Future Animanager development will happen on the `Go version
+<https://go.felesatra.moe/animanager>`_.
+
+Added
+^^^^^
+
+Added ``fix`` command.  This command fixes certain issues caused by
+caching for the schema up to v3 (the latest on the Python version).
+Run this command before migrating to the Go version.  The Go version
+will update the schema to v4 on the first run.
+
+(It is fine to migrate to the Go version without running ``fix``.
+However, this will leave database inconsistencies unfixed and purge
+the cached data necessary for fixing these inconsistencies.)
+
+Make sure to backup your database before running ``fix``.
+
+またね
+
 0.11.0 (2017-10-22)
 -------------------
 
