@@ -3,8 +3,8 @@ animanager Release Notes
 
 This project uses `semantic versioning <http://semver.org/>`_.
 
-0.12.0 ()
----------
+0.12.0 (2018-08-20)
+-------------------
 
 This is the last release of the Python version of Animanager (barring
 bug fixes for bugs that prevent migration to the new version).
