@@ -1,6 +1,11 @@
 Animanager
 ==========
 
+The Python version of Animanager is no longer being developed.
+
+Future Animanager development will happen on the `Go version
+<https://go.felesatra.moe/animanager>`_.
+
 Animanager_ is a command line program for advanced anime watching
 management.
 
